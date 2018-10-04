@@ -1,0 +1,572 @@
+Changes in 6.3.2 (bug fixes following R CRAN release 3.5)
+================
+
+Enhancements:
+-------------
+- better memory usage 
+- faster implementation
+- warnings suppressed when performing cross-validation
+
+Bug fixes:
+----------
+- specific bug related to NA values
+
+New features:
+-------------
+A new tune.spls function has been deployed but is restrained for a fixed Y data set. This is function still need further developments, contact us for more details and examples. 
+
+
+Changes in 6.3.1 (bug fixes)
+================
+
+Enhancements:
+-------------
+- plotContrib deprecated (use plotLoadings instead)
+
+Bug fixes:
+----------
+- major bug when NA values is now fixed
+- one-sided t-test in the tune functions fixed
+- nipals function capped to a maximum number of components and nipals function now faster
+
+
+
+Changes in 6.3.0 (faster! and bug fixes)
+================
+
+
+Enhancements:
+-------------
+- huge gain in computation time for the tune functions tune.splsda and tune.block.splsda. The larger the data, the bigger the gain. Requires new dependencies: ‘matrixStats’, ‘rARPACK’, ‘gridExtra’ 
+- a plot for an object `tune.block.splsda'
+- tune.multilevel function was deprecated a while ago and now removed.
+
+Bug fixes:
+----------
+- fixed reproducibility problem when using parallel coding in tune.block.splsda (via the `cpus' argument)
+- network: correlation with missing values fixed, label names fixed
+- fixed perf for block.splsda objects with prediction distances
+- some NA issues reported in 6.2.0 fixed (hopefully)
+
+
+
+
+Changes in 6.2.0 (improvements and bug fixes)
+================
+
+New features:
+-------------
+- The constraint argument (version 6.1.0 - 6.1.3) was removed in the functions perf and tune for all supervised objects because of a risk of overfitting
+
+Enhancements:
+-------------
+- AUROC aded for MINT objects mint.plsda and mint.splsda where the study name needs to be specified, e.g. auroc( .., roc.study = "study4"). See ?auroc
+- choice.ncomp output added on all perf and tune functions for all supervised methods.
+- mat.c output for pls and plsda objects (matrix of coefficients from the regression of X / residual matrices X on the X-variates).
+
+
+Bug fixes:
+----------
+- fixed bug when using predict, perf or tune with the error msg: 'Error in predict.spls(spls.res, X.test[, nzv]) : 'newdata' must include all the variables of 'object$X''
+
+
+Changes in 6.1.3 (patch and enhancements)
+================
+
+New features:
+-------------
+1 - Prediction area of a PLS-DA or sPLS-DA model can be not plotted using the background.predict function as an input parameter in plotIndiv. The plot enables to visualise in 2D the effect of the prediction distances.
+2 - Functions get.confusion_matrix and get.BER to calculate a confusion matrix based on class prediction of test samples and their real class, and calculate their Balanced Error Rate, see ?get.BER
+
+
+Enhancements:
+-------------
+1 - perf.sgccda (for DIABLO) now implements a constraint model (see details in ?perf)
+2 - legend = TRUE option in circosPlot and plotDiablo
+
+
+Bug fixes:
+----------
+- tune.splsda had a bug when assessing the 'choice.ncomp' based on ones-sided t-test of the error rate when the error rate was constant.
+- sparse PCA deflation algorithm fixed
+- added add mixOmics:: for pls functions to avoid clash with other packages
+
+
+
+Changes in 6.1.2 (patch)
+================
+
+New features:
+-------------
+1 - tune.splsda now returns a 'choice.ncomp' which indicates the number of components to choose (only if nrepeat > 2, criterion based on t-tests)
+2 - plotIndiv now enables two legends based on color, as well as pch, when pch is a factor different from what is indicated in group (use arguments pch and pch.levels, see ?plotIndiv)
+
+Enhancements:
+-------------
+1 - argument 'cutoff' now replaces 'threshold' in network for consistency with plotVar and circosPlot 
+2 - new argument 'sd' in plot.perf for block.splsda method
+3 - new arguments "color.Y" and "color.blocks" in cimDiablo
+4 - new argument 'xlim' in plotLoadings
+
+Bug fixes:
+----------
+- directionality is now enforced in AUROC (results lower than 0.5 can be obtained, which would indicate a very poor model performance)
+
+
+Changes in 6.1.1 (patch)
+================
+
+New features:
+-------------
+1 - mint.pca function to perform unsupervised integration of independent data sets
+2 - new weighted prediction for block approaches for both unsupervised and supervised analyses, see ?predict.spls and ?predict.splsda. 
+3 - 'cpus' parameter for sPLS-DA perf/tune and block.splsda perf/tune added to run the code in parallel
+
+Enhancements:
+-------------
+1 - 'constraint' parameter for sPLS-DA perf and tune functions added.
+2 - plotLoading for PCA object
+3 - color arugment in plot.tune and plot.perf added
+
+Bug fixes:
+----------
+- predict with logratio (the logratio transform is now performed inside the predict function)
+- in block methods, scheme = 'horst' set by default instead of centroid
+- in block methods, initialisation set to svd.single by default
+
+
+Changes in 6.1.0 (improvements and bug fixes)
+================
+In short,
+- cimDIABLO argument 'corThreshold' replaced by 'cutoff'
+- new plots of tune and perf results now available
+- tune function for block.splsda/DIABLO method
+- auroc for supervised methods
+
+New features:
+-------------
+- auroc function applicable for (mint).(block).(s)plsda objects. AUc values also included in perf and tune functions (except mixDIABLO module)
+- tune.block.splsda function to chose the keepX parameters of block.splsda (a.k.a mixDIABLO)
+- plot for perf objects displays the classification error rate w.r.t components
+- plot for tune objects displays the classification error rate w.r.t keepX values (not implemented for tune.block.splsda)
+- multilevel function has been removed (as planned) as it is now included as an argument in other functions (see pca, pls, splsda, etc)
+
+
+Enhancements:
+-------------
+1 - All tune functions (except for mixDIABLO/block.splsda module) include a 'constraint' argument to either build the model based on user input specific parameters (object$keepX.constraint) or based on the optimal parameter keepX determined by the tune function, see examples in help files.
+2 - All perf functions (except for mixDIABLO/block.splsda module) have now a 'constraint' argument that allows the performances to be calculate either based on the number of parameters (object$keepX) defined in object or based on the variables  selected on each component, see examples in help files.
+3 - max.iter has been set to 100 to speed up computational time for all multivariate methods except pca/spca.
+4 - cimDiablo: new arguments include transpose, row.names and col.names
+5 - circosPlot: new arguments include var.names and comp. Argument 'corThreshold' has been replaced by 'cutoff'.
+6 - plotIndiv: new argument legend.title
+7 - network function for block.spls(da) models and allows to plot for more than 2 blocks
+8 - PCA: new argument ilr.offset to be used only for ILR log transform in PCA (mixMC module)
+9 - Legend added in plotDiablo, new argument legend.ncol
+
+
+Bug fixes:
+----------
+1 - plotIndiv and ellipse: plot ellipse for all groups with more than 1 sample
+2 - predict function: argument multilevel added, log transform included
+3 - Call to plsda.vip() from the RVAideMemoire package
+4 - other small bugs as listed in out bitbucket issues, matching rgl package changes.
+
+
+
+Changes in 6.0.0 (major, implementation improvements and new methods)
+================
+In short,
+- argument names which changed in all plots for homogeneous call are:
+'main' changed to 'title', 'add.legend' -> 'legend', 'cex.xxx' -> 'size.xxx', 'plot.ellipse' -> 'ellipse'
+- ncomp is now a single value in all wrapper. and block. functions (multiple integration)
+
+Please refer to our help files for the functions listed below.
+
+
+New features:
+-------------
+1- log.ratio transformation (log.ratio = c('CLR', 'ILR')) in PCA and PLS-like methods to deal with compositional microbiome data (see website www.mixOmics.org/mixMC for details)
+2 - plotLoadings is a novel graphical way of showing the regression coefficients of the selected variables (deprecated plotContrib)
+3 - mixMINT module to analyse independent data sets on the same type of variable. See www.mixOmics.org/mixMINT for details. 
+      Added methods: mint.pls, mint.plsda, mint.spls, mint.splsda; 
+      S3 visualisations: plotIndiv, plotLoadings, plotVar; 
+      Performance evaluation: perf (new, uses leave one out group), tune (new, uses leave one out group)
+4 - mixDIABLO module to integrate different omics data sets performed on the same samples. See www.mixOmics.org/mixDIABLO for details. 
+      Added methods: block.pls, block.plsda, block.spls, block.splsda; 
+      S3 visualisations: circosPlot (new), cimDiablo (new), plotDiablo (new), plotIndiv, plotLoadings, plotVar;   
+      Performance evaluation: perf, tune, predict (new with majority vote for DIABLO, $vote) 
+5 - new data sets: stemcell (for MINT), breast.TCGA (for DIABLO), diverse.16S and Koren.16S (for mixMC)
+
+Enhancements:
+-------------
+1 - plotIndiv: displays explained variance for sPLS objects
+2 - multilevel option is now included in PLS and PCA objects (argument multilevel = design or sample info)
+3 - WARNING: in all plots, homogeneous arguments call: 'main' changed to 'title', 'add.legend' -> 'legend', 'cex.xxx' -> 'size.xxx', 'plot.ellipse' -> 'ellipse'
+4 - print.method functions updated to show the range of graphics / other functions to use with the object
+5 - predict function now outputs class names in $class
+6 - data set vac18 reduced number of genes is now 1000 (memory issues with the package)
+7 - plotContrib has been deprecated for plotLoadings
+8 - tune.pca has been coded more efficiently
+9 - ncomp input is now a single value in wrapper.rgcca, wrapper.sgcca, block.pls, block.spls, block.plsda, block.splsda
+
+
+Bug fixes:
+----------
+1 - explained variance for NIPALS/PCA fixed in print.pca, tune.pca and pca
+2 - plot3d mistmatch legend color, double titles for plotIndiv ggplot2 and lattice, order of group for ggpot2 and lattice
+3 - retired: data set prostate
+
+
+Changes in 5.2.0 (graphical improvements)
+================
+
+New features:
+-------------
+1 - plotArrow for PLS, sPLS, rCC,  rGCCA, sGCCA, sGCCDA is an improved version from our old s.match function (which is still available but will be soon deprecated)
+2 - network function has been enhanced with various options to represent the nodes (e.g. lty.edge='dotted',row.names = FALSE), see our website for more examples
+2 - rcc has a new argument method = c("ridge", "shrinkage") with shrinkage to estimate the shrinkage coefficients directly
+3 - plotIndiv directly implements 3d plots (style='3d'), including ellipses, % of variance explained output for PCA, centroids and star plots (see example(plotIndiv))
+4 - plotVar directly implements 3d plots (style='3d'), legend can also be added with add.legend = TRUE
+5 - cim and network have new arguments: save = c('jpeg','tiff','png','pdf') to save plots directly, and name.save. Argument threshold has been added/updated for both displays. Some arguments underwent name changes, see ?network
+
+
+Enhancements:
+-------------
+1 - network: a single function for all objects.
+2 - pheatmap.multilevel has been deprecated with the new enhancements of CIM
+3 - plot3dIndiv and plot3dVar have been deprecated  (see new features in plotIndiv and plotVar)
+4 - plotContrib also now available for sgccda plsda, splsda objects. Added arguments complete.name.var and col.ties (see ?plotContrib), changed argument name ties to show.ties
+5 - imageMap has been deprecated (now included in cim directly)
+6 - pca also outputs 'loadings' and 'variates' to remain in the mixOmics spirit
+7 - tau.estimate help file removed as now directly called as internal function from rcc and srgcca
+8 - imgCor: added argument 'main' and changed argument names x.sideColors and y.sideColors to sideColors
+9 - cim: changed argument names labRow and labCol to row.sideColors and col.sideColors
+
+Bug fixes:
+----------
+1 - plotContrib now fixed (showed wrong contribution colors)
+2 - cim has been fixed to show the ordered variable names after users reports (thanks!)
+3 - resolved blank page in network when saving image as a pdf
+
+
+
+Changes in 5.1.2 (patches)
+================
+
+Enhancements:
+-------------
+1 - plotIndiv: the argument col is back! see our help file. 
+
+2 - plotVar has been dramatically improved with more efficient coding (not a S3method anymore) and availability of different plotting styles with 'ggplot2', 'lattice' or 'graphics'.
+
+
+Bug fixes:
+----------
+- plotIndiv: X and Y.label fixed, par() bug fixed
+
+-rgcca tau parameter output enhanced.
+
+
+
+
+Changes in 5.1.1 (major release)
+================
+
+New features:
+-------------
+1 - plotContrib for objects of class PLSDA and sPLSDA has been added and is of particular interest for those analysing microbial communities / metagenomics data. 
+
+2 - wrapper.sgccda was added to enable multiple data sets integration with one or several factor outcomes. Note: the prediction function for this new add-on has not been fully tested yet and is not available.
+
+3 - wrapper.sgcca and wrapper.sgccda now have an argument called 'keep' that you can use as an alternative to the 'penalty' old argument. Keep is the equivalent of the keepX in the PLS method to specify the number of variables to select on each component and each block. Refer to the help file, as keep should be input as a list of length the number of blocks, and each element of the list (corresponding to a block) indicates the number of variables to select on each component (yes, it becomes, indeed, complicated).
+
+4 - All wrapper methods for the multiblock module, i.e. wrapper.rgcca, wrapper.sgcca and wrapper.sgccda take the input argument 'blocks' (instead of previously 'data') - this is to enable a smoother transition to the next update!
+
+5 - plotIndiv has been improved dramatically. A single function can now be used for the objects PLS, sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA (not an S3 function anymore). In addition, we now provide the new arguments (and more to come!):
+	- ellipse plots are now available, a group argument is requested for the unsupervised methods (PCA, IPCA, PLS)
+	-three types of graphical plot: graphics (version < 5.1-0), ggplot2 and lattice
+	-legend and title can be added
+  - NOTE: if you want to color each sample with respect to a factor (i.e. a factor of length n), then the argument to use is 'group'. If you use a supervised approach then col.per.group is a vector of length the number of groups. These arguments may change in the coming up updates.
+
+6 - cim has been implemented for PLS, sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA and includes a wide range of options to plot a single data set in the form of a heatmap (new!), or the cross correlation between two matching data sets via the methods rCC or (s)PLS using the cross product between latent variables and loading vectors (improved with legends and color bars). We will give more examples on our website.
+
+7 - added package dependencies: ggplot2 and ellipse
+
+
+Enhancements:
+----------
+1 - All wrappers for multiple data integration have been improved and re-implemented. Consequently, the dependency to RGCCA has been removed, and three wrapper functions are now available: wrapper.sgcca, wrapper.rgcca and wrapper.sgccda (see New Feature #2 above).
+
+2 - selectVar has been extended for the non sparse versions PCA, PLS and PLS-DA and output the features with decreasing absolute weights in the loading vectors. It is used in particular for plotContrib (see New feature #1 above)
+
+
+Bug fixes:
+----------
+1 - The sPLS algorithm was rewritten to ensure convergence. This implies that spls results might be slightly different from version < 5.1-0!
+
+
+Changes in 5.0-4
+================
+
+New features:
+-------------
+1- new set of palettes have been added: color.jet, color.spectral, color.GreenRed and color.mixo
+2- the multilevel module has been updated. A new function called withinVariation() calculates the within matrix. Our new website www.mixOmics.org will be updated shortly
+3- the function tau.estim was borrowed from the RGCCA package and included in mixOmics in order to estimate the regularisation parameters from rcc more efficiently than tune.rcc(). We noted differences in those parameters estimates between tune.rcc() and tau.estim() as the methods use either cross-validation or the formula from SHaefer and Strimmer (2005). When using tau.estim() we also advise to center and scale the input data in rcc(). See helptau.estim().  
+4- because of a S3 method clash with the MASS package with the current R version we had to rename select.var to selectVar
+
+Bug fixes:
+----------
+1- select.var.sgcca has been fixed (the outputs were messy)
+2- minor bug in plotVar.sgcca and plotVar.rgcca fixed
+3- the algorithm in perf.pls and perf.spls has been almost entirely changed. We are now using a different algorithm to estimate the Q2, as presented in the help Rd file (unfortunately the reference is French so contact us for more details if needed). plot.perf() has been updated
+
+Enhancements:
+----------
+1- network default color set to color.GreenRed
+2- output feature.final in perf S3 function has been removed. Better to use select.var() to obtain the list of selected variables
+3- the multilevel module has been updated. The argument names were changed to 'design' instead of 'cond'. The pheatmap.multilevel() function has been improved.
+4- the nearZeroVar function that was borrowed from the caret package has been enhanced to improve computational time as this is costly in the pls/spls functions
+
+Changes in 5.0-3
+================
+
+Bug fixes:
+----------
+-the perf and predict functions have been updated. The prediction values are calculated based on the regression coefficients of Y onto the latent variables associated to X.
+
+-scaling issues in perf/old-valid have been fixed
+
+-one warning on the plotIndiv.rcc has been fixed.
+
+-transition from valid() to perf() announced.
+
+Changes in 5.0-2
+================
+
+New features:
+-------------
+- The valid function has been superseded by the perf function. Although similar in essence, few bugs have been fixed to estimate the performance of the sPLS and sPLS-DA models with no selection bias. A variable stability frequency has been added to the output. Functions spls.model and pls.model have been removed.
+
+Bug fixes:
+----------
+-pls and spls function have been modified and harmonised w.r.t to scaling. Loading vectors a and b are now scaled to 1. Latent variables t and u are not scaled (following Table 21 of the Tenenhaus book - which is in French, sorry!).
+
+-the argument abline.line has been set to FALSE by default in all plotIndiv functions.
+
+- tune.multilevel for one factor has been fixed.
+
+Changes in 5.0-1
+================
+
+New features:
+-------------
+
+New dependency to RGCCA package to enable integration of multiple matching data sets
+- wrapping method wrapper.sgcca() and wrapper.rgcca() created
+- S3 methods plotIndiv, plotVar, select.var, print for rgcca and sgcca added
+
+Multilevel analysis
+- cross validation enabled in function tune.multilevel for one factor (previously, only loocv was available)
+
+RCC
+-the function estim.regul has been renamed tune.rcc
+-the function pcatune has been renamed tune.pca
+
+Bug fixes:
+----------
+-in plotIndiv: horizontal and vertical abline set as a default argument
+-a new argument in splsda() function added: near.zero.var = TRUE or FALSE to speed up computations (near.zero.var = FALSE to gain speed)
+-the valid() function has been updated to speed up the computations. There is no 'criterion' argument to choose anymore (by default, all are included in the computation)
+-in plotVar: matching arguments user-function to avoid additions of unused arguments
+-in plotIndiv, arguments 'x.label' and 'y.label' were replaced by 'X.label' and 'Y.label'
+-in pca, argument 'scale.' was changed to 'scale'
+
+Changes in 4.1
+================
+
+New features:
+-------------
+- New S3 method valid for objects of class psl, spls, plsda and splsda
+- New select.var function to directly extract the selected variables from spls, spca, sipca
+- New data set vac18 for multilevel data
+
+
+Changes in 4.0
+================
+
+New features:
+-------------
+- The multilevel methodology has been added as well as the associated S3 methods for the graphical outputs (plotVar, plotIndiv)
+- pheatmap clustering is available for multilevel analysis (borrowed from the pheatmap package)
+- tuning functions are available for multilevel analyses
+- a dependency to the package 'igraph0' has been created (instead of 'igraph' as the authors informed us of major changes in this package)
+
+Bug fixes:
+----------
+-pls and spls have been modified to better handle NA values
+
+
+Changes in 3.0
+================
+
+New features:
+-------------
+- The new methodology IPCA and sIPCA have been added as well as the associated S3 methods for the graphical outputs
+
+- GeneBank IDs and gene titles were added in the liver toxicity study
+
+
+Changes in 2.9-6
+================
+
+New features:
+-------------
+- Modifying the valid function: the Q2 criterion has been implemented
+
+- var.label argument is used in plotVar.plsda, plotVar.splsda, plot3dVar.plsda, plot3dVar.splsda instead of X.label
+
+- New S3 method network for pls
+
+- New code for valid function to PLS-DA and sPLS-DA models validation
+
+- New code for plot.valid to display the results of the valid function for PLS-DA 
+  and sPLS-DA models
+
+- cim and network were modified to obtain the simMat matrix as value
+
+- plotVar was modified to obtain the coordinates for X and Y variables as value
+
+- In predict function, several or all prediction methods are available simultaneously to 
+  predict the classes of test data with plsda and splsda 
+  
+- The argument 'mode' has been removed of plsda and splsda functions
+
+
+Changes in 2.9-5
+================
+
+New features:
+-------------
+- sPCA has been modified to get orthogonal principal components
+
+
+Changes in 2.9-4
+================
+
+New features:
+-------------
+- PCA has been modified to run either SVD (no missing values) or NIPALS (missing values)
+
+- print.pca has been added to display the results of PCA
+
+- pcatune has been added to guide the choice of the number of principal components
+
+
+Changes in 2.9-1
+================
+
+New features:
+-------------
+- New S3 methods plotIndiv and plotVar for PCA
+
+- New S3 method plot.valid to display the results of the valid function
+
+- New code for imgCor function for a nicer representation of the correlation matrix
+
+- In predict.plsda and predict.splsda functions the argument 'method' were replaced by
+  method = c("max.dist", "class.dist", "centroids.dist", "mahalanobis.dist")
+
+- New arguments for the cim function:
+  * dendrogram
+  * ColSideColors, RowSideColors
+
+- Modifying the valid function:
+  * missing data are allowed
+  * Q2 criterion has been removed
+
+- Functions pls, plsda, spls and splsda were modified to identify zero- or near-zero variance predictors
+
+- Functions plotVar.plsda, plotVar.splsda, plot3dVar.plsda, plot3dVar.splsda were modified to represent 
+  only the X variables
+
+- New function: 'nearZeroVar' for identification of zero- or near-zero variance predictors 
+
+
+Changes in 2.8-1
+================
+
+New features:
+-------------
+- New arguments ("axis.labelX", "axis.labelY") in the function imgCor, to indicate if the labels 
+  of axis have to be shown or not
+
+- New classes splsda and plsda for predict, print, plotIndiv, plot3dIndiv, plotVar, plot3dVar
+
+- Several prediction functions are avaiable to predict the classes of test data with plsda and 
+  splsda see predict (argument 'method' ("class.dist", "centroids.dist", "Sr.dist", "max.dist"))
+
+- New functions map & unmap borrowed from the mclust package
+
+
+Bug fixes:
+----------
+
+
+Changes in 2.7-1
+================
+
+New features:
+-------------
+
+- New functions pca, plsda and splsda, as well as extensions of plot3dVar and plot3dIndiv for pca 
+
+- New network.default function which is called by network.rcc and network.spls
+
+- bin.color function added in network.default to color edges w.r.t. the values in the simMat matrix
+
+- nipals has been improved to be computationally more efficient
+
+- Missing values are treated as in Tenenhaus in pls, spls and valid functions
+
+- New argument 'ncomp' in rcc function, argument 'ncomp' has been removed from 'summary' and 'rcc'
+
+- New option ("XY-variate") for the argument 'rep.space' in the 'plot3dVar'
+
+
+Bug fixes:
+----------
+- 'tick marks' values have been corrected for color key in cim
+
+- Computation of the simMat matrix for pls and spls - canonical mode, and correction in 
+  plotVar, plot3dVar, cim and network
+
+- Correction of the default argument 'rep.space = "XY-variate"' in plotIndiv and plot3dIndiv
+
+- Correction of the manual
+
+
+Changes in 2.6-0
+================
+
+New features:
+-------------
+- Former R package integrOmics has been renamed mixOmics
+
+- In functions plotIndiv, plotVar, cim, network the arguments 'dim1', 'dim2', 'ncomp' 
+  were replaced by 'comp', a vector of length 2 (by default 'comp = 1:2')
+
+- Network has a new argument 'alpha'
+
+User-visible changes:
+---------------------
+
+Bug fixes:
+----------
+
+Internal changes:
+-----------------
+
+
+
