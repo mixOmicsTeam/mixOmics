@@ -116,6 +116,8 @@ tune = tune.splsda(X, Y, ncomp = 1, nrepeat = 10, logratio = "none",
 test.keepX = c(5, 10, 15), folds = 10, dist = "max.dist",
 progressBar = TRUE)
 
+\dontrun{
+
 # 5 components, optimising 'keepX' and 'ncomp'
 tune = tune.splsda(X, Y, ncomp = 5, test.keepX = c(5, 10, 15),
 folds = 10, dist = "max.dist", nrepeat = 5, progressBar = TRUE)
@@ -125,7 +127,6 @@ tune$choice.keepX
 plot(tune)
 
 
-\dontrun{
 ## only tune component 3 and 4
 # keeping 5 and 10 variables on the first two components respectively
 

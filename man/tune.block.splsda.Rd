@@ -137,7 +137,7 @@ ncomp = 5
 
 # Tuning the first two components
 # -------------
-
+\dontrun{
 # definition of the keepX value to be tested for each block mRNA miRNA and protein
 # names of test.keepX must match the names of 'data'
 test.keepX = list(mrna = seq(10,40,20), mirna = seq(10,30,10), protein = seq(1,10,5))
@@ -150,7 +150,7 @@ ncomp = ncomp, test.keepX = test.keepX, design = design, nrepeat = 3)
 tune$choice.ncomp
 tune$choice.keepX
 
-\dontrun{
+
 
 # Only tuning the second component
 # -------------
