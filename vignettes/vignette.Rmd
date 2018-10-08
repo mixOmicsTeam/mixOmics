@@ -25,9 +25,6 @@ header-includes:
   - \usepackage{color}
 ---
 
-<!--
-  %% \VignetteEngine{knitr::knitr}
--->
 
 ```{r style, echo = FALSE, results = 'asis'}
 BiocStyle::markdown()
@@ -447,7 +444,7 @@ Such representation will be more informative once we select a few variables in t
 
 Plots can also be displayed in 3 dimensions using the option `style="3d"`, and interactively (we use the `rgl` package for this).
 
-```{r eval= TRUE, fig.show = 'hide'}
+```{r eval= FALSE, fig.show = 'hide'}
 plotIndiv(MyResult.pca2,
           group = liver.toxicity$treatment$Dose.Group, style="3d",
           legend = TRUE, title = 'Liver toxicity: genes, PCA comp 1 - 2 - 3')
@@ -730,7 +727,7 @@ Interestingly from this plot, we can see that all selected variables on componen
 
 
 Since 4 classes are being discriminated here, samples plots in 3d may help interpretation: 
-```{r eval=TRUE, fig.show='hide'}
+```{r eval=FALSE, fig.show='hide'}
 plotIndiv(MyResult.splsda2, style="3d")
 ```
 
