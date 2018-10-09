@@ -62,7 +62,7 @@ legend = TRUE)
     ##############################
     
     # check input object
-    if (!any(class(object) == "block.splsda"))
+    if (!is(object, "block.splsda"))
     stop("circosPlot is only available for 'block.splsda' objects")
     
     if (length(object$X) < 2)

@@ -100,6 +100,7 @@ data(liver.toxicity)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
 
+\dontrun{
 tune = tune.spls(X, Y, ncomp=4, test.keepX = c(5,10,15), measure = "MSE",
 nrepeat=3, progressBar = TRUE)
 
@@ -108,7 +109,7 @@ tune$choice.keepX
 
 # plot the results
 plot(tune)
-
+}
 
 }
 

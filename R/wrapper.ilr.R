@@ -35,7 +35,7 @@ offset = 0)
  
     if (logratio == 'ILR')
     {
-        if (any(class(X) != 'ilr'))
+        if (!is(X, 'ilr'))
         {   # data are ilr transformed, then the data lose 1 variable, but we'll use V to reconstruct the matrix
             X = ilr.transfo(X, offset = offset)
         }

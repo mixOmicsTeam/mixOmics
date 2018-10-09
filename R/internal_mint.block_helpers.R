@@ -75,7 +75,7 @@ get.weights = function(variates, indY)
 study_split = function(data, study)
 {
     #data should be a matrix
-    if(!any(class(data) == "matrix"))
+    if(!is(data, "matrix"))
     data = as.matrix(data)
     
     M = length(levels(study))

@@ -35,7 +35,7 @@ function(mat, cutoff, breaks, col, symkey)
     }
     
     if (missing(breaks) || is.null(breaks)) {
-        if (class(col) == "function") breaks = 32
+        if (is(col,"function")) breaks = 32
         else breaks = length(col)
     }
     
@@ -81,7 +81,7 @@ function(mat, cutoff, breaks, col, symkey)
     
     ncol = length(breaks) - 1
     
-    if (class(col) == "function")
+    if (is(col, "function"))
     col = col(ncol)
     
     if (length(breaks) != length(col) + 1)

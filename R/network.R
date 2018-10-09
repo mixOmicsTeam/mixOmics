@@ -378,7 +378,7 @@ name.save = NULL)
         coord = M_block = list()
         j = 1
         
-        if (any(class(mat) == "sgcca"))
+        if (is(mat, "sgcca"))
         {
             for (k in blocks)
             {
@@ -572,10 +572,10 @@ name.save = NULL)
     stop("'cex.node.name' must be a non-negative numerical value.", call. = FALSE)
     
     #-- color.edge
-    if (length(color.edge) < 2 && (class(color.edge) != "function"))
+    if (length(color.edge) < 2 && (!is(color.edge, "function")))
     stop("'color.edge' must be a vector of length larger than or equal to 2.", call. = FALSE)
     
-    if ((length(color.edge) %% 2) != 0 && (class(color.edge) != "function") && isTRUE(symkey))
+    if ((length(color.edge) %% 2) != 0 && (!is(color.edge, "function")) && isTRUE(symkey))
     stop("'color.edge' must be a vector of length an even number if 'symkey = TRUE'.", call. = FALSE)
     
     if (any(!sapply(color.edge, function(x) {tryCatch(is.matrix(col2rgb(x)), error = function(e) FALSE) })))
@@ -631,7 +631,7 @@ name.save = NULL)
     call. = FALSE)
     
     #-- layout.fun
-    if (!is.null(layout.fun) && class(layout.fun) != "function")
+    if (!is.null(layout.fun) && !is(layout.fun, "function"))
     stop("'layout.fun' must be a valid layout function.", call. = FALSE)
     
     #-- end checking --#

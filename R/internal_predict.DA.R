@@ -45,7 +45,7 @@ internal_predict.DA = function(object, out, q, dist, weights)
 {
     
     # a DA analysis (mint).(block).(s)plsda
-    if (length(grep("plsda",class(object)))==0)
+    if (!is(object, "DA"))
     stop("'Object' is not from a Discriminant Analysis", call.=FALSE)
     
     out.DA = list()
@@ -281,7 +281,8 @@ internal_predict.DA = function(object, out, q, dist, weights)
         out.DA$MajorityVote = lapply(out.DA$class,function(x){x[[1]]})
     }
     
-    if (length(grep("block",class(object)))!=0 & J>1) # a block
+    block.object = c("block.pls", "block.spls", "block.plsda", "block.spsda")
+    if (is(object, block.object) & J>1) # a block
     {
         out.DA$centroids = G
     }else{ #not a block
