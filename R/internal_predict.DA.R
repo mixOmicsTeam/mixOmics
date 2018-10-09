@@ -281,7 +281,8 @@ internal_predict.DA = function(object, out, q, dist, weights)
         out.DA$MajorityVote = lapply(out.DA$class,function(x){x[[1]]})
     }
     
-    if (is(object, c("block.pls", "block.spls", "block.plsda", "block.spsda")) & J>1) # a block
+    block.object = c("block.pls", "block.spls", "block.plsda", "block.spsda")
+    if (is(object, block.object) & J>1) # a block
     {
         out.DA$centroids = G
     }else{ #not a block
