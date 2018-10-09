@@ -87,11 +87,11 @@ background = NULL,
     size.axis = size.axis, size.legend = size.legend, size.legend.title = size.legend.title, legend.title = legend.title,
     legend.title.pch = legend.title.pch, legend.position = legend.position, point.lwd = point.lwd)
 
-    if (any(class(object)%in%c("mint.block.pls", "mint.block.spls", "mint.block.plsda", "mint.block.splsda")))
+    if (is(object, c("mint.block.pls", "mint.block.spls", "mint.block.plsda", "mint.block.splsda")))
     stop("No plotIndiv for the following functions at this stage: mint.block.pls, mint.block.spls, mint.block.plsda, mint.block.splsda.")
     
     #-- choose rep.space
-    if (is.null(rep.space) && any(class(object) %in% "DA"))#"splsda", "plsda", "mlsplsda")))
+    if (is.null(rep.space) && is(object, "DA"))#"splsda", "plsda", "mlsplsda")))
     {
         rep.space = "X-variate"
     } else if (is.null(rep.space)) {
@@ -134,7 +134,7 @@ background = NULL,
         stop("'subtitle' indicates the subtitle of the plot for each 'blocks'; it needs to be the same length as 'blocks' and duplicate are not allowed.")
     }
     
-    if(!is.null(background) && class(background)!="background.predict")
+    if(!is.null(background) &&  !is(background, "background.predict"))
     stop("'background' must have been obtained with the 'background.predict' function")
 
     #-- check inputs

@@ -61,17 +61,17 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
     
     # input parameter: noAveragePredict=> no averagePredict calculation, used in tune.block.splsda
     
-    if(any(class(object)%in%c("rgcca","sparse.rgcca")))
+    if(is(object, c("rgcca","sparse.rgcca")))
     stop("no prediction for RGCCA methods")
     
     #check on dist
-    if (!any(dist %in% c("all", "max.dist", "centroids.dist", "mahalanobis.dist")) & length(grep("plsda",class(object)))>0)
+    if (!any(dist %in% c("all", "max.dist", "centroids.dist", "mahalanobis.dist")) & is(object, "DA"))
     stop("ERROR : choose one of the four following modes: 'all', 'max.dist', 'centroids.dist' or 'mahalanobis.dist'")
     #end general checks
     
     ncomp = object$ncomp
     
-    if(length(grep("plsda",class(object)))>0) # a DA analysis (mint).(block).(s)plsda
+    if(is(object, "DA")) # a DA analysis (mint).(block).(s)plsda
     {
         #if DA analysis, the unmap Y is in ind.mat
         Y.factor=object$Y
@@ -96,8 +96,10 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
         multilevel = NULL
     }
     
+    mint.object = c("mint.pls", "mint.spls", "mint.plsda", "mint.splsda")
+    block.object = c("block.pls", "block.spls", "block.plsda", "block.splsda")
     ### if the object is a block, the input newdata is different, we check newdata, make sure it's a list and check newdata/X
-    if(length(grep("block",class(object)))==0) # not a block (pls/spls/plsda/splsda/mint...)
+    if(!is(object, block.object)) # not a block (pls/spls/plsda/splsda/mint...)
     {
         p=ncol(object$X)
         if(is.list(object$X))
@@ -148,7 +150,7 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
         if(!is.list(newdata))
         stop("'newdata' should be a list")
         
-        if(!is.null(object$indY) && length(grep("DA",class(object)))==0 ) #if DA, object$X is already without Y
+        if(!is.null(object$indY) && !is(object, "DA")) #if DA, object$X is already without Y
         {
             X = object$X[-object$indY]
         }else{
@@ -252,7 +254,7 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
     # we only scale the data if the input `newdata.scale' is missing. Only use in tune functions where we do not need to scale for every prediction as we predict on the same newdata for a grid of keepX
     if(!hasArg(newdata.scale))
     {
-        if(length(grep("mint",class(object)))==0 )#| nlevels(factor(object$study))<=1) #not a mint object or just one level in the study
+        if(!is(object, mint.object))#| nlevels(factor(object$study))<=1) #not a mint object or just one level in the study
         {   # not a mint (pls/spls/plsda/splsda/block...)
 
             # scale newdata if just one study
@@ -491,7 +493,7 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
     if(time) time4 = proc.time()
 
     # basic prediction results
-    if(length(grep("block",class(object)))!=0 & length(object$X)>1 )
+    if(is(object, block.object) & length(object$X)>1 )
     {
         out=list(predict=Y.hat[which(!is.na(ind.match))],variates=t.pred[which(!is.na(ind.match))],B.hat=B.hat[which(!is.na(ind.match))])
         
@@ -526,7 +528,7 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
 
 
         #out$newdata=concat.newdata
-    }else if(length(grep("block",class(object)))!=0){ # a block but can have only one block (so e.g. a pls done with a block.pls)
+    }else if(is(object, block.object)){ # a block but can have only one block (so e.g. a pls done with a block.pls)
         out=list(predict=Y.hat,variates=t.pred,B.hat=B.hat)
         
     } else {# not a block (pls/spls/plsda/splsda/mint...)
@@ -539,10 +541,10 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
 
     
     # get the classification for each new sample if the object is a DA
-    if(any(class(object)=="DA")) # a DA analysis (mint).(block).(s)plsda
+    if(is(object, "DA")) # a DA analysis (mint).(block).(s)plsda
     {
         
-        if(length(grep("block",class(object)))!=0 & length(object$X)>1 )
+        if(is(object, block.object) & length(object$X)>1 )
         {
             if(!hasArg(noAveragePredict))
             {

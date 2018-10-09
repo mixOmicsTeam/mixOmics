@@ -562,9 +562,9 @@ function(x, ...)
     digits = x$digits
     
     #--------------------- output pls/spls ---------------------#
-    if(any(class(x) %in% c("pls", "spls"))){
+    if(is(x, c("pls", "spls"))){
         
-        if (any(class(x) == "pls"))
+        if (is(x, "pls"))
         {
             cat(" PLS mode:", x$mode)
             cat("\n Number of variates considered:", x$ncomp, "\n")
@@ -609,7 +609,7 @@ function(x, ...)
     }  #end if pls
     
     # ---------------------- output rcc ------------------------#
-    if(any(class(x) == "rcc"))
+    if(is(x, "rcc"))
     {
         print.gap = 4
         if (any(what == "all"))

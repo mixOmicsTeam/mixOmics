@@ -77,10 +77,10 @@ cpus
     #---------------------------------------------------------------------------#
     
     #------------------#
-    if(!any(class(X)=="matrix"))
+    if(!is(X, "matrix"))
     X= as.matrix(X)
     
-    if(!any(class(Y)=="matrix"))
+    if(!is(Y, "matrix"))
     Y= as.matrix(Y)
     
     #-- check entries --#

@@ -97,7 +97,7 @@ progressBar = TRUE,
     
     
     #-- tells which variables are selected in X and in Y --#
-    if (any(class(object) == "mixo_spls"))
+    if (is(object, "mixo_spls"))
     {
         keepX = object$keepX
         keepY = object$keepY
@@ -571,7 +571,7 @@ cpus,
         misdata = misdata, is.na.A = is.na.A)#, ind.NA = ind.NA, ind.NA.col = ind.NA.col)
 
         # ---- extract stability of features ----- # NEW
-        if (any(class(object) == "mixo_splsda"))
+        if (is(object, "mixo_splsda"))
         list.features[[comp]] = result$features$stable
         
         for (ijk in dist)

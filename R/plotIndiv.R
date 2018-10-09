@@ -469,7 +469,7 @@ plot_parameters)
     
     #-- Define group
     missing.group = TRUE
-    if (missing(group) & any(class(object) == "DA"))
+    if (missing(group) & is(object, "DA"))
     {
         group = object$Y#factor(map(object$ind.mat), labels = object$names$colnames$Y)
         object$ind.mat = unmap(group) # added in v6 cause $ind.mat is the scaled (if scale = TRUE) version of ind.mat( = unmap(Y))

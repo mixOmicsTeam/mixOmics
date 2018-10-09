@@ -49,7 +49,7 @@ size.legend=1.5)
 {
     
     # check input object
-    if (!any(class(object) == "block.splsda"))
+    if (!is(object, "block.splsda"))
     stop("cimDiablo is only available for 'block.splsda' objects")
 
     if (length(object$X) <= 1)
