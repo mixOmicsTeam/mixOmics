@@ -73,4 +73,13 @@ test_that("block.splsda works", {
   expect_equal(nutrimouse.sgccda$AVE$AVE_inner[1], 0.663209598406049)
   expect_equal(nutrimouse.sgccda$AVE$AVE_X$Y[1], c(`comp 1` = 0.25))
 
+  expect_length(nutrimouse.sgccda$variates, 3L)
+  expect_equal(names(nutrimouse.sgccda$variates), c("gene", "lipid", "Y"))
+  expect_is(nutrimouse.sgccda$variates$gene, "matrix")
+  expect_is(nutrimouse.sgccda$variates$lipid, "matrix")
+  expect_is(nutrimouse.sgccda$variates$Y, "matrix")
+
+  expect_equal(nutrimouse.sgccda$variates$gene[1, 1], 2.9424296984024)
+  expect_equal(nutrimouse.sgccda$variates$lipid[1, 1], 2.73351593820324)
+  expect_equal(nutrimouse.sgccda$variates$Y[1, 1], 0.639567998302767)
 })
