@@ -28,11 +28,14 @@ test_that("block.splsda works", {
 
   expect_is(nutrimouse.sgccda$X, "list")
   expect_is(nutrimouse.sgccda$design, "matrix")
+  expect_is(nutrimouse.sgccda$X$gene, "matrix")
+  expect_is(nutrimouse.sgccda$X$lipid, "matrix")
 
   expect_equal(nutrimouse.sgccda$design, design)
-  expect_equal(nutrimouse.sgccda$X$gene, data$gene)
-  expect_equal(nutrimouse.sgccda$X$lipid, data$lipid)
-
+  expect_equal(dim(nutrimouse.sgccda$X$gene), dim(data$gene))
+  expect_equal(dim(nutrimouse.sgccda$X$lipid), dim(data$lipid))
+  expect_equal(nutrimouse.sgccda$X$gene[1, 1], 0.524732755905559)
+  expect_equal(nutrimouse.sgccda$X$lipid[1, 1], -0.528375020663953)
   expect_is(nutrimouse.sgccda$ind.mat, "matrix")
 
   expect_equal(dim(nutrimouse.sgccda$ind.mat), c(40L, 5L))
