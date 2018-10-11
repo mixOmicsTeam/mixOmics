@@ -49,7 +49,8 @@ cpus,
     n = nrow(X[[1]]);
     indY = object$indY
     max.iter = object$max.iter
-    
+    near.zero.var = !is.null(object$nzv) # if near.zero.var was used, we set it to TRUE. if not used, object$nzv is NULL
+
     if (any(dist == "all"))
     {
         dist.select = c("max.dist", "centroids.dist", "mahalanobis.dist")
@@ -134,7 +135,7 @@ cpus,
             model = lapply(1 : M, function(x) {suppressWarnings(block.splsda(X = X.training[[x]], Y = Y.training[[x]], ncomp = max(object$ncomp[-indY]),
                 keepX = keepX,
                 design = object$design, max.iter = object$max.iter, tol = object$tol, init = object$init, scheme = object$scheme,
-                mode = object$mode))})
+                mode = object$mode, near.zero.var=near.zero.var))})
         } else {
             cl <- makeCluster(cpus, type = "SOCK")
             clusterExport(cl, c("block.splsda"))
@@ -142,7 +143,7 @@ cpus,
             model = parLapply(cl, 1 : M, function(x) {suppressWarnings(block.splsda(X = X.training[[x]], Y = Y.training[[x]], ncomp = max(object$ncomp[-indY]),
                 keepX = keepX,
                 design = object$design, max.iter = object$max.iter, tol = object$tol, init = object$init, scheme = object$scheme,
-                mode = object$mode))})
+                mode = object$mode, near.zero.var=near.zero.var ))})
             
             stopCluster(cl)
         }

@@ -193,9 +193,9 @@ name.save = NULL)
         if(length(test.keepX) != length(X))
         stop(paste("test.keepX should be a list of length ", length(X),", corresponding to the blocks: ", paste(names(X),collapse=", "), sep=""))
         
-        aa = sapply(test.keepX, length)
-        if (any(is.null(aa) | aa == 1 | !is.numeric(aa)))
-        stop("Each entry of 'test.keepX' must be a numeric vector with more than two values", call. = FALSE)
+        #aa = sapply(test.keepX, length)
+        #if (any(is.null(aa) | aa == 1 | !is.numeric(aa)))
+        #stop("Each entry of 'test.keepX' must be a numeric vector with more than two values", call. = FALSE)
         
     }
     
