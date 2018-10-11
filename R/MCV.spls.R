@@ -129,7 +129,8 @@ parallel
     } else {
         pb = FALSE
     }
-    
+    if(any(measure == "AUC")) auc=TRUE
+
     design = matrix(c(0,1,1,0), ncol = 2, nrow = 2, byrow = TRUE)
     
     if(ncomp>1 &  any(class.object == "DA")){keepY = rep(nlevels(Y), ncomp-1)} else {keepY=rep(ncol(Y),ncomp-1)}
@@ -673,6 +674,33 @@ parallel
         
         
     }
+    
+    if (any(measure ==  "AUC"))
+    {
+        # no loop in ijk because AUC does not use any distances
+        # still need to put [[1]] to be similar to other distances
+        
+        #save(list=ls(),file="temp.Rdata")
+        # average the AUCs over the class (AUC per keepX)
+        error.mean[[1]] = apply(auc.mean.sd,c(3),function(x){mean(x[,1])})
+
+        #choose highest AUC
+        keepX.opt[[1]] = which(error.mean[[1]] ==  max(error.mean[[1]]))[1]
+        
+        # match to the best keepX
+        test.keepX.out[[1]]= test.keepX[keepX.opt[[1]]]
+        choice.keepX.out[[1]] = c(choice.keepX, test.keepX.out)
+
+        result$"AUC"$error.rate.mean = error.mean
+        if (!nrepeat ==  1)
+        result$"AUC"$error.rate.sd = NULL
+        
+        result$"AUC"$confusion = NULL
+        result$"AUC"$mat.error.rate = auc.all
+        result$"AUC"$keepX.opt = test.keepX.out
+    }
+    
+    
     
     if (any(measure == "MSE"))
     {
