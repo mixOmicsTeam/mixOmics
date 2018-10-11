@@ -511,18 +511,22 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
         
         if(!hasArg(noAveragePredict))
         {
-            out$AveragedPredict = array(unlist(lapply(temp.all, function(x){apply(x, c(1,2), mean)})), dim(Y.hat[[1]]), dimnames = list(rownames(newdata[[1]]), colnames(Y), paste("dim", c(1:min(ncomp[-object$indY])), sep = " ")))
+            out$AveragedPredict = array(unlist(lapply(temp.all, function(x){
+                apply(x, c(1,2), mean)
+                
+            })), dim(Y.hat[[1]]), dimnames = list(rownames(newdata[[1]]), colnames(Y), paste("dim", c(1:min(ncomp[-object$indY])), sep = " ")))
             
-            out$WeightedPredict = array(unlist(lapply(temp.all, function(x){apply(x, c(1,2), function(z){
-                temp = aggregate(object$weights,list(z),sum)
-                ind = which(temp[,2]== max (temp[,2]))# if two max, then NA
-                if(length(ind) == 1)
-                {
-                    res = temp[ind, 1]
-                } else {
-                    res = NA
-                }
-                res
+            out$WeightedPredict = array(unlist(lapply(temp.all, function(x){
+                apply(x, c(1,2), function(z){
+                    temp = aggregate(object$weights,list(z),sum)
+                    ind = which(temp[,2]== max (temp[,2]))# if two max, then NA
+                    if(length(ind) == 1)
+                    {
+                        res = temp[ind, 1]
+                    } else {
+                        res = NA
+                    }
+                    res
             })})), dim(Y.hat[[1]]), dimnames = list(rownames(newdata[[1]]), colnames(Y), paste("dim", c(1:min(ncomp[-object$indY])), sep = " ")))
         }
 
