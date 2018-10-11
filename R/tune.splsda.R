@@ -387,7 +387,7 @@ cpus
         
         if (progressBar == TRUE)
         cat('\n')
-
+        
         # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
         if(nrepeat > 2 & length(comp.real) >1 & all(measure!="AUC"))
         {
@@ -403,10 +403,25 @@ cpus
             opt = t.test.process(error.keepX)
             
             ncomp_opt = comp.real[opt]
+        }  else if(nrepeat > 2 & length(comp.real) >1 & all(measure=="AUC")){
+            #hacking t.test.process for AUC
+            keepX = already.tested.X
+            error.keepX = NULL
+            for(comp in 1:length(comp.real))
+            {
+                ind.row = match(keepX[[comp.real[comp]]],test.keepX)
+                error.keepX = cbind(error.keepX, mat.error.rate[[comp]][ind.row,])
+            }
+            colnames(error.keepX) = c(paste('comp', comp.real, sep=''))
+            
+            #1- to change the AUC to an 'error' and check for decrease
+            opt = t.test.process(1-error.keepX)
+            
+            ncomp_opt = comp.real[opt]
         } else {
             ncomp_opt = error.keepX = NULL
         }
-        
+
         result = list(
         error.rate = mat.mean.error,
         error.rate.sd = mat.sd.error,
