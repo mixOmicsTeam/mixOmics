@@ -209,12 +209,16 @@ Other methods not covered in this document are described on our website and the 
 # Let's get started {#start}
 
 ## Installation
-First, install the latest \texttt{mixOmics} version:
+First, download the latest \texttt{mixOmics} version from Bioconductor.:
 ```{r, eval = FALSE}
-# in bioconductor:
-# try http:// if https:// URLs are not supported
-source("https://bioconductor.org/biocLite.R")
-biocLite('mixOmics')
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+ BiocManager::install("pkgName")
+```
+
+Alternatively, you can install the development version of the package from Github.
+```{r, eval = FALSE}
+BiocManager::install(“githubUserName/pkgname”)
 ```
 
 The `mixOmics` package will directly import the following packages: 
