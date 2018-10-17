@@ -832,27 +832,29 @@ label.axes.box = "both"  )
     
     #-- Start: 3d
     if(style=="3d") {
-        
-        open3d()
-        par3d(windowRect = c(500, 30, 1100, 630))
+        if(requireNamespace("rgl") == FALSE)
+        stop("the rgl package is required for 3d plots")
+
+        rgl::open3d()
+        rgl::par3d(windowRect = c(500, 30, 1100, 630))
         Sys.sleep(0.5)
         
         if (!is.null(title)) {
             mat = matrix(1:2, 2)
-            layout3d(mat, heights = c(1, 10), model = "inherit")
-            next3d()
-            text3d(0, 0, 0, title)
-            next3d()
+            rgl::layout3d(mat, heights = c(1, 10), model = "inherit")
+            rgl::next3d()
+            rgl::text3d(0, 0, 0, title)
+            rgl::next3d()
         }
         
-        par3d(userMatrix = rotationMatrix(pi/80, 1, -1/(100*pi), 0))
+        rgl::par3d(userMatrix = rgl::rotationMatrix(pi/80, 1, -1/(100*pi), 0))
         
         
         
         
         
         if (legend) {
-            legend3d(x="right",
+            rgl::legend3d(x="right",
             legend = blocks,
             col = unique(col),
             pch = rep(16,length(unique(pch))),
@@ -861,12 +863,12 @@ label.axes.box = "both"  )
         }
         
         if (any(axes.box == "axes") || any(axes.box == "all"))
-        axes3d(c('x','y','z'), pos = c(0, 0, 0), nticks = 2, at = c(-1.2, 1.2),
+        rgl::axes3d(c('x','y','z'), pos = c(0, 0, 0), nticks = 2, at = c(-1.2, 1.2),
         tick = FALSE, labels = "")
         
         for (i in 1 : length(var.names)){
             if (var.names[i]) {
-                text3d(x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
+                rgl::text3d(x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
                 y = df[c((ind.group[i] + 1) : ind.group[i + 1]), "y"],
                 z=df[c((ind.group[i] + 1) : ind.group[i + 1]), "z"],
                 texts = df[c((ind.group[i] + 1) : ind.group[i + 1]), "names"],
@@ -875,32 +877,32 @@ label.axes.box = "both"  )
                 font = df[c((ind.group[i] + 1) : ind.group[i + 1]), "font"])
             } else {
                 switch(unique(df[c((ind.group[i] + 1) : ind.group[i + 1]), "pch"]),
-                sphere = plot3d(x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
+                sphere = rgl::plot3d(x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
                 y = df[c((ind.group[i] + 1) : ind.group[i + 1]), "y"],
                 z=df[c((ind.group[i] + 1) : ind.group[i + 1]), "z"], type = "s",
                 col = df[c((ind.group[i] + 1) : ind.group[i + 1]), "col"],
                 size = df[c((ind.group[i] + 1) : ind.group[i + 1]), "cex"], radius = cex/20, add = TRUE),
-                tetra = shapelist3d(tetrahedron3d(), x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
+                tetra = rgl::shapelist3d(rgl::tetrahedron3d(), x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
                 y = df[c((ind.group[i] + 1) : ind.group[i + 1]), "y"],
                 z=df[c((ind.group[i] + 1) : ind.group[i + 1]), "z"],
                 col = df[c((ind.group[i] + 1) : ind.group[i + 1]), "col"],
                 size = df[c((ind.group[i] + 1) : ind.group[i + 1]), "cex"]/25),
-                cube = shapelist3d(cube3d(), x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
+                cube = rgl::shapelist3d(rgl::cube3d(), x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
                 y = df[c((ind.group[i] + 1) : ind.group[i + 1]), "y"],
                 z=df[c((ind.group[i] + 1) : ind.group[i + 1]), "z"],
                 col = df[c((ind.group[i] + 1) : ind.group[i + 1]), "col"],
                 size = df[c((ind.group[i] + 1) : ind.group[i + 1]), "cex"]/30),
-                octa = shapelist3d(octahedron3d(), x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
+                octa = rgl::shapelist3d(rgl::octahedron3d(), x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
                 y = df[c((ind.group[i] + 1) : ind.group[i + 1]), "y"],
                 z=df[c((ind.group[i] + 1) : ind.group[i + 1]), "z"],
                 col = df[c((ind.group[i] + 1) : ind.group[i + 1]), "col"],
                 size = df[c((ind.group[i] + 1) : ind.group[i + 1]), "cex"]/17),
-                icosa = shapelist3d(icosahedron3d(), x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
+                icosa = rgl::shapelist3d(rgl::icosahedron3d(), x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
                 y = df[c((ind.group[i] + 1) : ind.group[i + 1]), "y"],
                 z=df[c((ind.group[i] + 1) : ind.group[i + 1]), "z"],
                 col = df[c((ind.group[i] + 1) : ind.group[i + 1]), "col"],
                 size = df[c((ind.group[i] + 1) : ind.group[i + 1]), "cex"]/20),
-                dodeca = shapelist3d(dodecahedron3d(), x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
+                dodeca = rgl::shapelist3d(rgl::dodecahedron3d(), x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
                 y = df[c((ind.group[i] + 1) : ind.group[i + 1]), "y"],
                 z=df[c((ind.group[i] + 1) : ind.group[i + 1]), "z"],
                 col = df[c((ind.group[i] + 1) : ind.group[i + 1]), "col"],
@@ -908,14 +910,14 @@ label.axes.box = "both"  )
             }
         }
         
-        par3d(cex = 0.8)
+        rgl::par3d(cex = 0.8)
         
         #-- draws axes --#
         if (any(axes.box == "axes") || any(axes.box == "all")) {
             if (any(label.axes.box == "axes") || any(label.axes.box == "both")) {
-                text3d(1.2, -0.05, 0, texts = X.label, cex = 0.8, color = "black")
-                text3d(0, 1.27, 0, texts = Y.label, cex = 0.8, color = "black")
-                text3d(0, -0.05, 1.2, texts = Z.label, cex = 0.8, color = "black")
+                rgl::text3d(1.2, -0.05, 0, texts = X.label, cex = 0.8, color = "black")
+                rgl::text3d(0, 1.27, 0, texts = Y.label, cex = 0.8, color = "black")
+                rgl::text3d(0, -0.05, 1.2, texts = Z.label, cex = 0.8, color = "black")
             }
             X =  c(1.2, 1.09, 1.09, 1.2, 1.09, 1.09, 1.2, 1.09, 1.09, 1.2, 1.09,  1.09,
             0.0, 0.0,  0.0, 0.0, 0.035, -0.035, 0.0, 0.035*sin(pi/4), -0.035*sin(pi/4), 0.0, 0.035*sin(pi/4), -0.035*sin(pi/4),
@@ -928,39 +930,39 @@ label.axes.box = "both"  )
             Z = c(0.0, 0.035, -0.035, 0.0, 0.035, -0.035, 0.0, 0.0,  0.0, 0.0, 0.035*sin(pi/4), -0.035*sin(pi/4),
             0.0, 0.035, -0.035, 0.0, 0.0,  0.0, 0.0, 0.035*sin(pi/4), -0.035*sin(pi/4), 0.0, -0.035*sin(pi/4), 0.035*sin(pi/4),
             1.2, 1.09,  1.09, 1.2, 1.09,  1.09, 1.2, 1.09,  1.09, 1.2, 1.09,  1.09)
-            triangles3d(x = X, y = Y, z = Z, col = "black")
+            rgl::triangles3d(x = X, y = Y, z = Z, col = "black")
             
         }
         
-        points3d(1.2, 0, 0, size = 0.1, alpha = 0)
-        points3d(0, 1.2, 0, size = 0.1, alpha = 0)
-        points3d(0, 0, 1.2, size = 0.1, alpha = 0)
-        points3d(-1.2, 0, 0, size = 0.1, alpha = 0)
-        points3d(0, -1.2, 0, size = 0.1, alpha = 0)
-        points3d(0, 0, -1.2, size = 0.1, alpha = 0)
+        rgl::points3d(1.2, 0, 0, size = 0.1, alpha = 0)
+        rgl::points3d(0, 1.2, 0, size = 0.1, alpha = 0)
+        rgl::points3d(0, 0, 1.2, size = 0.1, alpha = 0)
+        rgl::points3d(-1.2, 0, 0, size = 0.1, alpha = 0)
+        rgl::points3d(0, -1.2, 0, size = 0.1, alpha = 0)
+        rgl::points3d(0, 0, -1.2, size = 0.1, alpha = 0)
         
         #-- draws sphere --#
-        spheres3d(0, 0, 0, radius = rad.in, front = "fill", back = "fill", emission = gray(0.9), alpha = 0.4)
-        spheres3d(0, 0, 0, radius = rad.in, front = "line", back = "line", emission = gray(0.9))
+        rgl::spheres3d(0, 0, 0, radius = rad.in, front = "fill", back = "fill", emission = gray(0.9), alpha = 0.4)
+        rgl::spheres3d(0, 0, 0, radius = rad.in, front = "line", back = "line", emission = gray(0.9))
         
         #-- draws axes/box and add axes labels --#
         if (any(axes.box == "box") || any(axes.box == "all")) {
-            axes3d(marklen = 25)
-            box3d()
+            rgl::axes3d(marklen = 25)
+            rgl::box3d()
             if (any(label.axes.box == "box") || any(label.axes.box == "both")) {
-                mtext3d(X.label, "x-+", line = 1)
-                mtext3d(Y.label, "y-+", line = 1.5)
-                mtext3d(Z.label, "z+-", line = 1)
+                rgl::mtext3d(X.label, "x-+", line = 1)
+                rgl::mtext3d(Y.label, "y-+", line = 1.5)
+                rgl::mtext3d(Z.label, "z+-", line = 1)
             }
         }
         
         if (any(axes.box == "bbox") || any(axes.box == "all")) {
-            bbox3d(color = c("#333377", "black"), emission = gray(0.5),
+            rgl::bbox3d(color = c("#333377", "black"), emission = gray(0.5),
             specular = gray(0.1), shininess = 5, alpha = 0.8, marklen = 25)
             if (any(label.axes.box == "box") || any(label.axes.box == "both")) {
-                mtext3d(X.label, "x-+", line = 1)
-                mtext3d(Y.label, "y-+", line = 1.5)
-                mtext3d(Z.label, "z+-", line = 1)
+                rgl::mtext3d(X.label, "x-+", line = 1)
+                rgl::mtext3d(Y.label, "y-+", line = 1.5)
+                rgl::mtext3d(Z.label, "z+-", line = 1)
             }
         }
         
