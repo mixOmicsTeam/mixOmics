@@ -47,7 +47,7 @@ knitr::opts_chunk$set(dpi = 100, echo=TRUE, warning=FALSE, message=FALSE, eval =
 
 
 # Bookdown version
-This vignette is also available as a bookdown format on our gitHub page https://github.com/mixOmics. 
+This vignette is also available as a bookdown format on our gitHub page https://github.com/mixOmicsTeam/. 
 
 # Introduction {#intro}
 
