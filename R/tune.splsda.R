@@ -76,7 +76,7 @@ cpus
     
     #------------------#
     #-- check entries --#
-    if(!any(class(X) == "matrix"))
+    if(!is(X, "matrix"))
     X = as.matrix(X)
     
     if (length(dim(X)) != 2 || !is.numeric(X))
