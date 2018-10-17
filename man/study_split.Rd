@@ -29,6 +29,7 @@ study_split(data, study)
 \code{\link{mint.splsda}}.}
 
 \examples{
+data(stemcells)
 data = stemcells$gene
 exp = stemcells$study
 
