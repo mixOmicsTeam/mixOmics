@@ -1,12 +1,6 @@
 
 import(MASS, lattice, igraph, ggplot2,corpcor,parallel, RColorBrewer)
 
-importFrom(rgl, axes3d, bbox3d, box3d, cube3d, dodecahedron3d,
-            ellipse3d, icosahedron3d, layout3d, legend3d, mtext3d,
-            next3d, octahedron3d, open3d, par3d, plot3d, points3d,
-            rotationMatrix, segments3d, shade3d, shapelist3d, spheres3d,
-            tetrahedron3d, text3d, title3d, triangles3d)
-
 importFrom("grDevices", "as.graphicsAnnot", "chull", "col2rgb",
              "colorRamp", "colorRampPalette", "colors", "dev.cur",
              "dev.new", "dev.off", "dev.prev", "dev.set",
