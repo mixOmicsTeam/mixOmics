@@ -25,9 +25,6 @@ header-includes:
   - \usepackage{color}
 ---
 
-<!--
-  %% \VignetteEngine{knitr::knitr}
--->
 
 ```{r style, echo = FALSE, results = 'asis'}
 BiocStyle::markdown()
