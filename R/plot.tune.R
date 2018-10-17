@@ -76,6 +76,8 @@ function(x, optimal = TRUE, sd = TRUE, legend.position = "topright", col, ...)
         ylab = "Bias"
     }else if (measure == "R2"){
         ylab = "R2"
+    }else if (measure == "AUC"){
+        ylab = "AUC"
     }
 
     matplot(rownames(error),error, type = "l", axes = TRUE, lwd = 2, lty = 1, log = "x",

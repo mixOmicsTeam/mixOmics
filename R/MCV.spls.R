@@ -129,7 +129,8 @@ parallel
     } else {
         pb = FALSE
     }
-    
+    if(any(measure == "AUC")) auc=TRUE
+
     design = matrix(c(0,1,1,0), ncol = 2, nrow = 2, byrow = TRUE)
     
     if(ncomp>1 &  any(class.object == "DA")){keepY = rep(nlevels(Y), ncomp-1)} else {keepY=rep(ncol(Y),ncomp-1)}
@@ -546,12 +547,15 @@ parallel
     #----- average AUC over the nrepeat, for each test.keepX -----#
     if(auc)
     {
+        # matrix of AUC per keepX, per nrepeat, averaged over classes
+        auc.mean.sd.over.class =  matrix(0, nrow= length(test.keepX), ncol=nrepeat, dimnames = list(names(test.keepX), paste0("nrep.", 1:nrepeat)))
         
+        # matrix of AUC per keepX, per class, averaged over nrepeat
         if(nlevels(Y)>2)
         {
-            auc.mean.sd =  array(0, c(nlevels(Y),2, length(test.keepX)), dimnames = list(rownames(auc.all[[1]]), c("AUC.mean","AUC.sd"), names(test.keepX)))
+            auc.mean.sd.over.nrepeat =  array(0, c(nlevels(Y),2, length(test.keepX)), dimnames = list(rownames(auc.all[[1]]), c("AUC.mean","AUC.sd"), names(test.keepX)))
         }else{
-            auc.mean.sd =  array(0, c(1,2, length(test.keepX)), dimnames = list(rownames(auc.all[[1]]), c("AUC.mean","AUC.sd"), names(test.keepX)))
+            auc.mean.sd.over.nrepeat =  array(0, c(1,2, length(test.keepX)), dimnames = list(rownames(auc.all[[1]]), c("AUC.mean","AUC.sd"), names(test.keepX)))
         }
         
         for(i in 1:length(test.keepX))
@@ -560,12 +564,13 @@ parallel
             for(nrep in 1:nrepeat)
             {
                 temp = cbind(temp, auc.all[[nrep]][, 1, i])
+                auc.mean.sd.over.class[i,nrep] = mean (auc.all[[nrep]][,1,i])
             }
-            auc.mean.sd[, 1, i] = apply(temp,1,mean)
-            auc.mean.sd[, 2, i] = apply(temp,1,sd)
+            auc.mean.sd.over.nrepeat[, 1, i] = apply(temp,1,mean)
+            auc.mean.sd.over.nrepeat[, 2, i] = apply(temp,1,sd)
         }
     } else {
-        auc.mean.sd = auc.all = NULL
+        auc.mean.sd.over.nrepeat = auc.all  = NULL
         
     }
     #----- average AUC over the nrepeat, for each test.keepX -----#
@@ -673,6 +678,33 @@ parallel
         
         
     }
+    
+    if (any(measure ==  "AUC"))
+    {
+        # no loop in ijk because AUC does not use any distances
+        # still need to put [[1]] to be similar to other distances
+        
+        #save(list=ls(),file="temp.Rdata")
+        # average the AUCs over the class (AUC per keepX)
+        error.mean[[1]] = apply(auc.mean.sd.over.class, 1, mean)
+
+        #choose highest AUC
+        keepX.opt[[1]] = which(error.mean[[1]] ==  max(error.mean[[1]]))[1]
+        
+        # match to the best keepX
+        test.keepX.out[[1]]= test.keepX[keepX.opt[[1]]]
+        choice.keepX.out[[1]] = c(choice.keepX, test.keepX.out)
+
+        result$"AUC"$error.rate.mean = error.mean
+        if (!nrepeat ==  1)
+        result$"AUC"$error.rate.sd = NULL
+        
+        result$"AUC"$confusion = NULL
+        result$"AUC"$mat.error.rate = list(auc.mean.sd.over.class)
+        result$"AUC"$keepX.opt = test.keepX.out
+    }
+    
+    
     
     if (any(measure == "MSE"))
     {
@@ -822,7 +854,7 @@ parallel
     result$prediction.comp = prediction.comp
     if(any(class.object == "DA")){
         if(auc){
-            result$auc = auc.mean.sd
+            result$auc = auc.mean.sd.over.nrepeat
             result$auc.all = auc.all
         }
         result$class.comp = class.comp
