@@ -2,7 +2,6 @@ Package: mixOmics
 Type: Package
 Title: Omics Data Integration Project
 Version: 6.4.3
-Date: 2018-10-09
 Depends: R (>= 3.5.0), MASS, lattice, ggplot2
 Imports: igraph, rgl, ellipse, corpcor, RColorBrewer, parallel,
         dplyr, tidyr, reshape2, methods, matrixStats, rARPACK, gridExtra, grDevices, graphics, stats, utils
@@ -19,6 +18,5 @@ VignetteBuilder: knitr
 Date/Publication: 2017-02-06 12:08:22
 Packaged: 2017-02-06 06:49:17 UTC; klecao
 NeedsCompilation: no
-LazyData: true
 biocViews: Microarray, Sequencing, Metabolomics, Metagenomics, Proteomics,  GenePrediction, MultipleComparison, Classification, Regression
 RoxygenNote: 6.0.1.9000
