@@ -213,12 +213,12 @@ First, download the latest \texttt{mixOmics} version from Bioconductor.:
 ```{r, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
- BiocManager::install("pkgName")
+ BiocManager::install("mixOmics")
 ```
 
 Alternatively, you can install the development version of the package from Github.
 ```{r, eval = FALSE}
-BiocManager::install(“githubUserName/pkgname”)
+BiocManager::install("mixOmicsTeam/mixOmics/")
 ```
 
 The `mixOmics` package will directly import the following packages: 
