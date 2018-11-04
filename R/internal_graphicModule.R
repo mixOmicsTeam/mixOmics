@@ -164,8 +164,8 @@ background = NULL)
         #   per subplot, so cannot use xlim properly
         
         #-- Initialise ggplot2
-        p = ggplot(df, aes(x = x, y = y, color = group, shape = pch.levels),
-        main = title, xlab = X.label, ylab = Y.label) +
+        p = ggplot(df, aes(x = x, y = y, color = group, shape = pch.levels)) +
+        labs(title=title, x = X.label, y = Y.label) +
         theme_bw() + theme(strip.text = element_text(size = size.subtitle,
             face = "bold"))
         
@@ -236,7 +236,7 @@ background = NULL)
             name = legend.title.pch, breaks = levels(df$pch.levels))
         }
         
-        p = p + labs(list(title = title, x = X.label, y = Y.label)) +
+        p = p + #labs(list(title = title, x = X.label, y = Y.label)) +
         facet_wrap(~ Block, ncol = nCols, scales = "free", as.table = TRUE)
         #as.table to plot in the same order as the factor
         
@@ -366,8 +366,8 @@ background = NULL)
         
         
         #-- Initialise ggplot2
-        p = ggplot(df, aes(x = x, y = y, color = group, shape = studyname),
-        main = title, xlab = X.label, ylab = Y.label) +
+        p = ggplot(df, aes(x = x, y = y, color = group, shape = studyname)) +
+        labs(title=title, x = X.label, y = Y.label) +
         theme_bw() + theme(strip.text = element_text(size = size.subtitle,
         face = "bold"))
         
@@ -388,7 +388,7 @@ background = NULL)
         # replace the shape/pch by the input, it's converted by default to
         # 1,2,3.. by ggplots
         
-        p = p + labs(list(title = title, x = X.label, y = Y.label)) +
+        p = p + #labs(list(title = title, x = X.label, y = Y.label)) +
         facet_wrap(~ Block, ncol = nCols, scales = "free", as.table = TRUE)
         #as.table to plot in the same order as the factor
         p = p + theme(plot.title = element_text(size=size.title),
