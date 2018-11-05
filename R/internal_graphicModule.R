@@ -164,8 +164,8 @@ background = NULL)
         #   per subplot, so cannot use xlim properly
         
         #-- Initialise ggplot2
-        p = ggplot(df, aes(x = x, y = y, color = group, shape = pch.levels),
-        main = title, xlab = X.label, ylab = Y.label) +
+        p = ggplot(df, aes(x = x, y = y, color = group, shape = pch.levels)) +
+        labs(title=title, x = X.label, y = Y.label) +
         theme_bw() + theme(strip.text = element_text(size = size.subtitle,
             face = "bold"))
         
@@ -236,7 +236,7 @@ background = NULL)
             name = legend.title.pch, breaks = levels(df$pch.levels))
         }
         
-        p = p + labs(list(title = title, x = X.label, y = Y.label)) +
+        p = p + #labs(list(title = title, x = X.label, y = Y.label)) +
         facet_wrap(~ Block, ncol = nCols, scales = "free", as.table = TRUE)
         #as.table to plot in the same order as the factor
         
@@ -366,8 +366,8 @@ background = NULL)
         
         
         #-- Initialise ggplot2
-        p = ggplot(df, aes(x = x, y = y, color = group, shape = studyname),
-        main = title, xlab = X.label, ylab = Y.label) +
+        p = ggplot(df, aes(x = x, y = y, color = group, shape = studyname)) +
+        labs(title=title, x = X.label, y = Y.label) +
         theme_bw() + theme(strip.text = element_text(size = size.subtitle,
         face = "bold"))
         
@@ -388,7 +388,7 @@ background = NULL)
         # replace the shape/pch by the input, it's converted by default to
         # 1,2,3.. by ggplots
         
-        p = p + labs(list(title = title, x = X.label, y = Y.label)) +
+        p = p + #labs(list(title = title, x = X.label, y = Y.label)) +
         facet_wrap(~ Block, ncol = nCols, scales = "free", as.table = TRUE)
         #as.table to plot in the same order as the factor
         p = p + theme(plot.title = element_text(size=size.title),
@@ -893,23 +893,25 @@ background = NULL)
     
     if (style=="3d")
     {
-        
+        if(requireNamespace("rgl") == FALSE)
+        stop("the rgl package is required for 3d plots")
+
         #-- Start: 3d
         
         for (k in 1 : nlevels(df$Block))
         {
-            open3d()
+            rgl::open3d()
             
-            par3d(windowRect = c(500, 30, 1100, 630))
+            rgl::par3d(windowRect = c(500, 30, 1100, 630))
             Sys.sleep(0.1)
             
             if (!is.null(title))
             {
                 mat = matrix(1:2, 2)
-                layout3d(mat, heights = c(1, 10), model = "inherit")
-                next3d()
-                text3d(0, 0, 0, title)
-                next3d()
+                rgl::layout3d(mat, heights = c(1, 10), model = "inherit")
+                rgl::next3d()
+                rgl::text3d(0, 0, 0, title)
+                rgl::next3d()
             }
             
             if(any(class.object %in% c("ipca", "sipca", "pca", "spca", "prcomp",
@@ -924,11 +926,11 @@ background = NULL)
                 other.ellipse = df.ellipse$Block %in% levels(df$Block)[k]
             }
             
-            par3d(userMatrix = rotationMatrix(pi/80, 1, -1/(100*pi), 0))
+            rgl::par3d(userMatrix = rgl::rotationMatrix(pi/80, 1, -1/(100*pi), 0))
             
             if (legend)
             {
-                legend3d(x = "right",
+                rgl::legend3d(x = "right",
                 legend = levels(df$group),
                 col = col.per.group,
                 pch = rep(16,length(unique(df$pch))),
@@ -944,7 +946,7 @@ background = NULL)
                     for (cex_i in unique(df[df$col == i, ]$cex))
                     {
                         ind = which(df[df$col == i, ]$cex == cex_i)
-                        text3d(x = df[df$col == i &  other, "x"][ind],
+                        rgl::text3d(x = df[df$col == i &  other, "x"][ind],
                         y = df[df$col == i &  other, "y"][ind],
                         z = df[df$col == i &  other, "z"][ind],
                         texts = df[df$col == i &  other, "names"][ind],
@@ -961,7 +963,7 @@ background = NULL)
                             {
                                 ind_cex = which(df[df$col == i, ]$cex[ind] ==
                                 cex_i)
-                                points3d(x = df[df$col == i &
+                                rgl::points3d(x = df[df$col == i &
                                 other, "x"][ind][ind_cex],
                                 y = df[df$col == i & other, "y"][ind][ind_cex],
                                 z = df[df$col == i & other, "z"][ind][ind_cex],
@@ -970,7 +972,7 @@ background = NULL)
                             }
                             
                         } else if (pch_i == "tetra") {
-                            shapelist3d(tetrahedron3d(), x = df[df$col == i &
+                            rgl::shapelist3d(rgl::tetrahedron3d(), x = df[df$col == i &
                             other, "x"][ind],
                             y = df[df$col == i & other, "y"][ind],
                             z = df[df$col == i & other, "z"][ind],
@@ -979,7 +981,7 @@ background = NULL)
                             
                             
                         } else if (pch_i == "cube") {
-                            shapelist3d(cube3d(),x = df[df$col == i &
+                            rgl::shapelist3d(rgl::cube3d(),x = df[df$col == i &
                             other, "x"][ind],
                             y = df[df$col == i & other, "y"][ind],
                             z = df[df$col == i & other, "z"][ind],
@@ -988,7 +990,7 @@ background = NULL)
                             
                             
                         } else if (pch_i == "octa") {
-                            shapelist3d(octahedron3d(), x = df[df$col == i &
+                            rgl::shapelist3d(rgl::octahedron3d(), x = df[df$col == i &
                             other, "x"][ind],
                             y = df[df$col == i & other, "y"][ind],
                             z = df[df$col == i & other, "z"][ind],
@@ -996,7 +998,7 @@ background = NULL)
                             cex[ind]/17)
                             
                         } else if (pch_i == "icosa") {
-                            shapelist3d(icosahedron3d(), x = df[df$col == i &
+                            rgl::shapelist3d(rgl::icosahedron3d(), x = df[df$col == i &
                             other, "x"][ind],
                             y = df[df$col == i & other, "y"][ind],
                             z = df[df$col == i &other, "z"][ind],
@@ -1005,7 +1007,7 @@ background = NULL)
                             
                             
                         } else if (pch_i == "dodeca") {
-                            shapelist3d(dodecahedron3d(), x = df[df$col == i &
+                            rgl::shapelist3d(rgl::dodecahedron3d(), x = df[df$col == i &
                             other, "x"][ind],
                             y = df[df$col == i & other, "y"][ind],
                             z = df[df$col == i & other, "z"][ind],
@@ -1036,7 +1038,7 @@ background = NULL)
                     s   = cov(coords[sel, , drop = FALSE])
                     cc  = centr.coords[i,]
                     # lines(ellipse(s, centre=cc), col=unique(col.per.group)[i])
-                    shade3d(ellipse3d(s, centre = cc, level =
+                    rgl::shade3d(rgl::ellipse3d(s, centre = cc, level =
                     df.ellipse$ellipse.level[1]), col=unique(col.per.group)[i],
                     alpha = alpha)
                     
@@ -1051,7 +1053,7 @@ background = NULL)
                     x0 = mean(df[df$group == levels(df$group)[i] & other, "x"])
                     y0 = mean(df[df$group == levels(df$group)[i] & other, "y"])
                     z0 = mean(df[df$group == levels(df$group)[i] & other, "z"])
-                    points3d(x=x0, y=y0,z=z0, cex=df$df[df$group ==
+                    rgl::points3d(x=x0, y=y0,z=z0, cex=df$df[df$group ==
                     levels(df$group)[i] & other, "cex"], col =
                     unique(col.per.group)[i])
                 }
@@ -1068,7 +1070,7 @@ background = NULL)
                     for (q in 1: length(df[df$group == levels(df$group)[i] &
                     other, "x"]))
                     {
-                        segments3d(x=c(x0, df[df$group == levels(df$group)[i] &
+                        rgl::segments3d(x=c(x0, df[df$group == levels(df$group)[i] &
                         other, "x"][q]), y=c(y0,df[df$group ==
                         levels(df$group)[i] & other, "y"][q]),
                         z=c(z0, df[df$group == levels(df$group)[i] &
@@ -1084,27 +1086,27 @@ background = NULL)
             #-- draws axes/box --#
             if (axes.box == "box")
             {
-                axes3d(marklen = 25)
-                box3d()
+                rgl::axes3d(marklen = 25)
+                rgl::box3d()
             }
             if (axes.box == "bbox")
             {
-                bbox3d(color = c("#333377", "black"), emission = gray(0.5),
+                rgl::bbox3d(color = c("#333377", "black"), emission = gray(0.5),
                 specular = gray(0.1), shininess = 5, alpha = 0.8, marklen = 25)
             }
             if (axes.box == "both")
             {
-                axes3d(marklen = 25); box3d()
-                bbox3d(color = c("#333377", "black"), emission = gray(0.5),
+                rgl::axes3d(marklen = 25); rgl::box3d()
+                rgl::bbox3d(color = c("#333377", "black"), emission = gray(0.5),
                 specular = gray(0.1), shininess = 5, alpha = 0.8, marklen = 25)
             }
             #-- add axes labels --#
-            mtext3d(X.label, "x-+", line = 1)
-            mtext3d(Y.label, "y-+", line = 1.5)
-            mtext3d(Z.label, "z+-", line = 1)
+            rgl::mtext3d(X.label, "x-+", line = 1)
+            rgl::mtext3d(Y.label, "y-+", line = 1.5)
+            rgl::mtext3d(Z.label, "z+-", line = 1)
             if (! any(class.object%in% c("ipca", "sipca", "pca", "spca",
             "prcomp", "mixo_splsda", "mixo_plsda", "mixo_mlsplsda")))
-            title3d(main = levels(df$Block)[k])
+            rgl::title3d(main = levels(df$Block)[k])
         }
         #-- output --#
         return(invisible(cbind(df$x, df$y, df$z)))

@@ -1,11 +1,11 @@
 Package: mixOmics
 Type: Package
 Title: Omics Data Integration Project
-Version: 6.4.4
+Version: 6.7.0
 Depends: R (>= 3.5.0), MASS, lattice, ggplot2
-Imports: igraph, rgl, ellipse, corpcor, RColorBrewer, parallel,
+Imports: igraph, ellipse, corpcor, RColorBrewer, parallel,
         dplyr, tidyr, reshape2, methods, matrixStats, rARPACK, gridExtra, grDevices, graphics, stats, utils
-Suggests: BiocStyle, knitr, rmarkdown
+Suggests: BiocStyle, knitr, rmarkdown, testthat, rgl
 Author: Kim-Anh Le Cao, Florian Rohart, Ignacio Gonzalez, Sebastien Dejean with key contributors Benoit Gautier, Francois Bartolo
         and contributions from Pierre Monget, Jeff Coquery, FangZou Yao, Benoit Liquet. 
 Maintainer: Kim-Anh Le Cao <kimanh.lecao@unimelb.edu.au>

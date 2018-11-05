@@ -76,7 +76,9 @@ spca.rat
 
 ## variable representation
 plotVar(spca.rat, cex = 0.5)
+\dontrun{
 plotVar(spca.rat,style="3d")
+}
 
 \dontrun{
 ## samples representation

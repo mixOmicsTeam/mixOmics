@@ -114,13 +114,17 @@ biplot(pca.res, xlabs = multidrug$cell.line$Class, cex = 0.7)
 plotIndiv(pca.res, ind.names = multidrug$cell.line$Class,
 group = as.numeric(as.factor(multidrug$cell.line$Class)))
 
+\dontrun{
 plotIndiv(pca.res, cex = 0.2,
 col = as.numeric(as.factor(multidrug$cell.line$Class)),style="3d")
+}
 
 # variable representation
 plotVar(pca.res)
 
+\dontrun{
 plotVar(pca.res, rad.in = 0.5, cex = 0.5,style="3d")
+}
 
 # example with multilevel decomposition and CLR log ratio transformation (ILR longer to run)
 # ----------------
