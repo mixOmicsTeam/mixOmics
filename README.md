@@ -21,6 +21,7 @@ mixOmics offers a wide range of multivariate methods for the exploration and int
 Single ‘omics analysis does not provide enough information to give a deep understanding of a biological system, but we can obtain a more holistic view of a system by combining multiple ‘omics analyses. Our mixOmics R package proposes a whole range of multivariate methods that we developed and validated on many biological studies to gain more insight into ‘omics biological studies.
 
 If you would like to know more:
+
 www.mixOmics.org (tutorials and resources)
 
 https://bioconductor.org/packages/release/bioc/vignettes/mixOmics/inst/doc/vignette.html (bioC vignette)
