@@ -22,6 +22,7 @@ Single ‘omics analysis does not provide enough information to give a deep unde
 
 If you would like to know more:
 www.mixOmics.org (tutorials and resources)
+
 https://bioconductor.org/packages/release/bioc/vignettes/mixOmics/inst/doc/vignette.html (bioC vignette)
 
 
