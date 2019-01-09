@@ -25,7 +25,7 @@
 ################################################################################
 
 
-image.tune.rcc <-
+plot.tune.rcc <- image.tune.rcc <-
 
 function(x, col = heat.colors, ...) 
 
