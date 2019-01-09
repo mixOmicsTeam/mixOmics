@@ -232,21 +232,21 @@ label.axes.box = "both"  )
             {
                 cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2, comp3)] + object$variates$Y[, c(comp1, comp2, comp3)], use = "pairwise")
                 cord.X[[2]] = cor(object$Y, object$variates$X[, c(comp1, comp2, comp3)] + object$variates$Y[, c(comp1, comp2, comp3)], use = "pairwise")
-                sample.X = lapply(cord.X, function(x){1 : nrow(x)})
+                sample.X = lapply(cord.X, function(x){seq_len(nrow(x))})
                 
             } else if (any(class.object %in% "mixo_plsda")) {
                 cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2, comp3)], use = "pairwise")
-                sample.X = lapply(cord.X, function(x){1 : nrow(x)})
+                sample.X = lapply(cord.X, function(x){seq_len(nrow(x))})
                 
             } else if (any(class.object %in%  "mixo_pls")) {
                 cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2, comp3)], use = "pairwise")
                 cord.X[[2]] = cor(object$Y, if(object$mode ==  "canonical"){object$variates$Y[, c(comp1, comp2, comp3)]} else {object$variates$X[, c(comp1, comp2, comp3)]}, use = "pairwise")
-                sample.X = lapply(cord.X, function(x){1 : nrow(x)})
+                sample.X = lapply(cord.X, function(x){seq_len(nrow(x))})
                 
             } else if (any(class.object %in%  c("mixo_splsda", "mixo_mlsplsda"))) {
                 cord.X[[1]] = cor(object$X[, colnames(object$X) %in% unique(unlist(lapply(unique(c(comp1, comp2, comp3, comp.select)), function(x){selectVar(object, comp = x)$name})))], # variables selected at least once on unique(comp1, comp2, comp3 and comp.select
                 object$variates$X[, c(comp1, comp2, comp3, comp.select)], use = "pairwise")
-                ind.var.sel[[1]] = sample.X[[1]] = 1 : length(colnames(object$X))
+                ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
                 if (!is.null(comp.select))
                 {
                     cord.X[[1]] = cord.X[[1]][row.names(cord.X[[1]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, comp = x)$name}))), ,drop = FALSE]
@@ -258,8 +258,8 @@ label.axes.box = "both"  )
                 object$variates$X[, c(comp1, comp2, comp3)], use = "pairwise")
                 cord.X[[2]] = cor(object$Y[, colnames(object$Y) %in% unique(unlist(lapply(c(comp1, comp2, comp3), function(x){selectVar(object, comp = x)$Y$name})))],
                 if(object$mode ==  "canonical"){object$variates$Y[, c(comp1, comp2, comp3)]} else {object$variates$X[, c(comp1, comp2, comp3)]}, use = "pairwise")
-                ind.var.sel[[1]] = sample.X[[1]] = 1 : length(colnames(object$X))
-                ind.var.sel[[2]] = sample.X[[2]] = 1 : length(colnames(object$Y))
+                ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
+                ind.var.sel[[2]] = sample.X[[2]] = seq_len(length(colnames(object$Y)))
                 if (!is.null(comp.select)) {
                     cord.X[[1]] = cord.X[[1]][row.names(cord.X[[1]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, comp = x)$X$name}))), ,drop = FALSE]
                     cord.X[[2]] = cord.X[[2]][row.names(cord.X[[2]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, comp = x)$Y$name}))), , drop = FALSE]
@@ -268,11 +268,11 @@ label.axes.box = "both"  )
                 ind.var.sel[[2]] = which(colnames(object$Y) %in% rownames(cord.X[[2]]))
             } else {
                 cord.X = lapply(blocks, function(x){cor(object$blocks[[x]], object$variates[[x]][, c(comp1, comp2, comp3)], use = "pairwise")})
-                ind.var.sel = sample.X = lapply(object$blocks, function(x){1 : ncol(x)})
+                ind.var.sel = sample.X = lapply(object$blocks, function(x){seq_len(ncol(x))})
                 if (!is.null(comp.select)) {
-                    cord.X = lapply(1 : length(cord.X), function(z){cord.X[[z]][row.names(cord.X[[z]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, block = z, comp = x)[[1]]$name}))), ,drop = FALSE]})
+                    cord.X = lapply(seq_len(length(cord.X)), function(z){cord.X[[z]][row.names(cord.X[[z]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, block = z, comp = x)[[1]]$name}))), ,drop = FALSE]})
                 }
-                for (i in 1 : length(cord.X)){
+                for (i in seq_len(length(cord.X))){
                     ind.var.sel[[i]] = which(colnames(object$X) %in% rownames(cord.X[[i]]))
                 }
             }
@@ -281,7 +281,7 @@ label.axes.box = "both"  )
                 
                 cord.X[[1]] = cor(object$X[, colnames(object$X) %in% unique(unlist(lapply(c(comp1, comp2, comp3), function(x){selectVar(object, comp = x)$name})))],
                 object$x[, c(comp1, comp2, comp3)], use = "pairwise")
-                ind.var.sel[[1]] = sample.X[[1]] = 1 : length(colnames(object$X))
+                ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
                 if (!is.null(comp.select)) {
                     cord.X[[1]] = cord.X[[1]][row.names(cord.X[[1]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, comp = x)$name}))), ,drop = FALSE]
                 }
@@ -289,7 +289,7 @@ label.axes.box = "both"  )
             } else {
                 
                 cord.X[[1]] = cor(object$X, object$x[, c(comp1, comp2, comp3)], use = "pairwise")
-                ind.var.sel[[1]] = sample.X[[1]] = 1 : length(colnames(object$X))
+                ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
             }
         }
     } else {
@@ -299,21 +299,21 @@ label.axes.box = "both"  )
             {
                 cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2)] + object$variates$Y[, c(comp1, comp2)], use = "pairwise")
                 cord.X[[2]] = cor(object$Y, object$variates$X[, c(comp1, comp2)] + object$variates$Y[, c(comp1, comp2)], use = "pairwise")
-                sample.X = lapply(cord.X, function(x){1 : nrow(x)})
+                sample.X = lapply(cord.X, function(x){seq_len(nrow(x))})
                 
             } else if (any(class.object %in% "mixo_plsda")) {
                 cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2)], use = "pairwise")
-                sample.X = lapply(cord.X, function(x){1 : nrow(x)})
+                sample.X = lapply(cord.X, function(x){seq_len(nrow(x))})
                 
             } else if (any(class.object %in%  "mixo_pls")) {
                 cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2)], use = "pairwise")
                 cord.X[[2]] = cor(object$Y, if(object$mode ==  "canonical"){object$variates$Y[, c(comp1, comp2)]} else {object$variates$X[, c(comp1, comp2)]}, use = "pairwise")
-                sample.X = lapply(cord.X, function(x){1 : nrow(x)})
+                sample.X = lapply(cord.X, function(x){seq_len(nrow(x))})
                 
             } else if (any(class.object %in%  c("mixo_splsda", "mixo_mlsplsda"))) {
                 cord.X[[1]] = cor(object$X[, colnames(object$X) %in% unique(unlist(lapply(comp.select, function(x){selectVar(object, comp = x)$name}))), drop = FALSE],
                 object$variates$X[, unique(c(comp1, comp2))], use = "pairwise")
-                ind.var.sel[[1]] = sample.X[[1]] = 1 : length(colnames(object$X))
+                ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
                 #if (!is.null(comp.select)) {
                 #   cord.X[[1]] = cord.X[[1]][row.names(cord.X[[1]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, comp = x)$name}))), ,drop = FALSE]
                 #}
@@ -330,9 +330,9 @@ label.axes.box = "both"  )
                     object$variates$X[, c(comp1, comp2)]
                 }, use = "pairwise")
                 #ind.var.sel[[1]] =
-                sample.X[[1]] = 1 : length(colnames(object$X))
+                sample.X[[1]] = seq_len(length(colnames(object$X)))
                 #ind.var.sel[[2]] =
-                sample.X[[2]] = 1 : length(colnames(object$Y))
+                sample.X[[2]] = seq_len(length(colnames(object$Y)))
                 #if (!is.null(comp.select)) {
                 #   cord.X[[1]] = cord.X[[1]][row.names(cord.X[[1]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, comp = x)$X$name}))), ,drop = FALSE]
                 #   cord.X[[2]] = cord.X[[2]][row.names(cord.X[[2]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, comp = x)$Y$name}))), , drop = FALSE]
@@ -342,12 +342,12 @@ label.axes.box = "both"  )
                 
             } else { #block object
                 cord.X = lapply(blocks, function(x){cor(object$blocks[[x]], object$variates[[x]][, c(comp1, comp2)], use = "pairwise")})
-                ind.var.sel = sample.X = lapply(object$blocks, function(x){1 : ncol(x)})
+                ind.var.sel = sample.X = lapply(object$blocks, function(x){seq_len(ncol(x))})
                 if (!is.null(comp.select))
                 {
-                    cord.X = lapply(1 : length(cord.X), function(z){cord.X[[z]][row.names(cord.X[[z]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, block = blocks[z], comp = x)[[1]]$name}))), ,drop = FALSE]})
+                    cord.X = lapply(seq_len(length(cord.X)), function(z){cord.X[[z]][row.names(cord.X[[z]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, block = blocks[z], comp = x)[[1]]$name}))), ,drop = FALSE]})
                 }
-                for (i in 1 : length(cord.X))
+                for (i in seq_len(length(cord.X)))
                 {
                     ind.var.sel[[i]] = which(colnames(object$blocks[[i]]) %in% rownames(cord.X[[i]]))
                 }
@@ -358,14 +358,14 @@ label.axes.box = "both"  )
                 cord.X[[1]] = cor(object$X[, colnames(object$X) %in% unique(unlist(lapply(comp.select, function(x){selectVar(object, comp = x)$name}))), drop = FALSE],
                 object$x[, c(comp1, comp2)], use = "pairwise")
                 #ind.var.sel[[1]] =
-                sample.X[[1]] = 1 : length(colnames(object$X))
+                sample.X[[1]] = seq_len(length(colnames(object$X)))
                 #if (!is.null(comp.select)) {
                 #    cord.X[[1]] = cord.X[[1]][row.names(cord.X[[1]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, comp = x)$name}))), ,drop = FALSE]
                 #}
                 ind.var.sel[[1]] = which(colnames(object$X) %in% rownames(cord.X[[1]]))
             } else {
                 cord.X[[1]] = cor(object$X, object$x[, c(comp1, comp2)], use = "pairwise")
-                ind.var.sel[[1]] = sample.X[[1]] = 1 : length(colnames(object$X))
+                ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
             }
         }}
 
@@ -401,21 +401,21 @@ label.axes.box = "both"  )
         missing.pch = TRUE
         if(style=="3d")
         {
-            pch = unlist(lapply(1 : length(cord.X), function(x){rep(c("sphere", "tetra", "cube", "octa", "icosa", "dodeca")[x], sum(sapply(cord.X[x], nrow)))}))
+            pch = unlist(lapply(seq_len(length(cord.X)), function(x){rep(c("sphere", "tetra", "cube", "octa", "icosa", "dodeca")[x], sum(sapply(cord.X[x], nrow)))}))
         } else {
-            pch = unlist(lapply(1 : length(cord.X), function(x){rep(seq_len(20)[x], sum(sapply(cord.X[x], nrow)))}))
+            pch = unlist(lapply(seq_len(length(cord.X)), function(x){rep(seq_len(20)[x], sum(sapply(cord.X[x], nrow)))}))
         }
         
     } else if (((is.vector(pch, mode = "double") || is.vector(pch, mode = "integer")) && !(style=="3d"))
     || (is.vector(pch, mode = "character") && style=="3d")) {
         if (length(pch) != length(sample.X))
         stop.message('pch', sample.X)
-        pch = unlist(lapply(1 : length(cord.X), function(x){rep(pch[x], sum(sapply(cord.X[x], nrow)))}))
+        pch = unlist(lapply(seq_len(length(cord.X)), function(x){rep(pch[x], sum(sapply(cord.X[x], nrow)))}))
     } else if (is.list(pch)) {
         if (length(pch) != length(sample.X) || length(unlist(pch)) != sum(sapply(sample.X, length)))
         stop.message('pch', sample.X)
         if (length(ind.var.sel) != 0)
-        pch = lapply(1 : length(pch), function(x){pch[[x]][ind.var.sel[[x]]]})
+        pch = lapply(seq_len(length(pch)), function(x){pch[[x]][ind.var.sel[[x]]]})
         pch = unlist(pch)
     } else if (style=="3d") {
         if (!all(pch %in% c("sphere", "tetra", "cube", "octa", "icosa", "dodeca")) && style=="3d")
@@ -429,19 +429,19 @@ label.axes.box = "both"  )
     #-- col argument
     if (missing(col)) {
         if (length(cord.X) < 10) {
-            col = unlist(lapply(1 : length(cord.X), function(x){rep(color.mixo(x), sum(sapply(cord.X[x], nrow)))}))
+            col = unlist(lapply(seq_len(length(cord.X)), function(x){rep(color.mixo(x), sum(sapply(cord.X[x], nrow)))}))
         } else {
-            col = unlist(lapply(1 : length(cord.X), function(x){rep(color.jet(length(cord.X))[x], sum(sapply(cord.X[x], nrow)))}))
+            col = unlist(lapply(seq_len(length(cord.X)), function(x){rep(color.jet(length(cord.X))[x], sum(sapply(cord.X[x], nrow)))}))
         }
     } else if (is.vector(col, mode = "double") | is.vector(col, mode = "character")) {
         if (length(col) != length(sample.X))
         stop.message('col', sample.X)
-        col = unlist(lapply(1 : length(cord.X), function(x){rep(col[x], sum(sapply(cord.X[x], nrow)))}))
+        col = unlist(lapply(seq_len(length(cord.X)), function(x){rep(col[x], sum(sapply(cord.X[x], nrow)))}))
     } else if (is.list(col)) {
         if (length(col) != length(sample.X) || length(unlist(col)) != sum(sapply(sample.X, length)))
         stop.message('col', sample.X)
         if (length(ind.var.sel) != 0)
-        col = lapply(1 : length(col), function(x){col[[x]][ind.var.sel[[x]]]})
+        col = lapply(seq_len(length(col)), function(x){col[[x]][ind.var.sel[[x]]]})
         col = unlist(col)
     } else {
         stop.message('col', sample.X)
@@ -457,12 +457,12 @@ label.axes.box = "both"  )
     } else if (is.vector(cex, mode = "double")) {
         if (length(cex) != length(cord.X))
         stop.message('cex', sample.X)
-        cex = unlist(lapply(1 : length(cord.X), function(x){rep(cex[x], sum(sapply(cord.X[x], nrow)))}))
+        cex = unlist(lapply(seq_len(length(cord.X)), function(x){rep(cex[x], sum(sapply(cord.X[x], nrow)))}))
     } else if (is.list(cex)) {
         if (length(cex) != length(sample.X) || length(unlist(cex)) != sum(sapply(sample.X, length)))
         stop.message('cex', sample.X)
         if (length(ind.var.sel) != 0)
-        cex = lapply(1 : length(cex), function(x){cex[[x]][ind.var.sel[[x]]]})
+        cex = lapply(seq_len(length(cex)), function(x){cex[[x]][ind.var.sel[[x]]]})
         cex = unlist(cex)
     } else {
         stop.message('cex', sample.X)
@@ -474,12 +474,12 @@ label.axes.box = "both"  )
     } else if (is.vector(font, mode = "numeric")) {
         if (length(font) != length(cord.X))
         stop.message('font', sample.X)
-        font = unlist(lapply(1 : length(cord.X), function(x){rep(font[x], sum(sapply(cord.X[x], nrow)))}))
+        font = unlist(lapply(seq_len(length(cord.X)), function(x){rep(font[x], sum(sapply(cord.X[x], nrow)))}))
     } else if (is.list(font)) {
         if (length(font) != length(sample.X) || length(unlist(font)) != sum(sapply(sample.X, length)))
         stop.message('font', sample.X)
         if (length(ind.var.sel) != 0)
-        font = lapply(1 : length(font), function(x){font[[x]][ind.var.sel[[x]]]})
+        font = lapply(seq_len(length(font)), function(x){font[[x]][ind.var.sel[[x]]]})
         font = unlist(font)
     } else {
         stop.message('font', sample.X)
@@ -499,24 +499,24 @@ label.axes.box = "both"  )
             var.names = rep(var.names,length(cord.X))}
         else if (length(var.names) != length(cord.X))
         stop.message('var.names', sample.X)
-        var.names.list = unlist(lapply(1 : length(var.names), function(x){if(var.names[x]){rownames(cord.X[[x]])}
+        var.names.list = unlist(lapply(seq_len(length(var.names)), function(x){if(var.names[x]){rownames(cord.X[[x]])}
             else {pch[(ind.group[x] + 1) : ind.group[x + 1]]}}))
     } else if (is.list(var.names)) {
         if (length(var.names) != length(cord.X))
         stop.message('var.names', sample.X)
         
-        if (sum(sapply(1 : length(var.names), function(x){if(!lapply(var.names, is.logical)[[x]]){
+        if (sum(sapply(seq_len(length(var.names)), function(x){if(!lapply(var.names, is.logical)[[x]]){
             if(is.null(ind.var.sel[[x]])){
                 length(var.names[[x]])
             } else {
                 length(var.names[[x]][ind.var.sel[[x]]])
             }
         } else {0}})) !=
-        sum(sapply(1 : length(var.names), function(x){if(!lapply(var.names, is.logical)[[x]]){nrow(cord.X[[x]])}else {0}}))){
+        sum(sapply(seq_len(length(var.names)), function(x){if(!lapply(var.names, is.logical)[[x]]){nrow(cord.X[[x]])}else {0}}))){
             stop.message('var.names', sample.X)
         }
         
-        var.names.list = unlist(sapply(1 : length(var.names), function(x){if(lapply(var.names, is.logical)[[x]]){
+        var.names.list = unlist(sapply(seq_len(length(var.names)), function(x){if(lapply(var.names, is.logical)[[x]]){
             if (var.names[[x]]) {
                 row.names(cord.X[[x]])
             } else {
@@ -543,7 +543,7 @@ label.axes.box = "both"  )
     #-- End: Computation ellipse
     
     #-- Start: data set
-    df = data.frame(do.call(rbind, cord.X), "Block" = paste0("Block: ", unlist(lapply(1 : length(cord.X), function(z){rep(blocks[z], nrow(cord.X[[z]]))}))))
+    df = data.frame(do.call(rbind, cord.X), "Block" = paste0("Block: ", unlist(lapply(seq_len(length(cord.X)), function(z){rep(blocks[z], nrow(cord.X[[z]]))}))))
     if (style=="3d")
     names(df)[seq_len(3)] = c("x", "y","z")
     else
@@ -559,13 +559,13 @@ label.axes.box = "both"  )
     if (overlap)
     {
         df$Overlap = title
-        df$Block = factor(unlist(lapply(1 : length(cord.X), function(z){rep(blocks[z], nrow(cord.X[[z]]))})))
+        df$Block = factor(unlist(lapply(seq_len(length(cord.X)), function(z){rep(blocks[z], nrow(cord.X[[z]]))})))
         if(style %in%c("ggplot2","lattice"))
         title=NULL # to avoid double title
     } else {
         df$Overlap = df$Block
         if(style %in%c("ggplot2","lattice"))
-        df$Block = factor(unlist(lapply(1 : length(cord.X), function(z){rep(blocks[z], nrow(cord.X[[z]]))})))
+        df$Block = factor(unlist(lapply(seq_len(length(cord.X)), function(z){rep(blocks[z], nrow(cord.X[[z]]))})))
     }
     
     if (cutoff != 0){
@@ -599,7 +599,7 @@ label.axes.box = "both"  )
         p = p + geom_point(data = subset(df, df$Block == i), size = 0, shape = 0)
         
         #-- Display sample or var.names
-        for (i in 1 : length(var.names)){
+        for (i in seq_len(length(var.names))){
             if (var.names[i]) {
                 p = p + geom_text(data = df[c((ind.group[i] + 1) : ind.group[i + 1]), ],
                 label = df[c((ind.group[i] + 1) : ind.group[i + 1]), "names"],
@@ -665,7 +665,7 @@ label.axes.box = "both"  )
                     panel.abline(h = 0, lty = 2, col = "darkgrey")}
                 
                 #-- Display sample or row.names
-                for (i in 1 : length(var.names)){
+                for (i in seq_len(length(var.names))){
                     if (var.names[i]) {
                         panel.text(x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
                         y = df[c((ind.group[i] + 1) : ind.group[i + 1]), "y"],
@@ -687,7 +687,7 @@ label.axes.box = "both"  )
             panels = trellis.currentLayout(which = "panel")
             ind = which(panels == 1, arr.ind = TRUE)
             trellis.focus("panel",ind[2], ind[1],highlight = FALSE)
-            for (i in 1 : length(c("Main circle", "Inner circle"))){
+            for (i in seq_len(length(c("Main circle", "Inner circle")))){
                 panel.lines(x = circle[circle$Circle %in% c("Main circle", "Inner circle")[i], "x"],
                 y = circle[circle$Circle %in% c("Main circle", "Inner circle")[i], "y"],
                 col = "black")
@@ -703,7 +703,7 @@ label.axes.box = "both"  )
             print(p)
             
             panels = trellis.currentLayout(which = "panel")
-            for (k in 1 : length(cord.X)) {
+            for (k in seq_len(length(cord.X))) {
                 ind = which(panels == k, arr.ind = TRUE)
                 trellis.focus("panel",ind[2], ind[1],highlight = FALSE)
                 
@@ -722,7 +722,7 @@ label.axes.box = "both"  )
                     pch = df[c((ind.group[k] + 1) : ind.group[k + 1]), "pch"])
                 }
                 
-                for (i in 1 : length(c("Main circle", "Inner circle"))){
+                for (i in seq_len(length(c("Main circle", "Inner circle")))){
                     panel.lines(x = circle[circle$Circle %in% c("Main circle", "Inner circle")[i], "x"],
                     y = circle[circle$Circle %in% c("Main circle", "Inner circle")[i], "y"],
                     col = "black")
@@ -750,7 +750,7 @@ label.axes.box = "both"  )
             plot(df$x, df$y, type = "n", xlab = X.label, ylab = Y.label, main = "", xlim = c(-1, 1), ylim = c(-1, 1))
             
             #-- Display sample or row.names
-            for (i in 1 : length(var.names)){
+            for (i in seq_len(length(var.names))){
                 if (var.names[i]) {
                     text(x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
                     y = df[c((ind.group[i] + 1) : ind.group[i + 1]), "y"],
@@ -793,14 +793,14 @@ label.axes.box = "both"  )
         } else {
             opar <- par()[! names(par()) %in% c("cin", "cra", "csi", "cxy", "din", "page")]
             #-- Define layout
-            mat = matrix(1 : (ceiling(length(cord.X)/2) * 2), ceiling(length(cord.X)/2), min(length(cord.X), 2), byrow = TRUE)
+            mat = matrix(seq_len((ceiling(length(cord.X)/2) * 2)), ceiling(length(cord.X)/2), min(length(cord.X), 2), byrow = TRUE)
             if (legend){
                 mat = matrix(rep(mat,each=2),nrow=nrow(mat),byrow=TRUE)
                 mat = cbind(mat,rep(max(mat) + 1, nrow(mat)))
             }
             
             layout(mat)
-            for (k in 1 : length(cord.X)){
+            for (k in seq_len(length(cord.X))){
                 #-- initialise plot
                 plot(df[df$Block %in% paste0("Block: ", blocks[k]), "x" ],
                 df[df$Block %in% paste0("Block: ", blocks[k]), "y" ],
@@ -836,7 +836,7 @@ label.axes.box = "both"  )
             
             title(title, outer = TRUE, line = -1)
             if (length(cord.X) != max(mat) & length(cord.X) != 1){
-                for (i in 1 : (max(mat)-length(cord.X))){
+                for (i in seq_len((max(mat)-length(cord.X)))){
                     plot(1,1, type = "n", axes = FALSE, ann = FALSE)
                 }
             }
@@ -891,7 +891,7 @@ label.axes.box = "both"  )
         rgl::axes3d(c('x','y','z'), pos = c(0, 0, 0), nticks = 2, at = c(-1.2, 1.2),
         tick = FALSE, labels = "")
         
-        for (i in 1 : length(var.names)){
+        for (i in seq_len(length(var.names))){
             if (var.names[i]) {
                 rgl::text3d(x = df[c((ind.group[i] + 1) : ind.group[i + 1]), "x"],
                 y = df[c((ind.group[i] + 1) : ind.group[i + 1]), "y"],
