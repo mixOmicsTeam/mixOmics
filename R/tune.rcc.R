@@ -83,8 +83,8 @@ function(X,
     image.tune.rcc(list(grid1 = grid1, grid2 = grid2, mat = mat))
     
     opt = cv.score.grid[cv.score.grid[, 3] == max(cv.score.grid[, 3]), ]
-    cat("  lambda1 = ", opt[[1]], "\n", " lambda2 = ", opt[[2]], "\n",
-	"CV-score = ", opt[[3]], "\n")
+    #cat("  lambda1 = ", opt[[1]], "\n", " lambda2 = ", opt[[2]], "\n",
+    #"CV-score = ", opt[[3]], "\n")
      
     out = list(opt.lambda1 = opt[[1]], opt.lambda2 = opt[[2]], 
 	opt.score = opt[[3]], grid1 = grid1, grid2 = grid2, mat = mat)
