@@ -152,9 +152,9 @@ label.axes.box = "both"  )
     {
         if (style=="3d")
         {
-            comp = c(1:3)
+            comp = seq_len(3)
         } else {
-            comp = c(1:2)
+            comp = seq_len(2)
         }
     }
     if (length(comp) != 2 && !(style=="3d"))
@@ -349,7 +349,7 @@ label.axes.box = "both"  )
     # output a message if some variates are anti correlated among blocks
     if (any(class.object %in%  object.blocks))
     {
-        VarX = lapply(1:2, function(j){do.call(cbind, lapply(object$variates, function(i) i[, comp[j]]))})
+        VarX = lapply(seq_len(2), function(j){do.call(cbind, lapply(object$variates, function(i) i[, comp[j]]))})
         corX = lapply(VarX, cor)
         if(any(sapply(corX, function(j){any(j < 0)})))
         warning("We detected negative correlation between the variates of some blocks, which means that some clusters of variables observed on the correlation circle plot are not necessarily positively correlated.")
@@ -380,7 +380,7 @@ label.axes.box = "both"  )
         {
             pch = unlist(lapply(1 : length(cord.X), function(x){rep(c("sphere", "tetra", "cube", "octa", "icosa", "dodeca")[x], sum(sapply(cord.X[x], nrow)))}))
         } else {
-            pch = unlist(lapply(1 : length(cord.X), function(x){rep(c(1:20)[x], sum(sapply(cord.X[x], nrow)))}))
+            pch = unlist(lapply(1 : length(cord.X), function(x){rep(seq_len(20)[x], sum(sapply(cord.X[x], nrow)))}))
         }
         
     } else if (((is.vector(pch, mode = "double") || is.vector(pch, mode = "integer")) && !(style=="3d"))
@@ -522,9 +522,9 @@ label.axes.box = "both"  )
     #-- Start: data set
     df = data.frame(do.call(rbind, cord.X), "Block" = paste0("Block: ", unlist(lapply(1 : length(cord.X), function(z){rep(blocks[z], nrow(cord.X[[z]]))}))))
     if (style=="3d")
-    names(df)[1:3] = c("x", "y","z")
+    names(df)[seq_len(3)] = c("x", "y","z")
     else
-    names(df)[1:2] = c("x", "y")
+    names(df)[seq_len(2)] = c("x", "y")
     
     df$names = as.vector(var.names.list)
     
@@ -569,12 +569,11 @@ label.axes.box = "both"  )
         x = y = Circle = NULL
         
         #-- Initialise ggplot2
-        p = ggplot(df, aes(x = x, y = y, color = Block), main = title, xlab = X.label, ylab = Y.label)+ theme_bw()
+        p = ggplot(df, aes(x = x, y = y, color = Block)) +
+        labs(title = title, x = X.label, y = Y.label) + theme_bw()
         
         for (i in levels(df$Block))
-        {
-            p = p + geom_point(data = subset(df, df$Block == i), size = 0, shape = 0)
-        }
+        p = p + geom_point(data = subset(df, df$Block == i), size = 0, shape = 0)
         
         #-- Display sample or var.names
         for (i in 1 : length(var.names)){
@@ -595,28 +594,31 @@ label.axes.box = "both"  )
         #-- Modify scale colour - Change X/Ylabel - split plots into Blocks
         p = p + scale_colour_manual(values = unique(col)[match(levels(factor(as.character(df$Block))), levels(df$Block))], name = "Block", breaks = levels(df$Block))
         p = p + scale_x_continuous(limits = c(-1, 1)) + scale_y_continuous(limits = c(-1, 1))
-        p = p + labs(list(title = title, x = X.label, y = Y.label)) + facet_wrap(~ Overlap, ncol = 2, as.table = TRUE)
+        p = p + facet_wrap(~ Overlap, ncol = 2, as.table = TRUE)
         
         #-- Legend
         if (!legend)
         {
             p = p + theme(legend.position="none")
         } else {
-            p = p + guides(colour = guide_legend(override.aes = list(shape = 19, size = unique(df$cex))))
+            p = p + guides(colour = guide_legend(override.aes = list(shape = 19,
+            size = unique(df$cex))))
         }
         
 
 
         #-- abline
         if (abline)
-        p = p + geom_vline(aes(xintercept = 0), linetype = 2, colour = "darkgrey") + geom_hline(aes(yintercept = 0),linetype = 2,colour = "darkgrey")
+        p = p + geom_vline(aes(xintercept = 0), linetype = 2,
+        colour = "darkgrey") + geom_hline(aes(yintercept = 0),linetype = 2,
+        colour = "darkgrey")
         
         #-- circle correlation
         for (i in c("Main circle", "Inner circle")){
-            p = p + geom_path(data = subset(circle, Circle == i), aes_string(x = "x", y = "y"), color = "Black")
+            p = p + geom_path(data = subset(circle, Circle == i),
+            aes_string(x = "x", y = "y"), color = "Black")
         }
         
-        #  p = p + scale_colour_manual(values = levels(factor(df$col))) + scale_shape_manual(values = as.numeric(levels(factor(df$pch)))) + scale_size_discrete(range = range(df$cex))
         print(p)
     }
     #-- End: ggplot2
@@ -840,7 +842,7 @@ label.axes.box = "both"  )
         Sys.sleep(0.5)
         
         if (!is.null(title)) {
-            mat = matrix(1:2, 2)
+            mat = matrix(seq_len(2), 2)
             rgl::layout3d(mat, heights = c(1, 10), model = "inherit")
             rgl::next3d()
             rgl::text3d(0, 0, 0, title)
