@@ -51,6 +51,7 @@ cutoff = 0,
 rad.in = 0.5,
 title = "Correlation Circle Plots",
 legend = FALSE,
+legend.title = "Block",
 style="ggplot2", # can choose between graphics,3d, lattice or ggplot2,
 overlap = TRUE,
 axes.box = "all",
@@ -104,11 +105,15 @@ label.axes.box = "both"  )
         call. = FALSE)}
     
     
+ 
     ### Start: Validation of arguments
     ncomp = object$ncomp
     if (any(class.object %in% object.blocks))
     {
-        
+        #-- legend: logical only
+        if (length(legend) != 1 || !is.logical(legend))
+        stop("'legend' must be a logical value.", call. = FALSE)
+
         if (is.null(blocks))
         {
             blocks = names(object$X)#names$blocks
@@ -134,11 +139,33 @@ label.axes.box = "both"  )
         }
         ncomp = object$ncomp[blocks]
     } else if (any(class.object %in% c("rcc", "mixo_pls", "mixo_spls", "mixo_mlspls")) & all(class.object !="DA")) {
-        blocks = c("X", "Y")
+        #-- legend: logical or a name for X and Y
+        if ( ! (length(legend) == 1 & is.logical(legend) || (length(legend)==2)))
+        stop("'legend' must be a logical value or a vector of 2 names for X and Y.", call. = FALSE)
+        
+        if(length(legend)==2){
+            blocks=legend
+            legend=TRUE
+        } else{
+            blocks = c("X","Y")
+        }
+
     } else {
-        blocks = "X"
+        #-- legend: logical or a name for X
+        if (length(legend) != 1 )
+        stop("'legend' must be a logical value or a vector of 1 name for X.", call. = FALSE)
+        
+        if(is.logical(legend)){
+            blocks = "X"
+        }else{
+            blocks = legend
+            legend=TRUE
+        }
     }
-    
+    #-- legend.title
+    if (length(legend.title)>1)
+    stop("'legend.title' needs to be a single value (length 1)")
+
     #-- ellipse.level
     if (!is.numeric(rad.in) | (rad.in > 1) | (rad.in < 0))
     stop("The value taken by 'rad.in' must be between 0 and 1", call. = FALSE)
@@ -194,10 +221,6 @@ label.axes.box = "both"  )
     }else if (!is.logical(abline)) {
         stop("'abline' must be logical.", call. = FALSE)
     }
-    
-    #-- legend
-    if (length(legend) != 1 || !is.logical(legend))
-    stop("'legend' must be a logical value.", call. = FALSE)
     
     #-- Start: Retrieve variates from object
     cord.X = sample.X = ind.var.sel = list()
@@ -592,7 +615,7 @@ label.axes.box = "both"  )
         }
         
         #-- Modify scale colour - Change X/Ylabel - split plots into Blocks
-        p = p + scale_colour_manual(values = unique(col)[match(levels(factor(as.character(df$Block))), levels(df$Block))], name = "Block", breaks = levels(df$Block))
+        p = p + scale_colour_manual(values = unique(col)[match(levels(factor(as.character(df$Block))), levels(df$Block))], name = legend.title, breaks = levels(df$Block))
         p = p + scale_x_continuous(limits = c(-1, 1)) + scale_y_continuous(limits = c(-1, 1))
         p = p + facet_wrap(~ Overlap, ncol = 2, as.table = TRUE)
         
@@ -626,7 +649,7 @@ label.axes.box = "both"  )
     #-- Start: Lattice
     if(style == "lattice" )
     {
-        legend.lattice = list(space = "right", title = "Block", cex.title = 1.25,
+        legend.lattice = list(space = "right", title = legend.title, cex.title = 1.25,
         points=list(col=unique(df$col),cex = unique(df$cex),pch = unique(df$pch)),
         text = list(blocks))
         
@@ -748,7 +771,7 @@ label.axes.box = "both"  )
             if (legend)
             legend(x = 1.09, y=0.2,
             legend = blocks,
-            title="Block",
+            title=legend.title,
             col = unique(df$col),
             pch = unique(df$pch),
             pt.cex = unique(df$cex),
@@ -820,7 +843,7 @@ label.axes.box = "both"  )
             if (legend)
             legend("center",
             legend = blocks,
-            title="Block",
+            title=legend.title,
             col = unique(df$col),
             pch = unique(df$pch),
             cex = unique(df$cex),
