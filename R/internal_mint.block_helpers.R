@@ -518,12 +518,12 @@ init = "svd")
     {
         
         # same step with or without NA, as they are already replaced by 0
-        M = lapply(c(seq_len(M))[-indY], function(x){crossprod(A[[x]], A[[indY]])})
+        M = lapply(c(seq_len(J))[-indY], function(x){crossprod(A[[x]], A[[indY]])})
         #ssvd faster with svds, only if more than 3 column, otherwise break down
         svd.M = lapply(M, function(x){if(ncol(x)>3)
             {svds(x, k=1, nu = 1, nv = 1)} else {svd(x, nu = 1, nv = 1)}})
         
-        loadings.A[c(seq_len(M))[-indY]] = lapply(seq_len(length(M)), function(x)
+        loadings.A[c(seq_len(J))[-indY]] = lapply(seq_len(length(M)), function(x)
         {svd.M[[x]]$u})
         loadings.A[[indY]] = svd.M[[1]]$v
         
@@ -531,7 +531,7 @@ init = "svd")
         
         alpha =  lapply(seq_len(J), function(y){initsvd(A[[y]])})
 
-        for (j in seq_len(M))
+        for (j in seq_len(J))
         {
             if (nrow(A[[j]]) >= ncol(A[[j]]))
             {
