@@ -40,13 +40,13 @@ get.weights = function(variates, indY)
     ncomp = min(sapply(variates, ncol))
     x.xList <- list()
     compt = 1
-    for(comp in 1:ncomp)
+    for(comp in seq_len(ncomp))
     {
-        for(i in 1:length(variates)){
+        for(i in seq_len(length(variates))){
             corDat <- rep(0, length(variates))
             names(corDat) <- paste("cor", names(variates)[i], names(variates),
             sep = "_")
-            for(j in 1:length(variates)){
+            for(j in seq_len(length(variates))){
                 corDat[j] <- as.numeric(cor(variates[[i]][,comp],
                 variates[[j]][,comp]))
             }
@@ -56,11 +56,11 @@ get.weights = function(variates, indY)
     }
     corMat.diablo <- do.call(rbind, x.xList)
     rownames(corMat.diablo) <- paste(names(variates),".comp",
-    rep(1:ncomp,each=length(variates)),sep="")
+    rep(seq_len(ncomp),each=length(variates)),sep="")
     colnames(corMat.diablo) <- names(variates)
     
     temp = matrix(corMat.diablo[,indY],ncol=ncomp)
-    correlation = apply(temp, 1, function(x){mean(abs(x))})[1:length(variates)]
+    correlation = apply(temp, 1, function(x){mean(abs(x))})[seq_len(length(variates))]
     names(correlation) = names(variates)
     
     correlation = correlation[-indY]
@@ -223,7 +223,8 @@ scale.function=function(temp, scale = TRUE)
         
         # third possibility (ell.equal=>TRUE)
         data.list.study.scale_i = temp-rep(1, nrow(temp)) %*% t(meanX)
-        data.list.study.scale_i = data.list.study.scale_i / rep(1, nrow(temp)) %*% t(sqrt.sdX)
+        data.list.study.scale_i = data.list.study.scale_i /
+            rep(1, nrow(temp)) %*% t(sqrt.sdX)
         
         
         ind = which(sqrt.sdX == 0) # scaling can creates NA
@@ -277,7 +278,7 @@ mean_centering_per_study=function(data, study, scale)
     }
     if (M > 1)
     {
-        for (m in 1:M)
+        for (m in seq_len(M))
         {
             attr(concat.data,paste0("means:", levels(study)[m])) = meanX[[m]]
             if(scale)
@@ -440,7 +441,7 @@ mode = "canonical", aa = NULL, misdata, is.na.A, ind.NA) {
     #save(list=ls(),file="temp2.Rdata")
     resdefl = NULL
     pdefl = NULL
-    for (q in 1 : nbloc) {
+    for (q in seq_len(nbloc)) {
         # for each block we create missing data parameters to be passed to
         #  deflation()
         if(misdata[q])
@@ -460,14 +461,14 @@ mode = "canonical", aa = NULL, misdata, is.na.A, ind.NA) {
                 resdefl[[q]] = defltmp$R
                 pdefl[[q]]   = defltmp$p
             } else if (mode == "classic") {
-                resdefl[[q]] = Reduce("+", lapply(c(1:nbloc)[-q], function(x)
+                resdefl[[q]] = Reduce("+", lapply(c(seq_len(nbloc))[-q], function(x)
                 {rr[[q]] - yy[ ,x]%*%t(aa[[q]])}))/(nbloc-1)
                 pdefl[[q]]   =  rep(0,NCOL(rr[[q]]))
             } else if (mode == "invariant") { #no deflation
                 resdefl[[q]] = rr[[q]]
                 pdefl[[q]]   =  rep(0,NCOL(rr[[q]]))
             } else if (mode == "regression") {
-                resdefl[[q]] = Reduce("+", lapply(c(1:nbloc)[-q], function(x)
+                resdefl[[q]] = Reduce("+", lapply(c(seq_len(nbloc))[-q], function(x)
                 {deflation(rr[[q]],yy[, x], misdata[q], is.na.A.q,
                     ind.NA[[q]])$R}))/(nbloc-1)
                 pdefl[[q]]   =  rep(0,NCOL(rr[[q]]))
@@ -517,20 +518,20 @@ init = "svd")
     {
         
         # same step with or without NA, as they are already replaced by 0
-        M = lapply(c(1:J)[-indY], function(x){crossprod(A[[x]], A[[indY]])})
+        M = lapply(c(seq_len(M))[-indY], function(x){crossprod(A[[x]], A[[indY]])})
         #ssvd faster with svds, only if more than 3 column, otherwise break down
         svd.M = lapply(M, function(x){if(ncol(x)>3)
             {svds(x, k=1, nu = 1, nv = 1)} else {svd(x, nu = 1, nv = 1)}})
         
-        loadings.A[c(1:J)[-indY]] = lapply(1:length(M), function(x)
+        loadings.A[c(seq_len(M))[-indY]] = lapply(seq_len(length(M)), function(x)
         {svd.M[[x]]$u})
         loadings.A[[indY]] = svd.M[[1]]$v
         
     } else if (init=="svd.single") {
         
-        alpha =  lapply(1 : J, function(y){initsvd(A[[y]])})
+        alpha =  lapply(seq_len(J), function(y){initsvd(A[[y]])})
 
-        for (j in 1:J)
+        for (j in seq_len(M))
         {
             if (nrow(A[[j]]) >= ncol(A[[j]]))
             {
