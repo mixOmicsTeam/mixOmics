@@ -217,7 +217,14 @@ scale.function=function(temp, scale = TRUE)
     if (scale)
     {
         sqrt.sdX = colSds(temp,  na.rm=TRUE)
-        data.list.study.scale_i = t( (t(temp)-meanX) / sqrt.sdX)
+        # first possiblity: scale(), too long
+        # second possibility: matrix approach: transpose is too long
+        # data.list.study.scale_i = t( (t(temp)-meanX) / sqrt.sdX)
+        
+        # third possibility (ell.equal=>TRUE)
+        data.list.study.scale_i = temp-rep(1, nrow(temp)) %*% t(meanX)
+        data.list.study.scale_i = data.list.study.scale_i / rep(1, nrow(temp)) %*% t(sqrt.sdX)
+        
         
         ind = which(sqrt.sdX == 0) # scaling can creates NA
         if(length(ind) >0)
@@ -225,7 +232,8 @@ scale.function=function(temp, scale = TRUE)
         
     } else {
         sqrt.sdX = NULL
-        data.list.study.scale_i = t( (t(temp)-meanX))
+        # data.list.study.scale_i = t( (t(temp)-meanX)) # too long bc t()
+        data.list.study.scale_i = temp-rep(1, nrow(temp)) %*% t(meanX)
     }
     
     #is.na.data = is.na(data.list.study.scale_i)
