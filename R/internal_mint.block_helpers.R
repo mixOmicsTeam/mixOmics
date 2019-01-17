@@ -439,8 +439,7 @@ defl.select = function(yy, rr, nncomp, nn, nbloc, indY = NULL,
 mode = "canonical", aa = NULL, misdata, is.na.A, ind.NA) {
     ### Start: Add new parameter for estimation classic mode
     #save(list=ls(),file="temp2.Rdata")
-    resdefl = NULL
-    pdefl = NULL
+    resdefl = pdefl = vector("list",length=nbloc)
     for (q in seq_len(nbloc)) {
         # for each block we create missing data parameters to be passed to
         #  deflation()
@@ -458,6 +457,7 @@ mode = "canonical", aa = NULL, misdata, is.na.A, ind.NA) {
                 # except indY
                 defltmp = deflation(rr[[q]], yy[ , q], misdata[q],
                 is.na.A.q, ind.NA[[q]])
+                #save(list=ls(),file="temp.Rdata")
                 resdefl[[q]] = defltmp$R
                 pdefl[[q]]   = defltmp$p
             } else if (mode == "classic") {
