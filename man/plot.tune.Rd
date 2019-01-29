@@ -11,7 +11,7 @@ Function to plot performance criteria, such as classification error rate or bala
 }
 
 \usage{
-\method{plot}{tune.splsda}(x, optimal = TRUE, sd = TRUE, legend.position = "topright", col, \dots)
+\method{plot}{tune.splsda}(x, optimal = TRUE, sd = TRUE, col, \dots)
 
 \method{plot}{tune.block.splsda}(x, sd = TRUE, col, \dots)
 }
@@ -21,15 +21,13 @@ Function to plot performance criteria, such as classification error rate or bala
 \item{x}{an \code{tune.splsda} object.}
 \item{optimal}{If TRUE, highlights the optimal keepX per component}
 \item{sd}{If 'nrepeat' was used in the call to 'tune.splsda', error bar shows the standard deviation if sd=TRUE}
-\item{legend.position}{position of the legend, one of "bottomright", "bottom", "bottomleft",
--"left", "topleft", "top", "topright", "right" and "center". }
 \item{col}{character (or symbol) color to be used, possibly vector. One color per component.}
 \item{\dots}{Further arguments sent to \code{\link{xyplot}} function.}
 }
 
 \details{
 \code{plot.tune.splsda} plots the classification error rate or the balanced error rate from x$error.rate, for each component of the model.
-A circle highlights the optimal number of variables oneach component.
+A lozenge highlights the optimal number of variables on each component.
 
 \code{plot.tune.block.splsda} plots the classification error rate or the balanced error rate from x$error.rate, for each component of the model. The error rate is ordered by increasing value, the yaxis shows the optimal combination of keepX at the top (e.g. `keepX on block 1'_`keepX on block 2'_`keepX on block 3')
 
@@ -48,12 +46,13 @@ A circle highlights the optimal number of variables oneach component.
 data(breast.tumors)
 X = breast.tumors$gene.exp
 Y = as.factor(breast.tumors$sample$treatment)
-out = tune.splsda(X, Y, ncomp = 3, nrepeat = 2, logratio = "none",
+out = tune.splsda(X, Y, ncomp = 3, nrepeat = 5, logratio = "none",
 test.keepX = c(5, 10, 15), folds = 10, dist = "max.dist",
 progressBar = TRUE)
 
 
 plot(out)
+plot(out, sd=FALSE)
 
 
 \dontrun{
