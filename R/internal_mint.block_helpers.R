@@ -258,7 +258,7 @@ mean_centering_per_study=function(data, study, scale)
     data.list.study = study_split(data, study)
 
     # center and scale data per group, and concatene the data
-    res = lapply(data.list.study, scale.function, scale = scale)
+    res = lapply(data.list.study, function(x) scale.function(x,scale = scale))
     
     meanX = lapply(res, function(x){x[[2]]})
     sqrt.sdX = lapply(res, function(x){x[[3]]})
