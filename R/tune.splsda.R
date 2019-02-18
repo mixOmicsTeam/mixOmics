@@ -294,8 +294,12 @@ cpus
     error.per.class = list()
     AUC = list()
     
-    mat.sd.error = matrix(0,nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
-    dimnames = list(c(test.keepX), c(paste('comp', comp.real, sep=''))))
+    if(nrepeat>1 & all(measure != "AUC")){
+        mat.sd.error = matrix(0,nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
+        dimnames = list(c(test.keepX), c(paste('comp', comp.real, sep=''))))
+    } else{
+        mat.sd.error=NULL
+    }
     mat.mean.error = matrix(nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
     dimnames = list(c(test.keepX), c(paste('comp', comp.real, sep=''))))        
    
@@ -331,8 +335,12 @@ cpus
             clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
 
         error.per.class.keepX.opt = list()
-        error.per.class.keepX.opt.mean = matrix(0, nrow = nlevels(Y), ncol = length(comp.real),
-        dimnames = list(c(levels(Y)), c(paste('comp', comp.real, sep=''))))
+        if(all(measure != "AUC")){
+            error.per.class.keepX.opt.mean = matrix(0, nrow = nlevels(Y), ncol = length(comp.real),
+            dimnames = list(c(levels(Y)), c(paste('comp', comp.real, sep=''))))
+        } else {
+            error.per.class.keepX.opt.mean=NULL
+        }
         # successively tune the components until ncomp: comp1, then comp2, ...
         for(comp in 1:length(comp.real))
         {

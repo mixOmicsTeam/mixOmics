@@ -696,10 +696,14 @@ parallel
         choice.keepX.out[[1]] = c(choice.keepX, test.keepX.out)
 
         result$"AUC"$error.rate.mean = error.mean
-        if (!nrepeat ==  1)
-        result$"AUC"$error.rate.sd = NULL
         
-        result$"AUC"$confusion = NULL
+        # we are calculating a mean over nrepeat from means over the groups
+        # we do not outputs SD so far (which one should we use?)
+        
+        #if (!nrepeat ==  1)
+        #result$"AUC"$error.rate.sd = list(list())
+        #result$"AUC"$confusion = list(list())
+        
         result$"AUC"$mat.error.rate = list(auc.mean.sd.over.class)
         result$"AUC"$keepX.opt = test.keepX.out
     }
