@@ -3,10 +3,13 @@
 
 This repository includes the package now hosted on BioConductor and our current development version!
 
-To pull the latest version (as bug-free as it can be):
+To install the latest stable version (as bug-free as it can be):
 > library('devtools')
 
 > install_github("mixOmicsTeam/mixOmics")
+
+You can also install the development version  
+> install_github("mixOmicsTeam/mixOmics", ref="devel")
 
 If you would like to report a bug or issue: https://github.com/mixOmicsTeam/mixOmics/issues
 
