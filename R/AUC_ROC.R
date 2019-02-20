@@ -58,8 +58,8 @@ roc.comp = 1,
         title=paste("ROC Curve Comp",i)
         temp = statauc(data, plot = ifelse(i%in%roc.comp,plot,FALSE),
         title = title)
-        statauc[[paste("Comp", i, sep = "")]] = temp[[1]]
-        graph[[paste("Comp", i, sep = "")]] = temp$graph
+        statauc[[paste0("Comp", i, sep = "")]] = temp[[1]]
+        graph[[paste0("Comp", i, sep = "")]] = temp$graph
     }
     print(statauc)
     return(invisible(c(statauc,graph=graph)))
@@ -122,8 +122,8 @@ roc.study = "global",
         title=paste0("ROC Curve Comp ",i, title.temp)
         temp = statauc(data, plot = ifelse(i%in%roc.comp,plot,FALSE),
         title = title)
-        statauc[[paste("Comp", i, sep = "")]] = temp[[1]]
-        graph[[paste("Comp", i, sep = "")]] = temp$graph
+        statauc[[paste0("Comp", i, sep = "")]] = temp[[1]]
+        graph[[paste0("Comp", i, sep = "")]] = temp$graph
     }
     print(statauc)
     return(invisible(c(statauc,graph=graph)))
@@ -166,9 +166,9 @@ roc.comp = 1,
                 ifelse(i%in%roc.comp && names(res.predict)[j]%in%block.temp,
                 plot, FALSE)
             temp = statauc(data, plot = plot.temp, title = title)
-            auc.mean[[names(res.predict)[j]]][[paste("comp",i,sep = "")]] =
+            auc.mean[[names(res.predict)[j]]][[paste0("comp",i,sep = "")]] =
                 temp[[1]]
-            graph[[names(res.predict)[j]]][[paste("comp",i,sep = "")]] =
+            graph[[names(res.predict)[j]]][[paste0("comp",i,sep = "")]] =
                 temp$graph
             
         }
@@ -216,9 +216,9 @@ roc.comp = 1,
                 ifelse(i%in%roc.comp && names(res.predict)[j]%in%block.temp,
                 plot, FALSE)
             temp = statauc(data, plot = plot.temp, title = title)
-            auc.mean[[names(res.predict)[j]]][[paste("comp",i,sep = "")]] =
+            auc.mean[[names(res.predict)[j]]][[paste0("comp",i,sep = "")]] =
                 temp[[1]]
-            graph[[names(res.predict)[j]]][[paste("comp",i,sep = "")]] =
+            graph[[names(res.predict)[j]]][[paste0("comp",i,sep = "")]] =
                 temp$graph
             
         }

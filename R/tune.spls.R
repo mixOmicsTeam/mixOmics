@@ -219,9 +219,9 @@ cpus
     error.per.class = list()
 
     mat.sd.error = matrix(0,nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
-    dimnames = list(test.keepX, c(paste('comp', comp.real, sep=''))))
+    dimnames = list(test.keepX, c(paste0('comp', comp.real))))
     mat.mean.error = matrix(nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
-    dimnames = list(test.keepX, c(paste('comp', comp.real, sep=''))))
+    dimnames = list(test.keepX, c(paste0('comp', comp.real))))
    
     # first: near zero var on the whole data set
     if(near.zero.var == TRUE)
@@ -285,8 +285,8 @@ cpus
         if (parallel == TRUE)
         stopCluster(cl)
         
-        names(mat.error.rate) = c(paste('comp', comp.real, sep=''))
-        names(already.tested.X) = c(paste('comp', seq_len(ncomp), sep=''))
+        names(mat.error.rate) = c(paste0('comp', comp.real))
+        names(already.tested.X) = c(paste0('comp', seq_len(ncomp)))
 
         if (progressBar == TRUE)
         cat('\n')
@@ -301,8 +301,8 @@ cpus
                 ind.row = match(keepX[[comp.real[comp]]],test.keepX)
                 error.keepX = cbind(error.keepX, apply(matrix(mat.error.rate[[comp]][[ind.row]],ncol=nrepeat),2,mean))
             }
-            colnames(error.keepX) = c(paste('comp', comp.real, sep=''))
-            rownames(error.keepX) = c(paste('nrep.', seq_len(nrepeat), sep=''))
+            colnames(error.keepX) = c(paste0('comp', comp.real))
+            rownames(error.keepX) = c(paste0('nrep.', seq_len(nrepeat)))
             
             opt = t.test.process(error.keepX)
             
@@ -321,7 +321,7 @@ cpus
         
         if(light.output == FALSE)
         {
-            names(prediction.all) = c(paste('comp', comp.real, sep=''))
+            names(prediction.all) = c(paste0('comp', comp.real))
             result$predict = prediction.all
         }
 

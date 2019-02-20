@@ -189,18 +189,18 @@ light.output = TRUE # if FALSE, output the prediction and classification of each
     error.per.class = list()
     
     mat.sd.error = matrix(0,nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
-    dimnames = list(c(test.keepX), c(paste('comp', comp.real))))
+    dimnames = list(c(test.keepX), c(paste0('comp', comp.real))))
     mat.mean.error = matrix(nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
-    dimnames = list(c(test.keepX), c(paste('comp', comp.real))))
+    dimnames = list(c(test.keepX), c(paste0('comp', comp.real))))
     
     error.per.class.mean = matrix(nrow = nlevels(Y), ncol = ncomp-length(already.tested.X),
-    dimnames = list(c(levels(Y)), c(paste('comp', comp.real))))
+    dimnames = list(c(levels(Y)), c(paste0('comp', comp.real))))
     error.per.class.sd = matrix(0,nrow = nlevels(Y), ncol = ncomp-length(already.tested.X),
-    dimnames = list(c(levels(Y)), c(paste('comp', comp.real))))
+    dimnames = list(c(levels(Y)), c(paste0('comp', comp.real))))
     
     
     error.per.study.keepX.opt = matrix(nrow = nlevels(study), ncol = ncomp-length(already.tested.X),
-    dimnames = list(c(levels(study)), c(paste('comp', comp.real))))
+    dimnames = list(c(levels(study)), c(paste0('comp', comp.real))))
     
     if(light.output == FALSE)
     prediction.all = class.all = list()
@@ -246,8 +246,8 @@ light.output = TRUE # if FALSE, output the prediction and classification of each
         auc.mean[[comp]]=result$auc
         
     } # end comp
-    names(error.per.class.keepX.opt) = c(paste('comp', comp.real))
-    names(already.tested.X) = c(paste('comp', 1:ncomp))
+    names(error.per.class.keepX.opt) = c(paste0('comp', comp.real))
+    names(already.tested.X) = c(paste0('comp', 1:ncomp))
     
     if (progressBar == TRUE)
     cat('\n')
@@ -269,13 +269,13 @@ light.output = TRUE # if FALSE, output the prediction and classification of each
     
     if(auc)
     {
-        names(auc.mean) = c(paste('comp', comp.real))
+        names(auc.mean) = c(paste0('comp', comp.real))
         result$auc = auc.mean
     }
     
     if(light.output == FALSE)
     {
-        names(class.all) = names(prediction.all) = c(paste('comp', comp.real))
+        names(class.all) = names(prediction.all) = c(paste0('comp', comp.real))
         result$predict = prediction.all
         result$class = class.all
     }

@@ -302,9 +302,9 @@ name.save = NULL)
     mat.error.rate = list()
     error.per.class.keepX.opt=list()
     error.per.class.keepX.opt.mean = matrix(0, nrow = nlevels(Y), ncol = length(comp.real),
-    dimnames = list(c(levels(Y)), c(paste('comp', comp.real, sep=''))))
+    dimnames = list(c(levels(Y)), c(paste0('comp', comp.real))))
 
-    error.opt.per.comp = matrix(nrow = nrepeat, ncol = length(comp.real), dimnames=list(paste("nrep",1:nrepeat,sep="."), paste("comp", comp.real, sep='')))
+    error.opt.per.comp = matrix(nrow = nrepeat, ncol = length(comp.real), dimnames=list(paste("nrep",1:nrepeat,sep="."), paste0("comp", comp.real)))
     
     if(light.output == FALSE)
     prediction.all = class.all = list()
@@ -352,13 +352,13 @@ name.save = NULL)
         if(!is.null(name.save))
         {
             rownames(mat.mean.error) = rownames(result[[measure]]$mat.error.rate[[1]])
-            colnames(mat.mean.error) = paste("comp", comp.real, sep='')
-            names(mat.error.rate) = c(paste("comp", comp.real[1:comp], sep=''))
-            names(error.per.class.keepX.opt) = c(paste("comp", comp.real[1:comp], sep=''))
+            colnames(mat.mean.error) = paste0("comp", comp.real)
+            names(mat.error.rate) = c(paste0("comp", comp.real[1:comp]))
+            names(error.per.class.keepX.opt) = c(paste0("comp", comp.real[1:comp]))
             if(nrepeat > 1)
             {
                 rownames(mat.sd.error) = rownames(result[[measure]]$mat.error.rate[[1]])
-                colnames(mat.sd.error) = paste("comp", comp.real, sep='')
+                colnames(mat.sd.error) = paste0("comp", comp.real)
             }
             
             
@@ -379,13 +379,13 @@ name.save = NULL)
 
     }
     rownames(mat.mean.error) = rownames(result[[measure]]$mat.error.rate[[1]])
-    colnames(mat.mean.error) = paste("comp", comp.real, sep='')
-    names(mat.error.rate) = c(paste("comp", comp.real, sep=''))
-    names(error.per.class.keepX.opt) = c(paste("comp", comp.real, sep=''))
+    colnames(mat.mean.error) = paste0("comp", comp.real)
+    names(mat.error.rate) = c(paste0("comp", comp.real))
+    names(error.per.class.keepX.opt) = c(paste0("comp", comp.real))
     if(nrepeat > 1)
     {
         rownames(mat.sd.error) = rownames(result[[measure]]$mat.error.rate[[1]])
-        colnames(mat.sd.error) = paste("comp", comp.real, sep='')
+        colnames(mat.sd.error) = paste0("comp", comp.real)
     }
     
     #close the cluster after ncomp

@@ -326,7 +326,7 @@ progressBar = TRUE,
             list.features.Y[[k]] = sort(table(as.factor(featuresY[[k]][-remove.naY])) / M, decreasing = TRUE)
             
         }
-        names(list.features.X)  = names(list.features.Y) = paste('comp', 1:ncomp)
+        names(list.features.X)  = names(list.features.Y) = paste0('comp', 1:ncomp)
         
         # features
         result$features$stable.X = list.features.X
@@ -510,22 +510,22 @@ cpus,
     for (measure_i in measure)
     {
         mat.sd.error[[measure_i]] = matrix(0,nrow = ncomp, ncol = length(dist),
-        dimnames = list(c(paste('comp', 1 : ncomp)), dist))
+        dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
         mat.mean.error[[measure_i]] = matrix(0,nrow = ncomp, ncol = length(dist),
-        dimnames = list(c(paste('comp', 1 : ncomp)), dist))
+        dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
         error.per.class.keepX.opt[[measure_i]] = list()
         error.per.class.keepX.opt.mean[[measure_i]] = list()
         mat.error.rate[[measure_i]]=list()
         for(ijk in dist)
         {
             mat.error.rate[[measure_i]][[ijk]] = matrix(0, nrow = ncomp, ncol = nrepeat,
-            dimnames = list(c(paste('comp', 1 : ncomp)), c(paste('nrep', 1 : nrepeat))))
+            dimnames = list(c(paste0('comp', 1 : ncomp)), c(paste0('nrep', 1 : nrepeat))))
 
             error.per.class.keepX.opt[[measure_i]][[ijk]] = array(0, c(nlevels(Y), nrepeat, ncomp),
-            dimnames = list(c(levels(Y)), c(paste('nrep', 1 : nrepeat)), c(paste('comp', 1:ncomp, sep=''))))
+            dimnames = list(c(levels(Y)), c(paste0('nrep', 1 : nrepeat)), c(paste0('comp', 1:ncomp, sep=''))))
 
             error.per.class.keepX.opt.mean[[measure_i]][[ijk]] = matrix(nrow = nlevels(Y), ncol = ncomp,
-            dimnames = list(c(levels(Y)), c(paste('comp', 1 : ncomp))))
+            dimnames = list(c(levels(Y)), c(paste0('comp', 1 : ncomp))))
         }
     }
     
@@ -539,7 +539,7 @@ cpus,
     for(ijk in dist)
     {
         class.all[[ijk]] = array(0, c(nrow(X),  nrepeat ,ncomp),
-        dimnames = list(rownames(X),c(paste('nrep', 1 : nrepeat)),c(paste('comp', 1 : ncomp))))
+        dimnames = list(rownames(X),c(paste0('nrep', 1 : nrepeat)),c(paste0('comp', 1 : ncomp))))
     }
     
     class.object=class(object)
@@ -608,7 +608,7 @@ cpus,
     if (parallel == TRUE)
     stopCluster(cl)
 
-    names(prediction.all) = paste('comp', 1:ncomp)
+    names(prediction.all) = paste0('comp', 1:ncomp)
     
     # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
     ncomp_opt = matrix(NA, nrow = length(measure), ncol = length(dist),
@@ -633,16 +633,16 @@ cpus,
 
     if(auc)
     {
-        names(auc.mean) = c(paste('comp', 1:ncomp))
+        names(auc.mean) = c(paste0('comp', 1:ncomp))
         result$auc = auc.mean
         
-        names(auc.all) = c(paste('comp', 1:ncomp))
+        names(auc.all) = c(paste0('comp', 1:ncomp))
         result$auc.all =auc.all
     }
 
     if (is(object, "mixo_splsda"))
     {
-        names(list.features) = paste('comp', 1:ncomp)
+        names(list.features) = paste0('comp', 1:ncomp)
         result$features$stable = list.features
     }
 

@@ -153,7 +153,7 @@ background.predict = function(object, comp.predicted = 1, dist = "max.dist",
             }), nrow = nrow(t.pred[[x]]), ncol = ncomp[x])
         })
         cls$max.dist = lapply(1:J, function(x){colnames(cls$max.dist[[x]]) =
-            paste(rep("comp", ncomp[x]), 1 : ncomp[[x]], sep = " ");
+            paste0(rep("comp", ncomp[x]), 1 : ncomp[[x]]);
             rownames(cls$max.dist[[x]]) = rownames(t.pred[[x]]);
             return(cls$max.dist[[x]])})
         names(cls$max.dist)=names(X)
@@ -171,7 +171,7 @@ background.predict = function(object, comp.predicted = 1, dist = "max.dist",
             G[[i]] = t(t(G[[i]]))
             else
             G[[i]] = t(G[[i]])
-            colnames(G[[i]]) = paste("dim", c(1:ncomp[i]), sep = " ")
+            colnames(G[[i]]) = paste0("dim", c(1:ncomp[i]))
             rownames(G[[i]]) = levels(Y)
             
         }
@@ -210,7 +210,7 @@ background.predict = function(object, comp.predicted = 1, dist = "max.dist",
             }
             
             cls$centroids.dist = lapply(1:J, function(x){colnames(cl[[x]]) =
-                paste(rep("comp", ncomp[x]), 1 : ncomp[[x]], sep = " ");
+                paste0(rep("comp", ncomp[x]), 1 : ncomp[[x]]);
                 return(cl[[x]])})
             
         } else if (dist == "mahalanobis.dist") {
@@ -245,7 +245,7 @@ background.predict = function(object, comp.predicted = 1, dist = "max.dist",
             }
             
             cls$mahalanobis.dist = lapply(1:J, function(x){colnames(cl[[x]]) =
-                paste(rep("comp", ncomp[x]), 1 : ncomp[[x]], sep = " ");
+                paste0(rep("comp", ncomp[x]), 1 : ncomp[[x]]);
                 return(cl[[x]])})
         }
     }

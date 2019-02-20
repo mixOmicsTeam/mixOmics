@@ -211,7 +211,7 @@ cpus
     X.names = dimnames(X)[[2]]
     if (is.null(X.names))
     {
-        X.names = paste("X", 1:ncol(X), sep = "")
+        X.names = paste0("X", 1:ncol(X))
         dimnames(X)[[2]] = X.names
     }
     
@@ -296,12 +296,12 @@ cpus
     
     if(nrepeat>1 & all(measure != "AUC")){
         mat.sd.error = matrix(0,nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
-        dimnames = list(c(test.keepX), c(paste('comp', comp.real, sep=''))))
+        dimnames = list(c(test.keepX), c(paste0('comp', comp.real))))
     } else{
         mat.sd.error=NULL
     }
     mat.mean.error = matrix(nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
-    dimnames = list(c(test.keepX), c(paste('comp', comp.real, sep=''))))        
+    dimnames = list(c(test.keepX), c(paste0('comp', comp.real))))
    
     # first: near zero var on the whole data set
     if(near.zero.var == TRUE)
@@ -337,7 +337,7 @@ cpus
         error.per.class.keepX.opt = list()
         if(all(measure != "AUC")){
             error.per.class.keepX.opt.mean = matrix(0, nrow = nlevels(Y), ncol = length(comp.real),
-            dimnames = list(c(levels(Y)), c(paste('comp', comp.real, sep=''))))
+            dimnames = list(c(levels(Y)), c(paste0('comp', comp.real))))
         } else {
             error.per.class.keepX.opt.mean=NULL
         }
@@ -387,11 +387,11 @@ cpus
         } # end comp
         if (parallel == TRUE)
         stopCluster(cl)
-        names(mat.error.rate) = c(paste('comp', comp.real, sep=''))
+        names(mat.error.rate) = c(paste0('comp', comp.real))
         if (all(measure!="AUC"))
-            names(error.per.class.keepX.opt) = c(paste('comp', comp.real, sep=''))
+            names(error.per.class.keepX.opt) = c(paste0('comp', comp.real))
         
-        names(already.tested.X) = c(paste('comp', 1:ncomp, sep=''))
+        names(already.tested.X) = c(paste0('comp', 1:ncomp))
         
         if (progressBar == TRUE)
         cat('\n')
@@ -406,7 +406,7 @@ cpus
                 ind.row = match(keepX[[comp.real[comp]]],test.keepX)
                 error.keepX = cbind(error.keepX, mat.error.rate[[comp]][ind.row,])
             }
-            colnames(error.keepX) = c(paste('comp', comp.real, sep=''))
+            colnames(error.keepX) = c(paste0('comp', comp.real))
             
             opt = t.test.process(error.keepX)
             
@@ -420,7 +420,7 @@ cpus
                 ind.row = match(keepX[[comp.real[comp]]],test.keepX)
                 error.keepX = cbind(error.keepX, mat.error.rate[[comp]][ind.row,])
             }
-            colnames(error.keepX) = c(paste('comp', comp.real, sep=''))
+            colnames(error.keepX) = c(paste0('comp', comp.real))
             
             #1- to change the AUC to an 'error' and check for decrease
             opt = t.test.process(1-error.keepX)
@@ -441,7 +441,7 @@ cpus
 
         if(light.output == FALSE)
         {
-            names(class.all) = names(prediction.all) = c(paste('comp', comp.real, sep=''))
+            names(class.all) = names(prediction.all) = c(paste0('comp', comp.real))
             result$predict = prediction.all
             result$class = class.all
         }
@@ -451,12 +451,12 @@ cpus
             #we add the AUC outputs only if it was not the measure
             #otherwise there is twice the same output
             if(all(measure != "AUC")){
-                names(auc.mean.sd) = c(paste('comp', comp.real, sep=''))
+                names(auc.mean.sd) = c(paste0('comp', comp.real))
                 result$auc = auc.mean.sd
             }
             if(light.output == FALSE)
             {
-                names(auc.all) = c(paste('comp', comp.real, sep=''))
+                names(auc.all) = c(paste0('comp', comp.real))
                 result$auc.all =auc.all
             }
         }

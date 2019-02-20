@@ -473,13 +473,13 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
         ### End estimation using formula Y = XW(P'W)C (+ Yr, residuals on Y) See page 136 La regression PLS Theorie et pratique Tenenhaus
         
         rownames(t.pred[[i]]) = rownames(newdata[[i]])
-        colnames(t.pred[[i]]) = paste("dim", c(1:ncomp[i]), sep = " ")
+        colnames(t.pred[[i]]) = paste0("dim", c(1:ncomp[i]))
         rownames(Y.hat[[i]]) = rownames(newdata[[i]])
         colnames(Y.hat[[i]]) = colnames(Y)
-        dimnames(Y.hat[[i]])[[3]]=paste("dim", c(1:ncomp[i]), sep = " ")
+        dimnames(Y.hat[[i]])[[3]]=paste0("dim", c(1:ncomp[i]))
         rownames(B.hat[[i]]) = colnames(newdata[[i]])
         colnames(B.hat[[i]]) = colnames(Y)
-        dimnames(B.hat[[i]])[[3]]=paste("dim", c(1:ncomp[i]), sep = " ")
+        dimnames(B.hat[[i]])[[3]]=paste0("dim", c(1:ncomp[i]))
 
     }
     
@@ -507,14 +507,14 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
             
             temp.all[[comp]] = temp
         }
-        names(temp.all) = paste("dim", c(1:min(ncomp[-object$indY])), sep = " ")
+        names(temp.all) = paste0("dim", c(1:min(ncomp[-object$indY])))
         
         if(!hasArg(noAveragePredict))
         {
             out$AveragedPredict = array(unlist(lapply(temp.all, function(x){
                 apply(x, c(1,2), mean)
                 
-            })), dim(Y.hat[[1]]), dimnames = list(rownames(newdata[[1]]), colnames(Y), paste("dim", c(1:min(ncomp[-object$indY])), sep = " ")))
+            })), dim(Y.hat[[1]]), dimnames = list(rownames(newdata[[1]]), colnames(Y), paste0("dim", c(1:min(ncomp[-object$indY])))))
             
             out$WeightedPredict = array(unlist(lapply(temp.all, function(x){
                 apply(x, c(1,2), function(z){
@@ -527,7 +527,7 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
                         res = NA
                     }
                     res
-            })})), dim(Y.hat[[1]]), dimnames = list(rownames(newdata[[1]]), colnames(Y), paste("dim", c(1:min(ncomp[-object$indY])), sep = " ")))
+            })})), dim(Y.hat[[1]]), dimnames = list(rownames(newdata[[1]]), colnames(Y), paste0("dim", c(1:min(ncomp[-object$indY])))))
         }
 
 
@@ -570,7 +570,7 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
                 }), nrow = nrow(newdata[[1]]), ncol = ncomp[1])
                 
                 rownames(out$AveragedPredict.class$max.dist) = rownames(out$WeightedPredict.class$max.dist) = rownames(newdata[[1]])
-                colnames(out$AveragedPredict.class$max.dist) = colnames(out$WeightedPredict.class$max.dist) = paste("dim", c(1:min(ncomp[-object$indY])), sep = " ")
+                colnames(out$AveragedPredict.class$max.dist) = colnames(out$WeightedPredict.class$max.dist) = paste0("dim", c(1:min(ncomp[-object$indY])))
             }
         }
         
