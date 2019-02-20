@@ -57,10 +57,10 @@
 stratified.subsampling = function(Y, folds = 10)
 {
     stop = 0
-    for(i in 1:nlevels(Y))
+    for(i in seq_len(nlevels(Y)))
     {
         ai=sample(which(Y==levels(Y)[i]),replace=FALSE) # random sampling of the samples from level i
-        aai=suppressWarnings(split(ai,factor(1:min(folds,length(ai)))))                       # split of the samples in k-folds
+        aai=suppressWarnings(split(ai,factor(seq_len(min(folds,length(ai))))))                       # split of the samples in k-folds
         if(length(ai)<folds)                                                # if one level doesn't have at least k samples, the list is completed with "integer(0)"
         {
             for(j in (length(ai)+1):folds)
@@ -72,10 +72,10 @@ stratified.subsampling = function(Y, folds = 10)
     
     # combination of the different split aa_i into SAMPLE
     SAMPLE=list()
-    for(j in 1:folds)
+    for(j in seq_len(folds))
     {
         SAMPLE[[j]]=integer(0)
-        for(i in 1:nlevels(Y))
+        for(i in seq_len(nlevels(Y)))
         {
             SAMPLE[[j]]=c(SAMPLE[[j]],get(paste("aa",i,sep="_"))[[j]])
         }
@@ -146,12 +146,12 @@ parallel
         class.comp[[ijk]] = array(0, c(nrow(X), nrepeat, length(test.keepX)))# prediction of all samples for each test.keepX and  nrep at comp fixed
     } else {
         prediction.keepX = vector("list", length=length(test.keepX))
-        for(i in 1:length(test.keepX))
-        prediction.keepX[[i]] = array(0,c(nrow(X), ncol(Y), nrepeat), dimnames = list(rownames(X), colnames(Y), paste0("nrep.", 1:nrepeat)))
+        for(i in seq_len(length(test.keepX)))
+        prediction.keepX[[i]] = array(0,c(nrow(X), ncol(Y), nrepeat), dimnames = list(rownames(X), colnames(Y), paste0("nrep.", seq_len(nrepeat))))
     }
     
     folds.input = folds # save fold number to be used for each nrepeat
-    for(nrep in 1:nrepeat)
+    for(nrep in seq_len(nrepeat))
     {
         n = nrow(X)
         if(any(class.object == "DA")){
@@ -171,7 +171,7 @@ parallel
         rownames(prediction.comp[[nrep]]) = rownames.X
         
         
-        repeated.measure = 1:n
+        repeated.measure = seq_len(n)
         if (!is.null(multilevel))
         {
             repeated.measure = multilevel[,1]
@@ -200,22 +200,22 @@ parallel
                         warning("At least one class is not represented in one fold, which may unbalance the error rate.\n  Consider a number of folds lower than the minimum in table(Y): ", min(table(Y)))
                         rm(temp)
                     } else {
-                        folds = suppressWarnings(split(sample(1:n), rep(1:n, length = M)))
+                        folds = suppressWarnings(split(sample(seq_len(n)), rep(seq_len(n), length = M)))
                     }
                     
                 } else {
-                    folds = split(sample(1:n), rep(1:M, length = n)) # needs to have all repeated samples in the same fold
+                    folds = split(sample(seq_len(n)), rep(seq_len(M), length = n)) # needs to have all repeated samples in the same fold
                 }
             }
         } else if (validation ==  "loo") {
-            folds = split(1:n, rep(1:n, length = n))
+            folds = split(seq_len(n), rep(seq_len(n), length = n))
             M = n
         }
         
         M = length(folds)
         
         error.sw = matrix(0,nrow = M, ncol = length(test.keepX))
-        rownames(error.sw) = paste0("fold",1:M)
+        rownames(error.sw) = paste0("fold",seq_len(M))
         colnames(error.sw) = test.keepX
         # for the last keepX (i) tested, prediction combined for all M folds so as to extract the error rate per class
         # prediction.all = vector(length = nrow(X))
@@ -429,7 +429,7 @@ parallel
 
             
             
-            for(i in 1:nrow(test.keepA))
+            for(i in seq_len(nrow(test.keepA)))
             {
                 #print(i)
                 
@@ -437,7 +437,7 @@ parallel
                 
                 names.to.pick = NULL
                 if(ncomp>1)
-                names.to.pick = unlist(lapply(1:(ncomp-1), function(x){
+                names.to.pick = unlist(lapply(seq_len(ncomp-1), function(x){
                     paste(paste0("comp",x),apply(keepA[[x]],1,function(x) paste(x,collapse="_")), sep=":")
                     
                 }))
@@ -482,15 +482,15 @@ parallel
             #clusterExport(cl, ls(), envir=environment())
             #print(clusterEvalQ(cl,ls()))
             
-            result.all = parLapply(cl, 1: M, fonction.j.folds)
+            result.all = parLapply(cl, seq_len(M), fonction.j.folds)
         } else {
-            result.all = lapply(1: M, fonction.j.folds)
+            result.all = lapply(seq_len(M), fonction.j.folds)
             
         }
         #---------------------------#
         #--- combine the results ---#
 
-        for(j in 1:M)
+        for(j in seq_len(M))
         {
             omit = result.all[[j]]$omit
             prediction.comp.j = result.all[[j]]$prediction.comp.j
@@ -510,7 +510,7 @@ parallel
         }
         if(!any(class.object == "DA")){
             # create a array, for each keepX: n*q*nrep
-            for(i in 1:length(test.keepX))
+            for(i in seq_len(length(test.keepX)))
                 prediction.keepX[[i]][,,nrep] = prediction.comp[[nrep]][,,i, drop=FALSE]
         }
 
@@ -527,20 +527,20 @@ parallel
         if(auc)
         {
             data=list()
-            for (i in 1:length(test.keepX))
+            for (i in seq_len(length(test.keepX)))
             {
                 data$outcome = Y
                 data$data = prediction.comp[[nrep]][, , i]
-                auc.all[[nrep]][, , i] = as.matrix(statauc(data)[[1]]) # [[1]] because [[2]] is the graph
+                auc.all[[nrep]][, , i] = statauc(data)[[1]] #as.matrix(statauc(data)[[1]]) # [[1]] because [[2]] is the graph
             }
         }
         #----- AUC on the test -----#
         #---------------------------#
 
     } #end nrep 1:nrepeat
-    if(auc) names(auc.all) = paste0("nrep.", 1:nrepeat)
+    if(auc) names(auc.all) = paste0("nrep.", seq_len(nrepeat))
     
-    names(prediction.comp) = paste0("nrep.", 1:nrepeat)
+    names(prediction.comp) = paste0("nrep.", seq_len(nrepeat))
     # class.comp[[ijk]] is a matrix containing all prediction for test.keepX, all nrepeat and all distance, at comp fixed
     
     #-------------------------------------------------------------#
@@ -548,7 +548,7 @@ parallel
     if(auc)
     {
         # matrix of AUC per keepX, per nrepeat, averaged over classes
-        auc.mean.sd.over.class =  matrix(0, nrow= length(test.keepX), ncol=nrepeat, dimnames = list(names(test.keepX), paste0("nrep.", 1:nrepeat)))
+        auc.mean.sd.over.class =  matrix(0, nrow= length(test.keepX), ncol=nrepeat, dimnames = list(names(test.keepX), paste0("nrep.", seq_len(nrepeat))))
         
         # matrix of AUC per keepX, per class, averaged over nrepeat
         if(nlevels(Y)>2)
@@ -558,10 +558,10 @@ parallel
             auc.mean.sd.over.nrepeat =  array(0, c(1,2, length(test.keepX)), dimnames = list(rownames(auc.all[[1]]), c("AUC.mean","AUC.sd"), names(test.keepX)))
         }
         
-        for(i in 1:length(test.keepX))
+        for(i in seq_len(length(test.keepX)))
         {
             temp = NULL
-            for(nrep in 1:nrepeat)
+            for(nrep in seq_len(nrepeat))
             {
                 temp = cbind(temp, auc.all[[nrep]][, 1, i])
                 auc.mean.sd.over.class[i,nrep] = mean (auc.all[[nrep]][,1,i])
@@ -583,7 +583,7 @@ parallel
         for(ijk in dist)
         {
             rownames(class.comp[[ijk]]) = rownames.X
-            colnames(class.comp[[ijk]]) = paste0("nrep.", 1:nrepeat)
+            colnames(class.comp[[ijk]]) = paste0("nrep.", seq_len(nrepeat))
             dimnames(class.comp[[ijk]])[[3]] = paste0("test.keepX.",names(test.keepX))
             
             #finding the best keepX depending on the error measure: overall or BER
@@ -593,7 +593,7 @@ parallel
                 sum(as.character(Y) != x)
             })
             rownames(error) = names(test.keepX)
-            colnames(error) = paste0("nrep.",1:nrepeat)
+            colnames(error) = paste0("nrep.",seq_len(nrepeat))
             
             # we want to average the error per keepX over nrepeat and choose the minimum error
             error.mean[[ijk]] = apply(error,1,mean)/length(Y)
@@ -612,7 +612,7 @@ parallel
             })
             
             rownames(error.per.class.keepX.opt.comp[[ijk]]) = levels(Y)
-            colnames(error.per.class.keepX.opt.comp[[ijk]]) = paste0("nrep.", 1:nrepeat)
+            colnames(error.per.class.keepX.opt.comp[[ijk]]) = paste0("nrep.", seq_len(nrepeat))
             
             
             test.keepX.out[[ijk]] = test.keepX[keepX.opt[[ijk]]]
@@ -633,7 +633,7 @@ parallel
         for(ijk in dist)
         {
             rownames(class.comp[[ijk]]) = rownames.X
-            colnames(class.comp[[ijk]]) = paste0("nrep.", 1:nrepeat)
+            colnames(class.comp[[ijk]]) = paste0("nrep.", seq_len(nrepeat))
             dimnames(class.comp[[ijk]])[[3]] = paste0("test.keepX.",names(test.keepX))
             
             error = apply(class.comp[[ijk]],c(3,2),function(x)
@@ -642,7 +642,7 @@ parallel
                 get.BER(conf)
             })
             rownames(error) = names(test.keepX)
-            colnames(error) = paste0("nrep.",1:nrepeat)
+            colnames(error) = paste0("nrep.",seq_len(nrepeat))
             
             # average BER over the nrepeat
             error.mean[[ijk]] = apply(error,1,mean)
@@ -661,7 +661,7 @@ parallel
             })
             
             rownames(error.per.class.keepX.opt.comp[[ijk]]) = levels(Y)
-            colnames(error.per.class.keepX.opt.comp[[ijk]]) = paste0("nrep.", 1:nrepeat)
+            colnames(error.per.class.keepX.opt.comp[[ijk]]) = paste0("nrep.", seq_len(nrepeat))
             
             test.keepX.out[[ijk]] = test.keepX[keepX.opt[[ijk]]]
             choice.keepX.out[[ijk]] = c(choice.keepX, test.keepX.out)

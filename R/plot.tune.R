@@ -28,7 +28,9 @@
 plot.tune.splsda = plot.tune.spls = #plot.spca <- plot.ipca <- plot.sipca <-
 function(x, optimal = TRUE, sd = TRUE, col, ...)
 {
-    
+    # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
+    y = Comp = lwr = upr = NULL
+
     if (!is.logical(optimal))
     stop("'optimal' must be logical.", call. = FALSE)
 
@@ -53,7 +55,7 @@ function(x, optimal = TRUE, sd = TRUE, col, ...)
     {
         #only 10 colors in color.mixo
         if(missing(col))
-        col = color.mixo(1:comp.tuned)
+        col = color.mixo(seq_len(comp.tuned))
     } else {
         #use color.jet
         if(missing(col))
@@ -120,7 +122,7 @@ function(x, optimal = TRUE, sd = TRUE, col, ...)
     if(optimal)
     {
         index = NULL
-        for(i in 1:comp.tuned)
+        for(i in seq_len(comp.tuned))
             index = c(index, which(df$x == select.keepX[i] & df$Comp == levels(df$Comp)[i]))
             
         # adding the choseen keepX to the graph
@@ -157,7 +159,7 @@ function(x, sd = TRUE, col, ...)
     {
         #only 10 colors in color.mixo
         if(missing(col))
-        col = color.mixo(1:comp.tuned)
+        col = color.mixo(seq_len(comp.tuned))
     } else {
         #use color.jet
         if(missing(col))
@@ -199,7 +201,7 @@ function(x, sd = TRUE, col, ...)
     }
     
     pp=list()
-    for(comp in 1:comp.tuned)
+    for(comp in seq_len(comp.tuned))
     {
         # order error per comp
         so = sort(error[,comp], index.return=TRUE, decreasing = TRUE)

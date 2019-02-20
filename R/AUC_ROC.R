@@ -52,7 +52,7 @@ roc.comp = 1,
     res.predict = predict.mixo_spls(object, newdata = newdata,
     dist = "max.dist", multilevel = multilevel)$predict
     
-    for (i in 1:object$ncomp)
+    for (i in seq_len(object$ncomp))
     {
         data$data=res.predict[,,i]
         title=paste("ROC Curve Comp",i)
@@ -116,7 +116,7 @@ roc.study = "global",
     res.predict = predict.mixo_spls(object, newdata = newdata, dist = "max.dist",
     multilevel = multilevel, study.test = study.test)$predict
     
-    for (i in 1:object$ncomp)
+    for (i in seq_len(object$ncomp))
     {
         data$data=res.predict[,,i]
         title=paste0("ROC Curve Comp ",i, title.temp)
@@ -154,9 +154,9 @@ roc.comp = 1,
     block.all = names(res.predict)
     block.temp = names(res.predict[roc.block])
     
-    for(j in 1:length(res.predict))
+    for(j in seq_len(length(res.predict)))
     {
-        for (i in 1:object$ncomp[j])
+        for (i in seq_len(object$ncomp[j]))
         {
             data$data=res.predict[[j]][,,i]
             title=paste("ROC Curve\nBlock: ", names(res.predict)[j],
@@ -204,9 +204,9 @@ roc.comp = 1,
     block.all = names(res.predict)
     block.temp = names(res.predict[roc.block])
     
-    for(j in 1:length(res.predict))
+    for(j in seq_len(length(res.predict)))
     {
-        for (i in 1:object$ncomp[j])
+        for (i in seq_len(object$ncomp[j]))
         {
             data$data=res.predict[[j]][,,i]
             title=paste("ROC Curve\nBlock: ", names(res.predict)[j],

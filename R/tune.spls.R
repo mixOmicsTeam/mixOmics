@@ -163,14 +163,14 @@ cpus
     X.names = dimnames(X)[[2]]
     if (is.null(X.names))
     {
-        X.names = paste("X", 1:ncol(X), sep = "")
+        X.names = paste("X", seq_len(ncol(X)), sep = "")
         dimnames(X)[[2]] = X.names
     }
     
     ind.names = dimnames(X)[[1]]
     if (is.null(ind.names))
     {
-        ind.names = 1:nrow(X)
+        ind.names = seq_len(nrow(X))
         rownames(X)  = ind.names
     }
     
@@ -211,7 +211,7 @@ cpus
     {
         comp.real = (length(already.tested.X) + 1):ncomp
     } else {
-        comp.real = 1:ncomp
+        comp.real = seq_len(ncomp)
     }
     
 
@@ -249,7 +249,7 @@ cpus
         clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX", "test.keepY"),envir=environment())
 
         # successively tune the components until ncomp: comp1, then comp2, ...
-        for(comp in 1:length(comp.real))
+        for(comp in seq_len(length(comp.real)))
         {
 
             if (progressBar == TRUE)
@@ -286,7 +286,7 @@ cpus
         stopCluster(cl)
         
         names(mat.error.rate) = c(paste('comp', comp.real, sep=''))
-        names(already.tested.X) = c(paste('comp', 1:ncomp, sep=''))
+        names(already.tested.X) = c(paste('comp', seq_len(ncomp), sep=''))
 
         if (progressBar == TRUE)
         cat('\n')
@@ -296,13 +296,13 @@ cpus
         {
             keepX = already.tested.X
             error.keepX = NULL
-            for(comp in 1:length(comp.real))
+            for(comp in seq_len(length(comp.real)))
             {
                 ind.row = match(keepX[[comp.real[comp]]],test.keepX)
                 error.keepX = cbind(error.keepX, apply(matrix(mat.error.rate[[comp]][[ind.row]],ncol=nrepeat),2,mean))
             }
             colnames(error.keepX) = c(paste('comp', comp.real, sep=''))
-            rownames(error.keepX) = c(paste('nrep.', 1:nrepeat, sep=''))
+            rownames(error.keepX) = c(paste('nrep.', seq_len(nrepeat), sep=''))
             
             opt = t.test.process(error.keepX)
             

@@ -591,7 +591,7 @@ name.save = NULL)
         if (length(lty.edge)==1) lty.edge = c(lty.edge, lty.edge)
         
         choices = c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash", "blank")
-        lty.edge = choices[pmatch(lty.edge, choices,duplicate=TRUE)]
+        lty.edge = choices[pmatch(lty.edge, choices,duplicates.ok=TRUE)]
         
         if (any(is.na(lty.edge)))
         stop("'lty.edge' should be from 'solid', 'dashed', 'dotted', 'dotdash', 'longdash', twodash' or 'blank'.",
