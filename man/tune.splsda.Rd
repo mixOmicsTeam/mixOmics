@@ -69,7 +69,7 @@ How many folds to generate is selected by specifying the number of folds in \cod
 
 
 If \code{auc = TRUE} and there are more than 2 categories in \code{Y}, the Area Under the Curve is averaged using one-vs-all comparison. Note however that the AUC criteria may not be particularly insightful as the prediction threshold we use in sPLS-DA differs from an AUC threshold (sPLS-DA relies on prediction distances for predictions, see \code{?predict.splsda} for more details) and the supplemental material of the mixOmics article (Rohart et al. 2017).
-If \code{measure==AUC}, we do not output SD as this measure can be a mean (over \code{nrepeat}) of means (over the categories).
+If you want the AUC criterion to be insightful, you should use \code{measure==AUC} as this will output the number of variable that maximises the AUC; in this case there is no prediction threshold from sPLS-DA (\code{dist} is not used). If \code{measure==AUC}, we do not output SD as this measure can be a mean (over \code{nrepeat}) of means (over the categories).
 
 
 BER is appropriate in case of an unbalanced number of samples per class as it calculates the average proportion of wrongly classified samples in each class, weighted by the number of samples in each class. BER is less biased towards majority classes during the performance assessment.
