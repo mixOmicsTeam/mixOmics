@@ -47,7 +47,7 @@ knitr::opts_chunk$set(dpi = 100, echo=TRUE, warning=FALSE, message=FALSE, eval =
 
 
 # Bookdown version
-This vignette is also available as a bookdown format on our gitHub page https://github.com/mixOmicsTeam/. 
+This vignette is also available as a bookdown format on our gitHub page https://mixomicsteam.github.io/Bookdown/. 
 
 # Introduction {#intro}
 
@@ -158,21 +158,34 @@ knitr::include_graphics("XtraFigs/cheatsheet.png")
 
 ### Key publications {#intro:pubs}
 
+#### Methods papers
 The methods implemented in `mixOmics` are described in detail in the following publications. A more extensive list can be found at this [link](http://mixomics.org/a-propos/publications/).
+
+- **DIABLO** (<span style="color:blue">New</span>): Singh A, Gautier B, Shannon C, Vacher M, Rohart F, Tebbutt S, K-A. Le Cao (2019). [DIABLO: an integrative approach for identifying key molecular drivers from multi-omics assays](https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/bty1054). *Bioinformatics* bty1054. 
+
 
 - **Overview and recent integrative methods**: Rohart F.,  Gautier, B, Singh, A, Le Cao, K. A. mixOmics: an [R package for omics feature selection and multiple data integration](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005752). *PLoS Comput Biol* 13(11): e1005752.
 
 - **Graphical outputs for integrative methods**: [@Gon12] Gonzalez I., Le Cao K.-A., Davis, M.D. and Dejean S. (2012) [Insightful graphical outputs to explore relationships between two omics data sets](https://biodatamining.biomedcentral.com/articles/10.1186/1756-0381-5-19). *BioData Mining* 5:19.
 
-- **DIABLO**: Singh A, Gautier B, Shannon C, Vacher M, Rohart F, Tebbutt S, K-A. Le Cao. [DIABLO - multi-omics data integration for biomarker discovery.](https://www.biorxiv.org/content/early/2018/03/20/067611)
 
 - **sparse PLS**: Le Cao K.-A., Martin P.G.P, Robert-Granie C. and Besse, P. (2009) [Sparse Canonical Methods for Biological Data Integration: application to a cross-platform study](http://www.biomedcentral.com/1471-2105/10/34/). *BMC Bioinformatics*, 10:34.
 
 - **sparse PLS-DA**:Le Cao K.-A., Boitard S. and Besse P. (2011) [Sparse PLS Discriminant Analysis: biologically relevant feature selection and graphical displays for multiclass problems]( https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-12-253). *BMC Bioinformatics*, 22:253.
 
+- **sPLS-DA for microbiome data**: Le Cao K-A$^*$, Costello ME $^*$, Lakis VA , Bartolo F, Chua XY, Brazeilles R and Rondeau P. (2016) [MixMC: Multivariate insights into Microbial Communities](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0160169).PLoS ONE 11(8): e0160169
+
 - **Multilevel approach for repeated measurements**: Liquet B, Le Cao K-A, Hocini H, Thiebaut R (2012). [A novel approach for biomarker selection and the integration of repeated measures experiments from two assays](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-13-325). *BMC Bioinformatics*, 13:325
 
-- **sPLS-DA for microbiome data**: Le Cao K-A$^*$, Costello ME $^*$, Lakis VA , Bartolo F, Chua XY, Brazeilles R and Rondeau P. (2016) [MixMC: Multivariate insights into Microbial Communities](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0160169).PLoS ONE 11(8): e0160169
+
+#### Biological application papers
+For those interested in how these methods have been applied to omics biological problems:
+
+- Lee AH, Shanon CS, [...], some members of mixOmics team and Kollman T (2019). [Dynamic molecular changes during the first week of human life follow a robust developmental trajectory](https://www.nature.com/articles/s41467-019-08794-x) *Nature Communications* **10**: 1092. *We used DIABLO and other multi omics integrative methods to integratve 3 - 5 omics datasets*.
+
+- Gavin PG, [...], and Hamilton-Williams EE (2018). [Intestinal metaproteomics reveals host-microbiota interactions in subjects at risk for type 1 diabetes](https://www.nature.com/articles/s41467-019-08794-x) *Diabetes care* **41**: 10. *We used DIABLO to integrate microbiome, proteomics and meta-proteomics*.
+
+
 
 
 
@@ -216,13 +229,17 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
  BiocManager::install("mixOmics")
 ```
 
-Alternatively, you can install the development version of the package from Github.
+Alternatively, you can install the *latest* development version of the package from Github.
 ```{r, eval = FALSE}
-BiocManager::install("mixOmicsTeam/mixOmics/")
+install.packages("devtools")
+# then load
+library(devtools)
+install_github("mixOmicsTeam/mixOmics")
 ```
 
 The `mixOmics` package will directly import the following packages: 
 `r Rpackage("igraph")`, `r Rpackage("rgl")`, `r Rpackage("ellipse")`, `r Rpackage("corpcor")`, `r Rpackage("RColorBrewer")`, `r Rpackage("parallel")`, `r Rpackage("dplyr")`, `r Rpackage("tidyr")`, `r Rpackage("reshape2")`, `r Rpackage("methods")`, `r Rpackage("matrixStats")`, `r Rpackage("rARPACK")`, `r Rpackage("gridExtra")`.
+
 For *apple mac users*, if you are unable to install the imported library `rgl`, you will need to install the [XQuartz software](https://www.xquartz.org) first.
 
 
@@ -235,7 +252,7 @@ library(mixOmics)
 Check that there is no error when loading the package, especially for the `rgl` library (see above).
 
 ## Upload data
-The examples we give in this vignette use data that are already part of the package. To upload your own data, check first that your working directory is set, then read your data from a  `.txt` or `.csv` format, either by using **File > Import Dataset** in RStudio or via one of these command lines:
+The examples we give in this vignette use data that are already part of the package, *which means that the objects are stored as list. However, you do not need to store your data as list, just data frames will do*. To upload your own data, check first that your working directory is set, then read your data from a  `.txt` or `.csv` format, either by using **File > Import Dataset** in RStudio (*although be mindful this option may pose problem with row and col name headers*) or via one of these command lines:
 
 ```{r, eval = FALSE}
 # from csv file
@@ -243,9 +260,12 @@ data <- read.csv("your_data.csv", row.names = 1, header = TRUE)
 
 # from txt file
 data <- read.table("your_data.txt", header = TRUE)
+
+# then in the argument in the mixOmics functions, just fill with:
+# X = data
 ```
 
-For more details about the arguments used to modify those functions, type `?read.csv` or `?read.table` in the R console.
+For more details about the arguments used to modify those functions, type `?read.csv` or `?read.table` in the R console. In this vignette we assume you are sufficiently proficient in R to input your data to carry on with the mixOmics analyses! 
 
 ## Quick start in `mixOmics` {#start:PCA}
 
@@ -752,11 +772,22 @@ For **item 1**, the `perf` evaluates the performance of PLS-DA for a large numbe
 
 ```{r eval= TRUE}
 MyResult.plsda2 <- plsda(X,Y, ncomp=10)
-set.seed(30) # for reproducbility in this vignette, otherwise increase nrepeat
+set.seed(30) # for reproducibility in this vignette, otherwise increase nrepeat
 MyPerf.plsda <- perf(MyResult.plsda2, validation = "Mfold", folds = 3, 
                   progressBar = FALSE, nrepeat = 10) # we suggest nrepeat = 50
 
-plot(MyPerf.plsda, col = color.mixo(5:7), sd = TRUE, legend.position = "horizontal")
+# type attributes(MyPerf.plsda) to see the different outputs
+# slight bug in our output function currently see the quick fix below
+#plot(MyPerf.plsda, col = color.mixo(5:7), sd = TRUE, legend.position = "horizontal")
+
+# quick fix
+matplot(MyPerf.plsda$error.rate$BER, type = 'l', lty = 1, 
+        col = color.mixo(1:3), 
+        main = 'Balanced Error rate')
+legend('topright', 
+       c('max.dist', 'centroids.dist', 'mahalanobis.dist'), 
+       lty = 1,
+       col = color.mixo(5:7))
 ```
 
 
@@ -1055,24 +1086,24 @@ Tuning `keepX` and `keepY` conjointly is still work in progress. What we advise 
 
 ### PLS modes {#PLS:details}
 
-You may have noticed the `mode` argument in PLS. We can calculate the residual matrices at each PLS iteration differently. Note: this is fore **advanced** users.
+You may have noticed the `mode` argument in PLS. We can calculate the residual matrices at each PLS iteration differently. Note: this is for **advanced** users.
 
-#### Regression mode 
+** Regression mode **
 The PLS regression mode models  *uni-directional* (or 'causal') relationship between two data sets. The `Y` matrix is deflated with respect to the information extracted/modelled from the local regression on X. Here the goal is to predict `Y` from `X` (`Y` and `X` play an *assymmetric role*). Consequently the latent variables computed to predict Y from X are different from those computed to predict X from Y. More details about the model can be found in[ Appendix [@Lec08]. 
 
 PLS regression mode, also called PLS2, is commonly applied for the analysis of biological data [@Bou05; @Byl07] due to the biological assumptions or the biological dogma. In general, the number of variables in `Y` to predict are fewer in number than the predictors in `X`. 
 
-#### Canonical mode
+** Canonical mode **
 Similar to a Canonical Correlation Analysis (CCA) framework, this mode is used to model a *bi-directional* (or *symmetrical*) relationship between the two data sets.  The `Y` matrix is deflated with respect to the information extracted or modelled from the local regression on `Y`. Here `X` and `Y` play a symmetric role and the goal is similar to CCA. More details about the model can be found in [@Lec09a]. 
 
 PLS canonical mode is not well known (yet), but is applicable when there is no *a priori* relationship between the two data sets, or in place of CCA but when variable selection is required in large data sets. In [@Lec09a], we compared the measures of the same biological samples on different types of microarrays, cDNA and Affymetrix arrays, to highlight complementary information at the transcripts levels. Note however that for this mode we do not provide any tuning function.
 
 
-#### Other modes
+** Other modes **
 The 'invariant' mode performs a redundancy analysis, where the `Y` matrix is not deflated. The 'classic' mode is similar to a regression mode. It gives identical results for the variates and loadings associated to the `X` data set, but differences for the loadings vectors associated to the Y data set (different normalisations are used). Classic mode is the PLS2 model as defined by [@Ten98], Chap 9. 
 
 
-#### Difference between PLS modes
+** Difference between PLS modes **
 For the first PLS dimension, all PLS modes will output the same results in terms of latent variables and loading vectors. After the first dimension, these vectors will differ, as the  matrices are deflated differently. 
 
 ## Additional resources
