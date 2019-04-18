@@ -198,7 +198,7 @@ ind.NA = NULL, ind.NA.col = NULL, remove.object=NULL)
             is.na.X = is.na.A[[1]]
         }
         mat.c = matrix(0, nrow = ncol(A[[1]]), ncol = N,
-        dimnames = list(colnames(A[[1]],  paste0("comp ", 1:N))))
+        dimnames = list(colnames(A[[1]],  paste0("comp", 1:N))))
     } else {mat.c = NULL}
     
     ### End: Initialization parameters
@@ -390,7 +390,7 @@ ind.NA = NULL, ind.NA.col = NULL, remove.object=NULL)
             
             rownames(variates.A[[k]]) = rownames(A[[k]])
             colnames(variates.A[[k]]) = colnames(loadings.A[[k]]) =
-            paste0("comp ", 1:max(ncomp))
+            paste0("comp", 1:max(ncomp))
             if(all.outputs)
             AVE_X[[k]] = apply(cor(A[[k]], variates.A[[k]])^2, 2, mean)
             
@@ -403,10 +403,10 @@ ind.NA = NULL, ind.NA.col = NULL, remove.object=NULL)
                 {
                     rownames(loadings.partial.A[[k]][[m]]) = colnames(A[[k]])
                     colnames(loadings.partial.A[[k]][[m]]) =
-                    paste0("comp ", 1:max(ncomp))
+                    paste0("comp", 1:max(ncomp))
                     rownames(variates.partial.A[[k]][[m]]) = mean_centered.rownames.study[[m]]
                     colnames(variates.partial.A[[k]][[m]]) =
-                    paste0("comp ", 1:max(ncomp))
+                    paste0("comp", 1:max(ncomp))
                 }
             }
         }

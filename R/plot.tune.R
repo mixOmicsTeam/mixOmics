@@ -1,11 +1,11 @@
-#############################################################################################################
+###############################################################################
 # Authors:
-#   Kim-Anh Le Cao, French National Institute for Agricultural Research and ARC Centre of Excellence ins Bioinformatics, Institute for Molecular Bioscience, University of Queensland, Australia
-#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Leigh Coonan, Queensland Faculty for Advanced Bioinformatics, Australia
+#   Kim-Anh Le Cao
+#   Florian Rohart
+#   Leigh Coonan
 #
 # created: 20-08-2016
-# last modified: 25-08-2016
+# last modified: 29-01-2019
 #
 # Copyright (C) 2010
 #
@@ -22,13 +22,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
+###############################################################################
 
 
 plot.tune.splsda = plot.tune.spls = #plot.spca <- plot.ipca <- plot.sipca <-
-function(x, optimal = TRUE, sd = TRUE, legend.position = "topright", col, ...)
+function(x, optimal = TRUE, sd = TRUE, col, ...)
 {
-    
+    # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
+    y = Comp = lwr = upr = NULL
+
     if (!is.logical(optimal))
     stop("'optimal' must be logical.", call. = FALSE)
 
@@ -53,7 +55,7 @@ function(x, optimal = TRUE, sd = TRUE, legend.position = "topright", col, ...)
     {
         #only 10 colors in color.mixo
         if(missing(col))
-        col = color.mixo(1:comp.tuned)
+        col = color.mixo(seq_len(comp.tuned))
     } else {
         #use color.jet
         if(missing(col))
@@ -76,44 +78,60 @@ function(x, optimal = TRUE, sd = TRUE, legend.position = "topright", col, ...)
         ylab = "Bias"
     }else if (measure == "R2"){
         ylab = "R2"
+    }else if (measure == "AUC"){
+        ylab = "AUC"
+    }
+    
+    #legend
+    names.comp = substr(colnames(error),5,10) # remove "comp" from the name
+    if(length(x$choice.keepX) == 1){
+         #only first comp tuned
+         legend = "1"
+    } else if(length(x$choice.keepX) == comp.tuned) {
+        # all components have been tuned
+        legend = c("1", paste("1 to", names.comp[-1]))
+    } else {
+        #first components were not tuned
+        legend = paste("1 to", names.comp)
     }
 
-    matplot(rownames(error),error, type = "l", axes = TRUE, lwd = 2, lty = 1, log = "x",
-    xlab = "Number of selected features", ylab = ylab,
-    col = col, ylim = ylim)
+    
+    # creating data.frame with all the information
+    df = melt(error)
+    colnames(df) = c("x","Comp","y")
+    df$Comp = factor(df$Comp, labels=legend)
+
+    p = ggplot(df, aes(x = x, y = y, color = Comp)) +
+    labs(x = "Number of selected features", y = ylab) +
+    theme_bw() +
+    geom_line()+ geom_point()
+    p = p+ scale_x_continuous(trans='log10') +
+    scale_color_manual(values = col)
+
+    # error bar
+    if(!is.null(error.rate.sd))
+    {
+        dferror = melt(error.rate.sd)
+        df$lwr = df$y - dferror$value
+        df$upr = df$y + dferror$value
+        
+        #adding the error bar to the plot
+        p = p + geom_errorbar(data=df,aes(ymin=lwr, ymax=upr))
+    }
     
     if(optimal)
     {
-        for(i in 1:comp.tuned)
-        {
-            # store coordinates of chosen keepX
-            index = which(rownames(error) == select.keepX[i])
-            # choseen keepX:
-            points(rownames(error)[index], error[index,i], col = col[i], lwd=2, cex=3, pch = 18)
-        }
+        index = NULL
+        for(i in seq_len(comp.tuned))
+            index = c(index, which(df$x == select.keepX[i] & df$Comp == levels(df$Comp)[i]))
+            
+        # adding the choseen keepX to the graph
+        p=p + geom_point(data=df[index,],size=7, shape = 18)
+        p = p + guides(color = guide_legend(override.aes =
+        list(size=0.7,stroke=1)))
     }
     
-    if(!is.null(error.rate.sd))
-    {
-        for(j in 1:ncol(error))
-        plot_error_bar(x = as.numeric(names(error[, j])), y =error[, j] , uiw=error.rate.sd[, j], add=TRUE, col = rep(col[j],each=nrow(error)))#, ...)
-    }
-
-
-
-    if(length(x$choice.keepX) == 1) #only first comp tuned
-    {
-        legend = "comp1"
-    } else if(length(x$choice.keepX) == comp.tuned) # all components have been tuned
-    {
-        legend = c("comp1", paste("comp1 to", colnames(error)[-1]))
-    } else { #first component was not tuned
-        legend = paste("comp1 to", colnames(error))
-    }
-
-    legend(legend.position, lty = 1, lwd = 2, horiz = FALSE, col = col,
-    legend = legend)
-    
+    p
 }
 
 
@@ -141,7 +159,7 @@ function(x, sd = TRUE, col, ...)
     {
         #only 10 colors in color.mixo
         if(missing(col))
-        col = color.mixo(1:comp.tuned)
+        col = color.mixo(seq_len(comp.tuned))
     } else {
         #use color.jet
         if(missing(col))
@@ -183,7 +201,7 @@ function(x, sd = TRUE, col, ...)
     }
     
     pp=list()
-    for(comp in 1:comp.tuned)
+    for(comp in seq_len(comp.tuned))
     {
         # order error per comp
         so = sort(error[,comp], index.return=TRUE, decreasing = TRUE)

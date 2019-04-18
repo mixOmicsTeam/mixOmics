@@ -43,7 +43,6 @@
 
 internal_predict.DA = function(object, out, q, dist, weights)
 {
-    
     # a DA analysis (mint).(block).(s)plsda
     if (!is(object, "DA"))
     stop("'Object' is not from a Discriminant Analysis", call.=FALSE)
@@ -69,7 +68,7 @@ internal_predict.DA = function(object, out, q, dist, weights)
         G[[i]] = t(t(G[[i]]))
         else
         G[[i]] = t(G[[i]])
-        colnames(G[[i]]) = paste("dim", c(1:ncomp[i]), sep = " ")
+        colnames(G[[i]]) = paste0("dim", c(1:ncomp[i]))
         rownames(G[[i]]) = colnames(object$ind.mat)
         
     }
@@ -88,7 +87,7 @@ internal_predict.DA = function(object, out, q, dist, weights)
             }), nrow = nrow(newdata[[x]]), ncol = ncomp[x])
         })
         cls$max.dist = lapply(1:J, function(x){colnames(cls$max.dist[[x]]) =
-            paste(rep("comp", ncomp[x]), 1 : ncomp[[x]], sep = " ");
+            paste0(rep("comp", ncomp[x]), 1 : ncomp[[x]]);
             rownames(cls$max.dist[[x]]) = rownames(newdata[[x]]);
             return(cls$max.dist[[x]])})
         names(cls$max.dist)=names(object$X)
@@ -125,7 +124,7 @@ internal_predict.DA = function(object, out, q, dist, weights)
         }
         
         cls$centroids.dist = lapply(1:J, function(x){colnames(cl[[x]]) =
-            paste(rep("comp", ncomp[x]), 1 : ncomp[[x]], sep = " ");
+            paste0(rep("comp", ncomp[x]), 1 : ncomp[[x]]);
             rownames(cl[[x]]) = rownames(newdata[[x]]); return(cl[[x]])})
         names(cls$centroids.dist)=names(object$X)
     }### End: Centroids distance
@@ -163,7 +162,7 @@ internal_predict.DA = function(object, out, q, dist, weights)
         }
         
         cls$mahalanobis.dist = lapply(1:J, function(x){colnames(cl[[x]]) =
-            paste(rep("comp", ncomp[x]), 1 : ncomp[[x]], sep = " ");
+            paste0(rep("comp", ncomp[x]), 1 : ncomp[[x]]);
             rownames(cl[[x]]) = rownames(newdata[[x]]);return(cl[[x]])})
         names(cls$mahalanobis.dist)=names(object$X)
     } ### End: Mahalanobis distance

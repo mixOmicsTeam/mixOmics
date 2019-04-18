@@ -71,7 +71,7 @@ test_that("block.splsda works", {
                c("AVE_X", "AVE_outer", "AVE_inner"))
   expect_equal(nutrimouse.sgccda$AVE$AVE_outer[1], 0.217938372815004)
   expect_equal(nutrimouse.sgccda$AVE$AVE_inner[1], 0.663209598406049)
-  expect_equal(nutrimouse.sgccda$AVE$AVE_X$Y[1], c(`comp 1` = 0.25))
+  expect_equal(nutrimouse.sgccda$AVE$AVE_X$Y[1], c(`comp1` = 0.25))
 
   expect_length(nutrimouse.sgccda$variates, 3L)
   expect_equal(names(nutrimouse.sgccda$variates), c("gene", "lipid", "Y"))

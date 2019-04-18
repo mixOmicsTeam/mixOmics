@@ -26,7 +26,7 @@ importFrom("grDevices","rainbow")
 
 importFrom("methods", "hasArg", "is")
 
-importFrom("dplyr","group_by", "mutate", "summarise", "arrange","row_number","filter")
+importFrom("dplyr","group_by", "mutate", "summarise", "arrange","row_number","filter","n")
 
 importFrom("tidyr","gather")
 
@@ -133,6 +133,7 @@ S3method(plot, perf.sgccda.mthd)
 S3method(plot, rcc)
 S3method(plot, pca)
 S3method(plot, sgccda)
+S3method(plot, tune.rcc)
 S3method(plot, tune.spls)
 S3method(plot, tune.splsda)
 S3method(plot, tune.block.splsda)

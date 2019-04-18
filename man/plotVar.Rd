@@ -36,6 +36,7 @@ cutoff = 0,
 rad.in = 0.5,
 title="Correlation Circle Plots",
 legend = FALSE,
+legend.title = "Block",
 style="ggplot2", # can choose between graphics,3d, lattice or ggplot2,
 overlap = TRUE,
 axes.box = "all",
@@ -66,7 +67,9 @@ or integers, can be of length 2 (one for each data set) or of length (p+q) (i.e.
 \item{cutoff}{numeric between 0 and 1. Variables with correlations below this cutoff in absolute value are not plotted (see Details).}
 \item{rad.in}{numeric between 0 and 1, the radius of the inner circle. Defaults to \code{0.5}.}
 \item{title}{character indicating the title plot.}
-\item{legend}{boolean. Whether the legend should be added. Default is TRUE.}
+\item{legend}{boolean when more than 3 blocks. Can be a character vector when one or 2 blocks
+to customize the legend. See examples. Default is FALSE.}
+\item{legend.title}{title of the legend}
 \item{style}{argument to be set to either \code{'graphics'}, \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.}
 \item{overlap}{boolean. Whether the variables should be plotted in one single figure. Default is TRUE.}
 \item{axes.box}{for style '3d', argument to be set to either \code{'axes'}, \code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.}
@@ -137,6 +140,10 @@ toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
 keepY = c(10, 10, 10))
 
 plotVar(toxicity.spls, cex = c(1,0.8))
+
+# with a customized legend
+plotVar(toxicity.spls, legend = c("block 1", "my block 2"),
+legend.title="my legend")
 
 ## variable representation for objects of class 'splsda'
 # ----------------------------------------------------

@@ -68,7 +68,7 @@ function(object)
     #-- valeurs sortantes --#
     VIP = sqrt(p * VIP)
     rownames(VIP) = rownames(W)
-    colnames(VIP)= paste("comp", 1:H)
+    colnames(VIP)= paste0("comp", 1:H)
      
     return(invisible(VIP))
 }

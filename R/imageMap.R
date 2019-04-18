@@ -116,8 +116,8 @@ lwid = NULL)
     
     if (!is.null(col.sideColors)) {
         lmat = rbind(lmat[1, ], c(NA, 3), lmat[2, ] + 1)
+        n.csc = ncol(col.sideColors)
         if (is.null(lhei)) {
-            n.csc = ncol(col.sideColors)
             lhei = c(keysize[2], 0.15 + 0.1 * (n.csc - 1), 4)
         }
         csc = TRUE

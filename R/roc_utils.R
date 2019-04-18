@@ -36,7 +36,7 @@ statauc <- function(data = NULL, plot = FALSE, title = NULL){
     tempout = outcome
     levels(tempout)[-i] = "Other(s)"
     tempout = factor(tempout, c(levels(outcome)[i], "Other(s)"))
-    temp = roc.default(response = tempout, predictor = as.matrix(res.predict[, i],ncol=1))
+    temp = roc.default(response = tempout, predictor = res.predict[, i,drop=FALSE])
     
     # print(coords(temp,x="local maximas" ,ret="threshold"))
     # print(coords(temp,x="best" ,ret="threshold",best.method = "youden"))
@@ -45,9 +45,17 @@ statauc <- function(data = NULL, plot = FALSE, title = NULL){
     seauc = sqrt((0.25 + (sum(table(tempout)) -2) * 0.083333)/(prod(table(tempout))))
     zauc = (temp$auc-0.5)/seauc
     zauc[zauc < 0] = - zauc[zauc < 0]
-    for (k in unique(temp$specificities)){
-      temp$sensitivities[which(temp$specificities == k)] = temp$sensitivities[rev(which(temp$specificities == k))]
-    }
+    #for (k in unique(temp$specificities)){
+    #    ind = which(temp$specificities == k)
+    #  temp$sensitivities[ind] = temp$sensitivities[rev(ind)]
+    #}
+    
+    #reorder sensitivities when several  identical specificities
+    a=split(temp$sensitivities,
+        factor(temp$specificities,levels=unique(temp$specificities)))
+    b=lapply(a,function(x){rev(x)})
+    temp$sensitivities = do.call("c",b)
+
     if (nlevels(outcome) == 2){
       ann_text = matrix(ncol=2,nrow=1)
       colnames(ann_text) = c("AUC", "p-value")
@@ -147,8 +155,12 @@ roc.default <- function(response, predictor,
     class(roc) <- "roc"
     
     # compute SE / SP
-    thresholds <-((c(-Inf, sort(unique(c(controls, cases)))) + c(sort(unique(c(controls, cases))), +Inf))/2)
-    perf.matrix <- sapply(thresholds, roc.utils.perfs, controls=controls, cases=cases, direction=direction)
+    so = sort(unique(c(controls, cases)))
+    thresholds <-((c(-Inf, so) + c(so, +Inf))/2)
+    
+    #thresholds <-((c(-Inf, sort(unique(c(controls, cases)))) + c(sort(unique(c(controls, cases))), +Inf))/2)
+    #perf.matrix <- sapply(thresholds, roc.utils.perfs, controls=controls, cases=cases, direction=direction)
+    perf.matrix <- roc.utils.perfs.fast.all.threshold(thresholds, controls=controls, cases=cases, direction=direction)
     perfs <- list(se=perf.matrix[2,], sp=perf.matrix[1,])
     
     se <- perfs$se
@@ -181,6 +193,23 @@ roc.default <- function(response, predictor,
 }
 
 # returns a vector with two elements, sensitivity and specificity, given the threshold at which to evaluate the performance, the values of controls and cases and the direction of the comparison, a character '>' or '<' as controls CMP cases
+
+# only the same as roc.utils.perfs if thresholds starts low and ends large
+# (added 0 and 1 value)
+roc.utils.perfs.fast.all.threshold <- function(thresholds, controls, cases, direction) {
+    a=cut(cases,thresholds)
+    b=cut(controls, thresholds)
+    if (direction == '>') {
+        se=c(0,cumsum(table(a))/length(cases))
+        sp=c(1, (length(controls)- cumsum(table(b)))/length(controls))
+    }  else if (direction == '<') {
+        se=c(1, (length(cases)- cumsum(table(a)))/length(cases))
+        sp=c(0, cumsum(table(b))/length(controls))
+        
+    }
+    return(rbind(sp=sp, se=se))
+}
+
 
 roc.utils.perfs <- function(threshold, controls, cases, direction) {
   if (direction == '>') {

@@ -98,7 +98,7 @@ progressBar = TRUE,
     for(ijk in dist)
     {
         class.all[[ijk]] = matrix(nrow = nrow(X), ncol = ncomp,
-        dimnames = list(rownames(X), c(paste('comp', 1 : ncomp))))
+        dimnames = list(rownames(X), c(paste0('comp', 1 : ncomp))))
     }
 
     if(auc)
@@ -112,15 +112,15 @@ progressBar = TRUE,
     {
         study.specific[[study_i]] =list()
         study.specific[[study_i]]$BER = global$BER = matrix(0,nrow = ncomp, ncol = length(dist),
-        dimnames = list(c(paste('comp', 1 : ncomp)), dist))
+        dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
         
         study.specific[[study_i]]$overall = global$overall = matrix(0,nrow = ncomp, ncol = length(dist),
-        dimnames = list(c(paste('comp', 1 : ncomp)), dist))
+        dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
         
         study.specific[[study_i]]$error.rate.class = list()
         for(ijk in dist)
         study.specific[[study_i]]$error.rate.class[[ijk]] = global$error.rate.class[[ijk]] = matrix(0,nrow = nlevels(Y), ncol = ncomp,
-        dimnames = list(levels(Y),c(paste('comp', 1 : ncomp))))
+        dimnames = list(levels(Y),c(paste0('comp', 1 : ncomp))))
 
     }
     names(study.specific) =levels(study)
@@ -276,7 +276,7 @@ progressBar = TRUE,
 
 
     } # end comp
-    names(prediction.all) = paste('comp', 1:ncomp)
+    names(prediction.all) = paste0('comp', 1:ncomp)
     
     result = list(study.specific.error = study.specific,
     global.error = global,
@@ -285,7 +285,7 @@ progressBar = TRUE,
     
     if(auc)
     {
-        names(auc.mean) = names(auc.mean.study) = paste('comp', 1:ncomp)
+        names(auc.mean) = names(auc.mean.study) = paste0('comp', 1:ncomp)
         result$auc = auc.mean
         result$auc.study = auc.mean.study
     }

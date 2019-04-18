@@ -25,12 +25,13 @@
 ################################################################################
 
 
-image.tune.rcc <-
+plot.tune.rcc <- image.tune.rcc <-
 
 function(x, col = heat.colors, ...) 
 
 {
 
+    opar = par(no.readonly = TRUE)
 
     grid1 = x$grid1
     grid2 = x$grid2
@@ -94,6 +95,8 @@ function(x, col = heat.colors, ...)
     axis(1, at = grid1, labels = as.character(round(grid1, 4)))
     axis(2, at = grid2, labels = as.character(round(grid2, 4)))
     box()
+    
+    par(opar) #reset par
 
 }
 

@@ -167,10 +167,10 @@ cpus
     stop("'ncomp' needs to be higher than the number of components already tuned, which is length(already.tested.X)=",length(already.tested.X) , call. = FALSE)
     
     #-- measure
-    choices = c("BER", "overall")
+    choices = c("BER", "overall","AUC")
     measure = choices[pmatch(measure, choices)]
     if (is.na(measure))
-    stop("'measure' must be either 'BER' or 'overall' ")
+    stop("'measure' must be either 'BER', 'overall' or 'AUC' ")
 
     if (any(is.na(validation)) || length(validation) > 1)
     stop("'validation' should be one of 'Mfold' or 'loo'.", call. = FALSE)
@@ -178,6 +178,16 @@ cpus
     #-- test.keepX
     if (is.null(test.keepX) | length(test.keepX) == 1 | !is.numeric(test.keepX))
     stop("'test.keepX' must be a numeric vector with more than two entries", call. = FALSE)
+    
+    # remove some test.keepX if needed
+    if (any(test.keepX > ncol(X))){
+        test.keepX = test.keepX[-which(test.keepX>ncol(X))]
+        if (length(test.keepX) < 2)
+        stop("Some entries of 'test.keepX' were higher than the number of
+        variables in 'X' and were removed, the resulting 'test.keepX' has now
+        too few entries (<2)", call. = FALSE)
+    }
+    
     
     if(!missing(cpus))
     {
@@ -201,7 +211,7 @@ cpus
     X.names = dimnames(X)[[2]]
     if (is.null(X.names))
     {
-        X.names = paste("X", 1:ncol(X), sep = "")
+        X.names = paste0("X", 1:ncol(X))
         dimnames(X)[[2]] = X.names
     }
     
@@ -282,11 +292,16 @@ cpus
     
     mat.error.rate = list()
     error.per.class = list()
-
-    mat.sd.error = matrix(0,nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
-    dimnames = list(c(test.keepX), c(paste('comp', comp.real, sep=''))))
+    AUC = list()
+    
+    if(nrepeat>1 & all(measure != "AUC")){
+        mat.sd.error = matrix(0,nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
+        dimnames = list(c(test.keepX), c(paste0('comp', comp.real))))
+    } else{
+        mat.sd.error=NULL
+    }
     mat.mean.error = matrix(nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
-    dimnames = list(c(test.keepX), c(paste('comp', comp.real, sep=''))))        
+    dimnames = list(c(test.keepX), c(paste0('comp', comp.real))))
    
     # first: near zero var on the whole data set
     if(near.zero.var == TRUE)
@@ -320,8 +335,12 @@ cpus
             clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
 
         error.per.class.keepX.opt = list()
-        error.per.class.keepX.opt.mean = matrix(0, nrow = nlevels(Y), ncol = length(comp.real),
-        dimnames = list(c(levels(Y)), c(paste('comp', comp.real, sep=''))))
+        if(all(measure != "AUC")){
+            error.per.class.keepX.opt.mean = matrix(0, nrow = nlevels(Y), ncol = length(comp.real),
+            dimnames = list(c(levels(Y)), c(paste0('comp', comp.real))))
+        } else {
+            error.per.class.keepX.opt.mean=NULL
+        }
         # successively tune the components until ncomp: comp1, then comp2, ...
         for(comp in 1:length(comp.real))
         {
@@ -343,9 +362,10 @@ cpus
             mat.sd.error[, comp]=result[[measure]]$error.rate.sd[[1]]
             
             # confusion matrix for keepX.opt
-            error.per.class.keepX.opt[[comp]]=result[[measure]]$confusion[[1]]
-            error.per.class.keepX.opt.mean[, comp]=apply(result[[measure]]$confusion[[1]], 1, mean)
-
+            if (all(measure!="AUC")){
+                error.per.class.keepX.opt[[comp]]=result[[measure]]$confusion[[1]]
+                error.per.class.keepX.opt.mean[, comp]=apply(result[[measure]]$confusion[[1]], 1, mean)
+            }
 
             # best keepX
             already.tested.X = c(already.tested.X, result[[measure]]$keepX.opt[[1]])
@@ -367,16 +387,17 @@ cpus
         } # end comp
         if (parallel == TRUE)
         stopCluster(cl)
+        names(mat.error.rate) = c(paste0('comp', comp.real))
+        if (all(measure!="AUC"))
+            names(error.per.class.keepX.opt) = c(paste0('comp', comp.real))
         
-        names(mat.error.rate) = c(paste('comp', comp.real, sep=''))
-        names(error.per.class.keepX.opt) = c(paste('comp', comp.real, sep=''))
-        names(already.tested.X) = c(paste('comp', 1:ncomp, sep=''))
+        names(already.tested.X) = c(paste0('comp', 1:ncomp))
         
         if (progressBar == TRUE)
         cat('\n')
-
+        
         # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
-        if(nrepeat > 2 & length(comp.real) >1)
+        if(nrepeat > 2 & length(comp.real) >1 & all(measure!="AUC"))
         {
             keepX = already.tested.X
             error.keepX = NULL
@@ -385,15 +406,30 @@ cpus
                 ind.row = match(keepX[[comp.real[comp]]],test.keepX)
                 error.keepX = cbind(error.keepX, mat.error.rate[[comp]][ind.row,])
             }
-            colnames(error.keepX) = c(paste('comp', comp.real, sep=''))
+            colnames(error.keepX) = c(paste0('comp', comp.real))
             
             opt = t.test.process(error.keepX)
+            
+            ncomp_opt = comp.real[opt]
+        }  else if(nrepeat > 2 & length(comp.real) >1 & all(measure=="AUC")){
+            #hacking t.test.process for AUC
+            keepX = already.tested.X
+            error.keepX = NULL
+            for(comp in 1:length(comp.real))
+            {
+                ind.row = match(keepX[[comp.real[comp]]],test.keepX)
+                error.keepX = cbind(error.keepX, mat.error.rate[[comp]][ind.row,])
+            }
+            colnames(error.keepX) = c(paste0('comp', comp.real))
+            
+            #1- to change the AUC to an 'error' and check for decrease
+            opt = t.test.process(1-error.keepX)
             
             ncomp_opt = comp.real[opt]
         } else {
             ncomp_opt = error.keepX = NULL
         }
-        
+
         result = list(
         error.rate = mat.mean.error,
         error.rate.sd = mat.sd.error,
@@ -402,20 +438,25 @@ cpus
         choice.ncomp = list(ncomp = ncomp_opt, values = error.keepX),
         error.rate.class = error.per.class.keepX.opt.mean,
         error.rate.class.all = error.per.class.keepX.opt)
-        
+
         if(light.output == FALSE)
         {
-            names(class.all) = names(prediction.all) = c(paste('comp', comp.real, sep=''))
+            names(class.all) = names(prediction.all) = c(paste0('comp', comp.real))
             result$predict = prediction.all
             result$class = class.all
         }
         if(auc)
         {
-            names(auc.mean.sd) = c(paste('comp', comp.real, sep=''))
-            result$auc = auc.mean.sd
+            
+            #we add the AUC outputs only if it was not the measure
+            #otherwise there is twice the same output
+            if(all(measure != "AUC")){
+                names(auc.mean.sd) = c(paste0('comp', comp.real))
+                result$auc = auc.mean.sd
+            }
             if(light.output == FALSE)
             {
-                names(auc.all) = c(paste('comp', comp.real, sep=''))
+                names(auc.all) = c(paste0('comp', comp.real))
                 result$auc.all =auc.all
             }
         }

@@ -198,10 +198,10 @@ cpus,
             })
         })
         
-        list.features[[nrep]] = lapply(1 : J, function(x){ names(list.features[[nrep]][[x]]) = paste("comp", 1 : object$ncomp[x])
+        list.features[[nrep]] = lapply(1 : J, function(x){ names(list.features[[nrep]][[x]]) = paste0("comp", 1 : object$ncomp[x])
             return(list.features[[nrep]][[x]])})
         
-        final.features[[nrep]] = lapply(1 : J, function(x){ names(final.features[[nrep]][[x]]) = paste("comp", 1 : object$ncomp[x])
+        final.features[[nrep]] = lapply(1 : J, function(x){ names(final.features[[nrep]][[x]]) = paste0("comp", 1 : object$ncomp[x])
             return(final.features[[nrep]][[x]])})
         ### End: Analysis feature selection
         
@@ -256,7 +256,7 @@ cpus,
                 colnames(Y.all[[nrep]][[x]][[y]]) = levels(Y)
                 return(Y.all[[nrep]][[x]][[y]])
             })
-            names(Y.all[[nrep]][[x]])=paste("comp", 1:object$ncomp[x])
+            names(Y.all[[nrep]][[x]])=paste0("comp", 1:object$ncomp[x])
             return(Y.all[[nrep]][[x]])
         })
         ## End: retrieve score for each component
@@ -287,7 +287,7 @@ cpus,
                     {
                         row.names(Y.predict[[nrep]][[x]][[y]][[z]]) = row.names(X[[x]])[folds[[y]]]
                     } else {
-                        row.names(Y.predict[[nrep]][[x]][[y]][[z]]) = paste("Ind", unlist(folds))
+                        row.names(Y.predict[[nrep]][[x]][[y]][[z]]) = paste0("Ind", unlist(folds))
                     }
                     return(Y.predict[[nrep]][[x]][[y]][[z]])
                 })
@@ -412,7 +412,7 @@ cpus,
             })
             
             #Y.mean.res = t(Y.mean.res)
-            colnames(Y.mean.res[[nrep]]) = paste("comp", 1:max(object$ncomp[-indY]))
+            colnames(Y.mean.res[[nrep]]) = paste0("comp", 1:max(object$ncomp[-indY]))
             row.names(Y.mean.res[[nrep]]) = c(levels(Y), "Overall.ER", "Overall.BER")
             ### End: Average prediction
             ###------------------------------------------------------------###
@@ -445,7 +445,7 @@ cpus,
             })
             
             #Y.mean.res = t(Y.mean.res)
-            colnames(Y.WeightedPredict.res[[nrep]]) = paste("comp", 1:max(object$ncomp[-indY]))
+            colnames(Y.WeightedPredict.res[[nrep]]) = paste0("comp", 1:max(object$ncomp[-indY]))
             row.names(Y.WeightedPredict.res[[nrep]]) = c(levels(Y), "Overall.ER", "Overall.BER")
             ### End: Average prediction
             ###------------------------------------------------------------###
@@ -495,7 +495,7 @@ cpus,
             
             Y.weighted.vote.res[[nrep]] = lapply(1 : length(dist.select), function(x)
             {
-                colnames(Y.weighted.vote.res[[nrep]][[x]]) = paste("comp", 1:max(object$ncomp[-(J + 1)]))
+                colnames(Y.weighted.vote.res[[nrep]][[x]]) = paste0("comp", 1:max(object$ncomp[-(J + 1)]))
                 row.names(Y.weighted.vote.res[[nrep]][[x]]) = c(levels(Y), "Overall.ER", "Overall.BER")
                 return((Y.weighted.vote.res[[nrep]][[x]]))
             })
@@ -548,7 +548,7 @@ cpus,
             
             Y.vote.res[[nrep]] = lapply(1 : length(dist.select), function(x)
             {
-                colnames(Y.vote.res[[nrep]][[x]]) = paste("comp", 1:max(object$ncomp[-(J + 1)]))
+                colnames(Y.vote.res[[nrep]][[x]]) = paste0("comp", 1:max(object$ncomp[-(J + 1)]))
                 row.names(Y.vote.res[[nrep]][[x]]) = c(levels(Y), "Overall.ER", "Overall.BER")
                 return((Y.vote.res[[nrep]][[x]]))
             })

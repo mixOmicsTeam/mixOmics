@@ -581,20 +581,31 @@ name.save = NULL)
     if (any(!sapply(color.edge, function(x) {tryCatch(is.matrix(col2rgb(x)), error = function(e) FALSE) })))
     stop("'color.edge' must be a character vector of recognized colors.", call. = FALSE)
     
-    #-- lty.edge
-    if (length(lty.edge)>1)
-    stop("\"lty.edge\" must a single character value of 'solid', 'dashed', 'dotted', 'dotdash', 'longdash', twodash' or 'blank'.",
-    call.=FALSE)
-    choices = c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash", "blank")
-    lty.edge = choices[pmatch(lty.edge, choices)]
-    
-    if (is.na(lty.edge))
-    stop("'lty.edge' should be one of 'solid', 'dashed', 'dotted', 'dotdash', 'longdash', twodash' or 'blank'.",
-    call. = FALSE)
-    
-    #-- lwd.edge
-    if (length(lwd.edge) != 1 || !is.finite(lwd.edge) || lwd.edge <= 0)
-    stop("'lwd.edge' must be a positive number.")
+        #-- lty.edge
+        if(length(lty.edge) >2)
+        stop("\"lty.edge\" must a character vector of up to 2 entries from
+        'solid', 'dashed', 'dotted', 'dotdash', 'longdash', twodash' or 'blank'.
+        see ?network",
+        call.=FALSE)
+        
+        if (length(lty.edge)==1) lty.edge = c(lty.edge, lty.edge)
+        
+        choices = c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash", "blank")
+        lty.edge = choices[pmatch(lty.edge, choices,duplicates.ok=TRUE)]
+        
+        if (any(is.na(lty.edge)))
+        stop("'lty.edge' should be from 'solid', 'dashed', 'dotted', 'dotdash', 'longdash', twodash' or 'blank'.",
+        call. = FALSE)
+        
+        
+        #-- lwd.edge
+        if(length(lwd.edge) >2)
+        stop("'lwd.edge' must be a vector of up to 2 positive numbers.
+        See ?network")
+        if (length(lwd.edge)==1) lwd.edge = c(lwd.edge, lwd.edge)
+        
+        if (length(lwd.edge) != 2 || !is.finite(lwd.edge) || any(lwd.edge <= 0))
+        stop("'lwd.edge' must be positive.")
     
     #-- show.edge.labels
     if (!is.logical(show.edge.labels))
@@ -771,10 +782,17 @@ name.save = NULL)
     
     E(gR)$color = color.edge
     
-    E(gR)$lty = lty.edge
+    #E(gR)$lty = lty.edge
     
-    E(gR)$width = lwd.edge
+    #E(gR)$width = lwd.edge
+    #from 5.0.x: allow different edge/lwd for >0 and <0 vertices
+    E(gR)$lty = lty.edge[1]
+    E(gR)$lty[E(gR)$weight < 0] = lty.edge[2]
     
+    E(gR)$width = lwd.edge[1]
+    E(gR)$width[E(gR)$weight < 0] = lwd.edge[2]
+
+
     gR = delete.vertices(gR, which(degree(gR) == 0))
     
     # plot attributes #
