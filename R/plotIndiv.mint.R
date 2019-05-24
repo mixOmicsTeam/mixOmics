@@ -65,7 +65,8 @@ size.legend = rel(1),
 size.legend.title = rel(1.1), 
 legend.title = "Legend",
 legend.position = "right",
-point.lwd = 1, 
+point.lwd = 1,
+background=NULL,
 ...
 )
 {
@@ -139,6 +140,9 @@ point.lwd = 1,
         if (length(subtitle)!=length(study.init)| length(subtitle)!=length(unique(subtitle)))
         stop("'subtitle' indicates the subtitle of the plot for each study and it needs to be the same length as 'study' (", length(study.init),") and duplicate are not allowed. 'study' includes: ", paste(study.init, collapse = ", "))
     }
+    
+    if(!is.null(background) &&  !is(background, "background.predict"))
+        stop("'background' must have been obtained with the 'background.predict' function")
     
     df.final = data.frame()
     
@@ -335,6 +339,13 @@ point.lwd = 1,
     }
     df = df.final
         
+    # match background color to col.per.group, the color of the groups
+    if(!is.null(background))
+    {
+        ind.match = match(names(background), levels(df$group))
+        names(background) = adjustcolor(col.per.group[ind.match],alpha.f=0.1)
+    }
+    
     if (style == "ggplot2")
     style = "ggplot2-MINT"
         
@@ -345,8 +356,7 @@ point.lwd = 1,
     star = star, ellipse = ellipse, df.ellipse = df.ellipse, style = style, layout = layout,
     #missing.col = missing.col,
     #for ggplot2-MINT
-    study.levels = study.levels, plot_parameters = plot_parameters
-    )
+    study.levels = study.levels, plot_parameters = plot_parameters, background = background)
 
     return(invisible(list(df = df, graph = res)))
 }
