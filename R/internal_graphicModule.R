@@ -384,6 +384,30 @@ background = NULL)
         name = legend.title, breaks = levels(df$group)) +
         labs(shape = "Study")#levels(object$study)[study.ind])
         
+        if(!is.null(background))
+        {
+            for(i in 1:length(background))
+            {
+                if(!is.null(background[[i]]))
+                    background[[i]]=data.frame(id=i,col=names(background)[i],
+                                               background[[i]])
+            }
+            
+            background = do.call(rbind,background)
+            
+            p = p+geom_polygon(data = background,aes(x=Var1, y=Var2,
+                                                     fill = col), inherit.aes = FALSE, show.legend
+                               =FALSE)
+            p = p + scale_fill_manual(values =
+                                          unique(as.character(background$col)))
+            
+            if(is.null(xlim))# we choose xlim that fits the points,
+                #   and not the background
+                xlim = range(df$x)
+            if(is.null(ylim))# we choose ylim that fits the points,
+                #   and not the background
+                ylim = range(df$y)
+        }
         p = p + scale_shape_manual(values = as.numeric(levels(factor(df$pch))))
         # replace the shape/pch by the input, it's converted by default to
         # 1,2,3.. by ggplots
@@ -1113,7 +1137,7 @@ background = NULL)
     }
     
     if (style%in%c("graphics","3d"))
-    p = NULL
+        p = NULL
     
     return(p)
 }
