@@ -62,10 +62,10 @@ measure, dist, legend.position, xlab, ylab, color, ...)
         
     }
     
-    #extract component numbers from rownames(error.rate.concat)
+    ## extract component numbers from rownames(error.rate.concat)
     
-    rownames(error.rate.concat) = sapply(strsplit(rownames(error.rate.concat),
-    " "), function(x){x[2]})
+    rownames(error.rate.concat) = gsub("comp","",rownames(error.rate.concat))
+    
     component = as.numeric(rownames(error.rate.concat))
     
     if(overlay == "all")
