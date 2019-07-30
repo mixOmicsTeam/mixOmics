@@ -73,7 +73,7 @@ software consistency and smooth integration in our package. Thank you\!
 To report a bug (or to offer a solution for a bug\!):
 <https://github.com/mixOmicsTeam/mixOmics/issues>. We welcome well-formatted and detailed pull requests with examples run on our datasets.
 
-## Discussion forum
+### Discussion forum
 
 We wish to make our discussions transparent! Direct your
 questions to our discussion forum
