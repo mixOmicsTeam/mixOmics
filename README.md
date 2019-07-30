@@ -58,24 +58,24 @@ library(mixOmics)
 #> Loaded mixOmics ?.?.?
 ```
 
-## Contribution
+## Community
 
-We welcome community contributions that respect [our code of
+### Contributions
+
+We welcome contributions that respect [our code of
 conduct](https://github.com/mixOmicsTeam/mixOmics/blob/master/CODE_OF_CONDUCT.md).
 We also strongly recommend adhering to [Bioconductor’s coding
-guide](https://bioconductor.org/developers/how-to/coding-style/) for
-software consistency and enabling a smooth integration on our end. Thank you!
+guidelines](https://bioconductor.org/developers/how-to/coding-style/) when possible, for
+software consistency and smooth integration in our package. Thank you\!
 
 ### Bug reports and pull requests
 
-To report a bug (or offer a solution for a bug\!):
-<https://github.com/mixOmicsTeam/mixOmics/issues>. We fully welcome and
-appreciate well-formatted and detailed pull requests. Preferrably with
-tests on our datasets.
+To report a bug (or to offer a solution for a bug\!):
+<https://github.com/mixOmicsTeam/mixOmics/issues>. We welcome well-formatted and detailed pull requests with examples run on our datasets.
 
-### Discussion forum
+## Discussion forum
 
-We wish to make our discussions transparent so please direct your
+We wish to make our discussions transparent! Direct your
 questions to our discussion forum
 <https://mixomics-users.discourse.group>. This forum is aimed to host
 discussions on choices of multivariate analyses, bug report as well as
