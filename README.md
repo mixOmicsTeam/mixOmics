@@ -60,11 +60,11 @@ library(mixOmics)
 
 ## Contribution
 
-We welcome community contributions concordant with [our code of
+We welcome community contributions that respect [our code of
 conduct](https://github.com/mixOmicsTeam/mixOmics/blob/master/CODE_OF_CONDUCT.md).
-We strongly recommend adhering to [Bioconductor’s coding
+We also strongly recommend adhering to [Bioconductor’s coding
 guide](https://bioconductor.org/developers/how-to/coding-style/) for
-software consistenncy.
+software consistency and enabling a smooth integration on our end. Thank you!
 
 ### Bug reports and pull requests
 
