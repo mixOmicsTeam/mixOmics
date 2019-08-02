@@ -53,6 +53,11 @@ multilevel = NULL)
     if ("simpleError" %in% class(err))
     stop(err[[1]], ".", call. = FALSE)
     
+    #-- store user arguments value
+    user.value <- list(X = X, ncomp = ncomp, center = center, scale = scale, max.iter = max.iter,
+                       tol = tol, logratio = logratio, ilr.offset = ilr.offset, V = V, 
+                       multilevel = multilevel)
+                   
     #-- X matrix
     if (is.data.frame(X))
     X = as.matrix(X)
@@ -248,6 +253,9 @@ multilevel = NULL)
     #calcul explained variance
     result$explained_variance = result$sdev^2 / result$var.tot
     result$cum.var = cumsum(result$explained_variance)
+                   
+    #user.value
+    result$user.value <- user.value
     
     return(invisible(result))
 }
