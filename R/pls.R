@@ -1,0 +1,192 @@
+# ========================================================================================================
+# pls: perform a PLS
+# this function is a particular setting of .mintBlock, the formatting of the input is checked in .mintWrapper
+# ========================================================================================================
+
+#' Partial Least Squares (PLS) Regression
+#'
+#' Function to perform Partial Least Squares (PLS) regression.
+#'
+#' \code{pls} function fit PLS models with \eqn{1, \ldots ,}\code{ncomp}
+#' components. Multi-response models are fully supported. The \code{X} and
+#' \code{Y} datasets can contain missing values.
+#'
+#' The type of algorithm to use is specified with the \code{mode} argument.
+#' Four PLS algorithms are available: PLS regression \code{("regression")}, PLS
+#' canonical analysis \code{("canonical")}, redundancy analysis
+#' \code{("invariant")} and the classical PLS algorithm \code{("classic")} (see
+#' References). Different modes relate on how the Y matrix is deflated across
+#' the iterations of the algorithms - i.e. the different components.
+#'
+#' - Regression mode: the Y matrix is deflated with respect to the information
+#' extracted/modelled from the local regression on X. Here the goal is to
+#' predict Y from X (Y and X play an asymmetric role). Consequently the latent
+#' variables computed to predict Y from X are different from those computed to
+#' predict X from Y.
+#'
+#' - Canonical mode: the Y matrix is deflated to the information
+#' extracted/modelled from the local regression on Y. Here X and Y play a
+#' symmetric role and the goal is similar to a Canonical Correlation type of
+#' analysis.
+#'
+#' - Invariant mode: the Y matrix is not deflated
+#'
+#' - Classic mode: is similar to a regression mode. It gives identical results
+#' for the variates and loadings associated to the X data set, but differences
+#' for the loadings vectors associated to the Y data set (different
+#' normalisations are used). Classic mode is the PLS2 model as defined by
+#' Tenenhaus (1998), Chap 9.
+#'
+#' Note that in all cases the results are the same on the first component as
+#' deflation only starts after component 1.
+#'
+#' The estimation of the missing values can be performed by the reconstitution
+#' of the data matrix using the \code{nipals} function. Otherwise, missing
+#' values are handled by casewise deletion in the \code{pls} function without
+#' having to delete the rows with missing data.
+#'
+#' logratio transform and multilevel analysis are performed sequentially as
+#' internal pre-processing step, through \code{\link{logratio.transfo}} and
+#' \code{\link{withinVariation}} respectively.
+
+## ----------------------------------- Parameters
+#' @param X Numeric matrix of predictors, or name of such an assay from \code{data} .
+#' \code{NA}s are allowed.
+#' @param Y Numeric vector or matrix of responses (for multi-response models),
+#' or name of such an \code{assay} or
+#' \code{colData} from \code{data}. \code{NA}s are allowed.
+#' @param ncomp The number of components to include in the model. Default to 2.
+#' @param scale Boleean. If scale = TRUE, each block is standardized to zero
+#' means and unit variances (default: TRUE)
+#' @param mode Character string. What type of algorithm to use, (partially)
+#' matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
+#' or \code{"classic"}. See Details.
+#' @param tol Convergence stopping value.
+#' @param max.iter Integer, the maximum number of iterations.
+#' @param near.zero.var Boolean, see the internal \code{\link{nearZeroVar}}
+#' function (should be set to TRUE in particular for data with many zero
+#' values). Setting this argument to FALSE (when appropriate) will speed up the
+#' computations. Default value is FALSE
+#' @param logratio One of ('none','CLR'). Default to 'none'
+#' @param multilevel Design matrix for repeated measurement analysis, where
+#' multlevel decomposition is required. For a one factor decomposition, the
+#' repeated measures on each individual, i.e. the individuals ID is input as
+#' the first column. For a 2 level factor decomposition then 2nd AND 3rd
+#' columns indicate those factors. See examples in \code{?spls}).
+#' @param all.outputs Boolean. Computation can be faster when some specific
+#' (and non-essential) outputs are not calculated. Default = \code{TRUE}.
+#' @param formula (\code{X} and \code{Y} must be \code{NULL})
+#' formula of form \code{LHS~RHS} (names of objects without quotations) where
+#' \code{LHS} and \code{RHS} (in effect \code{Y} and \code{X}, respectively) are
+#'  numeric matrices . \code{LHS} and \code{RHS} can also be an assay names from
+#'  \code{data}. \code{LHS} can also be a numeric \code{colData} name from \code{data}.
+#'  see examples.
+#' @param data A \code{MultiAssayExperiment} object.
+
+## ----------------------------------- Value
+#' @return \code{pls} returns an object of class \code{"mixo_pls"}, a list that
+#' contains the following components:
+#'
+#' \item{X}{the centered and standardized original predictor matrix.}
+#' \item{Y}{the centered and standardized original response vector or matrix.}
+#' \item{ncomp}{the number of components included in the model.}
+#' \item{mode}{the algorithm used to fit the model.} \item{variates}{list
+#' containing the variates.} \item{loadings}{list containing the estimated
+#' loadings for the \eqn{X} and \eqn{Y} variates.} \item{names}{list containing
+#' the names to be used for individuals and variables.} \item{tol}{the
+#' tolerance used in the iterative algorithm, used for subsequent S3 methods}
+#' \item{iter}{Number of iterations of the algorthm for each component}
+#' \item{max.iter}{the maximum number of iterations, used for subsequent S3
+#' methods} \item{nzv}{list containing the zero- or near-zero predictors
+#' information.} \item{scale}{whether scaling was applied per predictor.}
+#' \item{logratio}{whether log ratio transformation for relative proportion
+#' data was applied, and if so, which type of transformation.}
+#' \item{explained_variance}{amount of variance explained per component (note
+#' that contrary to PCA, this amount may not decrease as the aim of the method
+#' is not to maximise the variance, but the covariance between data sets).}
+#' \item{input.X}{numeric matrix of predictors in X that was input, before any
+#' saling / logratio / multilevel transformation.} \item{mat.c}{matrix of
+#' coefficients from the regression of X / residual matrices X on the
+#' X-variates, to be used internally by \code{predict}.}
+#' \item{defl.matrix}{residual matrices X for each dimension.}
+
+## ----------------------------------- Misc
+#' @author Sébastien Déjean, Ignacio González, Kim-Anh Lê Cao, Al J Abadi.
+#' @seealso \code{\link{spls}}, \code{\link{summary}}, \code{\link{plotIndiv}},
+#' \code{\link{plotVar}}, \code{\link{predict}}, \code{\link{perf}} and
+#' http://www.mixOmics.org for more details.
+#' @references Tenenhaus, M. (1998). \emph{La regression PLS: theorie et
+#' pratique}. Paris: Editions Technic.
+#'
+#' Wold H. (1966). Estimation of principal components and related models by
+#' iterative least squares. In: Krishnaiah, P. R. (editors), \emph{Multivariate
+#' Analysis}. Academic Press, N.Y., 391-420.
+#'
+#' Abdi H (2010). Partial least squares regression and projection on latent
+#' structure regression (PLS Regression). \emph{Wiley Interdisciplinary
+#' Reviews: Computational Statistics}, 2(1), 97-106.
+#' @keywords regression multivariate
+
+## ----------------------------------- Examples
+#' @example examples/pls-example.R
+#' @importFrom matrixStats colSds
+#' @importFrom matrixStats colVars
+#' @export pls
+pls = function(X=NULL,
+Y=NULL,
+ncomp = 2,
+scale = TRUE,
+mode = c("regression", "canonical", "invariant", "classic"),
+tol = 1e-06,
+max.iter = 100,
+near.zero.var = FALSE,
+logratio = "none",
+multilevel = NULL,
+all.outputs = TRUE,
+data=NULL,
+formula=NULL){
+    mc <- as.list(match.call()[-1])
+
+    ## make sure mode matches given arguments, and if it is not provided put as the first one in the definition
+    mc$mode <- .matchArg(mode)
+    ## if formula or data is given, process arguments to match default pls
+    if(any(c("formula", "data") %in% names(mc))){
+        mc <- .getXY(mc=mc)
+    }
+    mc$DA <- FALSE
+    # # call to '.mintWrapper'
+    result <- do.call(.mintWrapper, mc)
+    # choose the desired output from 'result'
+    out = list(
+        call = match.call(),
+        X = result$A[-result$indY][[1]],
+        Y = result$A[result$indY][[1]],
+        ncomp = result$ncomp,
+        mode = result$mode,
+        variates = result$variates,
+        loadings = result$loadings,
+        loadings.star = result$loadings.star,
+        names = result$names,
+        tol = result$tol,
+        iter = result$iter,
+        max.iter = result$max.iter,
+        nzv = result$nzv,
+        scale = scale,
+        logratio = logratio,
+        explained_variance = result$explained_variance,
+        input.X = result$input.X,
+        mat.c = result$mat.c#,
+        #defl.matrix = result$defl.matrix
+        )
+
+    class(out) = c("mixo_pls")
+    # output if multilevel analysis
+    if (!is.null(multilevel))
+    {
+        out$multilevel = multilevel
+        class(out) = c("mixo_mlpls",class(out))
+    }
+
+    return(invisible(out))
+
+}
