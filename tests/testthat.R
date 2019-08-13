@@ -1,4 +1,2 @@
 library(testthat)
-library(mixOmics)
-
-test_check("mixOmics")
+library(mixOmics.data)
