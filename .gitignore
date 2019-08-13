@@ -1,0 +1,25 @@
+.DS_Store
+.Rproj.user
+.Rproj.user
+.Ruserdata
+.Rhistory
+
+*.Rproj
+
+**/*_files
+**/*_cache
+**/*.rds
+**/*.RData
+
+
+**/*.md
+**/*.log
+
+**/*.html
+
+
+## my notes
+notes.Rmd
+
+## do not ever exclude:
+!**/README.md
