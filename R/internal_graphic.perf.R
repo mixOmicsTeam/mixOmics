@@ -29,7 +29,7 @@
 
 
 internal_graphic.perf<- function (error.rate, error.rate.sd, overlay, type,
-measure, dist, legend.position, xlab, ylab, color, ...)
+measure, dist, legend.position, xlab, ylab, color,ylim=NULL, ...)
 {
     # error.rate is a list [[measure]]
     # error.rate[[measure]] is a matrix of dist columns and ncomp rows
@@ -53,12 +53,14 @@ measure, dist, legend.position, xlab, ylab, color, ...)
             colnames(temp) = paste(mea, colnames(temp),sep="_")
             error.rate.sd.concat = cbind(error.rate.sd.concat, temp)
         }
-        ylim = range(c(error.rate.concat + error.rate.sd.concat),
+        if(is.null(ylim))
+            ylim = range(c(error.rate.concat + error.rate.sd.concat),
         c(error.rate.concat - error.rate.sd.concat))
         
     } else {
         error.rate.sd.concat = NULL
-        ylim = range(error.rate.concat)
+        if(is.null(ylim))
+            ylim = range(error.rate.concat)
         
     }
     

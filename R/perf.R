@@ -52,7 +52,7 @@ progressBar = TRUE,
     
     #-- check spls mode
     if (object$mode == 'canonical')
-    stop("object$mode should be 'regression', 'invariant' or 'classic'.", call. = FALSE)
+    stop("'perf' is only available for (s)pls with modes: 'regression', 'invariant' or 'classic'.  Object has mode 'canonical'", call. = FALSE)
     
     #-- validation
     choices = c("Mfold", "loo")
