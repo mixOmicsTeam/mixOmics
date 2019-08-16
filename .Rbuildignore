@@ -1,8 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^examples$
-^tests/internals$
-^build-ignore$
+^tests/internals
+buildignore
 
 ^roxygenise\.R$
 ^\.travis\.yml$
@@ -21,3 +21,4 @@
 ^MD5$
 
 ^vignettes$
+check.Renviron

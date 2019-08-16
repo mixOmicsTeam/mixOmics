@@ -1,0 +1,25 @@
+#!/usr/local/bin/zsh
+## in the following folder
+cd /Users/alabadi/Projects/dev/R/_work/mixOmics/ajabadi-mixOmics/ajabadi-mixOmics
+
+echo "Enter regex to find"
+read old
+
+while [[ "$old" != "" ]]
+do
+	echo "Enter text to replace"
+	read new
+	## echo "Enter the file extensions in which to look for "
+	## read ext
+
+	rpl -R -x'.R'  "$old" "$new" *
+
+	echo "Done"
+	echo "Enter regex to find, or <RETURN> to exit"
+	read old
+done
+
+exit
+# open -a Rstudio /Users/alabadi/Documents/_Projects/Cheatsheet/index.Rmd
+
+
