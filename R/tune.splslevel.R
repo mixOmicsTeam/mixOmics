@@ -146,12 +146,12 @@ already.tested.Y = NULL)
         {
             if (ncomp == 1)
             {
-                spls.train = mixOmics2::spls(Xw, Yw, ncomp = ncomp,
+                spls.train = mixOmics::spls(Xw, Yw, ncomp = ncomp,
                 keepX = test.keepX[i],
                 keepY = test.keepY[j],
                 mode = mode)
             } else {
-                spls.train = mixOmics2::spls(Xw, Yw, ncomp = ncomp,
+                spls.train = mixOmics::spls(Xw, Yw, ncomp = ncomp,
                 keepX = c(already.tested.X, test.keepX[i]),
                 keepY = c(already.tested.Y, test.keepY[j]),
                 mode = mode)

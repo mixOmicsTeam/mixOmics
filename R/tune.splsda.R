@@ -661,7 +661,7 @@ cpus
 
         for (i in 1:length(test.keepX))
         {
-            spls.train = mixOmics2::splsda(X, Y, ncomp = ncomp, keepX = c(already.tested.X, test.keepX[i]), logratio = logratio, near.zero.var = FALSE, mode = "regression")
+            spls.train = mixOmics::splsda(X, Y, ncomp = ncomp, keepX = c(already.tested.X, test.keepX[i]), logratio = logratio, near.zero.var = FALSE, mode = "regression")
 
             # Note: this is performed on the full data set
             # (could be done with resampling (bootstrap) (option 1) and/or prediction (option 2))

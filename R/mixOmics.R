@@ -494,7 +494,7 @@ near.zero.var = FALSE)
                     scale = TRUE
 
                     message("a Partial Least Squares - Discriminant Analysis is being performed (PLS-DA)")
-                    res = mixOmics2::plsda(X = X, Y = Y, ncomp = ncomp, mode = mode,
+                    res = mixOmics::plsda(X = X, Y = Y, ncomp = ncomp, mode = mode,
                     max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
 
                 } else {# mint
@@ -514,7 +514,7 @@ near.zero.var = FALSE)
                     scale = TRUE
 
                     message("a sparse Partial Least Squares - Discriminant Analysis is being performed (sPLS-DA)")
-                    res = mixOmics2::splsda(X = X, Y = Y, ncomp = ncomp, mode = mode, keepX = keepX,                     max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
+                    res = mixOmics::splsda(X = X, Y = Y, ncomp = ncomp, mode = mode, keepX = keepX,                     max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
 
                 } else {# mint
                     if (missing(scale))
@@ -540,7 +540,7 @@ near.zero.var = FALSE)
                     scale = TRUE
 
                     message("a Partial Least Squares is being performed (PLS)")
-                    res = mixOmics2::pls(X = X, Y = Y, ncomp = ncomp, mode = mode,
+                    res = mixOmics::pls(X = X, Y = Y, ncomp = ncomp, mode = mode,
                     max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
 
                 } else { # mint
@@ -559,7 +559,7 @@ near.zero.var = FALSE)
                     scale = TRUE
 
                     message("a sparse Partial Least Squares is being performed (sPLS)")
-                    res = mixOmics2::spls(X = X, Y = Y, ncomp = ncomp, mode = mode, keepX = keepX,keepY = keepY,
+                    res = mixOmics::spls(X = X, Y = Y, ncomp = ncomp, mode = mode, keepX = keepX,keepY = keepY,
                     max.iter = max.iter, tol = tol,
                     near.zero.var = near.zero.var,scale = scale)
                 } else {
