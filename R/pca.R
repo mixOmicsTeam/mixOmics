@@ -1,157 +1,3 @@
-####################################################################################
-## ---------- internal
-.pca <- function(X,
-                 ncomp = 2,
-                 center = TRUE,
-                 scale = FALSE,
-                 max.iter = 500,
-                 tol = 1e-09,
-                 logratio = c('none', 'CLR', 'ILR'),
-                 ilr.offset = 0.001,
-                 V = NULL,
-                 multilevel = NULL) {
-
-## ----------------------------------- checks
- logratio <- .matchArg(logratio)
- mcd <- mget(names(formals()),sys.frame(sys.nframe())) ## match.call and defaults
- err = tryCatch(mcd, error = function(e) e) ## see if arguments can be evaluated
- if ("simpleError" %in% class(err))
-   stop(err[[1]], ".", call. = FALSE)
-
- ## check pca entries for match.call and defaults and do necessary adjustments to
- ## arguments in this environement from within function
- .pcaEntryChecker(mcd, check.keepX = FALSE, check.center = TRUE, check.NA = FALSE)
-
- if (logratio != "none" && any(X < 0))
-    stop("'X' contains negative values, you can not log-transform your data")
-
- #-- put a names on the rows and columns of X --#
- X.names = colnames(X)
- if (is.null(X.names))
-   X.names = paste("V", 1:ncol(X), sep = "")
-
- ind.names = rownames(X)
- if (is.null(ind.names))
-   ind.names = 1:nrow(X)
- ## ----------------------------------- log ratio transformation
- if (is.null(V) & logratio == "ILR") # back-transformation to clr-space, will be used later to recalculate loadings etc
-   V = clr.backtransfo(X)
- X = logratio.transfo(X = X, logratio = logratio, offset = if (logratio == "ILR") {ilr.offset} else {0})
- #as X may have changed
- if (ncomp > min(ncol(X), nrow(X)))
-   stop("use smaller 'ncomp'", call. = FALSE)
-
- ## ----------------------------------- multilevel
- if (!is.null(multilevel)){
-   # we expect a vector or a 2-columns matrix in 'Y' and the repeated measurements in 'multilevel'
-   multilevel = data.frame(multilevel)
-
-   if ((nrow(X) != nrow(multilevel)))
-     stop("unequal number of rows in 'X' and 'multilevel'.")
-
-   if (ncol(multilevel) != 1)
-     stop("'multilevel' should have a single column for the repeated measurements.")
-
-   multilevel[, 1] = as.numeric(factor(multilevel[, 1])) # we want numbers for the repeated measurements
-
-   Xw = withinVariation(X, design = multilevel)
-   X = Xw
- }
- ## ----------------------------------- scale
- X = scale(X, center = center, scale = scale)
- cen = attr(X, "scaled:center")
- sc = attr(X, "scaled:scale")
-
- if (any(sc == 0))
-   stop("cannot rescale a constant/zero column to unit variance.",
-        call. = FALSE)
-
- is.na.X = is.na(X)
- na.X = FALSE
- if (any(is.na.X)) na.X = TRUE
- NA.X = any(is.na.X)
- {
-    ## keeping this for the exported generic's benefit, but is not necessary as far as methods are concerned
-    mcr = match.call() ## match call for returning
-    mcr[[1]] = as.name('pca')
-    mcr[-1L] <- lapply(mcr[-1L], eval.parent)
- }
- result = list(call = mcr, X = X, ncomp = ncomp,NA.X = NA.X,
-               center = if (is.null(cen)) {FALSE} else {cen},
-               scale = if (is.null(sc)) {FALSE} else {sc},
-               names = list(X = X.names, sample = ind.names))
-
-
- #-- pca approach -----------------------------------------------------------#
- #---------------------------------------------------------------------------#
-
- if (logratio == 'CLR' | logratio == 'none') {
-   #-- if there are missing values use NIPALS agorithm
-   if (any(is.na.X))
-   {
-     res = nipals(X, ncomp = ncomp, reconst = TRUE, max.iter = max.iter, tol = tol)
-     result$sdev = res$eig / sqrt(max(1, nrow(X) - 1))
-     names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
-     result$rotation = res$p
-     dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
-     X[is.na.X] = res$rec[is.na.X]
-     result$x = X %*% res$p
-     dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
-   } else {
-     #-- if data is complete use singular value decomposition
-
-     #-- borrowed from 'prcomp' function
-     res = svd(X, nu = 0)
-
-     result$sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))
-     result$rotation = res$v[, 1:ncomp, drop = FALSE]
-     result$x = X %*% res$v[, 1:ncomp, drop = FALSE]
-   }
- } else {
-   # if 'ILR', transform data and then back transform in clr space (from RobCompositions package)
-   # data have been transformed above
-   res = svd(X, nu = max(1, nrow(X) - 1))
-   if (ncomp < ncol(X))
-   {
-     result$sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))  # Note: what differs with RobCompo is that they use: cumsum(eigen(cov(X))$values)/sum(eigen(cov(X))$values)
-     # calculate loadings using back transformation to clr-space
-     result$rotation = V %*% res$v[, 1:ncomp, drop = FALSE]
-     # extract component score from the svd, multiply matrix by vector using diag, NB: this differ from our mixOmics PCA calculations
-     # NB: this differ also from Filmoser paper, but ok from their code: scores are unchanged
-     result$x = res$u[, 1:ncomp, drop = FALSE] %*% diag(res$d[1:ncomp, drop = FALSE])
-   } else {
-     result$sdev = res$d / sqrt(max(1, nrow(X) - 1))
-     result$rotation = V %*% res$v
-     result$x = res$u %*% diag(res$d)
-   }
- }
-
- names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
- dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
- dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
-
- result$var.tot = sum(X ^ 2 / max(1, nrow(X) - 1))# same as all res$d, or variance after nipals replacement of the missing values
-
- # to be similar to other methods, add loadings and variates as outputs
- result$loadings = list(X = result$rotation)
- result$variates = list(X = result$x)
-
- # output multilevel if needed
- if (!is.null(multilevel))
-    result = c(result, list(Xw = Xw, design = multilevel))
-
- class(result) = c("pca", "prcomp")
- if (!is.null(multilevel))
-    class(result) = c("mlpca", class(result))
-
- #calcul explained variance
- result$explained_variance = result$sdev^2 / result$var.tot
- result$cum.var = cumsum(result$explained_variance)
-
- return(invisible(result))
-}
-
-
 #' Principal Components Analysis
 #'
 #' Performs a principal components analysis on the given data matrix that can
@@ -260,6 +106,172 @@
 
 ## ----------------------------------- Examples
 #' @example examples/pca-example.R
+## setting the document name here so internal would not force the wrong name
+#' @name pca
+NULL
+
+####################################################################################
+## ---------- internal
+.pca <- function(X,
+                 ncomp=2,
+                 center=TRUE,
+                 scale=FALSE,
+                 max.iter=500,
+                 tol=1e-09,
+                 logratio=c('none', 'CLR', 'ILR'),
+                 ilr.offset=0.001,
+                 V=NULL,
+                 multilevel=NULL,
+                 ret.call=FALSE) {
+   
+   ## ----------------------------------- checks
+   logratio <- .matchArg(logratio)
+   mcd <- mget(names(formals()),sys.frame(sys.nframe())) ## match.call and defaults
+   err <- tryCatch(mcd, error = function(e) e) ## see if arguments can be evaluated
+   if ("simpleError" %in% class(err))
+      stop(err[[1]], ".", call. = FALSE)
+   
+   ## check pca entries for match.call and defaults and do necessary adjustments to
+   ## arguments in this environement from within function
+   .pcaEntryChecker(mcd, check.keepX = FALSE, check.center = TRUE, check.NA = FALSE)
+   
+   if (logratio != "none" && any(X < 0))
+      stop("'X' contains negative values, you can not log-transform your data")
+   
+   #-- put a names on the rows and columns of X --#
+   X.names = colnames(X)
+   if (is.null(X.names))
+      X.names = paste("V", 1:ncol(X), sep = "")
+   
+   ind.names = rownames(X)
+   if (is.null(ind.names))
+      ind.names = 1:nrow(X)
+   ## ----------------------------------- log ratio transformation
+   if (is.null(V) & logratio == "ILR") # back-transformation to clr-space, will be used later to recalculate loadings etc
+      V = clr.backtransfo(X)
+   X = logratio.transfo(X = X, logratio = logratio, offset = if (logratio == "ILR") {ilr.offset} else {0})
+   #as X may have changed
+   if (ncomp > min(ncol(X), nrow(X)))
+      stop("use smaller 'ncomp'", call. = FALSE)
+   
+   ## ----------------------------------- multilevel
+   if (!is.null(multilevel)){
+      # we expect a vector or a 2-columns matrix in 'Y' and the repeated measurements in 'multilevel'
+      multilevel = data.frame(multilevel)
+      
+      if ((nrow(X) != nrow(multilevel)))
+         stop("unequal number of rows in 'X' and 'multilevel'.")
+      
+      if (ncol(multilevel) != 1)
+         stop("'multilevel' should have a single column for the repeated measurements.")
+      
+      multilevel[, 1] = as.numeric(factor(multilevel[, 1])) # we want numbers for the repeated measurements
+      
+      Xw = withinVariation(X, design = multilevel)
+      X = Xw
+   }
+   ## ----------------------------------- scale
+   X = scale(X, center = center, scale = scale)
+   cen = attr(X, "scaled:center")
+   sc = attr(X, "scaled:scale")
+   
+   if (any(sc == 0))
+      stop("cannot rescale a constant/zero column to unit variance.",
+           call. = FALSE)
+   
+   is.na.X = is.na(X)
+   na.X = FALSE
+   if (any(is.na.X)) na.X = TRUE
+   NA.X = any(is.na.X)
+
+   result = list(X = X, ncomp = ncomp,NA.X = NA.X,
+                 center = if (is.null(cen)) {FALSE} else {cen},
+                 scale = if (is.null(sc)) {FALSE} else {sc},
+                 names = list(X = X.names, sample = ind.names))
+   
+   #-- pca approach -----------------------------------------------------------#
+   #---------------------------------------------------------------------------#
+   
+   if (logratio == 'CLR' | logratio == 'none') {
+      #-- if there are missing values use NIPALS agorithm
+      if (any(is.na.X))
+      {
+         res = nipals(X, ncomp = ncomp, reconst = TRUE, max.iter = max.iter, tol = tol)
+         result$sdev = res$eig / sqrt(max(1, nrow(X) - 1))
+         names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
+         result$rotation = res$p
+         dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
+         X[is.na.X] = res$rec[is.na.X]
+         result$x = X %*% res$p
+         dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
+      } else {
+         #-- if data is complete use singular value decomposition
+         
+         #-- borrowed from 'prcomp' function
+         res = svd(X, nu = 0)
+         
+         result$sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))
+         result$rotation = res$v[, 1:ncomp, drop = FALSE]
+         result$x = X %*% res$v[, 1:ncomp, drop = FALSE]
+      }
+   } else {
+      # if 'ILR', transform data and then back transform in clr space (from RobCompositions package)
+      # data have been transformed above
+      res = svd(X, nu = max(1, nrow(X) - 1))
+      if (ncomp < ncol(X))
+      {
+         result$sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))  # Note: what differs with RobCompo is that they use: cumsum(eigen(cov(X))$values)/sum(eigen(cov(X))$values)
+         # calculate loadings using back transformation to clr-space
+         result$rotation = V %*% res$v[, 1:ncomp, drop = FALSE]
+         # extract component score from the svd, multiply matrix by vector using diag, NB: this differ from our mixOmics PCA calculations
+         # NB: this differ also from Filmoser paper, but ok from their code: scores are unchanged
+         result$x = res$u[, 1:ncomp, drop = FALSE] %*% diag(res$d[1:ncomp, drop = FALSE])
+      } else {
+         result$sdev = res$d / sqrt(max(1, nrow(X) - 1))
+         result$rotation = V %*% res$v
+         result$x = res$u %*% diag(res$d)
+      }
+   }
+   
+   names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
+   dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
+   dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
+   
+   result$var.tot = sum(X ^ 2 / max(1, nrow(X) - 1))# same as all res$d, or variance after nipals replacement of the missing values
+   
+   # to be similar to other methods, add loadings and variates as outputs
+   result$loadings = list(X = result$rotation)
+   result$variates = list(X = result$x)
+   
+   # output multilevel if needed
+   if (!is.null(multilevel))
+      result = c(result, list(Xw = Xw, design = multilevel))
+   
+   class(result) = c("pca", "prcomp")
+   if (!is.null(multilevel))
+      class(result) = c("mlpca", class(result))
+   
+   #calcul explained variance
+   result$explained_variance = result$sdev^2 / result$var.tot
+   result$cum.var = cumsum(result$explained_variance)
+   
+   {
+      ## keeping this for the exported generic's benefit,
+      ## as the methods handle it
+      mcr = match.call() ## match call for returning
+      mcr[[1]] = as.name('pca')
+      mcr[-1L] <- lapply(mcr[-1L], eval.parent)
+   }
+   
+   if (isTRUE(ret.call)) {
+      result$call <- mcr
+   }
+   
+   return(invisible(result))
+}
+
+
+
 ####################################################################################
 ## ---------- Generic
 #' @param ... Aguments passed to the generic.
@@ -272,7 +284,9 @@ pca <- function(X=NULL, data=NULL, ncomp=2, ...) UseMethod('pca')
 ## ----------------------------------- X=matrix
 #' @rdname pca
 #' @export
-pca.default <- .pca
+pca.default <- function(X=NULL, data=NULL, ncomp=2, ...){
+   .pca(X, data, ncomp, ...)
+}
 
 ## ----------------------------------- X= assay name from data
 #' @importFrom SummarizedExperiment assay
