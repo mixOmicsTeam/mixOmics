@@ -108,7 +108,7 @@ background = NULL)
         group.pch = "different"
     } else {
         a = NULL
-        for(j in 1:ncol(temp))
+        for(j in seq_len(temp))
         {
             a = c(a, sum(temp[,j]!=0))
         }

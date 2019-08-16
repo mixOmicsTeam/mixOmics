@@ -109,7 +109,7 @@ nipals = function (X, ncomp = 1, reconst = FALSE, max.iter = 500, tol = 1e-09)
     #-- put a names on the rows and columns of X --#
     X.names = colnames(X)
     if (is.null(X.names))
-    X.names = paste("V", 1:ncol(X), sep = "")
+    X.names = paste("V", seq_len(X), sep = "")
     
     ind.names = rownames(X)
     if (is.null(ind.names))

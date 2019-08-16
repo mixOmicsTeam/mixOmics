@@ -631,7 +631,7 @@ get.contrib.df = function(Y, X, method, contrib, value.selected.var, colnames.X,
     # End: Initialisation
 
     # calculate the max.method per group for each variable, and identifies which group has the max max.method
-    for(k in 1:ncol(X))
+    for(k in seq_len(X))
     {
         method.group[[k]] = tapply(X[, k], Y, method, na.rm=TRUE) #method is either mean or median
         # determine which group has the highest mean/median

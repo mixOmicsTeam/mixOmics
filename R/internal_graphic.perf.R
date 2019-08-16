@@ -97,7 +97,7 @@ measure, dist, legend.position, xlab, ylab, color, ...)
             nrow = nrow(error.rate.concat), ncol = length(measure)*length(dist),
             byrow=TRUE)
             
-            for(j in 1:ncol(error.rate.concat))
+            for(j in seq_len(error.rate.concat))
             plot_error_bar(x = component, y = error.rate.concat[, j],
             uiw=error.rate.sd.concat[, j], add=TRUE, col = col[, j])
         }
@@ -130,7 +130,7 @@ measure, dist, legend.position, xlab, ylab, color, ...)
             {
                 new_sd.error = error.rate.sd.concat[, grep(di,
                 colnames(error.rate.sd.concat)), drop = FALSE]
-                for(j in 1:ncol(new_mat.error))
+                for(j in seq_len(new_mat.error))
                 plot_error_bar(x = component, y = new_mat.error[, j],
                 uiw=new_sd.error[, j], add=TRUE, col = color[which(di == dist)])
             }
@@ -170,7 +170,7 @@ measure, dist, legend.position, xlab, ylab, color, ...)
 
                 new_sd.error=error.rate.sd.concat[,
                 grep(mea, colnames(error.rate.sd.concat)), drop = FALSE]
-                for(j in 1:ncol(new_mat.error))
+                for(j in seq_len(new_mat.error))
                 plot_error_bar(x = component, y = new_mat.error[, j],
                 uiw=new_sd.error[, j], add=TRUE, col = col[, j])
             }

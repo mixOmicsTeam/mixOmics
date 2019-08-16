@@ -1031,7 +1031,7 @@ name.save = NULL)
                     call. = FALSE)
 
 
-                    cut[[2]] = unlist(lapply(1:ncol(object),
+                    cut[[2]] = unlist(lapply(seq_len(object),
                     function(x){any(abs(object[,x]) > threshold)}))
                     object = object[,cut[[2]]]
                     if (dist.method[2] != "correlation")
@@ -1300,7 +1300,7 @@ name.save = NULL)
                     call. = FALSE)
 
 
-                    cut[[2]] = unlist(lapply(1:ncol(object),
+                    cut[[2]] = unlist(lapply(seq_len(object),
                     function(x){any(abs(object[,x]) > threshold)}))
                     object = object[,cut[[2]]]
                     if (dist.method[2] != "correlation")

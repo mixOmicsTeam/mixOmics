@@ -37,7 +37,7 @@
 
   X.names = dimnames(X)[[2]]
   if (is.null(X.names))
-    X.names = paste("X", 1:ncol(X), sep = "")
+    X.names = paste("X", seq_len(X), sep = "")
 
   ind.names = dimnames(X)[[1]]
   if (is.null(ind.names))
@@ -163,7 +163,7 @@
 
   result$x = ipc_mat
   result$variates = list(X = ipc_mat)
-  dimnames(result$x) = list(ind.names, paste("IPC", 1:ncol(result$rotation), sep = " "))
+  dimnames(result$x) = list(ind.names, paste("IPC", seq_len(result$rotation), sep = " "))
 
   class(result) = c("sipca", "ipca", "pca")
 

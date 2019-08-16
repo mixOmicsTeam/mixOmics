@@ -224,7 +224,7 @@ setGeneric("splsda", def = function(X, Y, formula=NULL, ncomp = 2, mode = c("reg
       stop("'Y' should be a factor with more than one level")
 
     Y.mat = unmap(Y)
-    colnames(Y.mat) = levels(Y)#paste0("Y", 1:ncol(Y.mat))
+    colnames(Y.mat) = levels(Y)#paste0("Y", seq_len(Y.mat))
   }else{
     # we expect a vector or a 2-columns matrix in 'Y' and the repeated measurements in 'multilevel'
     multilevel = data.frame(multilevel)

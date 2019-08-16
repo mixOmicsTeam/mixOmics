@@ -97,7 +97,7 @@ clr.backtransfo = function(x)
 {
     # construct orthonormal basis
     V = matrix(0, nrow = ncol(x), ncol = ncol(x)-1)
-    for( i in 1:ncol(V) )
+    for( i in seq_len(V) )
     {
         V[1:i, i] = 1/i
         V[i+1, i] = (-1)

@@ -220,7 +220,7 @@ all.outputs = TRUE)
 
         Y.input=Y
         Y=unmap(Y)
-        colnames(Y) = paste0("Y", 1:ncol(Y))
+        colnames(Y) = paste0("Y", seq_len(Y))
         rownames(Y) = rownames(X[[1]])
 
     }else if(!missing(indY)) {

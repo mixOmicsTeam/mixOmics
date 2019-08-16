@@ -405,7 +405,7 @@ plot.perf.pls.mthd <- function(x,
     }
     
     df = data.frame(val = val, comps = comps, varName = varName)
-    if (is.null(cTicks)) cTicks = 1:ncol(y)
+    if (is.null(cTicks)) cTicks = seq_len(y)
     yList = list(relation = "free")
     
     
