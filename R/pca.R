@@ -39,7 +39,8 @@
 #' @param X A numeric matrix (or data frame) which provides the data for the
 #' principal components analysis. It can contain missing values.
 #' Alternatively, name of an assay from \code{data}.
-#' @param data  An object of class \code{MultiAssayExperiment} or similar. See Details.
+#' @param data  An object of class \code{MultiAssayExperiment} or similar.
+#' See Details.
 #' @param ncomp Integer, if data is complete \code{ncomp} decides the number of
 #' components and associated eigenvalues to display from the \code{pcasvd}
 #' algorithm and if the data has missing values, \code{ncomp} gives the number
@@ -65,7 +66,8 @@
 #' @param ilr.offset When logratio is set to 'ILR', an offset must be input to
 #' avoid infinite value after the logratio transform, default to 0.001.
 #' @param V Matrix used in the logratio transformation id provided.
-#' @param multilevel Sample information for multilevel decomposition for repeated measurements.
+#' @param multilevel Sample information for multilevel decomposition for
+#' repeated measurements.
 
 ## ----------------------------------- Value
 #' @return \code{pca} returns a list with class \code{"pca"} and
@@ -82,8 +84,9 @@
 #' used, or \code{FALSE}.} \item{explained_variance}{explained variance from
 #' the multivariate model, used for plotIndiv}.
 #' \code{pca} can take numeric matrices/data.frames as \code{X},
-#' or \code{data} of class \code{MultiAssayExperiment} (or any other class that inherits
-#' from \code{SummarizedExperiment} class for which the following methods are defined:
+#' or \code{data} of class \code{MultiAssayExperiment} (or any other class that
+#' inherits from \code{SummarizedExperiment} class for which the following
+#' methods are defined:
 #' \code{assay}, \code{assays}, and \code{colData}).
 
 ## ----------------------------------- Misc
@@ -110,7 +113,7 @@
 #' @name pca
 NULL
 
-####################################################################################
+#########################################################################
 ## ---------- internal
 .pca <- function(X,
                  ncomp=2,
@@ -126,13 +129,15 @@ NULL
    
    ## ----------------------------------- checks
    logratio <- .matchArg(logratio)
-   mcd <- mget(names(formals()),sys.frame(sys.nframe())) ## match.call and defaults
-   err <- tryCatch(mcd, error = function(e) e) ## see if arguments can be evaluated
+   ## match.call and defaults
+   mcd <- mget(names(formals()),sys.frame(sys.nframe()))
+   ## see if arguments can be evaluated
+   err <- tryCatch(mcd, error = function(e) e)
    if ("simpleError" %in% class(err))
       stop(err[[1]], ".", call. = FALSE)
    
-   ## check pca entries for match.call and defaults and do necessary adjustments to
-   ## arguments in this environement from within function
+   ## check pca entries for match.call and defaults and do necessary
+   ## adjustments to arguments in this environement from within function
    .pcaEntryChecker(mcd, check.keepX = FALSE, check.center = TRUE, check.NA = FALSE)
    
    if (logratio != "none" && any(X < 0))
@@ -147,25 +152,29 @@ NULL
    if (is.null(ind.names))
       ind.names = 1:nrow(X)
    ## ----------------------------------- log ratio transformation
-   if (is.null(V) & logratio == "ILR") # back-transformation to clr-space, will be used later to recalculate loadings etc
+   ## back-transformation to clr-space,
+   ## will be used later to recalculate loadings etc
+   if (is.null(V) & logratio == "ILR")
       V = clr.backtransfo(X)
    X = logratio.transfo(X = X, logratio = logratio, offset = if (logratio == "ILR") {ilr.offset} else {0})
-   #as X may have changed
+   ## as X may have changed
    if (ncomp > min(ncol(X), nrow(X)))
       stop("use smaller 'ncomp'", call. = FALSE)
    
    ## ----------------------------------- multilevel
-   if (!is.null(multilevel)){
-      # we expect a vector or a 2-columns matrix in 'Y' and the repeated measurements in 'multilevel'
+   if (!is.null(multilevel)) {
+      ## we expect a vector or a 2-columns matrix in 'Y' and the repeated
+      ## measurements in 'multilevel'
       multilevel = data.frame(multilevel)
       
       if ((nrow(X) != nrow(multilevel)))
          stop("unequal number of rows in 'X' and 'multilevel'.")
       
       if (ncol(multilevel) != 1)
-         stop("'multilevel' should have a single column for the repeated measurements.")
-      
-      multilevel[, 1] = as.numeric(factor(multilevel[, 1])) # we want numbers for the repeated measurements
+         stop("'multilevel' should have a single column for the
+              repeated measurements.")
+      ## we want numbers for the repeated measurements
+      multilevel[, 1] = as.numeric(factor(multilevel[, 1]))
       
       Xw = withinVariation(X, design = multilevel)
       X = Xw
@@ -196,7 +205,13 @@ NULL
       #-- if there are missing values use NIPALS agorithm
       if (any(is.na.X))
       {
-         res = nipals(X, ncomp = ncomp, reconst = TRUE, max.iter = max.iter, tol = tol)
+         res = nipals(
+            X,
+            ncomp = ncomp,
+            reconst = TRUE,
+            max.iter = max.iter,
+            tol = tol
+         )
          result$sdev = res$eig / sqrt(max(1, nrow(X) - 1))
          names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
          result$rotation = res$p
@@ -255,43 +270,53 @@ NULL
    result$explained_variance = result$sdev^2 / result$var.tot
    result$cum.var = cumsum(result$explained_variance)
    
-   {
-      ## keeping this for the exported generic's benefit,
-      ## as the methods handle it
-      mcr = match.call() ## match call for returning
-      mcr[[1]] = as.name('pca')
-      mcr[-1L] <- lapply(mcr[-1L], eval.parent)
-   }
-   
-   if (isTRUE(ret.call)) {
-      result$call <- mcr
-   }
-   
    return(invisible(result))
 }
 
 
 
-####################################################################################
+#########################################################################
 ## ---------- Generic
 #' @param ... Aguments passed to the generic.
 #' @export
-pca <- function(X=NULL, data=NULL, ncomp=2, ...) UseMethod('pca')
+pca <- function(data=NULL, X=NULL, ncomp=2, ...) UseMethod('pca')
 
-####################################################################################
+#########################################################################
 ## ---------- Methods
 
-## ----------------------------------- X=matrix
+## ----------------------------------- default
 #' @rdname pca
 #' @export
-pca.default <- function(X=NULL, data=NULL, ncomp=2, ...){
-   .pca(X, data, ncomp, ...)
+## in default method data should be NULL, but we make an expection for legacy
+## codes where 'X' is not named
+pca.default <- function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE){
+   mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+   ## if data is a matrix-like:
+   if ( any(class(data) %in% c('matrix', 'data.frame'))) {
+      .warning(message = 'mixOmics arguments have changed and this code will
+               not work in near future (you can use named arguments to avoid
+               this), please see documentation',
+               .subclass = 'deprecated')
+      result <- .pca(X = data, ncomp = ncomp, ...)
+   } else if (is.null(data)) {
+      ## let the internal throw the error
+      result <- .pca(X = X, ncomp = ncomp, ...)
+   } else {
+      .stop("'data' is not valid, see ?pca.", .subclass = "inv_data")
+   }
+   .call_return(result, ret.call, mcr = match.call(), fun.name = 'pca')
 }
 
-## ----------------------------------- X= assay name from data
-#' @importFrom SummarizedExperiment assay
+
+## ----------------------------------- 'X = assay' name from 'data = MAE'
 #' @rdname pca
 #' @export
-pca.character <- function(X=NULL, data=NULL, ncomp=2, ...){
-   .pcaMethodsHelper(match.call(), fun = 'pca')
+pca.MultiAssayExperiment <-
+   function(data = NULL,
+            X = NULL,
+            ncomp = 2,
+            ...,
+            ret.call = FALSE) {
+      result <- .pcaMethodsHelper(match.call(), fun = 'pca')
+      .call_return(result, ret.call, mcr = match.call(), fun.name = 'pca')
 }

@@ -3,23 +3,23 @@
 \name{pca}
 \alias{pca}
 \alias{pca.default}
-\alias{pca.character}
+\alias{pca.MultiAssayExperiment}
 \title{Principal Components Analysis}
 \usage{
-pca(X = NULL, data = NULL, ncomp = 2, ...)
+pca(data = NULL, X = NULL, ncomp = 2, ...)
 
-\method{pca}{default}(X, ncomp = 2, center = TRUE, scale = FALSE,
-  max.iter = 500, tol = 1e-09, logratio = c("none", "CLR", "ILR"),
-  ilr.offset = 0.001, V = NULL, multilevel = NULL)
+\method{pca}{default}(data = NULL, X = NULL, ncomp = 2, ...,
+  ret.call = FALSE)
 
-\method{pca}{character}(X = NULL, data = NULL, ncomp = 2, ...)
+\method{pca}{MultiAssayExperiment}(data = NULL, X = NULL, ncomp = 2,
+  ..., ret.call = FALSE)
 }
 \arguments{
+\item{data}{An object of class \code{MultiAssayExperiment} or similar. See Details.}
+
 \item{X}{A numeric matrix (or data frame) which provides the data for the
 principal components analysis. It can contain missing values.
 Alternatively, name of an assay from \code{data}.}
-
-\item{data}{An object of class \code{MultiAssayExperiment} or similar. See Details.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
