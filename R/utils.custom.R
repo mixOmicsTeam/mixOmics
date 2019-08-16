@@ -32,7 +32,7 @@
 ## -----------------------------------------------------------------------------------
 ## ---------------  custom warnings with specified class
 ## -----------------------------------------------------------------------------------
-.warning <- function(.subclass, message, call=NULL, ...){
+.warning <- function(message, .subclass, call=NULL, ...){
   formals(warning)$call. <- FALSE
   warn <- structure(
     list(
