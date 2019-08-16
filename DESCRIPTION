@@ -1,7 +1,7 @@
 Package: mixOmics
 Type: Package
 Title: Omics Data Integration Project
-Version: 6.8.1
+Version: 6.9.3
 Depends:
     R (>= 3.5.0),
     MASS,
@@ -23,15 +23,28 @@ Imports:
      grDevices, 
      graphics, 
      stats, 
-     utils
+     utils,
+     MultiAssayExperiment,
+     SummarizedExperiment
 Suggests:
     BiocStyle, 
     knitr, 
     rmarkdown, 
     testthat, 
     rgl
-Author: Kim-Anh Le Cao, Florian Rohart, Ignacio Gonzalez, Sebastien Dejean, Al J Abadi with key contributors Benoit Gautier, Francois Bartolo
-        and contributions from Pierre Monget, Jeff Coquery, FangZou Yao, Benoit Liquet. 
+Authors@R: c(person("Kim-Anh", "Le Cao", role = c("aut", "cre"), email = "kimanh.lecao@unimelb.edu.au"), 
+      person("Florian", "Rohart", role = "aut"), 
+      person("Ignacio", "Gonzalez", role = "aut"),
+      person("Sebastien", "Dejean", role = "aut"), 
+      ## key contributors
+      person("Al", "Abadi", role = "ctb"), 
+      person("Benoit", "Gautier", role = "ctb"), 
+      person("Francois", "Bartolo", role = "ctb"), 
+      ## also contributions from
+      person("Pierre", "Monget", role = "ctb"),
+      person("Jeff", "Coquery", role = "ctb"),
+      person("FangZou", "Yao", role = "ctb"),
+      person("Benoit", "Liquet", role = "ctb"))
 Maintainer: Kim-Anh Le Cao <kimanh.lecao@unimelb.edu.au>
 Description: Multivariate methods are well suited to large omics data sets where the number of variables (e.g. genes, proteins, metabolites) is much larger than the number of samples (patients, cells, mice). They have the appealing properties of reducing the dimension of the data by using instrumental variables (components), which are defined as combinations of all variables. Those components are then used to produce useful graphical outputs that enable better understanding of the relationships and correlation structures between the different data sets that are integrated. mixOmics offers a wide range of multivariate methods for the exploration and integration of biological datasets with a particular focus on variable selection. The package proposes several sparse multivariate models we have developed to identify the key variables that are highly correlated, and/or explain the biological outcome of interest. The data that can be analysed with mixOmics may come from high throughput sequencing technologies, such as omics data (transcriptomics, metabolomics, proteomics, metagenomics etc) but also beyond the realm of omics (e.g. spectral imaging). The methods implemented in mixOmics can also handle missing values without having to delete entire rows with missing data. A non exhaustive list of methods include variants of generalised Canonical Correlation Analysis, sparse Partial Least Squares and sparse Discriminant Analysis. Recently we implemented integrative methods to combine multiple data sets: N-integration with variants of Generalised Canonical Correlation Analysis and P-integration with variants of multi-group Partial Least Squares.
 License: GPL (>= 2)
@@ -39,8 +52,7 @@ URL: http://www.mixOmics.org
 BugReports: https://github.com/mixOmicsTeam/mixOmics/issues/
 Repository: Bioconductor
 VignetteBuilder: knitr
-Date: 2019-08-30
-Packaged: 2017-02-06 06:49:17 UTC; klecao
+Date: 2019-08-16
 NeedsCompilation: no
 biocViews:
     ImmunoOncology, 
