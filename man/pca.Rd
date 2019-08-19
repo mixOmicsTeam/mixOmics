@@ -57,11 +57,6 @@ principal components will account for 100 \% of the explained variance.
 
 Note that \code{scale= TRUE} cannot be used if there are zero or constant (for \code{center = TRUE}) variables.
 
-Components are omitted if their standard deviations are less than or equal to \code{comp.tol} times
-the standard deviation of the first component. With the default null setting, no components are omitted.
-Other settings for \code{comp.tol} could be \code{comp.tol = sqrt(.Machine$double.eps)},
-which would omit essentially constant components, or \code{comp.tol = 0}.
-
 According to Filzmoser et al., a ILR log ratio transformation is more appropriate for PCA with compositional data. Both CLR and ILR are valid.
 
 Logratio transform and multilevel analysis are performed sequentially as internal pre-processing step, through \code{\link{logratio.transfo}} and \code{\link{withinVariation}} respectively.
