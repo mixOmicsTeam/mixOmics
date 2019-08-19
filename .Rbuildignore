@@ -1,0 +1,14 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^examples$
+
+^\.travis\.yml$
+^docs$
+README*
+
+^CODE_OF_CONDUCT\.md$
+^LICENSE\.md$
+
+^NEWS*$
+^MD5$
+^.gitignore$
