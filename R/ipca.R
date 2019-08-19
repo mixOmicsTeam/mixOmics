@@ -159,8 +159,8 @@
 
   #-- output -----------------------------------------------------------------#
   #---------------------------------------------------------------------------#
-  dimnames(S) = list(X.names, paste("IPC", seq_len(S), sep = ""))
-  dimnames(ipc) = list(ind.names, paste("IPC", seq_len(ipc), sep = ""))
+  dimnames(S) = list(X.names, paste("IPC", 1:ncol(S), sep = ""))
+  dimnames(ipc) = list(ind.names, paste("IPC", 1:ncol(ipc), sep = ""))
 
   {
     ## keeping this for the exported generic's benefit, but is not necessary as far as methods are concerned

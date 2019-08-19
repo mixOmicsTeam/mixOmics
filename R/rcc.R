@@ -212,10 +212,10 @@ function(   X,
 
     #-- put a names on the columns of X and Y --#
     X.names = colnames(X)
-    if (is.null(X.names)) X.names = paste("X", seq_len(X), sep = "")
+    if (is.null(X.names)) X.names = paste("X", 1:ncol(X), sep = "")
 
     Y.names = colnames(Y)
-    if (is.null(Y.names)) Y.names = paste("Y", seq_len(Y), sep = "")
+    if (is.null(Y.names)) Y.names = paste("Y", 1:ncol(Y), sep = "")
 
     #-- put a names on the samples --#
     ind.names = dimnames(X)[[1]]

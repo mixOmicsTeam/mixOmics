@@ -165,7 +165,7 @@ map = function (Y)
     nrowY = nrow(Y)
     cl = numeric(nrowY)
     I = 1:nrowY
-    J = seq_len(Y)
+    J = 1:ncol(Y)
     for (i in I)
     {
         cl[i] = (J[Y[i, ] == max(Y[i, ])])[1]

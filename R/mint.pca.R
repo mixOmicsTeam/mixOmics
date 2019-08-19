@@ -149,7 +149,7 @@ max.iter = 100)
     #-- put a names on the rows and columns of X --#
     X.names = colnames(X)
     if (is.null(X.names))
-    X.names = paste("V", seq_len(X), sep = "")
+    X.names = paste("V", 1:ncol(X), sep = "")
 
     ind.names = rownames(X)
     if (is.null(ind.names))

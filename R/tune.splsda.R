@@ -397,7 +397,7 @@ cpus
     X.names = dimnames(X)[[2]]
     if (is.null(X.names))
     {
-        X.names = paste0("X", seq_len(X))
+        X.names = paste0("X", 1:ncol(X))
         dimnames(X)[[2]] = X.names
     }
 

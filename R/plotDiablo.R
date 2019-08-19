@@ -120,7 +120,7 @@ legend.ncol,
     mat = matrix(0, nrow = numberOfRows, ncol = numberOfRows)
     for(i in 1:nrow(mat))
     {
-        for(j in seq_len(mat))
+        for(j in 1:ncol(mat))
         mat[i,j] = paste(i,j, sep="_")
     }
     plotType = list(cor=mat[lower.tri(mat)], scatter=mat[upper.tri(mat)],

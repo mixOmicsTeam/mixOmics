@@ -146,7 +146,7 @@ NULL
    #-- put a names on the rows and columns of X --#
    X.names = colnames(X)
    if (is.null(X.names))
-      X.names = paste("V", seq_len(X), sep = "")
+      X.names = paste("V", 1:ncol(X), sep = "")
    
    ind.names = rownames(X)
    if (is.null(ind.names))
@@ -215,10 +215,10 @@ NULL
          result$sdev = res$eig / sqrt(max(1, nrow(X) - 1))
          names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
          result$rotation = res$p
-         dimnames(result$rotation) = list(X.names, paste("PC", seq_len(result$rotation), sep = ""))
+         dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
          X[is.na.X] = res$rec[is.na.X]
          result$x = X %*% res$p
-         dimnames(result$x) = list(ind.names, paste("PC", seq_len(result$x), sep = ""))
+         dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
       } else {
          #-- if data is complete use singular value decomposition
          
@@ -249,8 +249,8 @@ NULL
    }
    
    names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
-   dimnames(result$rotation) = list(X.names, paste("PC", seq_len(result$rotation), sep = ""))
-   dimnames(result$x) = list(ind.names, paste("PC", seq_len(result$x), sep = ""))
+   dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
+   dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
    
    result$var.tot = sum(X ^ 2 / max(1, nrow(X) - 1))# same as all res$d, or variance after nipals replacement of the missing values
    

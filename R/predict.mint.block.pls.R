@@ -466,7 +466,7 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
         Y.hat[[i]] = array(Ypred, c(nrow(newdata[[i]]), ncol(Y), ncomp[i])) # in case one observation and only one Y, we need array() to keep it an array with a third dimension being ncomp
 
         t.pred[[i]] = concat.newdata[[i]] %*% Wmat %*% solve(t(Pmat) %*% Wmat)
-        t.pred[[i]] = matrix(data = sapply(seq_len(t.pred[[i]]),
+        t.pred[[i]] = matrix(data = sapply(1:ncol(t.pred[[i]]),
         function(x) {t.pred[[i]][, x] * apply(variatesX[[i]], 2,
             function(y){(norm(y, type = "2"))^2})[x]}), nrow = nrow(concat.newdata[[i]]), ncol = ncol(t.pred[[i]]))
 
