@@ -19,7 +19,7 @@ test_that('pca returns appropriate error for invalid assay/data',{
   ## expect error
   expect_error(pca(data = nutrimouse.mae, X = "not-an-assay"), class = "inv_assay")
   expect_error(pca(data = nutrimouse, X = "lipid"), class = "inv_data")
-  expect_error(pca(X = "lipid"), class = "inv_matrix")
+  expect_error(pca(X = "lipid"), class = "inv_X")
 })
 
 test_that('pca entry checker works',{
@@ -27,7 +27,7 @@ test_that('pca entry checker works',{
   ## expect error
   expect_error(pca(data = nutrimouse.mae, X = "not-an-assay"), class = "inv_assay")
   expect_error(pca(data = nutrimouse, X = "lipid"), class = "inv_data")
-  expect_error(pca(X = "lipid"), class = "inv_matrix")
+  expect_error(pca(X = "lipid"), class = "inv_X")
 })
 
 test_that('legacy code works with a warning',{

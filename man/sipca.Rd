@@ -3,25 +3,24 @@
 \name{sipca}
 \alias{sipca}
 \alias{sipca.default}
-\alias{sipca.character}
-\title{Independent Principal Component Analysis}
+\alias{sipca.MultiAssayExperiment}
+\title{Sparse Independent Principal Component Analysis}
 \usage{
-sipca(X = NULL, data = NULL, ncomp = 2, keepX = NULL, ...)
+sipca(data = NULL, X = NULL, ncomp = 2, keepX = NULL, ...)
 
-\method{sipca}{default}(X, ncomp = 3, keepX = NULL,
-  mode = c("deflation", "parallel"), fun = c("logcosh", "exp"),
-  scale = FALSE, max.iter = 200, tol = 1e-04, w.init = NULL)
+\method{sipca}{default}(data = NULL, X = NULL, ncomp = 2,
+  keepX = NULL, ..., ret.call = FALSE)
 
-\method{sipca}{character}(X = NULL, data = NULL, ncomp = 2,
-  keepX = NULL, ...)
+\method{sipca}{MultiAssayExperiment}(data = NULL, X = NULL,
+  ncomp = 2, keepX = NULL, ..., ret.call = FALSE)
 }
 \arguments{
+\item{data}{An object of class \code{MultiAssayExperiment} or similar.
+See Details.}
+
 \item{X}{A numeric matrix (or data frame) which provides the data for the
 principal components analysis. It can contain missing values.
 Alternatively, name of an assay from \code{data}.}
-
-\item{data}{An object of class \code{MultiAssayExperiment} or similar.
-See Details.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
@@ -34,17 +33,7 @@ ncol(X))}.}
 
 \item{...}{Aguments passed to the generic.}
 
-\item{scale}{A logical value indicating whether the variables should be
-scaled to have unit variance before the analysis takes place. The default is
-\code{FALSE} for consistency with \code{prcomp} function, but in general
-scaling is advisable. Alternatively, a vector of length equal the number of
-columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}.}
-
-\item{max.iter}{Integer, the maximum number of iterations in the NIPALS
-algorithm.}
-
-\item{tol}{A positive real, the tolerance used in the NIPALS algorithm.}
+\item{ret.call}{Logical indicating whether evaluated input arguments}
 }
 \value{
 \code{pca} returns a list with class \code{"ipca"} containing the
@@ -59,7 +48,8 @@ vectors}
 \description{
 Performs sparse independent principal component analysis on the given data
 matrix to enable variable selection.
-
+}
+\details{
 See Details of ipca.
 
 Soft thresholding is implemented on the independent loading vectors to
@@ -67,11 +57,9 @@ obtain sparse loading vectors and enable variable selection.
 }
 \examples{
 #' \dontrun{
-
-library(mixOmics.data)
-
-# implement IPCA on a microarray dataset
-sipca.res <- sipca(liver.toxicity$gene, ncomp = 3, mode="deflation", keepX=c(50,50,50))
+data(liver.toxicity)
+# implement sIPCA on a microarray dataset
+sipca.res <- sipca(X = liver.toxicity$gene, ncomp = 3, mode="deflation", keepX=c(50,50,50))
 sipca.res
 # samples representation
 plotIndiv(sipca.res, ind.names = liver.toxicity$treatment[, 4],

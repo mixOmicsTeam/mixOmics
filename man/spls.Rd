@@ -127,8 +127,8 @@ included.
 #' \dontrun{
 ## 1st example: accepted input formats
 #--------------------------------------------------------------
+data(liver.toxicity)
 
-library(mixOmics.data)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
 keepX <- c(50, 50)

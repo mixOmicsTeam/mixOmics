@@ -286,37 +286,37 @@ pca <- function(data=NULL, X=NULL, ncomp=2, ...) UseMethod('pca')
 
 #### Default ####
 #' @rdname pca
+#' @param ret.call Logical indicating whether evaluated input arguments
+#' should be included in the result
 #' @export
 ## in default method data should be NULL, but we make an expection for legacy
 ## codes where 'X' is not named
-pca.default <- function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE){
+pca.default <- 
+   function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE){
    mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
    ## if data is a matrix-like:
    if ( any(class(data) %in% c('matrix', 'data.frame'))) {
-      .warning(message = 'mixOmics arguments have changed and this code will
-               not work in near future (you can use named arguments to avoid
-               this), please see documentation',
-               .subclass = 'deprecated')
+      .deprecate_ufma() ## deprecate unnamed first matrix argument
       result <- .pca(X = data, ncomp = ncomp, ...)
    } else if (is.null(data)) {
-      ## let the internal throw the error
+      ## over to the internal
       result <- .pca(X = X, ncomp = ncomp, ...)
    } else {
       .stop("'data' is not valid, see ?pca.", .subclass = "inv_data")
    }
+      ## if asked, append the evaluted args to the output list
    .call_return(result, ret.call, mcr = match.call(), fun.name = 'pca')
 }
 
 #### MultiAssayExperiment ####
 ## 'X = assay' name from 'data = MAE'
+#' @param ret.call Logical indicating whether evaluated input arguments
 #' @rdname pca
 #' @export
-pca.MultiAssayExperiment <-
-   function(data = NULL,
-            X = NULL,
-            ncomp = 2,
-            ...,
-            ret.call = FALSE) {
+pca.MultiAssayExperiment <- 
+   function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE) {
+      ## pipeline to adjust and send the method args to the internal
       result <- .pcaMethodsHelper(match.call(), fun = 'pca')
+      ## if asked, append the evaluted args to the output list
       .call_return(result, ret.call, mcr = match.call(), fun.name = 'pca')
 }

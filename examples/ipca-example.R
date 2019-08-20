@@ -3,7 +3,7 @@
 data(liver.toxicity)
 
 # implement IPCA on a microarray dataset
-ipca.res <- ipca(liver.toxicity$gene, ncomp = 3, mode = "deflation")
+ipca.res <- ipca(X = liver.toxicity$gene, ncomp = 3, mode = "deflation")
 
 # samples representation
 plotIndiv(
@@ -16,8 +16,8 @@ plotIndiv(
 # --------------------------------
 
 ipca.res <-
-  ipca(liver.toxicity.mae,
-       assay = 'gene',
+  ipca(data = liver.toxicity.mae,
+       X = 'gene',
        ncomp = 3,
        mode = "deflation")
 ipca.res

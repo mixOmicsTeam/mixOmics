@@ -250,11 +250,11 @@
     mc$X <- as.matrix(mc$X)
   
   if (!(is.matrix(mc$X) && is.numeric(mc$X)))
-    .stop(.subclass = 'inv_matrix', message = "'X' must be a numeric matrix.")
+    .stop(.subclass = 'inv_X', message = "'X' must be a numeric matrix.")
   
   if ( any(is.infinite(mc$X)) )
      .stop(message = "infinite values in data not allowed",
-           .subclass = "inv_XY")
+           .subclass = "inv_X")
      
 
   ## checking NAs, only for ICA

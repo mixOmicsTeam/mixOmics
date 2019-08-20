@@ -1,7 +1,7 @@
 #' \dontrun{
 data(liver.toxicity)
 # implement sIPCA on a microarray dataset
-sipca.res <- sipca(liver.toxicity$gene, ncomp = 3, mode="deflation", keepX=c(50,50,50))
+sipca.res <- sipca(X = liver.toxicity$gene, ncomp = 3, mode="deflation", keepX=c(50,50,50))
 sipca.res
 # samples representation
 plotIndiv(sipca.res, ind.names = liver.toxicity$treatment[, 4],

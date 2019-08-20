@@ -16,7 +16,7 @@ test_fun <- function(fun=fun){
 }
 test_fun(fun = fun)
 
-devtools::test_file()
+# devtools::test_file()
 ############# run ./tests tests which then redirects to testthat.R. testhat/helper-*.R files are run before tests
 devtools::test()
 ############# check without examples

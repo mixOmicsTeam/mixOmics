@@ -19,5 +19,5 @@ test_that('spca returns appropriate error for invalid assay/data',{
   ## expect error
   expect_error(spca(data = nutrimouse.mae, X = "not-an-assay", keepX = c(5,5)), class = "inv_assay")
   expect_error(spca(data = nutrimouse, X = "lipid", keepX = c(5,5)), class = "inv_data")
-  expect_error(spca(X = "lipid"), class = "inv_data")
+  expect_error(spca(X = "lipid"), class = "inv_X")
 })

@@ -31,6 +31,9 @@ ncol(X))}.}
 
 \item{...}{Aguments passed to the generic.}
 
+\item{ret.call}{Logical indicating whether evaluated input arguments
+should be included in the result}
+
 \item{mode}{character string. What type of algorithm to use when estimating
 the unmixing matrix, choose one of \code{"deflation"}, \code{"parallel"}.}
 
@@ -84,10 +87,10 @@ to obtain the independent principal components.
 \examples{
 #' \dontrun{
 
-library(mixOmics.data)
+data(liver.toxicity)
 
 # implement IPCA on a microarray dataset
-ipca.res <- ipca(liver.toxicity$gene, ncomp = 3, mode = "deflation")
+ipca.res <- ipca(X = liver.toxicity$gene, ncomp = 3, mode = "deflation")
 
 # samples representation
 plotIndiv(
@@ -100,8 +103,8 @@ plotIndiv(
 # --------------------------------
 
 ipca.res <-
-  ipca(liver.toxicity.mae,
-       assay = 'gene',
+  ipca(data = liver.toxicity.mae,
+       X = 'gene',
        ncomp = 3,
        mode = "deflation")
 ipca.res

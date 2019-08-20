@@ -31,6 +31,9 @@ ncol(X))}.}
 
 \item{...}{Aguments passed to the generic.}
 
+\item{ret.call}{Logical indicating whether evaluated input arguments
+should be included in the result}
+
 \item{center}{A logical value indicating whether the variables should be
 shifted to be zero centered. Alternately, a vector of length equal the
 number of columns of \code{X} can be supplied. The value is passed to
@@ -59,6 +62,8 @@ avoid infinite value after the logratio transform, default to 0.001.}
 
 \item{multilevel}{Sample information for multilevel decomposition for
 repeated measurements.}
+
+\item{ret.call}{Logical indicating whether evaluated input arguments}
 }
 \value{
 \code{pca} returns a list with class \code{"pca"} and
@@ -113,7 +118,7 @@ transformation and additional offset might be needed.
 \examples{
 #' \dontrun{
 
-library(mixOmics.data)
+data(multidru)
 # example with missing values where NIPALS is applied
 # --------------------------------
 pca.res <- pca(X = multidrug$ABC.trans, ncomp = 4, scale = TRUE)
@@ -145,6 +150,7 @@ plotVar(pca.res, rad.in = 0.5, cex = 0.5,style="3d")
 ## example with multilevel decomposition and CLR log ratio transformation
 ## (ILR longer to run)
 ## ----------------
+data(diverse.16S)
 pca.res = pca(X = diverse.16S$data.TSS, ncomp = 5,
               logratio = 'CLR', multilevel = diverse.16S$sample)
 plot(pca.res)

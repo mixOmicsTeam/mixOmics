@@ -11,5 +11,5 @@ test_that('ipca returns appropriate error for invalid assay/data',{
   ## expect error
   expect_error(ipca(data = nutrimouse.mae, X = "not-an-assay"), class = "inv_assay")
   expect_error(ipca(data = nutrimouse, X = "lipid"), class = "inv_data")
-  expect_error(ipca(X = "lipid"), class = "inv_matrix")
+  expect_error(ipca(X = "lipid"), class = "inv_X")
 })

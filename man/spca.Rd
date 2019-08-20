@@ -3,25 +3,24 @@
 \name{spca}
 \alias{spca}
 \alias{spca.default}
-\alias{spca.character}
+\alias{spca.MultiAssayExperiment}
 \title{Sparse Principal Components Analysis}
 \usage{
-spca(X = NULL, data = NULL, ncomp = 2, keepX = NULL, ...)
+spca(data = NULL, X = NULL, ncomp = 2, keepX = NULL, ...)
 
-\method{spca}{default}(X, ncomp = 2, center = TRUE, keepX = NULL,
-  scale = TRUE, max.iter = 500, tol = 1e-06, logratio = c("none",
-  "CLR"), multilevel = NULL)
+\method{spca}{default}(data = NULL, X = NULL, ncomp = 2,
+  keepX = NULL, ..., ret.call = FALSE)
 
-\method{spca}{character}(X = NULL, data = NULL, ncomp = 2,
-  keepX = NULL, ...)
+\method{spca}{MultiAssayExperiment}(data = NULL, X = NULL, ncomp = 2,
+  keepX = NULL, ..., ret.call = FALSE)
 }
 \arguments{
+\item{data}{An object of class \code{MultiAssayExperiment} or similar.
+See Details.}
+
 \item{X}{A numeric matrix (or data frame) which provides the data for the
 principal components analysis. It can contain missing values.
 Alternatively, name of an assay from \code{data}.}
-
-\item{data}{An object of class \code{MultiAssayExperiment} or similar.
-See Details.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
@@ -34,22 +33,7 @@ ncol(X))}.}
 
 \item{...}{Aguments passed to the generic.}
 
-\item{center}{A logical value indicating whether the variables should be
-shifted to be zero centered. Alternately, a vector of length equal the
-number of columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}.}
-
-\item{scale}{A logical value indicating whether the variables should be
-scaled to have unit variance before the analysis takes place. The default is
-\code{FALSE} for consistency with \code{prcomp} function, but in general
-scaling is advisable. Alternatively, a vector of length equal the number of
-columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}.}
-
-\item{max.iter}{Integer, the maximum number of iterations in the NIPALS
-algorithm.}
-
-\item{tol}{A positive real, the tolerance used in the NIPALS algorithm.}
+\item{ret.call}{Logical indicating whether evaluated input arguments}
 
 \item{logratio}{one of ('none','CLR'). Specifies the log ratio
 transformation to deal with compositional values that may arise from
@@ -57,8 +41,7 @@ specific normalisation in sequencing data. Default to 'none'.
 in loading vectors. By default all variables are kept in the model. See
 details.}
 
-\item{multilevel}{Sample information for multilevel decomposition for
-repeated measurements.}
+\item{ret.call}{Logical indicating whether evaluated input arguments}
 }
 \value{
 \code{spca} returns a list with class \code{"spca"} containing the
@@ -102,7 +85,7 @@ transformation and additional offset might be needed.
 \examples{
 #' \dontrun{
 
-library(mixOmics.data)
+data(liver.toxicity)
 spca.rat <- spca(liver.toxicity$gene, ncomp = 3, keepX = rep(50, 3))
 print(spca.rat)
 ## variable representation

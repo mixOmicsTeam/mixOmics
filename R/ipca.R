@@ -237,15 +237,7 @@ NULL
   dimnames(S) = list(X.names, paste("IPC", 1:ncol(S), sep = ""))
   dimnames(ipc) = list(ind.names, paste("IPC", 1:ncol(ipc), sep = ""))
 
-  {
-    ## keeping this for the exported generic's benefit, but is not necessary as far as methods are concerned
-    mcr = match.call() ## match call for returning
-    mcr[[1]] = as.name('ipca')
-    mcr[-1L] <- lapply(mcr[-1L], eval.parent)
-  }
-  
   result = list(
-    call = mcr,
     X = X,
     ncomp = ncomp,
     x = ipc,
@@ -279,14 +271,12 @@ ipca <- function(data=NULL, X=NULL, ncomp=2, ...) UseMethod('ipca')
 #' @export
 ## in default method data should be NULL, but we make an expection for legacy
 ## codes where 'X' is not named
-ipca.default <- function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE){
+ipca.default <- 
+  function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE){
   mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
   ## if data is a matrix-like:
   if ( any(class(data) %in% c('matrix', 'data.frame'))) {
-    .warning(message = 'mixOmics arguments have changed and this code will
-               not work in near future (you can use named arguments to avoid
-               this), please see documentation',
-             .subclass = 'deprecated')
+    .deprecate_ufma() ## deprecate unnamed first matrix argument
     result <- .ipca(X = data, ncomp = ncomp, ...)
   } else if (is.null(data)) {
     ## let the internal throw the error
@@ -302,11 +292,7 @@ ipca.default <- function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE){
 #' @rdname ipca
 #' @export
 ipca.MultiAssayExperiment <-
-  function(data = NULL,
-           X = NULL,
-           ncomp = 2,
-           ...,
-           ret.call = FALSE) {
+  function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE) {
     result <- .pcaMethodsHelper(match.call(), fun = 'ipca')
     .call_return(result, ret.call, mcr = match.call(), fun.name = 'ipca')
   }
