@@ -7,31 +7,46 @@
 #' Y (assay/coldata name) and return matrices of X and Y in mc$X and mc$Y, 
 #' getting rid of  $data and/or $formula args
 #' 
-#' @param mc A list(data=MAE, X=X_name, Y=Y_name)
-#' @param mcc Unevaluated call list for exception handling
+#' @param mc A list with at least (data=MAE, X=X_name, Y=Y_name)=
 #' @noRd
 #' @importFrom MultiAssayExperiment complete.cases
 #' @importFrom SummarizedExperiment colData
 #' @importFrom SummarizedExperiment assays
 #' @importFrom SummarizedExperiment assay
 
-.get_xy <- function(mc, mcc){ 
+.get_xy <- function(mc){ 
+  mcc <- mc ## copy before change
+  ## ensure X and Y are character
   tryCatch({
-    if(any(class(c(mc$X, mc$Y))!="character")) stop("mc must have character X and Y", call. = FALSE)
-  }, error=function(e) message("oops! something went wrong! please check X and Y again or contact us if you had no luck!"))
-  if(!mc$X %in% names(assays(mc$data))) .stop(.subclass = "inv_xy", message = " 'X' is not a valid assay from 'data'")
+    if(any(class(c(mc$X, mc$Y))!="character")) 
+      stop("mc must have character X and Y", call. = FALSE)
+  }, error=function(e) 
+    message("oops! something went wrong! Please inputs again or contact us if you had no luck!"))
+  
+  ## ensure X and Y are valid
+  if(!mc$X %in% names(assays(mc$data))) 
+    .stop(.subclass = "inv_XY",
+          message = " 'X' is not a valid assay from 'data'")
+  
   ## --- if 'Y' is a colData
-  if(mc$Y %in% names(colData(mc$data))){
-    if(mc$Y %in% names(assays(mc$data))) .stop(.subclass = "inv_xy", message = paste0(mcc$Y, " matches to both colData and assay in 'data', change its name in one and continue."))
+  if(mc$Y %in% names(colData(mc$data))) {
+    if(mc$Y %in% names(assays(mc$data))) 
+      .stop(.subclass = "inv_XY", 
+            message = paste0(mcc$Y, " matches to both colData and assay
+                             in 'data', change its name in one and continue."))
     ## ----- if Y is a colData column subset it using X samples
-    Xcoldata <- suppressMessages( as.data.frame(colData(mc$data[,,mc$X]))) ## keep X assay coldata - DataFrame to data.frame
+    ## keep X assay's colData & change DataFrame to data.frame
+    Xcoldata <- suppressMessages( as.data.frame(colData(mc$data[,,mc$X]))) 
     mc$Y <- Xcoldata[,mc$Y] ## keep the coldata desired for Y
-    ## if Y not numeric
-    if(! typeof(mc$Y) %in% c("numeric","integer")){
-      if(typeof(mc$Y)=="factor") {
-        warning(paste0("The column data ", sQuote(mcc$Y)," is a factor, coercing to a numeric vector with names..."))
+    ## if Y not numeric coerce
+    if (! typeof(mc$Y) %in% c("numeric", "integer")) {
+      if (typeof(mc$Y) == "factor") {
+        warning(paste0("The column data ", sQuote(mcc$Y)," is a factor,
+                       coercing to a numeric vector with names..."))
         mc$Y <- structure(as.numeric(mc$Y),
-                          names=as.character(mc$Y), class="numeric")
+                          names = as.character(mc$Y), 
+                          class = "numeric")
+        
       } else if(typeof(mc$Y)=="character"){
         ## if Y is a character colData and the number of unique terms are less than total,
         ## coerce it to factor and then numeric with a warning
@@ -41,7 +56,7 @@
           mc$Y <- structure(as.numeric(as.factor(mc$Y)),
                             names=mc$Y, class="numeric")
         } else {
-          .stop(.subclass = "inv_xy", message = paste0(" 'Y' is not a numeric/integer column (or a factor coercible to numeric)"))
+          .stop(.subclass = "inv_XY", message = paste0(" 'Y' is not a numeric/integer column (or a factor coercible to numeric)"))
         }
       }
 
@@ -53,7 +68,7 @@
     mc$data <- mc$data[,complete.cases(mc$data[,,c(mc$X, mc$Y)])] ## keep complete data b/w two assays
     mc$X <- assay(mc$data, mc$X)
     mc$Y <- assay(mc$data, mc$Y)
-  } else {.stop(.subclass = "inv_xy", message = paste0(sQuote(mcc$Y), " is not an assay or column data from the MAE object" ))}
+  } else {.stop(.subclass = "inv_XY", message = paste0(sQuote(mcc$Y), " is not an assay or column data from the MAE object" ))}
   mc$X <- t(as.matrix(mc$X))
   mc$Y <- as.matrix(mc$Y)
 
@@ -119,7 +134,7 @@
       mc[c("X", "Y")] <- lapply( mc[c("X", "Y")], eval.parent)
       ## ensure it is a single character
       if(any(sapply( mc[c("X", "Y")], length)!=1))
-        .stop(.subclass = "inv_xy", message = "'X' and 'Y' must be assay names from 'data'")
+        .stop(.subclass = "inv_XY", message = "'X' and 'Y' must be assay names from 'data'")
       mc <- .get_xy(mc, mcc)
     }
     ##--- if data, X and Y , expect X and Y to be assays and change them to matrices

@@ -128,24 +128,25 @@
 #' 
 ## ----------- Examples ----------- 
 #' @example examples/pls-example.R
-## @importFrom matrixStats colSds
-## @importFrom matrixStats colVars
-#' @export pls
-pls = function(data=NULL,
-               X=NULL,
-               Y=NULL,
-               ncomp = 2,
-               scale = TRUE,
-               mode = c("regression", "canonical", "invariant", "classic"),
-               tol = 1e-06,
-               max.iter = 100,
-               near.zero.var = FALSE,
-               logratio = "none",
-               multilevel = NULL,
-               all.outputs = TRUE,
-               formula=NULL){
+## setting the document name here so internal would not force the wrong name
+#' @name pls
+NULL
+## ----------- Internal ----------- 
+.pls = function(X=NULL,
+                Y=NULL,
+                ncomp = 2,
+                scale = TRUE,
+                mode = c("regression", "canonical", "invariant", "classic"),
+                tol = 1e-06,
+                max.iter = 100,
+                near.zero.var = FALSE,
+                logratio = "none",
+                multilevel = NULL,
+                all.outputs = TRUE,
+                formula=NULL,
+                ret.call=FALSE){
     mc <- as.list(match.call()[-1])
-
+    
     ## make sure mode matches given arguments, and if it is not provided put as the first one in the definition
     mc$mode <- .matchArg(mode)
     ## if formula or data is given, process arguments to match default pls
@@ -157,7 +158,6 @@ pls = function(data=NULL,
     result <- do.call(.mintWrapper, mc)
     # choose the desired output from 'result'
     out = list(
-        call = match.call(),
         X = result$A[-result$indY][[1]],
         Y = result$A[result$indY][[1]],
         ncomp = result$ncomp,
@@ -176,8 +176,8 @@ pls = function(data=NULL,
         input.X = result$input.X,
         mat.c = result$mat.c#,
         #defl.matrix = result$defl.matrix
-        )
-
+    )
+    
     class(out) = c("mixo_pls")
     # output if multilevel analysis
     if (!is.null(multilevel))
@@ -185,7 +185,111 @@ pls = function(data=NULL,
         out$multilevel = multilevel
         class(out) = c("mixo_mlpls",class(out))
     }
-
+    
     return(invisible(out))
-
+    
 }
+## ----------- Generic ----------- 
+#' @export
+setGeneric('pls', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) standardGeneric('pls'))
+
+## ----------- Methods ----------- 
+#### ANY ####
+#' @param formula NULL for ANY
+#' @param data NULL for ANY
+#' @param ... Aguments passed to the generic.
+#' @param ret.call Whether call arguments should be included in the output.
+#' @export
+setMethod('pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL,..., ret.call=FALSE) {
+    mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+    if ( !(missing(data) || is.null(data))) { ## data must be NULL
+        .stop(message = "data should be a MultiAssayExperiment class, or NULL",
+              .subclass = "inv_signature")
+    }
+    if ( !(missing(formula) || is.null(formula)) ) { ## formula must be NULL
+        .stop(message = "With numerical X and Y, formula should not be provided. See ?pls",
+              .subclass = "inv_signature")
+    }
+    
+    mc <- match.call()
+    mc[-1] <- lapply(mc[-1], eval.parent)
+    ## TODO drop this if not necessary
+    # mc[-1L] <- lapply(mc[-1L], eval.parent) ## evaluate objects, if any 
+    ## drop the args not used by the internal
+    mc$ret.call <- mc$data <- mc$formula <- NULL 
+    mc[[1L]] <- quote(.pls)
+    result <- eval(mc)
+    .call_return(result, ret.call, mcr = match.call(), fun.name = 'pls')
+})
+
+#### signature(data = 'MultiAssayExperiment', formula = "formula") ####
+## expect X and Y to be NULL
+#' @param formula A formula of form Y~X where Y and X are assay names.
+#' @param data A \code{MultiAssayExperiment} data object.
+setMethod('pls', signature(data = 'MultiAssayExperiment', formula = 'formula'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., ret.call=FALSE) {
+              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+              ## X and Y NULL or missing
+              if ( !((missing(X) || is.null(X)) && (missing(Y) || is.null(Y)) ) )
+                  .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
+                        .subclass = "inv_signature")
+              mc <- match.call()
+              mc[-1] <- lapply(mc[-1], eval.parent)
+              .sformula_checker(mc) ## check formula validity
+              mc[c('Y', 'X')] <- lapply(as.list(formula)[2:3], eval.parent)
+              mc <- .get_xy(mc = mc)
+              mc$ret.call <- mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.pls)
+              result <- eval(mc)
+              .call_return(result, ret.call, mcr = match.call(), fun.name = 'pls')
+          })
+
+
+#### signature(data != 'MultiAssayExperiment', formula = "formula") ####
+## expect X and Y to be NULL
+#' @param formula Formula of form Y~X where Y and X are assay names.
+#' @param data Must be NULL for this method.
+setMethod('pls', signature(formula = 'formula'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., ret.call=FALSE) {
+              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+              if ( !(missing(data) || is.null(data))) { ## data must be NULL
+                  .stop(message = "data should be a MultiAssayExperiment class, or NULL",
+                        .subclass = "inv_signature")
+              }
+              ## X and Y NULL or missing
+              if ( !((missing(X) || is.null(X)) && (missing(Y) || is.null(Y)) ) )
+                  .stop(message = "'formula' must not be provided with
+                        'X' and 'Y'", .subclass = "inv_signature")
+              mc <- match.call()
+              mc[-1] <- lapply(mc[-1], eval.parent)
+              .sformula_checker(mc) ## check formula validity
+              mc[c('Y', 'X')] <- lapply(as.list(formula)[2:3], eval.parent)
+              # mc <- .get_xy(mc = mc)
+              mc$ret.call <- mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.pls)
+              result <- eval(mc)
+              .call_return(result, ret.call, mcr = match.call(), fun.name = 'pls')
+          })
+
+
+#### signature(data = 'MultiAssayExperiment', formula != "formula") ####
+## expect X and Y to be valid characters
+#' @param formula Must be NULL for this method.
+#' @param data A \code{MultiAssayExperiment} data object.
+setMethod('pls', signature(data = 'MultiAssayExperiment'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., ret.call=FALSE) {
+              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+              ## X and Y NULL or missing
+              if ( !(missing(formula) || is.null(formula)) ) { ## formula must be NULL
+                  .stop(message = "With numerical X and Y, formula should not be provided. See ?pls", 
+                        .subclass = "inv_signature")
+              }
+              
+              mc <- match.call()
+              mc[-1] <- lapply(mc[-1], eval.parent)
+              mc <- .get_xy(mc = mc)
+              mc$ret.call <- mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.pls)
+              result <- eval(mc)
+              .call_return(result, ret.call, mcr = match.call(), fun.name = 'pls')
+          })

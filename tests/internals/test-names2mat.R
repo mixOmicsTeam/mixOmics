@@ -6,6 +6,6 @@ test_that(".get_xy works when Y is colData or assay name ", {
 })
 
 test_that(".get_xy fails when Y is invalid", {
-  expect_error(.get_xy(list(data = miniACC, X="RNASeq2GeneNorm", Y="invalid y")), class = "inv_xy")
-  expect_error(.get_xy(list(data = miniACC, X="inv x", Y="years_to_birth")), class = "inv_xy")
+  expect_error(.get_xy(list(data = miniACC, X="RNASeq2GeneNorm", Y="invalid y")), class = "inv_XY")
+  expect_error(.get_xy(list(data = miniACC, X="inv x", Y="years_to_birth")), class = "inv_XY")
 })

@@ -53,14 +53,14 @@
 # test_that("spls fails with invalid assay and produces appropriate error",{
 # 
 #   ##---- "xy"
-#   expect_condition(spls(formula = Y~X, data = mae_data ), class = "inv_xy")
-#   expect_condition(spls(X = "invalidX", Y="invalidY", data = mae_data ), class = "inv_xy")
+#   expect_condition(spls(formula = Y~X, data = mae_data ), class = "inv_XY")
+#   expect_condition(spls(X = "invalidX", Y="invalidY", data = mae_data ), class = "inv_XY")
 # 
-#   expect_condition(spls(X=Xm_Ya, Y=Y_inv,data = mae_data),  class = "inv_xy")
+#   expect_condition(spls(X=Xm_Ya, Y=Y_inv,data = mae_data),  class = "inv_XY")
 #   ##---- "formula"
-#   expect_condition(spls(formula = Y~X, data = mae_data ), class = "inv_xy")
+#   expect_condition(spls(formula = Y~X, data = mae_data ), class = "inv_XY")
 #   ##---- 'formula_mae'
-#   expect_condition(spls(formula = wrong_LHS ~ gistict, data = mae_data ), class = "inv_xy")
+#   expect_condition(spls(formula = wrong_LHS ~ gistict, data = mae_data ), class = "inv_XY")
 # })
 # 
 # ## ------ correct error with invalid formula format
@@ -76,5 +76,5 @@
 # 
 # ## ------ correct error with non-numeric/factor Y coldata
 # test_that("spls fails with invalid Y",{
-#   expect_condition(spls(X=Xa , Y=Y_inv , data = mae_data), class = "inv_xy")
+#   expect_condition(spls(X=Xa , Y=Y_inv , data = mae_data), class = "inv_XY")
 # })
