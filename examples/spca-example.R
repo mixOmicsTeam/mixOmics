@@ -1,6 +1,6 @@
 #' \dontrun{
 
-library(mixOmics.data)
+data(liver.toxicity)
 spca.rat <- spca(liver.toxicity$gene, ncomp = 3, keepX = rep(50, 3))
 print(spca.rat)
 ## variable representation

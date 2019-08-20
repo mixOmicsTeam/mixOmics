@@ -1,5 +1,6 @@
 #' \dontrun{
-library(mixOmics.data)
+
+data(breast.tumors)
 
 ## ---------------- with X as matrix and and Y as numeric/factor
 X <- breast.tumors$gene.exp

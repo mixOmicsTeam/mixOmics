@@ -2,7 +2,7 @@
 ## example with PLSDA, 2 classes
 # ----------------
 #' \dontrun{
-library(mixOmics.data)
+data(breast.tumors)
 
 X <- breast.tumors$gene.exp
 Y <- breast.tumors$sample$treatment
@@ -37,6 +37,7 @@ auc.plsda.breast = auroc(plsda.breast, ncomp = 1)
 
   ## example with mint.splsda
   # -----------------
+  data(stemcells)
   res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 3, keepX = c(10, 5, 15),
                     study = stemcells$study)
   auc.mint.spslda = auroc(res, plot = TRUE, roc.comp = 3)

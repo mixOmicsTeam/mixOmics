@@ -1,5 +1,5 @@
 #' \dontrun{
-library(mixOmics.data)
+data(linnerud)
 
 ## ---------------- with X and Y as matrices
 X <- linnerud$exercise

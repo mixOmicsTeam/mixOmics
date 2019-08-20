@@ -2,7 +2,7 @@
 ## successful: TRUE
 ## final: TRUE
 
-library(mixOmics.data)
+data(multidrug)
 pca.res <- pca(multidrug$ABC.trans, ncomp = 10, scale = TRUE)
 plot(pca.res)
 #' }

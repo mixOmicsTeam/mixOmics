@@ -97,12 +97,6 @@ NULL
   max.iter <- as.integer(mcd$max.iter)
   rm(mcd)
   
-  X <- mcd$X
-  # keepX <- mcd$keepX
-  ncomp <- mcd$ncomp
-  max.iter <- as.integer(mcd$max.iter)
-  rm(mcd)
-  
   nc = ncol(X)
   nr = nrow(X)
   
@@ -313,6 +307,6 @@ ipca.MultiAssayExperiment <-
            ncomp = 2,
            ...,
            ret.call = FALSE) {
-    result <- .ipcaMethodsHelper(match.call(), fun = 'pca')
-    .call_return(result, ret.call, mcr = match.call(), fun.name = 'pca')
+    result <- .pcaMethodsHelper(match.call(), fun = 'ipca')
+    .call_return(result, ret.call, mcr = match.call(), fun.name = 'ipca')
   }

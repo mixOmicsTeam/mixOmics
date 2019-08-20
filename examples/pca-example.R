@@ -1,6 +1,6 @@
 #' \dontrun{
 
-library(mixOmics.data)
+data(multidru)
 # example with missing values where NIPALS is applied
 # --------------------------------
 pca.res <- pca(X = multidrug$ABC.trans, ncomp = 4, scale = TRUE)
@@ -32,6 +32,7 @@ plotVar(pca.res, rad.in = 0.5, cex = 0.5,style="3d")
 ## example with multilevel decomposition and CLR log ratio transformation
 ## (ILR longer to run)
 ## ----------------
+data(diverse.16S)
 pca.res = pca(X = diverse.16S$data.TSS, ncomp = 5,
               logratio = 'CLR', multilevel = diverse.16S$sample)
 plot(pca.res)

@@ -1,6 +1,6 @@
 #' \dontrun{
 
-library(mixOmics.data)
+data(liver.toxicity)
 
 # implement IPCA on a microarray dataset
 ipca.res <- ipca(liver.toxicity$gene, ncomp = 3, mode = "deflation")
