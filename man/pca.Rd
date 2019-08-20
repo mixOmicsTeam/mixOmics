@@ -15,7 +15,8 @@ pca(data = NULL, X = NULL, ncomp = 2, ...)
   ..., ret.call = FALSE)
 }
 \arguments{
-\item{data}{An object of class \code{MultiAssayExperiment} or similar. See Details.}
+\item{data}{An object of class \code{MultiAssayExperiment} or similar.
+See Details.}
 
 \item{X}{A numeric matrix (or data frame) which provides the data for the
 principal components analysis. It can contain missing values.
@@ -56,7 +57,8 @@ avoid infinite value after the logratio transform, default to 0.001.}
 
 \item{V}{Matrix used in the logratio transformation id provided.}
 
-\item{multilevel}{Sample information for multilevel decomposition for repeated measurements.}
+\item{multilevel}{Sample information for multilevel decomposition for
+repeated measurements.}
 }
 \value{
 \code{pca} returns a list with class \code{"pca"} and
@@ -73,8 +75,9 @@ to keep the mixOmics spirit} \item{center, scale}{the centering and scaling
 used, or \code{FALSE}.} \item{explained_variance}{explained variance from
 the multivariate model, used for plotIndiv}.
 \code{pca} can take numeric matrices/data.frames as \code{X},
-or \code{data} of class \code{MultiAssayExperiment} (or any other class that inherits
-from \code{SummarizedExperiment} class for which the following methods are defined:
+or \code{data} of class \code{MultiAssayExperiment} (or any other class that
+inherits from \code{SummarizedExperiment} class for which the following
+methods are defined:
 \code{assay}, \code{assays}, and \code{colData}).
 }
 \description{
@@ -96,13 +99,6 @@ When using NIPALS (missing values), we make the assumption that the first
 
 Note that \code{scale= TRUE} cannot be used if there are zero or constant
 (for \code{center = TRUE}) variables.
-
-Components are omitted if their standard deviations are less than or equal
-to \code{comp.tol} times the standard deviation of the first component. With
-the default null setting, no components are omitted. Other settings for
-\code{comp.tol} could be \code{comp.tol = sqrt(.Machine$double.eps)}, which
-would omit essentially constant components, or \code{comp.tol = 0}.
-
 According to Filzmoser et al., a ILR log ratio transformation is more
 appropriate for PCA with compositional data. Both CLR and ILR are valid.
 

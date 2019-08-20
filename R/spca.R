@@ -12,14 +12,19 @@
 
   ## ----------------------------------- checks
   logratio <- .matchArg(logratio)
-  mcd <- mget(names(formals()),sys.frame(sys.nframe())) ## match.call and defaults
-  err = tryCatch(mcd, error = function(e) e) ## see if arguments can be evaluated
+  mcd <- mget(names(formals()),sys.frame(sys.nframe())) ## match.call & defaults
+  err = tryCatch(mcd, error = function(e) e) ## check arguments can be evaluated
   if ("simpleError" %in% class(err))
     stop(err[[1]], ".", call. = FALSE)
 
-  ## check pca entries for match.call and defaults and do necessary adjustments to
-  ## arguments in this environement from within function
-  .pcaEntryChecker(mcd, check.keepX = TRUE, check.center = TRUE, check.NA = FALSE)
+  ## check entries for args and do necessary adjustments to them
+  mcd <- .pcaEntryChecker(mcd,fun = 'spca')
+  
+  X <- mcd$X
+  keepX <- mcd$keepX
+  ncomp <- mcd$ncomp
+  max.iter <- as.integer(mcd$max.iter)
+  rm(mcd)
 
   ## ----------------------------------- logratio tran.
   X = logratio.transfo(X = X, logratio = logratio, offset = 0)#if(logratio == "ILR") {ilr.offset} else {0})

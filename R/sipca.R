@@ -17,10 +17,15 @@
   if ("simpleError" %in% class(err))
     stop(err[[1]], ".", call. = FALSE)
 
-  ## check sipca entries for match.call and defaults and do necessary adjustments to
-  ## arguments in this environement from within function
-  .pcaEntryChecker(mcd, check.keepX = TRUE, check.center = FALSE, check.NA = TRUE)
-
+  ## check entries for args and do necessary adjustments to them
+  mcd <- .pcaEntryChecker(mcd,fun = 'sipca')
+  
+  X <- mcd$X
+  keepX <- mcd$keepX
+  ncomp <- mcd$ncomp
+  max.iter <- as.integer(mcd$max.iter)
+  rm(mcd)
+  
   dim_x <- dim(X)
   d <- dim_x[dim_x != 1]
   if (length(d) != 2)

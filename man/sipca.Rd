@@ -20,7 +20,8 @@ sipca(X = NULL, data = NULL, ncomp = 2, keepX = NULL, ...)
 principal components analysis. It can contain missing values.
 Alternatively, name of an assay from \code{data}.}
 
-\item{data}{An object of class \code{MultiAssayExperiment} or similar. See Details.}
+\item{data}{An object of class \code{MultiAssayExperiment} or similar.
+See Details.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}

@@ -1,3 +1,4 @@
+## ----------- Description ----------- 
 #' Principal Components Analysis
 #'
 #' Performs a principal components analysis on the given data matrix that can
@@ -17,13 +18,6 @@
 #'
 #' Note that \code{scale= TRUE} cannot be used if there are zero or constant
 #' (for \code{center = TRUE}) variables.
-#'
-#' Components are omitted if their standard deviations are less than or equal
-#' to \code{comp.tol} times the standard deviation of the first component. With
-#' the default null setting, no components are omitted. Other settings for
-#' \code{comp.tol} could be \code{comp.tol = sqrt(.Machine$double.eps)}, which
-#' would omit essentially constant components, or \code{comp.tol = 0}.
-#'
 #' According to Filzmoser et al., a ILR log ratio transformation is more
 #' appropriate for PCA with compositional data. Both CLR and ILR are valid.
 #'
@@ -35,7 +29,7 @@
 #' count data, we thus advise the normalise raw data with a 1 offset). For ILR
 #' transformation and additional offset might be needed.
 
-## ----------------------------------- Parameters
+## ----------- Parameters ----------- 
 #' @param X A numeric matrix (or data frame) which provides the data for the
 #' principal components analysis. It can contain missing values.
 #' Alternatively, name of an assay from \code{data}.
@@ -69,7 +63,7 @@
 #' @param multilevel Sample information for multilevel decomposition for
 #' repeated measurements.
 
-## ----------------------------------- Value
+## ----------- Value ----------- 
 #' @return \code{pca} returns a list with class \code{"pca"} and
 #' \code{"prcomp"} containing the following components: \item{ncomp}{the number
 #' of principal components used.} \item{sdev}{the eigenvalues of the
@@ -89,7 +83,7 @@
 #' methods are defined:
 #' \code{assay}, \code{assays}, and \code{colData}).
 
-## ----------------------------------- Misc
+## ----------- Ref ----------- 
 #' @author Florian Rohart, Kim-Anh Lê Cao, Ignacio González, Al J Abadi
 #' @seealso \code{\link{nipals}}, \code{\link{prcomp}}, \code{\link{biplot}},
 #' \code{\link{plotIndiv}}, \code{\link{plotVar}} and http://www.mixOmics.org
@@ -107,14 +101,13 @@
 #' 325 (2012)
 #' @keywords algebra
 
-## ----------------------------------- Examples
+## ----------- Examples ----------- 
 #' @example examples/pca-example.R
 ## setting the document name here so internal would not force the wrong name
 #' @name pca
 NULL
 
-#########################################################################
-## ---------- internal
+## ----------- Internal ----------- 
 .pca <- function(X,
                  ncomp=2,
                  center=TRUE,
@@ -136,9 +129,14 @@ NULL
    if ("simpleError" %in% class(err))
       stop(err[[1]], ".", call. = FALSE)
    
-   ## check pca entries for match.call and defaults and do necessary
-   ## adjustments to arguments in this environement from within function
-   .pcaEntryChecker(mcd, check.keepX = FALSE, check.center = TRUE, check.NA = FALSE)
+   ## check entries for args and do necessary adjustments to them
+   mcd <- .pcaEntryChecker(mcd,fun = 'pca')
+   
+   X <- mcd$X
+   # keepX <- mcd$keepX
+   ncomp <- mcd$ncomp
+   max.iter <- as.integer(mcd$max.iter)
+   rm(mcd)
    
    if (logratio != "none" && any(X < 0))
       stop("'X' contains negative values, you can not log-transform your data")
@@ -156,7 +154,9 @@ NULL
    ## will be used later to recalculate loadings etc
    if (is.null(V) & logratio == "ILR")
       V = clr.backtransfo(X)
-   X = logratio.transfo(X = X, logratio = logratio, offset = if (logratio == "ILR") {ilr.offset} else {0})
+   X = logratio.transfo(X = X,
+                        logratio = logratio, 
+                        offset = if (logratio == "ILR") {ilr.offset} else {0})
    ## as X may have changed
    if (ncomp > min(ncol(X), nrow(X)))
       stop("use smaller 'ncomp'", call. = FALSE)
@@ -230,16 +230,18 @@ NULL
          result$x = X %*% res$v[, 1:ncomp, drop = FALSE]
       }
    } else {
-      # if 'ILR', transform data and then back transform in clr space (from RobCompositions package)
-      # data have been transformed above
+      # if 'ILR', transform data and then back transform in clr space
+      # (from RobCompositions package). Data have been transformed above
       res = svd(X, nu = max(1, nrow(X) - 1))
       if (ncomp < ncol(X))
       {
          result$sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))  # Note: what differs with RobCompo is that they use: cumsum(eigen(cov(X))$values)/sum(eigen(cov(X))$values)
          # calculate loadings using back transformation to clr-space
          result$rotation = V %*% res$v[, 1:ncomp, drop = FALSE]
-         # extract component score from the svd, multiply matrix by vector using diag, NB: this differ from our mixOmics PCA calculations
-         # NB: this differ also from Filmoser paper, but ok from their code: scores are unchanged
+         # extract component score from the svd, multiply matrix by vector
+         # using diag, NB: this differ from our mixOmics PCA calculations
+         # NB: this differ also from Filmoser paper, but ok from their code:
+         # scores are unchanged
          result$x = res$u[, 1:ncomp, drop = FALSE] %*% diag(res$d[1:ncomp, drop = FALSE])
       } else {
          result$sdev = res$d / sqrt(max(1, nrow(X) - 1))
@@ -252,7 +254,9 @@ NULL
    dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
    dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
    
-   result$var.tot = sum(X ^ 2 / max(1, nrow(X) - 1))# same as all res$d, or variance after nipals replacement of the missing values
+   result$var.tot = sum(X ^ 2 / max(1, nrow(X) - 1))
+   # same as all res$d, or variance after
+   # nipals replacement of the missing values
    
    # to be similar to other methods, add loadings and variates as outputs
    result$loadings = list(X = result$rotation)
@@ -273,18 +277,14 @@ NULL
    return(invisible(result))
 }
 
-
-
-#########################################################################
-## ---------- Generic
+## ----------- Generic ----------- 
 #' @param ... Aguments passed to the generic.
 #' @export
 pca <- function(data=NULL, X=NULL, ncomp=2, ...) UseMethod('pca')
 
-#########################################################################
-## ---------- Methods
+## ----------- Methods ----------- 
 
-## ----------------------------------- default
+#### Default ####
 #' @rdname pca
 #' @export
 ## in default method data should be NULL, but we make an expection for legacy
@@ -307,8 +307,8 @@ pca.default <- function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE){
    .call_return(result, ret.call, mcr = match.call(), fun.name = 'pca')
 }
 
-
-## ----------------------------------- 'X = assay' name from 'data = MAE'
+#### MultiAssayExperiment ####
+## 'X = assay' name from 'data = MAE'
 #' @rdname pca
 #' @export
 pca.MultiAssayExperiment <-

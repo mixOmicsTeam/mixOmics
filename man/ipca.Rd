@@ -3,24 +3,24 @@
 \name{ipca}
 \alias{ipca}
 \alias{ipca.default}
-\alias{ipca.character}
+\alias{ipca.MultiAssayExperiment}
 \title{Independent Principal Component Analysis}
 \usage{
-ipca(X = NULL, data = NULL, ncomp = 2, keepX = NULL, ...)
+ipca(data = NULL, X = NULL, ncomp = 2, ...)
 
-\method{ipca}{default}(X, ncomp = 2, mode = c("deflation", "parallel"),
-  fun = c("logcosh", "exp", "kur"), scale = FALSE, w.init = NULL,
-  max.iter = 200, tol = 1e-04)
+\method{ipca}{default}(data = NULL, X = NULL, ncomp = 2, ...,
+  ret.call = FALSE)
 
-\method{ipca}{character}(X = NULL, data = NULL, ncomp = 2,
-  keepX = NULL, ...)
+\method{ipca}{MultiAssayExperiment}(data = NULL, X = NULL, ncomp = 2,
+  ..., ret.call = FALSE)
 }
 \arguments{
+\item{data}{An object of class \code{MultiAssayExperiment} or similar.
+See Details.}
+
 \item{X}{A numeric matrix (or data frame) which provides the data for the
 principal components analysis. It can contain missing values.
 Alternatively, name of an assay from \code{data}.}
-
-\item{data}{An object of class \code{MultiAssayExperiment} or similar. See Details.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
@@ -37,20 +37,8 @@ the unmixing matrix, choose one of \code{"deflation"}, \code{"parallel"}.}
 \item{fun}{the function used in approximation to neg-entropy in the FastICA
 algorithm. Default set to \code{logcosh}, see details of FastICA.}
 
-\item{scale}{A logical value indicating whether the variables should be
-scaled to have unit variance before the analysis takes place. The default is
-\code{FALSE} for consistency with \code{prcomp} function, but in general
-scaling is advisable. Alternatively, a vector of length equal the number of
-columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}.}
-
 \item{w.init}{initial un-mixing matrix (unlike FastICA, this matrix is fixed
 here).}
-
-\item{max.iter}{Integer, the maximum number of iterations in the NIPALS
-algorithm.}
-
-\item{tol}{A positive real, the tolerance used in the NIPALS algorithm.}
 }
 \value{
 \code{ipca} returns a list with class \code{"ipca"} containing the
@@ -65,7 +53,8 @@ components} \item{loadings}{the independent loading vectors}
 Performs independent principal component analysis on the given data matrix,
 a combination of Principal Component Analysis and Independent Component
 Analysis.
-
+}
+\details{
 In PCA, the loading vectors indicate the importance of the variables in the
 principal components. In large biological data sets, the loading vectors
 should only assign large weights to important variables (genes, metabolites

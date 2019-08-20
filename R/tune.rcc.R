@@ -172,8 +172,8 @@ tune.rcc <- function(X,
 
 ## ----------------------------------- internal Mfold
 ## keep internals above roxygen skeleton or under the function for correct documentation
-
-.Mfold = function(X, Y, lambda1, lambda2, folds)
+#' @importFrom stats cor
+.Mfold <- function(X, Y, lambda1, lambda2, folds)
 {
     
     xscore = NULL

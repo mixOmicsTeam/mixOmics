@@ -2,6 +2,9 @@
 ## in the following folder
 cd /Users/alabadi/Projects/dev/R/_work/mixOmics/ajabadi-mixOmics/ajabadi-mixOmics
 
+echo "Enter file extension to look in (like .R)"
+read ext
+
 echo "Enter regex to find"
 read old
 
@@ -12,7 +15,7 @@ do
 	## echo "Enter the file extensions in which to look for "
 	## read ext
 
-	rpl -R -x'.R'  "$old" "$new" *
+	rpl -R -x$ext  "$old" "$new" *
 
 	echo "Done"
 	echo "Enter regex to find, or <RETURN> to exit"

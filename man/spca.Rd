@@ -20,7 +20,8 @@ spca(X = NULL, data = NULL, ncomp = 2, keepX = NULL, ...)
 principal components analysis. It can contain missing values.
 Alternatively, name of an assay from \code{data}.}
 
-\item{data}{An object of class \code{MultiAssayExperiment} or similar. See Details.}
+\item{data}{An object of class \code{MultiAssayExperiment} or similar.
+See Details.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
@@ -56,7 +57,8 @@ specific normalisation in sequencing data. Default to 'none'.
 in loading vectors. By default all variables are kept in the model. See
 details.}
 
-\item{multilevel}{Sample information for multilevel decomposition for repeated measurements.}
+\item{multilevel}{Sample information for multilevel decomposition for
+repeated measurements.}
 }
 \value{
 \code{spca} returns a list with class \code{"spca"} containing the
