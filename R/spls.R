@@ -163,7 +163,7 @@ formula=NULL)
     mc$mode <- .matchArg(mode)
     ## if formula or data is given, process arguments to match default pls
     if(any(c("formula", "data") %in% names(mc))){
-        mc <- .getXY(mc=mc)
+        mc <- .plsMethodsHelper(mc=mc)
     }
     mc$DA <- FALSE
     # # call to '.mintWrapper'

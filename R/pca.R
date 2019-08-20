@@ -290,7 +290,8 @@ pca <- function(data=NULL, X=NULL, ncomp=2, ...) UseMethod('pca')
 #' should be included in the result
 #' @export
 ## in default method data should be NULL, but we make an expection for legacy
-## codes where 'X' is not named
+## codes where first argument is not named and is taken as data
+
 pca.default <- 
    function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE){
    mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate

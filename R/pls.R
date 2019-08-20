@@ -1,8 +1,7 @@
-# ========================================================================================================
-# pls: perform a PLS
-# this function is a particular setting of .mintBlock, the formatting of the input is checked in .mintWrapper
-# ========================================================================================================
-
+#### pls: perform a PLS
+#### this function is a particular setting of .mintBlock,
+#### the formatting of the input is checked in .mintWrapper
+## ----------- Description ----------- 
 #' Partial Least Squares (PLS) Regression
 #'
 #' Function to perform Partial Least Squares (PLS) regression.
@@ -48,8 +47,8 @@
 #' logratio transform and multilevel analysis are performed sequentially as
 #' internal pre-processing step, through \code{\link{logratio.transfo}} and
 #' \code{\link{withinVariation}} respectively.
-
-## ----------------------------------- Parameters
+#' 
+## ----------- Parameters ----------- 
 #' @param X Numeric matrix of predictors, or name of such an assay from \code{data} .
 #' \code{NA}s are allowed.
 #' @param Y Numeric vector or matrix of responses (for multi-response models),
@@ -83,7 +82,7 @@
 #'  see examples.
 #' @param data A \code{MultiAssayExperiment} object.
 
-## ----------------------------------- Value
+## ----------- Value -----------
 #' @return \code{pls} returns an object of class \code{"mixo_pls"}, a list that
 #' contains the following components:
 #'
@@ -109,8 +108,8 @@
 #' coefficients from the regression of X / residual matrices X on the
 #' X-variates, to be used internally by \code{predict}.}
 #' \item{defl.matrix}{residual matrices X for each dimension.}
-
-## ----------------------------------- Misc
+#' 
+## ----------- Ref ----------- 
 #' @author Sébastien Déjean, Ignacio González, Kim-Anh Lê Cao, Al J Abadi.
 #' @seealso \code{\link{spls}}, \code{\link{summary}}, \code{\link{plotIndiv}},
 #' \code{\link{plotVar}}, \code{\link{predict}}, \code{\link{perf}} and
@@ -126,32 +125,32 @@
 #' structure regression (PLS Regression). \emph{Wiley Interdisciplinary
 #' Reviews: Computational Statistics}, 2(1), 97-106.
 #' @keywords regression multivariate
-
-## ----------------------------------- Examples
+#' 
+## ----------- Examples ----------- 
 #' @example examples/pls-example.R
-#' @importFrom matrixStats colSds
-#' @importFrom matrixStats colVars
+## @importFrom matrixStats colSds
+## @importFrom matrixStats colVars
 #' @export pls
-pls = function(X=NULL,
-Y=NULL,
-ncomp = 2,
-scale = TRUE,
-mode = c("regression", "canonical", "invariant", "classic"),
-tol = 1e-06,
-max.iter = 100,
-near.zero.var = FALSE,
-logratio = "none",
-multilevel = NULL,
-all.outputs = TRUE,
-data=NULL,
-formula=NULL){
+pls = function(data=NULL,
+               X=NULL,
+               Y=NULL,
+               ncomp = 2,
+               scale = TRUE,
+               mode = c("regression", "canonical", "invariant", "classic"),
+               tol = 1e-06,
+               max.iter = 100,
+               near.zero.var = FALSE,
+               logratio = "none",
+               multilevel = NULL,
+               all.outputs = TRUE,
+               formula=NULL){
     mc <- as.list(match.call()[-1])
 
     ## make sure mode matches given arguments, and if it is not provided put as the first one in the definition
     mc$mode <- .matchArg(mode)
     ## if formula or data is given, process arguments to match default pls
-    if(any(c("formula", "data") %in% names(mc))){
-        mc <- .getXY(mc=mc)
+    if(any(c("formula", "data") %in% names(mc))) {
+        mc <- .plsMethodsHelper(mc = mc)
     }
     mc$DA <- FALSE
     # # call to '.mintWrapper'
