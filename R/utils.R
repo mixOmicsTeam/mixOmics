@@ -1,60 +1,21 @@
 ### TODO drop deprecated utils
-
-## ----------- .checkExpr ----------- 
-#### check that EXP can be evaluated and returned, if not throw error with error_message error
-.checkExpr <- function(EXP, error_message = paste0(as.expression(substitute(EXP)), " cannot be evaluated")){
-  formals(stop)$call. <-FALSE
-  out <- tryCatch(EXP, error = function(e) e)
-  if ("simpleError" %in% class(out)) stop(error_message)
-  return(out)
-}
-
-## ----------- .getDM ----------- 
-#### get a MAE object, assay name/index, and the call list, and return the
-#### data matrix for MAE methods
-## TODO this function needs to consider 'data' and not 'X'
-#### args.list must contain X entry
-#' @importFrom SummarizedExperiment assay
-#' @importFrom SummarizedExperiment assays
-.getDM <- function(X, assay){ ## MAE to data.matrix
-  args.list <- match.call()[-1]
-  ## ---------- get the assay name from either name  or index provided and check
-  if (is.numeric(assay)){
-    if(assay-floor(assay)!=0) .stop(.subclass = "inv_xy", message = paste0(assay, " is not a valid assay index. Use an integer."))
-    if(assay<1 | assay >length(assays(X))) .stop(.subclass = "inv_xy", message = paste0("assay index must be positive integer smaller than or equal to the number of assays in ",
-                                                                                                     args.list["X"]," (i.e. 1:",length(assays(X)),")"))
-    assay <- names(assays(X))[assay]
-  } else if(is.null(assay)){
-    .stop(.subclass = "inv_xy", message = paste0("Please provide an assay from object ", args.list["X"]))
-    } else if(is.na(assay)){
-      .stop(.subclass = "inv_xy", message = "assay cannot be NA ")
-    } else if(!is.character(assay)){
-    ## if 'assay' it none of acceptable forms
-    .stop(.subclass = "inv_xy", message = paste0("'assay' must be either an assay name or index from ", args.list["X"]))
-  }
-
-  ## ---------- use assay name to get the data matrix
-  if(! assay %in% names(assays(X)))
-    .stop(.subclass = "inv_xy", message = paste0(assay, " is not a valid assay from ","'",args.list["X"],"'"))
-  ## transpose and create a data matrix
-  X <- .checkExpr(EXP = data.matrix(t(assay(X,assay))),
-                                        error_message = paste0("could not create a data matrix from assay '", assay, "' in ", args.list["X"]) )
-  if(!is.numeric(as.matrix(X))) .stop(.subclass = "inv_xy", message = paste0("The ", assay, " assay contains non-numeric values"))
-  return(X)
-}
-
-## ----------- .names2mat ----------- 
-##### get MAE data and a call list containing character X and Y, check for
-##### validity of X (assay name) and Y (assay/coldata name)
-##### and return matrices of X and Y in mc$X and mc$Y, getting rid of 
-##### data and/or formula args
-
+## ----------- .get_xy ----------- 
+#' Create matrices from names of assays and a data object
+#' 
+#' get MAE data and a call list containing either character X and Y,
+#' or a formula of form Y~X and check for validity of X (assay name) and 
+#' Y (assay/coldata name) and return matrices of X and Y in mc$X and mc$Y, 
+#' getting rid of  $data and/or $formula args
+#' 
+#' @param mc A list(data=MAE, X=X_name, Y=Y_name)
+#' @param mcc Unevaluated call list for exception handling
+#' @noRd
 #' @importFrom MultiAssayExperiment complete.cases
 #' @importFrom SummarizedExperiment colData
 #' @importFrom SummarizedExperiment assays
 #' @importFrom SummarizedExperiment assay
 
-.names2mat <- function(mc, mcc){ ## mc is list(data=MAE, X=X_name, Y=Y_name)
+.get_xy <- function(mc, mcc){ 
   tryCatch({
     if(any(class(c(mc$X, mc$Y))!="character")) stop("mc must have character X and Y", call. = FALSE)
   }, error=function(e) message("oops! something went wrong! please check X and Y again or contact us if you had no luck!"))
@@ -102,26 +63,36 @@
   return(mc)
 }
 
-## ----------- .getXY ----------- 
+## ----------- .sformula_checker -----------  ## single-RHS formula checker
+#' Check formula's class and ensure non-NULL X and Y are not provided with it
+#'
+#' Gets a call which includes a $formula entry and expects it to be of form
+#' \code{Y~X}, it also checks that $X and $Y are NULL.
+#' 
+#' @param mc A call list
+#'
+#' @return Exception handler
+#'
+#' @noRd
+.sformula_checker <- function(mc){
+  if(class(try(mc$formula))!="formula")
+    .inv_sformula()
+  ## check formula is Y~X
+  if(any(sapply(as.list(mc$formula), length)!=1))
+    .inv_sformula()
+  ## X and Y must be NULL
+  if(!all(sapply(mc[c("X", "Y")], is.null)))
+    .inv_signature()
+}
+
+## ----------- .plsMethodsHelper ----------- 
 ####  get call list including potentiall X, Y, formula, and data and retain only valid X and Y
-.getXY <- function(mc){
-  mc[c('data', 'formula')]<- lapply( mc[c('data', 'formula')], eval.parent)
-  mc$formula <- eval.parent(mc$formula)
-  mcc <- mc ## copy so can change mc but keep the call for .names2mat
+.plsMethodsHelper <- function(mc){
+  mc[c('data', 'formula')] <- lapply( mc[c('data', 'formula')], eval.parent)
+  mcc <- mc ## copy so can change mc but keep the call for .get_xy
   # expectedArgs <- c('X', 'Y', 'formula', 'data')
   # mc[expectedArgs] <- lapply(mc[expectedArgs], eval.parent)
-  ## function to check formula's class and ensure non-NULL X and Y are not provided with it
-  .sformula_checker <- function(mc){
-    if(class(try(mc$formula))!="formula")
-      .inv_sformula()
-    ## check formula is Y~X
-    if(any(sapply(as.list(mc$formula), length)!=1))
-      .inv_sformula()
-    ## X and Y must be NULL
-    if(!all(sapply(mc[c("X", "Y")], is.null)))
-      .inv_signature()
-  }
-
+  
   ##============================= if data
   if (!is.null(try(mc$data)
   )) {
@@ -137,7 +108,7 @@
     )  !=  "NULL") {
       .sformula_checker(mc = mc)
       mc[c("X", "Y")] <- as.character(as.list(mc$formula)[3:2])
-      mc <- .names2mat(mc, mcc)
+      mc <- .get_xy(mc, mcc)
     }
     ##--------------- if data & formula=NULL
     else {
@@ -149,7 +120,7 @@
       ## ensure it is a single character
       if(any(sapply( mc[c("X", "Y")], length)!=1))
         .stop(.subclass = "inv_xy", message = "'X' and 'Y' must be assay names from 'data'")
-      mc <- .names2mat(mc, mcc)
+      mc <- .get_xy(mc, mcc)
     }
     ##--- if data, X and Y , expect X and Y to be assays and change them to matrices
     # else if(class(try(mc$formula))!="NULL"){
