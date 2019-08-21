@@ -94,7 +94,7 @@
 # {
 #     .Deprecated('tune_rcc', package = 'mixOmics')
 #     mc <- match.call()
-#     mc[-1L] <- lapply(mc[-1L], eval)
+#     mc[-1L] <- lapply(mc[-1L], eval.parent)
 #     mc[[1L]] <- quote(tune_rcc)
 #     eval(mc)
 # }
