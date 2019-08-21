@@ -212,9 +212,9 @@ setMethod('pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL,..., re
     }
     
     mc <- match.call()
-    mc[-1] <- lapply(mc[-1], eval.parent)
+    mc[-1L] <- lapply(mc[-1L], eval)
     ## TODO drop this if not necessary
-    # mc[-1L] <- lapply(mc[-1L], eval.parent) ## evaluate objects, if any 
+    # mc[-1L] <- lapply(mc[-1L], eval) ## evaluate objects, if any 
     ## drop the args not used by the internal
     mc$ret.call <- mc$data <- mc$formula <- NULL 
     mc[[1L]] <- quote(.pls)
@@ -234,7 +234,7 @@ setMethod('pls', signature(data = 'MultiAssayExperiment', formula = 'formula'),
                   .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
                         .subclass = "inv_signature")
               mc <- match.call()
-              mc[-1] <- lapply(mc[-1], eval.parent)
+              mc[-1L] <- lapply(mc[-1L], eval)
               .sformula_checker(mc) ## check formula validity
               mc[c('Y', 'X')] <- lapply(as.list(formula)[2:3], eval.parent)
               mc <- .get_xy(mc = mc)
@@ -261,7 +261,7 @@ setMethod('pls', signature(formula = 'formula'),
                   .stop(message = "'formula' must not be provided with
                         'X' and 'Y'", .subclass = "inv_signature")
               mc <- match.call()
-              mc[-1] <- lapply(mc[-1], eval.parent)
+              mc[-1L] <- lapply(mc[-1L], eval)
               .sformula_checker(mc) ## check formula validity
               mc[c('Y', 'X')] <- lapply(as.list(formula)[2:3], eval.parent)
               # mc <- .get_xy(mc = mc)
@@ -286,7 +286,7 @@ setMethod('pls', signature(data = 'MultiAssayExperiment'),
               }
               
               mc <- match.call()
-              mc[-1] <- lapply(mc[-1], eval.parent)
+              mc[-1L] <- lapply(mc[-1L], eval)
               mc <- .get_xy(mc = mc)
               mc$ret.call <- mc$data <- mc$formula <- NULL 
               mc[[1L]] <- quote(.pls)
