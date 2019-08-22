@@ -24,7 +24,7 @@
     message("oops! something went wrong! Please inputs again or contact us if you had no luck!"))
   
   ## ensure X and Y are valid
-  if(!mc$X %in% names(assays(mc$data))) 
+  if (!mc$X %in% names(assays(mc$data)))
     .stop(.subclass = "inv_XY",
           message = " 'X' is not a valid assay from 'data'")
   
@@ -114,7 +114,7 @@
     ## ensure it's MAE class
     if (class(try(mc$data)
     )  !=  "MultiAssayExperiment") {
-      .inv_mae(mc$data)
+      .inv_data(mc$data)
     }
     
     ##--------------- if data & formula≠NULL

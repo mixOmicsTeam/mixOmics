@@ -17,18 +17,18 @@
 ## invalid entry error handelrs
 ##TODO remove the first two
 ## ----------- for invalid signature
-.inv_signature <- function(msg="incorrect input format") .stop("inv_signature", msg)
+.inv_signature <- function(msg="incorrect input format. See mixOmics documentation.") .stop(.subclass = "inv_signature", msg)
 ## ----------- for invalid data
-.inv_mae <- function(data='data', msg=" is not a MultiAssayExperiment object") .stop("inv_mae", paste0(sQuote(data), msg))
+.inv_data <- function(data='data', msg=" is not a MultiAssayExperiment object.") .stop(.subclass = "inv_data", paste0(sQuote(data), msg))
 ## ----------- for invalid formula for single
 .inv_sformula <- function(msg="'formula' must be a formula object of form Y~X where X and
-                          Y are numeric matrices, or assay names from 'data'") .stop("inv_sformula", msg)
+                          Y are numeric matrices, or assay names from 'data'") .stop(.subclass = "inv_sformula", msg)
 ## ----------- for invalid formula for blocks
 .inv_bformula <- function(msg="'formula' must be a formula object of form Y~X where Y is a
                           numeric matrix (or name of such an assay from 'data') and X is a
-                          list of numeric matrices (or assay names)") .stop("inv_bformula", msg)
+                          list of numeric matrices (or assay names)") .stop(.subclass = "inv_bformula", msg)
 ## ----------- for invalid X/Y
-.inv_assay <- function(msg="invalid assay/colData name(s).") .stop("inv_assay", msg)
+.inv_assay <- function(msg="invalid assay/colData name(s).") .stop(.subclass = "inv_assay", msg)
 
 ## ----------- .warning ----------- 
 ## custom warnings with specified class
