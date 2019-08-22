@@ -15,46 +15,45 @@
 #' @importFrom SummarizedExperiment assay
 
 .get_xy <- function(mc){ 
-  mcc <- mc ## copy before change
   ## ensure X and Y are character
-  tryCatch({
-    if(any(class(c(mc$X, mc$Y))!="character")) 
-      stop("mc must have character X and Y", call. = FALSE)
-  }, error=function(e) 
-    message("oops! something went wrong! Please inputs again or contact us if you had no luck!"))
-  
+    if (!is(mc$X, "character")) 
+      .stop("'X' must be a valid assay name", 
+            .subclass = "inv_XY")
+  if (!is(mc$Y, "character")) 
+    .stop("'Y' must be a valid assay name", 
+          .subclass = "inv_XY")
   ## ensure X and Y are valid
   if (!mc$X %in% names(assays(mc$data)))
     .stop(.subclass = "inv_XY",
           message = " 'X' is not a valid assay from 'data'")
   
   ## --- if 'Y' is a colData
-  if(mc$Y %in% names(colData(mc$data))) {
-    if(mc$Y %in% names(assays(mc$data))) 
+  if (mc$Y %in% names(colData(mc$data))) {
+    if (mc$Y %in% names(assays(mc$data))) 
       .stop(.subclass = "inv_XY", 
-            message = paste0(mcc$Y, " matches to both colData and assay
+            message = paste0("'Y' matches to both colData and assay
                              in 'data', change its name in one and continue."))
     ## ----- if Y is a colData column subset it using X samples
     ## keep X assay's colData & change DataFrame to data.frame
     Xcoldata <- suppressMessages( as.data.frame(colData(mc$data[,,mc$X]))) 
     mc$Y <- Xcoldata[,mc$Y] ## keep the coldata desired for Y
     ## if Y not numeric coerce
-    if (! typeof(mc$Y) %in% c("numeric", "integer")) {
+    if (!(typeof(mc$Y) %in% c("numeric", "integer"))) {
       if (typeof(mc$Y) == "factor") {
-        warning(paste0("The column data ", sQuote(mcc$Y)," is a factor,
+        warning(paste0("'Y' is a factor column data,
                        coercing to a numeric vector with names..."))
         mc$Y <- structure(as.numeric(mc$Y),
                           names = as.character(mc$Y), 
                           class = "numeric")
         
-      } else if(typeof(mc$Y)=="character"){
+      } else if (typeof(mc$Y) == "character") {
         ## if Y is a character colData and the number of unique terms are less than total,
         ## coerce it to factor and then numeric with a warning
-        if(length(unique(mc$Y)) <  length(mc$Y) ){
-          .warning("char_Y", message = paste0("The column data ",mcc$Y, " is character vector, coercing to factor and then named numeric for pls"))
+        if (length(unique(mc$Y)) <  length(mc$Y) ) {
+          .warning("char_Y", message = paste0("'Y' column data is character vector, coercing to factor and then named numeric for pls"))
 
           mc$Y <- structure(as.numeric(as.factor(mc$Y)),
-                            names=mc$Y, class="numeric")
+                            names = mc$Y, class = "numeric")
         } else {
           .stop(.subclass = "inv_XY", message = paste0(" 'Y' is not a numeric/integer column (or a factor coercible to numeric)"))
         }
@@ -64,15 +63,15 @@
     ## if all is well with Y
     mc$X <- assay(mc$data, mc$X)
     ## ----- If Y is assay name
-  } else if(mc$Y %in% names(assays(mc$data))){
+  } else if (mc$Y %in% names(assays(mc$data))) {
     mc$data <- mc$data[,complete.cases(mc$data[,,c(mc$X, mc$Y)])] ## keep complete data b/w two assays
     mc$X <- assay(mc$data, mc$X)
     mc$Y <- assay(mc$data, mc$Y)
-  } else {.stop(.subclass = "inv_XY", message = paste0(sQuote(mcc$Y), " is not an assay or column data from the MAE object" ))}
+  } else {.stop(.subclass = "inv_XY", message = paste0("'Y' is not an assay or column data from the MAE object" ))}
   mc$X <- t(as.matrix(mc$X))
   mc$Y <- as.matrix(mc$Y)
 
-  if(!1 %in% dim(mc$Y)){ ## if Y is matrix transpose it
+  if (!(1 %in% dim(mc$Y))) { ## if Y is matrix transpose it
     mc$Y <- t(mc$Y)
   }
   return(mc)
@@ -103,29 +102,18 @@
 ## ----------- .plsMethodsHelper ----------- 
 ####  get call list including potentiall X, Y, formula, and data and retain only valid X and Y
 .plsMethodsHelper <- function(mc){
-  mc[c('data', 'formula')] <- lapply( mc[c('data', 'formula')], eval.parent)
-  mcc <- mc ## copy so can change mc but keep the call for .get_xy
-  # expectedArgs <- c('X', 'Y', 'formula', 'data')
-  # mc[expectedArgs] <- lapply(mc[expectedArgs], eval.parent)
-  
+  mc <- lapply(mc, eval)
   ##============================= if data
   if (!is.null(try(mc$data)
   )) {
-    ## ensure it's MAE class
-    if (class(try(mc$data)
-    )  !=  "MultiAssayExperiment") {
-      .inv_data(mc$data)
-    }
-    
-    ##--------------- if data & formula≠NULL
+    ##--------------- if data=MAE & formula=formula
     ##--- i) if (data,formula) given change it to X and Y matrices
-    if (class(try(mc$formula)
-    )  !=  "NULL") {
-      .sformula_checker(mc = mc)
+    if (!is.null(mc$formula)) {
+      .sformula_checker(mc = mc) ## check formula format
       mc[c("X", "Y")] <- as.character(as.list(mc$formula)[3:2])
-      mc <- .get_xy(mc, mcc)
+      mc <- .get_xy(mc)
     }
-    ##--------------- if data & formula=NULL
+    ##--------------- if data=MAE & formula=NULL
     else {
       ## check X and Y exist
       if(any(sapply(mc[c("X", "Y")], function(xy) {class(try(xy))=="NULL"})))
@@ -313,19 +301,19 @@
 ## function to add the call to the result if asked
 .call_return <-
   function(result = list(), ## result from internal
-           ret.call = FALSE, ## whether call should be returned
            mcr, ## always match.call()
            fun.name = 'pca', ## name of the function
            pframe = 3L) {  ## how many frames above to evaluate in?
     
-  if ( is(ret.call, 'logical') && isTRUE(ret.call) ) {
+  if ( is(mcr$ret.call, 'logical') && isTRUE(mcr$ret.call) ) {
     {
       mcr[[1]] = as.name(fun.name)
       mcr[-1L] <- lapply(mcr[-1L], function(x) eval.parent(x, n = pframe))
     }
     ## makes expect_identical() easy to have call as first arg and just
     ## drop it using pca.res[-1]
-    result <- c(list(call = mcr), result)
+    
+    result <- structure(c(list(call = mcr), result), class = class(result))
   }
     return(result)
 }

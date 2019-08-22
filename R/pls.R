@@ -68,9 +68,8 @@
 #' columns indicate those factors. See examples in \code{?spls}).
 #' @param all.outputs Boolean. Computation can be faster when some specific
 #' (and non-essential) outputs are not calculated. Default = \code{TRUE}.
-
 #'  see examples.
-
+#'  
 ## ----------- Value -----------
 #' @return \code{pls} returns an object of class \code{"mixo_pls"}, a list that
 #' contains the following components:
@@ -132,21 +131,16 @@ NULL
                 logratio = "none",
                 multilevel = NULL,
                 all.outputs = TRUE,
-                formula=NULL,
                 ret.call=FALSE){
     mc <- as.list(match.call()[-1])
-    
+    mc$ret.call <- NULL ## not need by wrapper
     ## make sure mode matches given arguments, and if it is not provided put as the first one in the definition
     mc$mode <- .matchArg(mode)
-    ## if formula or data is given, process arguments to match default pls
-    if(any(c("formula", "data") %in% names(mc))) {
-        mc <- .plsMethodsHelper(mc = mc)
-    }
     mc$DA <- FALSE
     # # call to '.mintWrapper'
     result <- do.call(.mintWrapper, mc)
     # choose the desired output from 'result'
-    result = list(
+    result = structure(list(
         X = result$A[-result$indY][[1]],
         Y = result$A[result$indY][[1]],
         ncomp = result$ncomp,
@@ -165,16 +159,17 @@ NULL
         input.X = result$input.X,
         mat.c = result$mat.c#,
         #defl.matrix = result$defl.matrix
-    )
+    ), class = "mixo_pls")
     
-    class(result) = c("mixo_pls")
     # output if multilevel analysis
     if (!is.null(multilevel))
     {
         result$multilevel = multilevel
         class(result) = c("mixo_mlpls",class(result))
     }
-    ## keeping this for ease of re-using code
+    ## keeping this cause we might revert S4 methods
+    ## the return us handled in methods now
+    ret.call <- FALSE
     if ( isTRUE(ret.call) ) { ## return call
         mcr <- match.call()
         mcr[-1] <- lapply(mcr[-1], eval)
@@ -190,17 +185,15 @@ NULL
 #'  from \code{data}. 
 #'  \code{X} and \code{Y} must be \code{NULL} when \code{formula} is used. 
 #'  See Details.
-#' @param ... Aguments passed to the generic.
 #' @export
 #' @rdname pls
 setGeneric('pls', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) standardGeneric('pls'))
 
 ## ----------- Methods ----------- 
 #### ANY ####
-#' @param ... Aguments passed to the generic.
 #' @export
 #' @rdname pls
-setMethod('pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., ret.call=FALSE) {
+setMethod('pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
     mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
     
     ## legacy code
@@ -210,22 +203,22 @@ setMethod('pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., r
               arguments such as pls(X=mat, ...) as opposed to pls(mat, ...).",
               .subclass = "defunct")
     
-    
     if ( !(missing(data) || is.null(data))) { ## data must be NULL
         .stop(message = "data should be a MultiAssayExperiment class, or NULL",
               .subclass = "inv_signature")
     }
     if ( !(missing(formula) || is.null(formula)) ) { ## formula must be NULL
-        .stop(message = "With numerical X and Y, formula should not be provided. See ?pls",
+        .stop(message = "With numerical X and Y, formula should not be provided. 
+              See ?pls",
               .subclass = "inv_signature")
     }
 
     mc <- match.call()
     mc[-1L] <- lapply(mc[-1L], eval.parent)
-    mc$ret.call <- mc$data <- mc$formula <- NULL 
+    mc$data <- mc$formula <- NULL 
     mc[[1L]] <- quote(.pls)
     result <- eval(mc)
-    .call_return(result, ret.call, mcr = match.call(), fun.name = 'pls')
+    .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'pls')
 })
 
 #### signature(data = 'MultiAssayExperiment', formula = "formula") ####
@@ -233,7 +226,7 @@ setMethod('pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., r
 #' @export
 #' @rdname pls
 setMethod('pls', signature(data = 'MultiAssayExperiment', formula = 'formula'), 
-          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., ret.call=FALSE) {
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
               mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
               ## X and Y NULL or missing
               if ( !((missing(X) || is.null(X)) && (missing(Y) || is.null(Y)) ) )
@@ -244,10 +237,10 @@ setMethod('pls', signature(data = 'MultiAssayExperiment', formula = 'formula'),
               .sformula_checker(mc) ## check formula validity
               mc[c('Y', 'X')] <- as.character(formula[2:3])
               mc <- .get_xy(mc = mc)
-              mc$ret.call <- mc$data <- mc$formula <- NULL 
+              mc$data <- mc$formula <- NULL 
               mc[[1L]] <- quote(.pls)
               result <- eval(mc)
-              .call_return(result, ret.call, mcr = match.call(), fun.name = 'pls')
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'pls')
           })
 
 
@@ -256,26 +249,18 @@ setMethod('pls', signature(data = 'MultiAssayExperiment', formula = 'formula'),
 #' @export
 #' @rdname pls
 setMethod('pls', signature(formula = 'formula'), 
-          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., ret.call=FALSE) {
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
               mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
-              if ( !(missing(data) || is.null(data))) { ## data must be NULL
-                  .stop(message = "data should be a MultiAssayExperiment class, or NULL",
-                        .subclass = "inv_signature")
-              }
-              ## X and Y NULL or missing
-              if ( !((missing(X) || is.null(X)) && (missing(Y) || is.null(Y)) ) )
-                  .stop(message = "'formula' must not be provided with
-                        'X' and 'Y'", .subclass = "inv_signature")
               mc <- match.call()
               mc[-1L] <- lapply(mc[-1L], eval.parent)
               .sformula_checker(mc) ## check formula validity
               mc$X <- eval.parent(as.list(formula)[[3]], n = 2)
               mc$Y <- eval.parent(as.list(formula)[[2]], n = 2)
               # mc <- .get_xy(mc = mc)
-              mc$ret.call <- mc$data <- mc$formula <- NULL 
+              mc$data <- mc$formula <- NULL 
               mc[[1L]] <- quote(.pls)
               result <- eval(mc)
-              .call_return(result, ret.call, mcr = match.call(), fun.name = 'pls')
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'pls')
           })
 
 
@@ -284,7 +269,7 @@ setMethod('pls', signature(formula = 'formula'),
 #' @export
 #' @rdname pls
 setMethod('pls', signature(data = 'MultiAssayExperiment'), 
-          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., ret.call=FALSE) {
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
               mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
               ## X and Y NULL or missing
               if ( !(missing(formula) || is.null(formula)) ) { ## formula must be NULL
@@ -295,8 +280,8 @@ setMethod('pls', signature(data = 'MultiAssayExperiment'),
               mc <- match.call()
               mc[-1L] <- lapply(mc[-1L], eval.parent)
               mc <- .get_xy(mc = mc)
-              mc$ret.call <- mc$data <- mc$formula <- NULL 
+              mc$data <- mc$formula <- NULL 
               mc[[1L]] <- quote(.pls)
               result <- eval(mc)
-              .call_return(result, ret.call, mcr = match.call(), fun.name = 'pls')
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'pls')
           })

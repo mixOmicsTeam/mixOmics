@@ -1,36 +1,7 @@
-#############################################################################################################
-# Authors:
-#   Ignacio Gonzalez, Genopole Toulouse Midi-Pyrenees, France
-#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Kim-Anh Le Cao, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Al J Abadi, Melbourne Integartive Genomics, The University of Melbourne, Australia
-#
-# created: 2009
-# last modified: 2019
-#
-# Copyright (C) 2009
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
-
-# ========================================================================================================
-# spls: perform a sPLS
-# this function is a particular setting of .mintBlock, the formatting of the input is checked in .mintWrapper
-# ========================================================================================================
-
+#### spls: perform a Sparse PLS
+#### this function is a particular setting of .mintBlock,
+#### the formatting of the input is checked in .mintWrapper
+## ----------- Description ----------- 
 #' Sparse Partial Least Squares (sPLS)
 #'
 #' Function to perform sparse Partial Least Squares (sPLS). The sPLS approach
@@ -62,13 +33,14 @@
 #' that are highly positively or negatively correlated across samples. The
 #' approach is unsupervised, i.e. no prior knowledge about the sample groups is
 #' included.
-## --------------------------------------------------------------------------------------- parameters
+## ----------- Parameters ----------- 
 #' @inheritParams pls
 #' @param keepX Numeric vector of length \code{ncomp}, the number of variables
 #' to keep in \eqn{X}-loadings. By default all variables are kept in the model.
 #' @param keepY Numeric vector of length \code{ncomp}, the number of variables
 #' to keep in \eqn{Y}-loadings. By default all variables are kept in the model.
-## --------------------------------------------------------------------------------------- value
+#'  
+## ----------- Value -----------
 #' @return \code{spls} returns an object of class \code{"spls"}, a list that
 #' contains the following components:
 #'
@@ -96,8 +68,9 @@
 #' coefficients from the regression of X / residual matrices X on the
 #' X-variates, to be used internally by \code{predict}.}
 #' \item{defl.matrix}{residual matrices X for each dimension.}
-## ---------------------------------------------------------------------------------------
-#' @author Sébastien Déjean, Ignacio González and Kim-Anh Lê Cao.
+#' 
+## ----------- Ref ----------- 
+#' @author Sébastien Déjean, Ignacio González, Kim-Anh Lê Cao, Al J Abadi.
 #' @seealso \code{\link{pls}}, \code{\link{summary}}, \code{\link{plotIndiv}},
 #' \code{\link{plotVar}}, \code{\link{cim}}, \code{\link{network}},
 #' \code{\link{predict}}, \code{\link{perf}} and http://www.mixOmics.org for
@@ -137,28 +110,31 @@
 #' (2010). Multivariate paired data analysis: multilevel PLSDA versus OPLSDA.
 #' \emph{Metabolomics}, \bold{6}(1), 119-128.
 #' @keywords regression multivariate
-## --------------------------------------------------------------------------------------- examples
+#' 
+## ----------- Examples ----------- 
 #' @example examples/spls-example.R
-
-#' @export spls
-spls = function(X,
-Y,
-ncomp = 2,
-mode = c("regression", "canonical", "invariant", "classic"),
-keepX,
-keepY,
-scale = TRUE,
-tol = 1e-06,
-max.iter = 100,
-near.zero.var = FALSE,
-logratio = "none",   # one of "none", "CLR"
-multilevel = NULL,
-all.outputs = TRUE,
-data=NULL,
-formula=NULL)
+## setting the document name here so internal would not force the wrong name
+#' @name spls
+NULL
+## ----------- Internal ----------- 
+.spls = function(X=NULL,
+                 Y=NULL,
+                 ncomp = 2,
+                 mode = c("regression", "canonical", "invariant", "classic"),
+                 keepX=NULL,
+                 keepY=NULL,
+                 scale = TRUE,
+                 tol = 1e-06,
+                 max.iter = 100,
+                 near.zero.var = FALSE,
+                 logratio = "none",   # one of "none", "CLR"
+                 multilevel = NULL,
+                 all.outputs = TRUE,
+                 data=NULL,
+                 formula=NULL)
 {
     mc <- as.list(match.call()[-1])
-
+    
     ## make sure mode matches given arguments, and if it is not provided put as the first one in the definition
     mc$mode <- .matchArg(mode)
     ## if formula or data is given, process arguments to match default pls
@@ -189,9 +165,9 @@ formula=NULL)
         explained_variance = result$explained_variance,
         input.X = result$input.X,
         mat.c = result$mat.c
-        )
-
-
+    )
+    
+    
     class(out) = c("mixo_spls")
     # output if multilevel analysis
     if (!is.null(multilevel))
@@ -199,8 +175,107 @@ formula=NULL)
         out$multilevel = multilevel
         class(out) = c("mixo_mlspls",class(out))
     }
-
+    
     return(invisible(out))
 }
+## ----------- Generic ----------- 
+#' @export
+#' @rdname spls
+setGeneric('spls', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) standardGeneric('spls'))
+
+## ----------- Methods ----------- 
+#### ANY ####
+#' @export
+#' @rdname spls
+setMethod('spls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+    mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+    
+    ## legacy code
+    if ( class(try(data)) %in% c("data.frame", "matrix") )
+        .stop(message = "mixOmics arguments have changed.
+              Please carefully read the documentation and try to use named 
+              arguments such as spls(X=mat, ...) as opposed to spls(mat, ...).",
+              .subclass = "defunct")
+    
+    if ( !(missing(data) || is.null(data))) { ## data must be NULL
+        .stop(message = "data should be a MultiAssayExperiment class, or NULL",
+              .subclass = "inv_signature")
+    }
+    if ( !(missing(formula) || is.null(formula)) ) { ## formula must be NULL
+        .stop(message = "With numerical X and Y, formula should not be provided. 
+              See ?spls",
+              .subclass = "inv_signature")
+    }
+    
+    mc <- match.call()
+    mc[-1L] <- lapply(mc[-1L], eval.parent)
+    mc$data <- mc$formula <- NULL 
+    mc[[1L]] <- quote(.spls)
+    result <- eval(mc)
+    .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'spls')
+})
+
+#### signature(data = 'MultiAssayExperiment', formula = "formula") ####
+## expect X and Y to be NULL
+#' @export
+#' @rdname spls
+setMethod('spls', signature(data = 'MultiAssayExperiment', formula = 'formula'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+              ## X and Y NULL or missing
+              if ( !((missing(X) || is.null(X)) && (missing(Y) || is.null(Y)) ) )
+                  .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
+                        .subclass = "inv_signature")
+              mc <- match.call()
+              mc[-1L] <- lapply(mc[-1L], eval.parent)
+              .sformula_checker(mc) ## check formula validity
+              mc[c('Y', 'X')] <- as.character(formula[2:3])
+              mc <- .get_xy(mc = mc)
+              mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.spls)
+              result <- eval(mc)
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'spls')
+          })
 
 
+#### signature(data != 'MultiAssayExperiment', formula = "formula") ####
+## expect X and Y to be NULL
+#' @export
+#' @rdname spls
+setMethod('spls', signature(formula = 'formula'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+              mc <- match.call()
+              mc[-1L] <- lapply(mc[-1L], eval.parent)
+              .sformula_checker(mc) ## check formula validity
+              mc$X <- eval.parent(as.list(formula)[[3]], n = 2)
+              mc$Y <- eval.parent(as.list(formula)[[2]], n = 2)
+              # mc <- .get_xy(mc = mc)
+              mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.spls)
+              result <- eval(mc)
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'spls')
+          })
+
+
+#### signature(data = 'MultiAssayExperiment', formula != "formula") ####
+## expect X and Y to be valid characters
+#' @export
+#' @rdname spls
+setMethod('spls', signature(data = 'MultiAssayExperiment'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+              ## X and Y NULL or missing
+              if ( !(missing(formula) || is.null(formula)) ) { ## formula must be NULL
+                  .stop(message = "With numerical X and Y, formula should not be provided. See ?spls", 
+                        .subclass = "inv_signature")
+              }
+              
+              mc <- match.call()
+              mc[-1L] <- lapply(mc[-1L], eval.parent)
+              mc <- .get_xy(mc = mc)
+              mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.spls)
+              result <- eval(mc)
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'spls')
+          })

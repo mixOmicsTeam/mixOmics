@@ -8,46 +8,45 @@ test_that("pls works for 'ANY' methods",{
   
   ## suppress NZV warnings
   suppressMessages({
-    pls.res.xy <-          pls(X =Xm_Yc, Y=Ycn )
-    expect_true(class( pls.res.xy)=="mixo_pls")
-    
-    pls.res.formula <-     pls(formula =Ycn ~ Xm_Yc)
-    expect_equal(pls.res.xy[-1] ,pls.res.formula[-1])
-    
-    pls.res.formula.mae <- pls(formula = f_Yc, data = mae_data)
-    expect_equal(pls.res.xy[-1] ,pls.res.formula.mae[-1])
-    
-    pls.res.xy.mae <-      pls(X=Xa , Y=Yc , data = mae_data)
-    expect_equal(pls.res.formula.mae[-1] , pls.res.xy.mae[-1] )
+    pls.res.xy <-          pls(X = Xm_Yc, Y = Ycn )
+    pls.res.xy.ret <-      pls(X = Xm_Yc, Y = Ycn, ret.call = TRUE )
+    expect_true(class( pls.res.xy) == "mixo_pls")
+    expect_true(class( pls.res.xy.ret) == "mixo_pls")
+    expect_identical(unclass(pls.res.xy), unclass(pls.res.xy.ret)[-1])
   })
 })
 
 
-## ------ pls works with numeric ~ matrix
-test_that("pls produces identical 'mixo_pls' classes for designated valid signatures when Y is a column data",{
-
+test_that("pls works for 'formula NOT data' methods",{
+  
   ## suppress NZV warnings
   suppressMessages({
-    pls.res.xy <-          pls(X =Xm_Yc, Y=Ycn )
-    expect_true(class( pls.res.xy)=="mixo_pls")
+    pls.res.xy <-          pls(X = Xm_Yc, Y = Ycn )
+    pls.res.formula <-     pls(formula = Ycn ~ Xm_Yc)
+    expect_identical(pls.res.xy[-1] ,pls.res.formula[-1])
 
-    pls.res.formula <-     pls(formula =Ycn ~ Xm_Yc)
-    expect_equal(pls.res.xy[-1] ,pls.res.formula[-1])
-
-    pls.res.formula.mae <- pls(formula = f_Yc, data = mae_data)
-    expect_equal(pls.res.xy[-1] ,pls.res.formula.mae[-1])
-
-    pls.res.xy.mae <-      pls(X=Xa , Y=Yc , data = mae_data)
-    expect_equal(pls.res.formula.mae[-1] , pls.res.xy.mae[-1] )
-    })
+  })
 })
+
+test_that("pls works for 'formula AND data' methods",{
+  
+  ## suppress NZV warnings
+  suppressMessages({
+    pls.res.xy <-          pls(X = Xm_Yc, Y = Ycn )
+    pls.res.formula.mae <- pls(formula = f_Yc, data = mae_data)
+    expect_identical(pls.res.xy[-1] ,pls.res.formula.mae[-1])
+  })
+})
+
+
+
 
 ## ------ pls works with matrix ~ matrix
 test_that("pls produces identical 'mixo_pls' classes for designated valid signatures when Y is an assay",{
   ## suppress NZV warnings
   suppressMessages({
-    pls.res.xy <-          pls(X =Xm_Ya, Y=Yam )
-    expect_true(class( pls.res.xy)=="mixo_pls")
+    pls.res.xy <-          pls(X = Xm_Ya, Y = Yam )
+    expect_true(class( pls.res.xy) == "mixo_pls")
 
     pls.res.formula <-     pls(formula = Yam ~ Xm_Ya)
     expect_equal(pls.res.xy[-1] ,pls.res.formula[-1])
@@ -55,7 +54,7 @@ test_that("pls produces identical 'mixo_pls' classes for designated valid signat
     pls.res.formula.mae <- pls(formula = f_Ya, data = mae_data)
     expect_equal(pls.res.xy[-1] ,pls.res.formula.mae[-1])
 
-    pls.res.xy.mae <-      pls(X=Xa , Y=Ya , data = mae_data)
+    pls.res.xy.mae <-      pls(X = Xa , Y = Ya , data = mae_data)
     expect_equal(pls.res.formula.mae[-1] , pls.res.xy.mae[-1] )
   })
 })
@@ -90,6 +89,7 @@ test_that("pls fails with invalid formula formats and produces expected errors",
 ## ------ correct error with invalid formula elements
 test_that("pls fails with invalid formula formats and produces expected errors",{
   expect_condition(pls(formula = Y~U), class = "simpleError")
+  expect_condition(pls(data = mae_data, formula = foo~bar), class = "inv_XY")
 })
 
 ## ------ correct error with non-numeric/factor Y coldata
@@ -101,3 +101,4 @@ test_that("pls fails with invalid Y",{
 test_that("pls fails with invalid Y",{
   expect_condition(pls(Xm_Ya ,Yam , ncomp = 2), class = "defunct")
 })
+

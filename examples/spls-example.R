@@ -18,6 +18,7 @@ spls.res2 <- spls(formula = Y ~ X, keepX = keepX, keepY = keepY)
 identical(spls.res1[-1], spls.res2[-1])
 #> TRUE
 ## ---------------- MultiAssayExperiment and assay names as X and Y
+data(liver.toxicity.mae)
 ## 'data' argument should be explicitly mentioned for correct method dispatch
 spls.res3 <- spls(X='gene', Y='clinic', data = liver.toxicity.mae,
                   keepX = keepX, keepY = keepY)
