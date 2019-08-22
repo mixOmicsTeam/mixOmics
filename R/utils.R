@@ -194,12 +194,13 @@
 #'
 #' @param mc The call object containing 'data', 'X', ... .
 #' @param fun The function originally called, pca, ipca, spca, ... .
+#' @param pframe How many levels higher should the arguments be evaluated.
 #' Assumes the internal name in parent.frame is .fun (.pca, .ipca, ... .)
 #'
 #' @return Evaluated call to internal (.fun)
 #' @noRd
-.pcaMethodsHelper <- function(mc, fun='pca'){
-  mc[-1L] <- lapply(mc[-1L], function(x) eval.parent(x, n = 2L))
+.pcaMethodsHelper <- function(mc, fun='pca', pframe=3L){
+  mc[-1L] <- lapply(mc[-1L], function(x) eval.parent(x, n = pframe))
   .check_data_assay(mc)
   # mcr <- mc ## to return as output
   # mcr[[1L]] <- as.name(fun) ## returned call to have 'pca' as function
@@ -223,6 +224,7 @@
 #' @noRd
 .pcaEntryChecker <-
   function(mc,fun='pca') {
+    if(class(try(mc$ret.call))!="logical") stop("'ret.call' must be logical")
     ## data.frame that specifies which arguments need checks in each function
     checks_df <- data.frame(
       row.names = c('check.keepX', 'check.center', 'check.NA'),
@@ -313,12 +315,13 @@
   function(result = list(), ## result from internal
            ret.call = FALSE, ## whether call should be returned
            mcr, ## always match.call()
-           fun.name = 'pca') { ## name of the function
+           fun.name = 'pca', ## name of the function
+           pframe = 3L) {  ## how many frames above to evaluate in?
     
-  if (isTRUE(ret.call)) {
+  if ( is(ret.call, 'logical') && isTRUE(ret.call) ) {
     {
       mcr[[1]] = as.name(fun.name)
-      mcr[-1L] <- lapply(mcr[-1L], function(x) eval.parent(x, n = 2))
+      mcr[-1L] <- lapply(mcr[-1L], function(x) eval.parent(x, n = pframe))
     }
     ## makes expect_identical() easy to have call as first arg and just
     ## drop it using pca.res[-1]

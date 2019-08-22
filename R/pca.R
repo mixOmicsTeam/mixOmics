@@ -65,6 +65,8 @@
 #' @param reconst Logical. If data has missing values, whether to reconstruct
 #' the output matrix which will also include estimated values for missing
 #' elements.
+#' @param ret.call Logical indicating whether evaluated input arguments
+#' should be included in the result.
 #' 
 ## ----------- Value ----------- 
 #' @return \code{pca} returns a list with class \code{"pca"} and
@@ -111,17 +113,19 @@
 NULL
 
 ## ----------- Internal ----------- 
-.pca <- function(X,
-                 ncomp=2,
-                 center=TRUE,
-                 scale=FALSE,
-                 max.iter=500,
-                 tol=1e-09,
-                 logratio=c('none', 'CLR', 'ILR'),
-                 ilr.offset=0.001,
-                 V=NULL,
-                 multilevel=NULL,
-                 reconst=TRUE) {
+#' @export
+.pca <- function(X=NULL,
+                ncomp=2,
+                center=TRUE,
+                scale=FALSE,
+                max.iter=500,
+                tol=1e-09,
+                logratio=c('none', 'CLR', 'ILR'),
+                ilr.offset=0.001,
+                V=NULL,
+                multilevel=NULL,
+                reconst=FALSE,
+                ret.call=FALSE) {
    
    ## ----------------------------------- checks
    logratio <- .matchArg(logratio)
@@ -277,49 +281,64 @@ NULL
    result$explained_variance = result$sdev^2 / result$var.tot
    result$cum.var = cumsum(result$explained_variance)
    
+   ## keeping this cause we might revert S4 methods
+   ## the return us handled in methods now
+   ret.call <- FALSE
+   if ( isTRUE(ret.call) ) { ## return call
+      mcr <- match.call()
+      mcr[-1] <- lapply(mcr[-1], eval)
+      mcr[[1L]] <- quote(pca)
+      result <- c(call = mcr, result)
+   }
+   
    return(invisible(result))
 }
 
 ## ----------- Generic ----------- 
 #' @param ... Aguments passed to the generic.
 #' @export
-pca <- function(data=NULL, X=NULL, ncomp=2, ...) UseMethod('pca')
+setGeneric("pca", function(data=NULL, X=NULL, ...) standardGeneric("pca") )
 
 ## ----------- Methods ----------- 
 
 #### Default ####
-#' @param ret.call Logical indicating whether evaluated input arguments
-#' should be included in the result
-#' @export
-#' @rdname pca
-## in default method data should be NULL, but we make an expection for legacy
-## codes where first argument is not named and is taken as data
 
-pca.default <- 
-   function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE){
-   mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
-   ## if data is a matrix-like:
+## in default method data should be NULL, but we make an exception for legacy
+## codes where first argument (used to be X) is not named and is taken as data
+
+#' @export
+setMethod("pca", "ANY",function(data=NULL, X=NULL, ...){
+   ## evaluate matched call with defaults
+   mget(names(formals()), sys.frame(sys.nframe()))
+   mc <- match.call()
+   mc[-1L] <- lapply(mc[-1L], eval.parent)
    if ( any(class(data) %in% c('matrix', 'data.frame'))) {
       .deprecate_ufma() ## deprecate unnamed first matrix argument
-      result <- .pca(X = data, ncomp = ncomp, ...)
-   } else if (is.null(data)) {
-      ## over to the internal
-      result <- .pca(X = X, ncomp = ncomp, ...)
-   } else {
+      mc$X <- mc$data
+      mc$data <- NULL
+      mc[[1L]] <- quote(.pca)
+   } else if ( !(missing(data) || is.null(data)) ) {
       .stop("'data' is not valid, see ?pca.", .subclass = "inv_data")
    }
-      ## if asked, append the evaluted args to the output list
-   .call_return(result, ret.call, mcr = match.call(), fun.name = 'pca')
-}
+   mc$data <- NULL ## not needed for the internal
+   mc[[1L]] <- quote(.pca) ## call to internal
+   result <- eval(mc)
+   ## include the call if asked
+   .call_return(result, mc$ret.call, mcr = match.call(), 
+                fun.name = 'pca')
+} )
 
 #### MultiAssayExperiment ####
-## 'X = assay' name from 'data = MAE'
 #' @export
-#' @noRd
-pca.MultiAssayExperiment <- 
-   function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE) {
-      ## pipeline to adjust and send the method args to the internal
-      result <- .pcaMethodsHelper(match.call(), fun = 'pca')
-      ## if asked, append the evaluted args to the output list
-      .call_return(result, ret.call, mcr = match.call(), fun.name = 'pca')
-}
+#' @rdname pca
+setMethod("pca", "MultiAssayExperiment", function(data=NULL, X=NULL, ...){
+   ## evaluate matched call with defaults
+   mget(names(formals()), sys.frame(sys.nframe()))
+   mc <- match.call()
+   mc[-1] <- lapply(mc[-1], eval.parent)
+   ## pipeline to adjust and send the method args to the internal
+   result <- .pcaMethodsHelper(mc, fun = 'pca')
+   ## if asked, append the evaluted args to the output list
+   .call_return(result, mc$ret.call,
+                mcr = match.call(), fun.name = 'pca')
+})

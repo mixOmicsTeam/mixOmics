@@ -32,7 +32,7 @@ ncol(X))}.}
 \item{...}{Aguments passed to the generic.}
 
 \item{ret.call}{Logical indicating whether evaluated input arguments
-should be included in the result}
+should be included in the result.}
 
 \item{mode}{character string. What type of algorithm to use when estimating
 the unmixing matrix, choose one of \code{"deflation"}, \code{"parallel"}.}
