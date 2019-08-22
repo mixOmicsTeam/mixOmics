@@ -62,7 +62,7 @@ supplemental material of the mixOmics article (Rohart et al. 2017).
 \dontrun{
 # Example 1
 # -----------------------------------
-library(mixOmics.data)
+library(mixOmicsData)
 X <- breast.tumors$gene.exp
 Y <- breast.tumors$sample$treatment
 

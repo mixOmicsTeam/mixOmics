@@ -162,7 +162,7 @@ supplemental material of the mixOmics article (Rohart et al. 2017).
 
 ## First example: analysis with sPLS-DA
 \dontrun{
-library(mixOmics.data)
+library(mixOmicsData)
 X = breast.tumors$gene.exp
 Y = as.factor(breast.tumors$sample$treatment)
 tune = tune.splsda(X, Y, ncomp = 1, nrepeat = 10, logratio = "none",

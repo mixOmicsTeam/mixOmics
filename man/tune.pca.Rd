@@ -82,7 +82,7 @@ internal pre-processing step, through \code{\link{logratio.transfo}} and
 }
 \examples{
 \dontrun{
-library(mixOmics.data)
+library(mixOmicsData)
 tune <- tune.pca(liver.toxicity$gene, center = TRUE, scale = TRUE)
 tune
 }

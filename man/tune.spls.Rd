@@ -110,7 +110,7 @@ See also \code{?perf} for more details.
 }
 \examples{
 \dontrun{
-library(mixOmics.data)
+library(mixOmicsData)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
 
