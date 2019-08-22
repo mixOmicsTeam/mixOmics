@@ -3,16 +3,12 @@
 \name{pca}
 \alias{pca}
 \alias{pca.default}
-\alias{pca.MultiAssayExperiment}
 \title{Principal Components Analysis}
 \usage{
 pca(data = NULL, X = NULL, ncomp = 2, ...)
 
 \method{pca}{default}(data = NULL, X = NULL, ncomp = 2, ...,
   ret.call = FALSE)
-
-\method{pca}{MultiAssayExperiment}(data = NULL, X = NULL, ncomp = 2,
-  ..., ret.call = FALSE)
 }
 \arguments{
 \item{data}{An object of class \code{MultiAssayExperiment} or similar.
@@ -63,7 +59,9 @@ avoid infinite value after the logratio transform, default to 0.001.}
 \item{multilevel}{Sample information for multilevel decomposition for
 repeated measurements.}
 
-\item{ret.call}{Logical indicating whether evaluated input arguments}
+\item{reconst}{Logical. If data has missing values, whether to reconstruct
+the output matrix which will also include estimated values for missing
+elements.}
 }
 \value{
 \code{pca} returns a list with class \code{"pca"} and

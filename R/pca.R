@@ -62,7 +62,10 @@
 #' @param V Matrix used in the logratio transformation id provided.
 #' @param multilevel Sample information for multilevel decomposition for
 #' repeated measurements.
-
+#' @param reconst Logical. If data has missing values, whether to reconstruct
+#' the output matrix which will also include estimated values for missing
+#' elements.
+#' 
 ## ----------- Value ----------- 
 #' @return \code{pca} returns a list with class \code{"pca"} and
 #' \code{"prcomp"} containing the following components: \item{ncomp}{the number
@@ -118,7 +121,7 @@ NULL
                  ilr.offset=0.001,
                  V=NULL,
                  multilevel=NULL,
-                 ret.call=FALSE) {
+                 reconst=TRUE) {
    
    ## ----------------------------------- checks
    logratio <- .matchArg(logratio)
@@ -285,10 +288,10 @@ pca <- function(data=NULL, X=NULL, ncomp=2, ...) UseMethod('pca')
 ## ----------- Methods ----------- 
 
 #### Default ####
-#' @rdname pca
 #' @param ret.call Logical indicating whether evaluated input arguments
 #' should be included in the result
 #' @export
+#' @rdname pca
 ## in default method data should be NULL, but we make an expection for legacy
 ## codes where first argument is not named and is taken as data
 
@@ -311,9 +314,8 @@ pca.default <-
 
 #### MultiAssayExperiment ####
 ## 'X = assay' name from 'data = MAE'
-#' @param ret.call Logical indicating whether evaluated input arguments
-#' @rdname pca
 #' @export
+#' @noRd
 pca.MultiAssayExperiment <- 
    function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE) {
       ## pipeline to adjust and send the method args to the internal
