@@ -1,0 +1,126 @@
+---
+title: "mixOmics-improvement"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# NIPALS
+
+```{r}
+## function to add random NA's in matrix
+rand_na <- function(mat=matrix(1:100, ncol = 20), 
+                    prop=0.2){ ## proportion of NAs
+  set.seed(42)
+  ## calculate the total number of NAs
+  total_na <- floor(prop*prod(dim(mat)))
+  vec <- as.vector(mat)
+  vec[sample(seq_along(vec), size = total_na, replace = FALSE)] <- NA
+  matrix(vec, ncol = ncol(mat), dimnames = dimnames(mat))
+  ## because it should be
+}
+
+subs_mat <- function(mtrx, 
+                     col=100, ## samples
+                     row=500){ ## genes
+  
+}
+
+```
+
+```{r}
+## cellbench 3 lines
+cb3 <- load(url("https://github.com/LuyiTian/CellBench_data/blob/master/data/sincell_with_class.RData?raw=true"))
+```
+```{r}
+## too many cells here for now
+# ## 10x logcounts
+# exp10x <- logcounts(sce_sc_10x_qc)
+# exp10x <- exp10x[rowMeans(exp10x)>2,]
+# exp10x <- rank(-rowSds(exp10x))
+# sum(is.na(exp10x)) ## No NAs
+# dim(exp10x)
+# ## add 20% NAs
+# exp10x <- rand_na(exp10x, prop = 0.2)
+# ## check proportion of NAs
+# sum(is.na(exp10x))/prod(dim(exp10x))
+```
+
+```{r}
+## celseq2 logcounts
+celseq <- logcounts(sce_sc_CELseq2_qc)
+dim(celseq)
+celseq <- celseq[rowMeans(celseq)>2,]
+dim(celseq)
+## top 100 HVGs
+celseq <- celseq[rank(-rowSds(celseq))<=1000,]
+sum(is.na(celseq)) ## No NAs
+dim(celseq)
+```
+
+## run times
+
+```{r}
+## subset
+celseq <- celseq[1:400, 1:100]
+```
+
+
+```{r}
+## nipals
+# nipals(x, ncomp = min(nrow(x), ncol(x)), center = TRUE, scale = TRUE,
+#   maxiter = 500, tol = 1e-06, startcol = 0, fitted = FALSE,
+#   force.na = FALSE, gramschmidt = TRUE, verbose = FALSE)
+```
+```{r}
+## mixOmics
+# nipals = function (X, ncomp = 1, reconst = FALSE, max.iter = 500, tol = 1e-09)
+```
+
+```{r}
+## define functions to customise and easily call using runtime_df
+mixOmics_mthd <- mixOmics::pca
+niplas_mthd <- nipals::nipals
+
+## make it as comparable as possible
+formals(niplas_mthd)$scale <- FALSE
+formals(mixOmica_pca)$tol <- 1e-6
+```
+
+```{r}
+comps <- 1:2
+prop.na <- seq(0.05,0.1, 0.05)
+## run scheme data.frame
+run_df <- expand.grid(method=c("mixOmics_mthd", "nipals_mthd"), component=comps, prop.na=prop.na, run.time = NA, stringsAsFactors = FALSE)
+
+## to store the plots
+results <- list()
+```
+
+
+
+
+```{r}
+for (i in seq_len(nrow(run_df))) {
+
+  scheme <- run_df[i,]
+  
+  ## add missing values
+  mtx <- t(rand_na(celseq, prop = scheme$prop.na))
+  
+  args <- list(X=mtx, scheme$component)
+  rt <- system.time({
+      res <- do.call(what = scheme$method, args = args)
+    })['elapsed']
+  
+  run_df[i, "run.time"] <- rt
+  
+  results[[run_df[i,]$method]]$prop.na <- run_df[i,3]
+  results[[run_df[i,]$method]]$comp <- run_df[i,2]
+  results[[run_df[i,]$method]]$result <- res
+
+}
+```
+
