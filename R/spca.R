@@ -70,7 +70,9 @@ NULL
                   max.iter = 500,
                   tol = 1e-06,
                   logratio = c('none', 'CLR'),
-                  multilevel = NULL) {
+                  multilevel = NULL,
+                  reconst=FALSE,
+                  ret.call=FALSE) {
   
   ## ----------------------------------- checks
   logratio <- .matchArg(logratio)
@@ -242,45 +244,64 @@ NULL
   explX=explained_variance(X,result$variates$X,ncomp)
   result$explained_variance=explX
   
-  
+  ## keeping this cause we might revert S4 methods
+  ## the return us handled in methods now
+  ret.call <- FALSE
+  if ( isTRUE(ret.call) ) { ## return call
+    mcr <- match.call()
+    mcr[-1] <- lapply(mcr[-1], eval)
+    mcr[[1L]] <- quote(spca)
+    result <- c(call = mcr, result)
+  }
   return(invisible(result))
 }
 
 ## ----------- Generic ----------- 
 #' @param ... Aguments passed to the generic.
 #' @export
-spca <- function(data=NULL, X=NULL, ncomp=2, keepX=NULL, ...) UseMethod('spca')
+setGeneric("spca", function(data=NULL, X=NULL, ...) standardGeneric("spca") )
 
 ## ----------- Methods ----------- 
 
 #### Default ####
-## refer to pca for detailed rationale
-#' @param ret.call Logical indicating whether evaluated input arguments
-#' @rdname spca
+
+## in default method data should be NULL, but we make an exception for legacy
+## codes where first argument (used to be X) is not named and is taken as data
+
 #' @export
-spca.default <- 
-  function(data=NULL, X=NULL, ncomp=2, keepX=NULL, ..., ret.call=FALSE){
-    mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
-    ## if data is a matrix-like:
-    if ( any(class(data) %in% c('matrix', 'data.frame'))) {
-      .deprecate_ufma() ## deprecate unnamed first matrix argument
-      result <- .spca(X = data, ncomp = ncomp, keepX = keepX, ...)
-    } else if (is.null(data)) {
-      ## over to the internal
-      result <- .spca(X = X, ncomp = ncomp, keepX = keepX, ...)
-    } else {
-      .stop("'data' is not valid, see ?pca.", .subclass = "inv_data")
-    }
-    .call_return(result, ret.call, mcr = match.call(), fun.name = 'pca')
+setMethod("spca", signature(data = "ANY"),function(data=NULL, X=NULL, ...){
+  ## evaluate matched call with defaults
+  mget(names(formals()), sys.frame(sys.nframe()))
+  mc <- match.call()
+  mc[-1L] <- lapply(mc[-1L], eval.parent)
+  if ( any(class(data) %in% c('matrix', 'data.frame'))) {
+    .deprecate_ufma() ## deprecate unnamed first matrix argument
+    mc$X <- mc$data
+    mc$data <- NULL
+    mc[[1L]] <- quote(.spca)
+  } else if ( !(missing(data) || is.null(data)) ) {
+    .stop("'data' is not valid, see ?spca.", .subclass = "inv_data")
   }
+  mc$data <- NULL ## not needed for the internal
+  mc[[1L]] <- quote(.spca) ## call to internal
+  result <- eval(mc)
+  ## include the call if asked
+  .call_return(result, mc$ret.call, mcr = match.call(), 
+               fun.name = 'spca')
+} )
 
 #### MultiAssayExperiment ####
-## refer to pca for detailed rationale
-#' @param ret.call Logical indicating whether evaluated input arguments
-#' @rdname spca
 #' @export
-spca.MultiAssayExperiment <- 
-  function(data=NULL, X=NULL, ncomp=2, keepX=NULL, ..., ret.call=FALSE) {
-    result <- .pcaMethodsHelper(match.call(), fun = 'spca')
-    .call_return(result, ret.call, mcr = match.call(), fun.name = 'spca')
-  }
+#' @rdname spca
+setMethod("spca", signature(data = "MultiAssayExperiment"), 
+          function(data=NULL, X=NULL, ...){
+  ## evaluate matched call with defaults
+  mget(names(formals()), sys.frame(sys.nframe()))
+  mc <- match.call()
+  mc[-1] <- lapply(mc[-1], eval.parent)
+  ## pipeline to adjust and send the method args to the internal
+  result <- .pcaMethodsHelper(mc, fun = 'spca')
+  ## if asked, append the evaluted args to the output list
+  .call_return(result, mc$ret.call,
+               mcr = match.call(), fun.name = 'spca')
+})

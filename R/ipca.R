@@ -71,13 +71,14 @@
 NULL
 ## ----------- Internal ----------- 
 .ipca = function(X,
-                 ncomp = 2,
-                 mode = c("deflation", "parallel"),
-                 fun = c("logcosh", "exp", "kur"),
-                 scale = FALSE,
-                 w.init = NULL,
-                 max.iter = 200,
-                 tol = 1e-04) {
+                 ncomp=2,
+                 mode=c("deflation", "parallel"),
+                 fun=c("logcosh", "exp", "kur"),
+                 scale=FALSE,
+                 w.init=NULL,
+                 max.iter=200,
+                 tol=1e-04,
+                 ret.call=FALSE) {
   
   ## ----------------------------------- checks
   mode <- .matchArg(mode)
@@ -256,43 +257,64 @@ NULL
   explX = explained_variance(X, result$variates$X, ncomp)
   result$explained_variance = explX
   
+  ## keeping this cause we might revert S4 methods
+  ## the return us handled in methods now
+  ret.call <- FALSE
+  if ( isTRUE(ret.call) ) { ## return call
+    mcr <- match.call()
+    mcr[-1] <- lapply(mcr[-1], eval)
+    mcr[[1L]] <- quote(ipca)
+    result <- c(call = mcr, result)
+  }
+  
   return(invisible(result))
 }
 
 ## ----------- Generic ----------- 
 #' @param ... Aguments passed to the generic.
 #' @export
-ipca <- function(data=NULL, X=NULL, ncomp=2, ...) UseMethod('ipca')
+setGeneric("ipca", function(data=NULL, X=NULL, ...) standardGeneric("ipca") )
 
 ## ----------- Methods ----------- 
 
 #### Default ####
-#' @rdname ipca
+
+## in default method data should be NULL, but we make an exception for legacy
+## codes where first argument (used to be X) is not named and is taken as data
+
 #' @export
-## in default method data should be NULL, but we make an expection for legacy
-## codes where 'X' is not named
-ipca.default <- 
-  function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE){
-  mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
-  ## if data is a matrix-like:
+setMethod("ipca", "ANY",function(data=NULL, X=NULL, ...){
+  ## evaluate matched call with defaults
+  mget(names(formals()), sys.frame(sys.nframe()))
+  mc <- match.call()
+  mc[-1L] <- lapply(mc[-1L], eval.parent)
   if ( any(class(data) %in% c('matrix', 'data.frame'))) {
     .deprecate_ufma() ## deprecate unnamed first matrix argument
-    result <- .ipca(X = data, ncomp = ncomp, ...)
-  } else if (is.null(data)) {
-    ## let the internal throw the error
-    result <- .ipca(X = X, ncomp = ncomp, ...)
-  } else {
+    mc$X <- mc$data
+    mc$data <- NULL
+    mc[[1L]] <- quote(.ipca)
+  } else if ( !(missing(data) || is.null(data)) ) {
     .stop("'data' is not valid, see ?ipca.", .subclass = "inv_data")
   }
-  .call_return(result, ret.call, mcr = match.call(), fun.name = 'ipca')
-}
+  mc$data <- NULL ## not needed for the internal
+  mc[[1L]] <- quote(.ipca) ## call to internal
+  result <- eval(mc)
+  ## include the call if asked
+  .call_return(result, mc$ret.call, mcr = match.call(), 
+               fun.name = 'ipca')
+} )
 
 #### MultiAssayExperiment ####
-## 'X = assay' name from 'data = MAE'
-#' @rdname ipca
 #' @export
-ipca.MultiAssayExperiment <-
-  function(data=NULL, X=NULL, ncomp=2, ..., ret.call=FALSE) {
-    result <- .pcaMethodsHelper(match.call(), fun = 'ipca')
-    .call_return(result, ret.call, mcr = match.call(), fun.name = 'ipca')
-  }
+#' @rdname ipca
+setMethod("ipca", "MultiAssayExperiment", function(data=NULL, X=NULL, ...){
+  ## evaluate matched call with defaults
+  mget(names(formals()), sys.frame(sys.nframe()))
+  mc <- match.call()
+  mc[-1] <- lapply(mc[-1], eval.parent)
+  ## pipeline to adjust and send the method args to the internal
+  result <- .pcaMethodsHelper(mc, fun = 'ipca')
+  ## if asked, append the evaluted args to the output list
+  .call_return(result, mc$ret.call,
+               mcr = match.call(), fun.name = 'ipca')
+})
