@@ -113,7 +113,6 @@
 NULL
 
 ## ----------- Internal ----------- 
-#' @export
 .pca <- function(X=NULL,
                 ncomp=2,
                 center=TRUE,
