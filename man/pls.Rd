@@ -3,13 +3,6 @@
 \name{pls}
 \alias{pls}
 \title{Partial Least Squares (PLS) Regression}
-\usage{
-pls(X = NULL, Y = NULL, ncomp = 2, scale = TRUE,
-  mode = c("regression", "canonical", "invariant", "classic"),
-  tol = 1e-06, max.iter = 100, near.zero.var = FALSE,
-  logratio = "none", multilevel = NULL, all.outputs = TRUE,
-  data = NULL, formula = NULL)
-}
 \arguments{
 \item{X}{Numeric matrix of predictors, or name of such an assay from \code{data} .
 \code{NA}s are allowed.}
@@ -47,14 +40,14 @@ columns indicate those factors. See examples in \code{?spls}).}
 \item{all.outputs}{Boolean. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
 
-\item{data}{A \code{MultiAssayExperiment} object.}
-
 \item{formula}{(\code{X} and \code{Y} must be \code{NULL})
 formula of form \code{LHS~RHS} (names of objects without quotations) where
 \code{LHS} and \code{RHS} (in effect \code{Y} and \code{X}, respectively) are
  numeric matrices . \code{LHS} and \code{RHS} can also be an assay names from
  \code{data}. \code{LHS} can also be a numeric \code{colData} name from \code{data}.
  see examples.}
+
+\item{data}{A \code{MultiAssayExperiment} object.}
 }
 \value{
 \code{pls} returns an object of class \code{"mixo_pls"}, a list that
@@ -131,8 +124,8 @@ internal pre-processing step, through \code{\link{logratio.transfo}} and
 }
 \examples{
 #' \dontrun{
+library(mixOmicsData)
 data(linnerud)
-
 ## ---------------- with X and Y as matrices
 X <- linnerud$exercise
 Y <- linnerud$physiological
@@ -148,16 +141,19 @@ identical(pls.res1[-1], pls.res2[-1])
 #> TRUE
 ## ---------------- MultiAssayExperiment and assay names as X and Y
 ## 'data' argument should be explicitly mentioned for correct method dispatch
-pls.res3 <- pls(X='exercise', Y='physiological', data = linnerud.mae)
+data("linnerud.mae")
+pls.res3 <- pls(X='exercise', Y='physiological', data = linnerud.mae, mode = "regression")
 identical(pls.res1[-1], pls.res3[-1])
 #> TRUE
 
 ## ---------------- MultiAssayExperiment and formula with assay names
-pls.res4 <- pls(formula = physiological ~ exercise, data = linnerud.mae, mode = "classic",)
+pls.res4 <- pls(formula = physiological ~ exercise, data = linnerud.mae)
 identical(pls.res1[-1], pls.res4[-1])
 #> TRUE
 
-## ---------------- MultiAssayExperiment; X=assay and Y=colData
+## ---------------- data=MultiAssayExperiment; X=assay and Y=colData
+data("liver.toxicity")
+data("liver.toxicity.mae")
 toxicity.pls1 <- pls(data = liver.toxicity.mae,  formula = Dose.Group~gene, ncomp = 3)
 toxicity.pls2 <- pls(data = liver.toxicity.mae,  Y='Dose.Group', X='gene', ncomp = 3)
 identical(toxicity.pls1[-1], toxicity.pls2[-1])
