@@ -1,6 +1,7 @@
-#### spls: perform a Sparse PLS
-#### this function is a particular setting of .mintBlock,
-#### the formatting of the input is checked in .mintWrapper
+# ========================================================================================================
+# spls: perform a sparse PLS
+# this function is a particular setting of .mintBlock, the formatting of the input is checked in .mintWrapper
+# ========================================================================================================
 ## ----------- Description ----------- 
 #' Sparse Partial Least Squares (sPLS)
 #'

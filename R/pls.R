@@ -1,6 +1,7 @@
-#### pls: perform a PLS
-#### this function is a particular setting of .mintBlock,
-#### the formatting of the input is checked in .mintWrapper
+# ========================================================================================================
+# pls: perform a PLS
+# this function is a particular setting of .mintBlock, the formatting of the input is checked in .mintWrapper
+# ========================================================================================================
 ## ----------- Description ----------- 
 #' Partial Least Squares (PLS) Regression
 #'
