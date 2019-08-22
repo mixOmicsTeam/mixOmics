@@ -96,3 +96,8 @@ test_that("pls fails with invalid formula formats and produces expected errors",
 test_that("pls fails with invalid Y",{
   expect_condition(pls(X=Xa , Y=Y_inv , data = mae_data), class = "inv_XY")
 })
+
+## ------ correct error with legacy code
+test_that("pls fails with invalid Y",{
+  expect_condition(pls(Xm_Ya ,Yam , ncomp = 2), class = "defunct")
+})
