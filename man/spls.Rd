@@ -11,14 +11,13 @@ spls(X, Y, ncomp = 2, mode = c("regression", "canonical", "invariant",
   formula = NULL)
 }
 \arguments{
-\item{X}{Numeric matrix of predictors, or name of such an assay from \code{data} .
-\code{NA}s are allowed.}
+\item{X}{A numeric matrix (or data frame) which provides the data for the
+principal components analysis. It can contain missing values.
+Alternatively, name of an assay from \code{data}.}
 
 \item{Y}{Numeric vector or matrix of responses (for multi-response models),
 or name of such an \code{assay} or
 \code{colData} from \code{data}. \code{NA}s are allowed.}
-
-\item{ncomp}{The number of components to include in the model. Default to 2.}
 
 \item{mode}{Character string. What type of algorithm to use, (partially)
 matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
@@ -29,13 +28,6 @@ to keep in \eqn{X}-loadings. By default all variables are kept in the model.}
 
 \item{keepY}{Numeric vector of length \code{ncomp}, the number of variables
 to keep in \eqn{Y}-loadings. By default all variables are kept in the model.}
-
-\item{scale}{Boleean. If scale = TRUE, each block is standardized to zero
-means and unit variances (default: TRUE)}
-
-\item{tol}{Convergence stopping value.}
-
-\item{max.iter}{Integer, the maximum number of iterations.}
 
 \item{near.zero.var}{Boolean, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
@@ -51,16 +43,17 @@ the first column. For a 2 level factor decomposition then 2nd AND 3rd
 columns indicate those factors. See examples in \code{?spls}).}
 
 \item{all.outputs}{Boolean. Computation can be faster when some specific
-(and non-essential) outputs are not calculated. Default = \code{TRUE}.}
-
-\item{data}{A \code{MultiAssayExperiment} object.}
-
-\item{formula}{(\code{X} and \code{Y} must be \code{NULL})
-formula of form \code{LHS~RHS} (names of objects without quotations) where
-\code{LHS} and \code{RHS} (in effect \code{Y} and \code{X}, respectively) are
- numeric matrices . \code{LHS} and \code{RHS} can also be an assay names from
- \code{data}. \code{LHS} can also be a numeric \code{colData} name from \code{data}.
+(and non-essential) outputs are not calculated. Default = \code{TRUE}.
  see examples.}
+
+\item{data}{An object of class \code{MultiAssayExperiment} or similar.
+See Details.}
+
+\item{formula}{A \code{formula} object of form \code{LHS ~ RHS} where 
+\code{LHS} and \code{RHS} are either matrices or assay names (no quotation)
+ from \code{data}. 
+ \code{X} and \code{Y} must be \code{NULL} when \code{formula} is used. 
+ See Details.}
 }
 \value{
 \code{spls} returns an object of class \code{"spls"}, a list that

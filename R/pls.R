@@ -49,19 +49,13 @@
 #' \code{\link{withinVariation}} respectively.
 #' 
 ## ----------- Parameters ----------- 
-#' @param X Numeric matrix of predictors, or name of such an assay from \code{data} .
-#' \code{NA}s are allowed.
+#' @inheritParams pca
 #' @param Y Numeric vector or matrix of responses (for multi-response models),
 #' or name of such an \code{assay} or
 #' \code{colData} from \code{data}. \code{NA}s are allowed.
-#' @param ncomp The number of components to include in the model. Default to 2.
-#' @param scale Boleean. If scale = TRUE, each block is standardized to zero
-#' means and unit variances (default: TRUE)
 #' @param mode Character string. What type of algorithm to use, (partially)
 #' matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 #' or \code{"classic"}. See Details.
-#' @param tol Convergence stopping value.
-#' @param max.iter Integer, the maximum number of iterations.
 #' @param near.zero.var Boolean, see the internal \code{\link{nearZeroVar}}
 #' function (should be set to TRUE in particular for data with many zero
 #' values). Setting this argument to FALSE (when appropriate) will speed up the
@@ -74,13 +68,8 @@
 #' columns indicate those factors. See examples in \code{?spls}).
 #' @param all.outputs Boolean. Computation can be faster when some specific
 #' (and non-essential) outputs are not calculated. Default = \code{TRUE}.
-#' @param formula (\code{X} and \code{Y} must be \code{NULL})
-#' formula of form \code{LHS~RHS} (names of objects without quotations) where
-#' \code{LHS} and \code{RHS} (in effect \code{Y} and \code{X}, respectively) are
-#'  numeric matrices . \code{LHS} and \code{RHS} can also be an assay names from
-#'  \code{data}. \code{LHS} can also be a numeric \code{colData} name from \code{data}.
+
 #'  see examples.
-#' @param data A \code{MultiAssayExperiment} object.
 
 ## ----------- Value -----------
 #' @return \code{pls} returns an object of class \code{"mixo_pls"}, a list that
@@ -157,7 +146,7 @@ NULL
     # # call to '.mintWrapper'
     result <- do.call(.mintWrapper, mc)
     # choose the desired output from 'result'
-    out = list(
+    result = list(
         X = result$A[-result$indY][[1]],
         Y = result$A[result$indY][[1]],
         ncomp = result$ncomp,
@@ -178,28 +167,39 @@ NULL
         #defl.matrix = result$defl.matrix
     )
     
-    class(out) = c("mixo_pls")
+    class(result) = c("mixo_pls")
     # output if multilevel analysis
     if (!is.null(multilevel))
     {
-        out$multilevel = multilevel
-        class(out) = c("mixo_mlpls",class(out))
+        result$multilevel = multilevel
+        class(result) = c("mixo_mlpls",class(result))
     }
-    
-    return(invisible(out))
+    ## keeping this for ease of re-using code
+    if ( isTRUE(ret.call) ) { ## return call
+        mcr <- match.call()
+        mcr[-1] <- lapply(mcr[-1], eval)
+        mcr[[1L]] <- quote(pls)
+        result <- c(call = mcr, result)
+    }
+    return(invisible(result))
     
 }
 ## ----------- Generic ----------- 
+#' @param formula A \code{formula} object of form \code{LHS ~ RHS} where 
+#' \code{LHS} and \code{RHS} are either matrices or assay names (no quotation)
+#'  from \code{data}. 
+#'  \code{X} and \code{Y} must be \code{NULL} when \code{formula} is used. 
+#'  See Details.
+#' @param ... Aguments passed to the generic.
 #' @export
+#' @rdname pls
 setGeneric('pls', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) standardGeneric('pls'))
 
 ## ----------- Methods ----------- 
 #### ANY ####
-#' @param formula NULL for ANY
-#' @param data NULL for ANY
 #' @param ... Aguments passed to the generic.
-#' @param ret.call Whether call arguments should be included in the output.
 #' @export
+#' @rdname pls
 setMethod('pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., ret.call=FALSE) {
     mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
     
@@ -230,8 +230,8 @@ setMethod('pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., r
 
 #### signature(data = 'MultiAssayExperiment', formula = "formula") ####
 ## expect X and Y to be NULL
-#' @param formula A formula of form Y~X where Y and X are assay names.
-#' @param data A \code{MultiAssayExperiment} data object.
+#' @export
+#' @rdname pls
 setMethod('pls', signature(data = 'MultiAssayExperiment', formula = 'formula'), 
           function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., ret.call=FALSE) {
               mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
@@ -253,8 +253,8 @@ setMethod('pls', signature(data = 'MultiAssayExperiment', formula = 'formula'),
 
 #### signature(data != 'MultiAssayExperiment', formula = "formula") ####
 ## expect X and Y to be NULL
-#' @param formula Formula of form Y~X where Y and X are assay names.
-#' @param data Must be NULL for this method.
+#' @export
+#' @rdname pls
 setMethod('pls', signature(formula = 'formula'), 
           function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., ret.call=FALSE) {
               mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
@@ -281,8 +281,8 @@ setMethod('pls', signature(formula = 'formula'),
 
 #### signature(data = 'MultiAssayExperiment', formula != "formula") ####
 ## expect X and Y to be valid characters
-#' @param formula Must be NULL for this method.
-#' @param data A \code{MultiAssayExperiment} data object.
+#' @export
+#' @rdname pls
 setMethod('pls', signature(data = 'MultiAssayExperiment'), 
           function(data=NULL, X=NULL, Y=NULL, formula=NULL, ..., ret.call=FALSE) {
               mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate

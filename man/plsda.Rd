@@ -10,30 +10,21 @@ max.iter = 100, near.zero.var = FALSE, logratio = c("none", "CLR"),
 multilevel = NULL, all.outputs = TRUE)
 }
 \arguments{
-\item{X}{Numeric matrix of predictors, or name of such an assay from \code{data} .
-\code{NA}s are allowed.}
+\item{X}{A numeric matrix (or data frame) which provides the data for the
+principal components analysis. It can contain missing values.
+Alternatively, name of an assay from \code{data}.}
 
 \item{Y}{a factor or a class vector for the discrete outcome.}
 
-\item{formula}{(\code{X} and \code{Y} must be \code{NULL})
-formula of form \code{LHS~RHS} (names of objects without quotations) where
-\code{LHS} and \code{RHS} (in effect \code{Y} and \code{X}, respectively) are
- numeric matrices . \code{LHS} and \code{RHS} can also be an assay names from
- \code{data}. \code{LHS} can also be a numeric \code{colData} name from \code{data}.
- see examples.}
-
-\item{ncomp}{The number of components to include in the model. Default to 2.}
-
-\item{scale}{Boleean. If scale = TRUE, each block is standardized to zero
-means and unit variances (default: TRUE)}
+\item{formula}{A \code{formula} object of form \code{LHS ~ RHS} where 
+\code{LHS} and \code{RHS} are either matrices or assay names (no quotation)
+ from \code{data}. 
+ \code{X} and \code{Y} must be \code{NULL} when \code{formula} is used. 
+ See Details.}
 
 \item{mode}{Character string. What type of algorithm to use, (partially)
 matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 or \code{"classic"}. See Details.}
-
-\item{tol}{Convergence stopping value.}
-
-\item{max.iter}{Integer, the maximum number of iterations.}
 
 \item{near.zero.var}{Boolean, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
@@ -41,6 +32,8 @@ values). Setting this argument to FALSE (when appropriate) will speed up the
 computations. Default value is FALSE}
 
 \item{logratio}{One of ('none','CLR'). Default to 'none'}
+
+\item{...}{Aguments passed to the generic.}
 
 \item{multilevel}{sample information for multilevel decomposition for
 repeated measurements. A numeric matrix or data frame indicating the
