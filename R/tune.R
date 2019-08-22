@@ -194,7 +194,7 @@
 #'
 #' ## sPLS-DA
 #' \dontrun{
-#' library(mixOmics.data)
+#' library(mixOmicsData)
 #' X <- breast.tumors$gene.exp
 #' Y <- as.factor(breast.tumors$sample$treatment)
 #' tune= tune(method = "splsda", X, Y, ncomp=1, nrepeat=10, logratio="none",

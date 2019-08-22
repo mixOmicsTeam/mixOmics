@@ -1,4 +1,4 @@
-library(mixOmics.data)
+library(mixOmicsData)
 library(MultiAssayExperiment)
 ## This is a parametrised test set for combinations of X, Y, formula, and daya in pls
 ## the tests should satisfy the conditions explained in documentation of pls function.

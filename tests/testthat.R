@@ -1,2 +1,2 @@
 library(testthat)
-library(mixOmics.data)
+library(mixOmicsData)

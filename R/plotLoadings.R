@@ -157,7 +157,7 @@
 #' \dontrun{
 #' ## object of class 'spls'
 #' # --------------------------
-#' library(mixOmics.data)
+#' library(mixOmicsData)
 #' X = liver.toxicity$gene
 #' Y = liver.toxicity$clinic
 #'

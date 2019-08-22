@@ -30,7 +30,7 @@ legend = TRUE, style = 'graphics')
 
 ## plot of individuals for objects of class 'pls' or 'spls'
 # ----------------------------------------------------
-library(mixOmics.data)
+library(mixOmicsData)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
 toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
@@ -75,7 +75,7 @@ legend = TRUE)
 
 ## plot of individuals for objects of class 'plsda' or 'splsda'
 # ----------------------------------------------------
-library(mixOmics.data)
+library(mixOmicsData)
 X <- breast.tumors$gene.exp
 Y <- breast.tumors$sample$treatment
 
@@ -122,7 +122,7 @@ pch = 15:17, pch.levels = c("a","b","c"),legend = TRUE)
 
 ## plot of individuals for objects of class 'mint.plsda' or 'mint.splsda'
 # ----------------------------------------------------
-library(mixOmics.data)
+library(mixOmicsData)
 res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2, keepX = c(10, 5),
 study = stemcells$study)
 
@@ -139,7 +139,7 @@ plotIndiv(res, study = "2")
 ## variable representation for objects of class 'sgcca' (or 'rgcca')
 # ----------------------------------------------------
 
-library(mixOmics.data)
+library(mixOmicsData)
 Y = unmap(nutrimouse$diet)
 data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
 design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)

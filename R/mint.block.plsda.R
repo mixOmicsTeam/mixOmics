@@ -169,7 +169,7 @@
 #' @keywords regression multivariate
 #' @examples
 #' \dontrun{
-#' library(mixOmics.data)
+#' library(mixOmicsData)
 #'
 #' # for the purpose of this example, we consider the training set as study1 and
 #' # the test set as another independent study2.

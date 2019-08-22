@@ -83,7 +83,7 @@
 #' @keywords utilities
 #' @examples
 #'\dontrun{
-#' library(mixOmics.data)
+#' library(mixOmicsData)
 #' nzv = nearZeroVar(diverse.16S$data.raw)
 #' length(nzv$Position) # those would be removed for the default frequency cut
 #'}

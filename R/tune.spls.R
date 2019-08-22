@@ -174,7 +174,7 @@
 #' @keywords regression multivariate
 #' @examples
 #' \dontrun{
-#' library(mixOmics.data)
+#' library(mixOmicsData)
 #' X <- liver.toxicity$gene
 #' Y <- liver.toxicity$clinic
 #'

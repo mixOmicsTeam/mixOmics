@@ -111,7 +111,7 @@
 #' @examples
 #'
 #'\dontrun{
-#' library(mixOmics.data)
+#' library(mixOmicsData)
 #' # need to unmap the Y factor diet if you pretend this is not a classification pb.
 #' # see also the function block.splsda for discriminant analysis  where you dont
 #' # need to unmap Y.

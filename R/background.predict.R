@@ -101,7 +101,7 @@
 #' \dontrun{
 #' # Example 1
 #' # -----------------------------------
-#' library(mixOmics.data)
+#' library(mixOmicsData)
 #' X <- breast.tumors$gene.exp
 #' Y <- breast.tumors$sample$treatment
 #'

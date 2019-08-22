@@ -98,7 +98,7 @@
 #' @keywords algebra
 #' @examples
 #' \dontrun{
-#' library(mixOmics.data)
+#' library(mixOmicsData)
 #' tune <- tune.pca(liver.toxicity$gene, center = TRUE, scale = TRUE)
 #' tune
 #'}

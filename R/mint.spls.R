@@ -144,7 +144,7 @@
 #' @keywords regression multivariate
 #' @examples
 #' \dontrun{
-#' library(mixOmics.data)
+#' library(mixOmicsData)
 #'
 #' # for the purpose of this example, we artificially
 #' # create a continuous response Y by taking gene 1.
