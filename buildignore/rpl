@@ -1,7 +1,12 @@
 #!/usr/local/bin/zsh
 ## in the following folder
-cd /Users/alabadi/Projects/dev/R/_work/mixOmics/ajabadi-mixOmics/ajabadi-mixOmics
+cwd="/Users/alabadi/Projects/dev/R/_work/mixOmics/ajabadi-mixOmics/ajabadi-mixOmics"
+cd $cwd
 
+echo "current search path is: "
+echo $cwd
+echo ""
+echo ""
 echo "Enter file extension to look in (like .R)"
 read ext
 
