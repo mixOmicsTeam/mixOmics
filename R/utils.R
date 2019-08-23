@@ -69,9 +69,9 @@
     mc$Y <- assay(mc$data, mc$Y)
   } else {.stop(.subclass = "inv_XY", message = paste0("'Y' is not an assay or column data from the MAE object" ))}
   mc$X <- t(as.matrix(mc$X))
-  mc$Y <- as.matrix(mc$Y)
+  # mc$Y <- as.matrix(mc$Y)
 
-  if (!(1 %in% dim(mc$Y))) { ## if Y is matrix transpose it
+  if (is(mc$Y, "matrix")) { ## if Y is matrix transpose it
     mc$Y <- t(mc$Y)
   }
   return(mc)

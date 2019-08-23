@@ -18,19 +18,11 @@ identical(plsda.res1[-1], plsda.res2[-1])
 #> TRUE
 ## ---------------- MultiAssayExperiment and assay names as X and Y
 ## 'data' argument should be explicitly mentioned for correct method dispatch
-plsda.res3 <- plsda(X='exercise', Y='physiological', data = linnerud.mae)
-identical(plsda.res1[-1], plsda.res3[-1])
-#> TRUE
+plsda.res3 <- plsda(X='gene', Y='Dose.Group', data = liver.toxicity.mae)
+plsda.res3
 
 ## ---------------- MultiAssayExperiment and formula with assay names
-plsda.res4 <- plsda(formula = physiological ~ exercise, data = linnerud.mae, mode = "classic",)
-identical(plsda.res1[-1], plsda.res4[-1])
+plsda.res4 <- plsda(formula = Dose.Group ~ gene, data = liver.toxicity.mae)
+identical(plsda.res3[-1], plsda.res4[-1])
 #> TRUE
-
-## ---------------- MultiAssayExperiment; X=assay and Y=colData
-toxicity.plsda1 <- plsda(data = liver.toxicity.mae,  formula = Dose.Group~gene, ncomp = 3)
-toxicity.plsda2 <- plsda(data = liver.toxicity.mae,  Y='Dose.Group', X='gene', ncomp = 3)
-identical(toxicity.plsda1[-1], toxicity.plsda2[-1])
-#> TRUE
-
 #' }

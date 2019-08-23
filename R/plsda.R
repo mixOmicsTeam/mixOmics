@@ -83,7 +83,7 @@
 #' @name plsda
 NULL
 ## ----------- Internal ----------- 
-.pls = function(X=NULL,
+.plsda = function(X=NULL,
                 Y=NULL,
                 ncomp = 2,
                 scale = TRUE,
@@ -95,8 +95,8 @@ NULL
                 multilevel = NULL,
                 all.outputs = TRUE,
                 ret.call=FALSE){
-  
-  #### from preb=vious version {
+  mc <- match.call() ## get the call args to adjust and pass to internal
+  #### from previous version {
   #-- validation des arguments --#
   # most of the checks are done in the wrapper.mint.spls.hybrid function
   if (is.null(multilevel))
@@ -135,16 +135,16 @@ NULL
     Y.mat = NULL
   }
   #### }
-  mc <- as.list(match.call()[-1])
-  mc$ret.call <- NULL ## not need by wrapper
+  mc$Y <- Y.mat ## matrix form of Y
   ## make sure mode matches given arguments, and if it is not provided put as the first one in the definition
   mc$mode <- .matchArg(mode)
   mc$DA <- TRUE
+  mc$ret.call <- NULL ## not need by wrapper
   # # call to '.mintWrapper'
-  result <- do.call(.mintWrapper, mc)
+  mc[[1L]] <- quote(.mintWrapper)
+  result <- eval(mc)
   # choose the desired output from 'result'
   result = structure(list(
-    call = match.call(),
     X = result$A[-result$indY][[1]],
     Y = if (is.null(multilevel))
     {

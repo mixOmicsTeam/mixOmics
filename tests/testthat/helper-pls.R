@@ -32,7 +32,7 @@ Xm_Yc <- t(as.matrix(assay(mae_data, Xa))) ## X matrix when Y column data
 Xm_Ya <- t(as.matrix(assay(mae_data[,complete.cases(mae_data[,,c(Xa, Ya)])], Xa))) ## X matrix when Y is assay
 
 Yam <- t(assay(mae_data[,complete.cases(mae_data[,,c(Xa, Ya)])], Ya)) ## Y assay matrix
-Ycn <-  as.matrix(colData(mae_data[,,Xa])[,Yc]) ## Y column data numeric
+Ycn <-  colData(mae_data[,,Xa])[,Yc] ## Y column data numeric
 
 Y_inv <- colnames(colData(mae_data))[iYc_index_num] ## invalid coldata y
 Y_inv.vec <- colData(mae_data)[,iYc_index_num] ## vector
