@@ -6,6 +6,10 @@
 **/*.rds
 **/*.RData
 
+## files for project-specific installation of the package
+Library
+.Rprofile
+
 ## log files
 **/*.log
 
