@@ -32,7 +32,7 @@ test_that("plsda works for 'formula AND data' methods",{
   suppressMessages({
     plsda.res.xy <-          plsda(X = Xm_Yc, Y = Ycn )
     plsda.res.formula.mae <- plsda(formula = f_Yc, data = mae_data)
-    expect_identical(pls.res.xy[-1] ,pls.res.formula.mae[-1])
+    expect_identical(plsda.res.xy[-1] ,plsda.res.formula.mae[-1])
   })
 })
 

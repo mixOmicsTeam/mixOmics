@@ -1,7 +1,8 @@
-# ========================================================================================================
-# spls: perform a sparse PLS
-# this function is a particular setting of .mintBlock, the formatting of the input is checked in .mintWrapper
-# ========================================================================================================
+# ========================================================================== #
+# pls: perform a sparse PLS
+# this function is a particular setting of .mintBlock.
+# The formatting of the input is checked in .mintWrapper
+# ========================================================================== #
 ## ----------- Description ----------- 
 #' Sparse Partial Least Squares (sPLS)
 #'
@@ -128,23 +129,20 @@ NULL
                  tol = 1e-06,
                  max.iter = 100,
                  near.zero.var = FALSE,
-                 logratio = "none",   # one of "none", "CLR"
+                 logratio = c('none','CLR'),
                  multilevel = NULL,
-                 all.outputs = TRUE,
-                 data=NULL,
-                 formula=NULL)
+                 all.outputs = TRUE)
 {
-    mc <- as.list(match.call()[-1])
-    
-    ## make sure mode matches given arguments, and if it is not provided put as the first one in the definition
+    mc <- match.call.defaults() 
+    mc$ret.call <- NULL ## not need by wrapper
+    ## make sure mode matches given arguments, 
+    ## and if it is not provided put as the first one in the definition
     mc$mode <- .matchArg(mode)
-    ## if formula or data is given, process arguments to match default pls
-    if(any(c("formula", "data") %in% names(mc))){
-        mc <- .plsMethodsHelper(mc=mc)
-    }
+    mc$logratio <- .matchArg(logratio)
     mc$DA <- FALSE
     # # call to '.mintWrapper'
-    result <- do.call(.mintWrapper, mc)
+    mc[[1L]] <- quote(.mintWrapper)
+    result <- eval(mc)
     # choose the desired output from 'result'
     out = list(
         call = match.call(),
@@ -182,7 +180,8 @@ NULL
 ## ----------- Generic ----------- 
 #' @export
 #' @rdname spls
-setGeneric('spls', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) standardGeneric('spls'))
+setGeneric('spls', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) 
+    standardGeneric('spls'))
 
 ## ----------- Methods ----------- 
 #### ANY ####

@@ -1,7 +1,8 @@
-# ========================================================================================================
+# ========================================================================== #
 # pls: perform a PLS
-# this function is a particular setting of .mintBlock, the formatting of the input is checked in .mintWrapper
-# ========================================================================================================
+# this function is a particular setting of .mintBlock.
+# The formatting of the input is checked in .mintWrapper
+# ========================================================================== #
 ## ----------- Description ----------- 
 #' Partial Least Squares (PLS) Regression
 #'
@@ -60,8 +61,8 @@
 #' @param near.zero.var Boolean, see the internal \code{\link{nearZeroVar}}
 #' function (should be set to TRUE in particular for data with many zero
 #' values). Setting this argument to FALSE (when appropriate) will speed up the
-#' computations. Default value is FALSE
-#' @param logratio One of ('none','CLR'). Default to 'none'
+#' computations. Default value is FALSE.
+#' @param logratio One of ('none','CLR'). Default to 'none'.
 #' @param multilevel Design matrix for repeated measurement analysis, where
 #' multlevel decomposition is required. For a one factor decomposition, the
 #' repeated measures on each individual, i.e. the individuals ID is input as
@@ -129,17 +130,20 @@ NULL
                 tol = 1e-06,
                 max.iter = 100,
                 near.zero.var = FALSE,
-                logratio = "none",
+                logratio = c('none','CLR'),
                 multilevel = NULL,
                 all.outputs = TRUE,
                 ret.call=FALSE){
-    mc <- as.list(match.call()[-1])
+    mc <- match.call.defaults() 
     mc$ret.call <- NULL ## not need by wrapper
-    ## make sure mode matches given arguments, and if it is not provided put as the first one in the definition
+    ## make sure mode matches given arguments, 
+    ## and if it is not provided put as the first one in the definition
     mc$mode <- .matchArg(mode)
+    mc$logratio <- .matchArg(logratio)
     mc$DA <- FALSE
     # # call to '.mintWrapper'
-    result <- do.call(.mintWrapper, mc)
+    mc[[1L]] <- quote(.mintWrapper)
+    result <- eval(mc)
     # choose the desired output from 'result'
     result = structure(list(
         X = result$A[-result$indY][[1]],
@@ -188,7 +192,8 @@ NULL
 #'  See Details.
 #' @export
 #' @rdname pls
-setGeneric('pls', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) standardGeneric('pls'))
+setGeneric('pls', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) 
+    standardGeneric('pls'))
 
 ## ----------- Methods ----------- 
 #### ANY ####

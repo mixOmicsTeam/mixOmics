@@ -123,7 +123,7 @@
       ## ensure it is a single character
       if(any(sapply( mc[c("X", "Y")], length)!=1))
         .stop(.subclass = "inv_XY", message = "'X' and 'Y' must be assay names from 'data'")
-      mc <- .get_xy(mc, mcc)
+      mc <- .get_xy(mc)
     }
     ##--- if data, X and Y , expect X and Y to be assays and change them to matrices
     # else if(class(try(mc$formula))!="NULL"){

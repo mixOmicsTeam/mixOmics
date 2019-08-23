@@ -1,7 +1,8 @@
-# ========================================================================================================
-# plsda: perform a PLS-DA
-# this function is a particular setting of .mintBlock, the formatting of the input is checked in .mintWrapper
-# ========================================================================================================
+# ========================================================================== #
+# pls: perform a PLS-DA
+# this function is a particular setting of .mintBlock.
+# The formatting of the input is checked in .mintWrapper
+# ========================================================================== #
 ## ----------- Description ----------- 
 #' Partial Least Squares Discriminant Analysis (PLS-DA).
 #'
@@ -84,60 +85,21 @@
 NULL
 ## ----------- Internal ----------- 
 .plsda = function(X=NULL,
-                Y=NULL,
-                ncomp = 2,
-                scale = TRUE,
-                mode = c("regression", "canonical", "invariant", "classic"),
-                tol = 1e-06,
-                max.iter = 100,
-                near.zero.var = FALSE,
-                logratio = "none",
-                multilevel = NULL,
-                all.outputs = TRUE,
-                ret.call=FALSE){
-  mc <- match.call() ## get the call args to adjust and pass to internal
-  #### from previous version {
-  #-- validation des arguments --#
-  # most of the checks are done in the wrapper.mint.spls.hybrid function
-  if (is.null(multilevel))
-  {
-    if (is.null(Y))
-      stop("'Y' has to be something else than NULL.")
-    
-    if (is.null(dim(Y)))
-    {
-      Y = factor(Y)
-    } else {
-      stop("'Y' should be a factor or a class vector.")
-    }
-    
-    if (nlevels(Y) == 1)
-      stop("'Y' should be a factor with more than one level")
-    
-    Y.mat = unmap(Y)
-    colnames(Y.mat) = levels(Y)
-    
-  } else {
-    # we expect a vector or a 2-columns matrix in 'Y' and the repeated measurements in 'multilevel'
-    multilevel = data.frame(multilevel)
-    
-    if ((nrow(X) != nrow(multilevel)))
-      stop("unequal number of rows in 'X' and 'multilevel'.")
-    
-    if (ncol(multilevel) != 1)
-      stop("'multilevel' should have a single column for the repeated measurements, other factors should be included in 'Y'.")
-    
-    if (!is.null(ncol(Y)) && !ncol(Y) %in% c(0,1,2))# multilevel 1 or 2 factors
-      stop("'Y' should either be a factor, a single column data.frame containing a factor, or a 2-columns data.frame containing 2 factors.")
-    multilevel = data.frame(multilevel, Y)
-    multilevel[, 1] = as.numeric(factor(multilevel[, 1])) # we want numbers for the repeated measurements
-    
-    Y.mat = NULL
-  }
-  #### }
-  mc$Y <- Y.mat ## matrix form of Y
-  ## make sure mode matches given arguments, and if it is not provided put as the first one in the definition
+                  Y=NULL,
+                  ncomp = 2,
+                  scale = TRUE,
+                  mode = c("regression", "canonical", "invariant", "classic"),
+                  tol = 1e-06,
+                  max.iter = 100,
+                  near.zero.var = FALSE,
+                  logratio = c('none','CLR'),
+                  multilevel = NULL,
+                  all.outputs = TRUE,
+                  ret.call=FALSE){
+  mc <- match.call.defaults() 
+  mc <- .check_plsda(mc)
   mc$mode <- .matchArg(mode)
+  mc$logratio <- .matchArg(logratio)
   mc$DA <- TRUE
   mc$ret.call <- NULL ## not need by wrapper
   # # call to '.mintWrapper'
@@ -167,7 +129,7 @@ NULL
     logratio = logratio,
     explained_variance = result$explained_variance,#[-result$indY],
     input.X = result$input.X,
-    mat.c = result$mat.c#,
+    mat.c = result$mat.c
   ), class = c("mixo_plsda","mixo_pls","DA"))
   
   # output if multilevel analysis

@@ -75,8 +75,8 @@ test_that("pls fails with invalid assay and produces appropriate error",{
   expect_condition(pls(X = "invalidX", Y="invalidY", data = mae_data ), class = "inv_XY")
 
   ##---- "formula"
-  expect_condition(pls(formula = Y~X, data = mae_data ), class = "inv_XY")
   ##---- 'formula_mae'
+  expect_condition(pls(formula = Y~X, data = mae_data ), class = "inv_XY")
   expect_condition(pls(formula = wrong_LHS ~ gistict, data = mae_data ), class = "inv_XY")
 })
 

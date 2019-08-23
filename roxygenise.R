@@ -3,7 +3,7 @@
 roxygen2::roxygenise()
 ############# load the pkg to access functions
 devtools::load_all()
-fun = 'spca'
+fun = 'plsda'
 
 # fun = NULL
 test_fun <- function(fun=fun){

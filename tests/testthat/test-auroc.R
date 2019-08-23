@@ -9,7 +9,7 @@ test_that("auroc works", {
     Y <- breast.tumors$sample$treatment
     Y.test<-breast.tumors$sample$treatment[test]
     
-    res.plsda <- plsda(X, Y, ncomp = 2)
+    res.plsda <- plsda(X = X, Y = Y, ncomp = 2)
     
     auc.plsda=auroc(res.plsda,plot = TRUE,roc.comp = 1)
     

@@ -12,16 +12,16 @@
 pls(data = NULL, X = NULL, Y = NULL, formula = NULL, ...)
 
 \S4method{pls}{ANY,ANY,ANY,ANY}(data = NULL, X = NULL, Y = NULL,
-  formula = NULL, ..., ret.call = FALSE)
+  formula = NULL, ...)
 
 \S4method{pls}{MultiAssayExperiment,ANY,ANY,formula}(data = NULL,
-  X = NULL, Y = NULL, formula = NULL, ..., ret.call = FALSE)
+  X = NULL, Y = NULL, formula = NULL, ...)
 
 \S4method{pls}{ANY,ANY,ANY,formula}(data = NULL, X = NULL, Y = NULL,
-  formula = NULL, ..., ret.call = FALSE)
+  formula = NULL, ...)
 
 \S4method{pls}{MultiAssayExperiment,ANY,ANY,ANY}(data = NULL, X = NULL,
-  Y = NULL, formula = NULL, ..., ret.call = FALSE)
+  Y = NULL, formula = NULL, ...)
 }
 \arguments{
 \item{data}{An object of class \code{MultiAssayExperiment} or similar.
@@ -43,9 +43,6 @@ or name of such an \code{assay} or
 
 \item{...}{Aguments passed to the generic.}
 
-\item{ret.call}{Logical indicating whether evaluated input arguments
-should be included in the result.}
-
 \item{mode}{Character string. What type of algorithm to use, (partially)
 matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 or \code{"classic"}. See Details.}
@@ -53,9 +50,9 @@ or \code{"classic"}. See Details.}
 \item{near.zero.var}{Boolean, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Setting this argument to FALSE (when appropriate) will speed up the
-computations. Default value is FALSE}
+computations. Default value is FALSE.}
 
-\item{logratio}{One of ('none','CLR'). Default to 'none'}
+\item{logratio}{One of ('none','CLR'). Default to 'none'.}
 
 \item{multilevel}{Design matrix for repeated measurement analysis, where
 multlevel decomposition is required. For a one factor decomposition, the
@@ -66,8 +63,6 @@ columns indicate those factors. See examples in \code{?spls}).}
 \item{all.outputs}{Boolean. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.
  see examples.}
-
-\item{...}{Aguments passed to the generic.}
 }
 \value{
 \code{pls} returns an object of class \code{"mixo_pls"}, a list that
