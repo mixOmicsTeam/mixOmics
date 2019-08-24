@@ -1,76 +1,17 @@
-################################################################################
-# Authors:
-#   Florian Rohart,
-#   Benoit Gautier,
-#   Kim-Anh Le Cao,
-#
-# created: 22-04-2015
-# last modified: 04-10-2017
-#
-# Copyright (C) 2015
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-################################################################################
-
-
-# =============================================================================
+# ========================================================================== #
 # block.pls: perform a horizontal PLS on a combination of datasets,
 # input as a list in X
 # this function is a particular setting of .mintBlock,
 # the formatting of the input is checked in .mintWrapperBlock
-# =============================================================================
-
-# X: a list of data sets (called 'blocks') matching on the same samples.
-#   Data in the list should be arranged in samples x variables,
-#   with samples order matching in all data sets. \code{NA}s are not allowed.
-# Y: outcome
-# indY: to supply if Y is missing, indicate the position of the outcome in X.
-# ncomp: numeric vector of length the number of blocks in \code{X}.
-#   The number of components to include in the model for each block
-#   (does not necessarily need to take the same value for each block).
-#   By default set to 2 per block.
-# design: the input design.
-# scheme: the input scheme, one of "horst", "factorial" or ""centroid".
-#   Default to "centroid"
-# mode: input mode, one of "canonical", "classic", "invariant" or "regression".
-#   Default to "regression"
-# scale: boleean. If scale = TRUE, each block is standardized to zero
-#   means and unit variances (default: TRUE).
-# init: intialisation of the algorithm, one of "svd" or "svd.single".
-#   Default to "svd"
-# tol: Convergence stopping value.
-# max.iter: integer, the maximum number of iterations.
-# near.zero.var: boolean, see the internal \code{\link{nearZeroVar}} function
-#   (should be set to TRUE in particular for data with many zero values).
-# all.outputs: calculation of non-essential outputs (e.g. explained variance,
-#   loadings.Astar, etc)
-
-
-
-
-
-
-
-
+# ========================================================================== #
+## ----------- Description ----------- 
 #' N-integration with Projection to Latent Structures models (PLS)
 #'
 #' Integration of multiple data sets measured on the same samples or
 #' observations, ie. N-integration. The method is partly based on Generalised
 #' Canonical Correlation Analysis.
 #'
-#' \code{block.spls} function fits a horizontal integration PLS model with a
+#' \code{block.pls} function fits a horizontal integration PLS model with a
 #' specified number of components per block). An outcome needs to be provided,
 #' either by \code{Y} or by its position \code{indY} in the list of blocks
 #' \code{X}. Multi (continuous)response are supported. \code{X} and \code{Y}
@@ -89,11 +30,13 @@
 #' Analysis and differs from the MB-PLS approaches proposed by Kowalski et al.,
 #' 1989, J Chemom 3(1) and Westerhuis et al., 1998, J Chemom, 12(5).
 #'
+## ----------- Parameters ----------- 
+#' @inheritParams pls
 #' @param X A list of data sets (called 'blocks') measured on the same samples.
 #' Data in the list should be arranged in matrices, samples x variables, with
 #' samples order matching in all data sets.
 #' @param Y Matrix response for a multivariate regression framework. Data
-#' should be continuous variables (see block.splsda for supervised
+#' should be continuous variables (see block.plsda for supervised
 #' classification and factor reponse)
 #' @param indY To supply if Y is missing, indicates the position of the matrix
 #' response in the list \code{X}
@@ -107,21 +50,14 @@
 #' relationships to \code{Y}.
 #' @param scheme Either "horst", "factorial" or "centroid". Default =
 #' \code{horst}, see reference.
-#' @param mode character string. What type of algorithm to use, (partially)
-#' matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
-#' or \code{"classic"}. See Details. Default = \code{regression}.
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
-#' means and unit variances. Default = \code{TRUE}.
 #' @param init Mode of initialization use in the algorithm, either by Singular
 #' Value Decompostion of the product of each block of X with Y ("svd") or each
 #' block independently ("svd.single"). Default = \code{svd.single}.
-#' @param tol Convergence stopping value.
-#' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
-#' function (should be set to TRUE in particular for data with many zero
-#' values). Default = \code{FALSE}.
-#' @param all.outputs boolean. Computation can be faster when some specific
-#' (and non-essential) outputs are not calculated. Default = \code{TRUE}.
+#' 
+## ----------- Value -----------
+#' @return \code{spls} returns an object of class \code{"spls"}, a list that
+#' contains the following components:
+#'
 #' @return \code{block.pls} returns an object of class \code{"block.pls"}, a
 #' list that contains the following components:
 #'
@@ -136,7 +72,9 @@
 #' iterations of the algorthm for each component}
 #' \item{explained_variance}{Percentage of explained variance for each
 #' component and each block}
-#' @author Florian Rohart, Benoit Gautier, Kim-Anh Lê Cao
+#' 
+## ----------- Ref ----------- 
+#' @author Florian Rohart, Benoit Gautier, Kim-Anh Lê Cao, Al J Abadi.
 #' @seealso \code{\link{plotIndiv}}, \code{\link{plotArrow}},
 #' \code{\link{plotLoadings}}, \code{\link{plotVar}}, \code{\link{predict}},
 #' \code{\link{perf}}, \code{\link{selectVar}}, \code{\link{block.spls}},
@@ -151,80 +89,165 @@
 #' Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical
 #' Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
 #' @keywords regression multivariate
-#' @examples
-#'
-#'\dontrun{
-#' # Example with TCGA multi omics study
-#' # -----------------------------------
-#' # this is the X data as a list of mRNA and miRNA; the Y data set is a single data set of proteins
-#' data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna)
-#' # set up a full design where every block is connected
-#' design = matrix(1, ncol = length(data), nrow = length(data),
-#' dimnames = list(names(data), names(data)))
-#' diag(design) =  0
-#' design
-#' # set number of component per data set
-#' ncomp = c(2)
-#'
-#' TCGA.block.pls = block.pls(X = data, Y = breast.TCGA$data.train$protein, ncomp = ncomp,
-#' design = design)
-#' TCGA.block.pls
-#' # in plotindiv we color the samples per breast subtype group but the method is unsupervised!
-#' # here Y is the protein data set
-#' plotIndiv(TCGA.block.pls, group =  breast.TCGA$data.train$subtype, ind.names = FALSE)
-#'}
-#'
-#'
-#' @export block.pls
-block.pls = function(X,
-Y,
-indY,
-ncomp = 2,
-design,
-scheme,
-mode,
-scale = TRUE,
-init ,
-tol = 1e-06,
-max.iter = 100,
-near.zero.var = FALSE,
-all.outputs = TRUE)
+#' 
+## ----------- Examples ----------- 
+#' @example examples/block.pls-example.R
+## setting the document name here so internal would not force the wrong name
+#' @name block.pls
+NULL
+## ----------- Internal ----------- 
+.block.pls = function(X=NULL,
+                      Y=NULL,
+                      indY=NULL,
+                      ncomp = 2,
+                      design=NULL,
+                      scheme=c("horst", "factorial", "centroid"),
+                      mode = c("regression", "canonical", "invariant", "classic"),
+                      scale = TRUE,
+                      init=c("svd.single", "svd") ,
+                      tol = 1e-06,
+                      max.iter = 100,
+                      near.zero.var = FALSE,
+                      all.outputs = TRUE)
 {
-
     # call to '.mintWrapperBlock'
-    result = .mintWrapperBlock(X=X, Y=Y, indY=indY, ncomp=ncomp,
-        design=design, scheme=scheme, mode=mode, scale=scale,
-        init=init, tol=tol, max.iter=max.iter ,near.zero.var=near.zero.var,
-        all.outputs = all.outputs)
-
+    mc <- match.call.defaults()
+    mc$scheme <- .matchArg(scheme)
+    mc$mode <- .matchArg(mode)
+    mc$init <- .matchArg(init)
+    mc[[1L]] <- quote(.mintWrapperBlock)
+    result <- eval(mc)
+    
     # calculate weights for each dataset
     weights = .getWeights(result$variates, indY = result$indY)
-
+    
     # choose the desired output from 'result'
     out=list(call = match.call(),
-        X = result$A,
-        indY = result$indY,
-        ncomp = result$ncomp,
-        mode = result$mode,
-        variates = result$variates,
-        loadings = result$loadings,
-        crit = result$crit,
-        AVE = result$AVE,
-        names = result$names,
-        init = result$init,
-        tol = result$tol,
-        iter = result$iter,
-        max.iter = result$max.iter,
-        nzv = result$nzv,
-        scale = result$scale,
-        design = result$design,
-        scheme = result$scheme,
-        weights = weights,
-        explained_variance = result$explained_variance)
-
+             X = result$A,
+             indY = result$indY,
+             ncomp = result$ncomp,
+             mode = result$mode,
+             variates = result$variates,
+             loadings = result$loadings,
+             crit = result$crit,
+             AVE = result$AVE,
+             names = result$names,
+             init = result$init,
+             tol = result$tol,
+             iter = result$iter,
+             max.iter = result$max.iter,
+             nzv = result$nzv,
+             scale = result$scale,
+             design = result$design,
+             scheme = result$scheme,
+             weights = weights,
+             explained_variance = result$explained_variance)
+    
     # give a class
     class(out) = c("block.pls","sgcca")
-
+    
     return(invisible(out))
-
+    
 }
+## ----------- Generic ----------- 
+#' @export
+#' @rdname block.pls
+setGeneric('block.pls', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) 
+    standardGeneric('block.pls'))
+
+## ----------- Methods ----------- 
+#### ANY ####
+#' @export
+#' @rdname block.pls
+setMethod('block.pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+    mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+    
+    ## legacy code
+    if ( class(try(data)) %in% c("data.frame", "matrix") )
+        .stop(message = "mixOmics arguments have changed.
+              Please carefully read the documentation and try to use named 
+              arguments such as block.pls(X=list(), ...) as opposed to block.pls(mat, ...).",
+              .subclass = "defunct")
+    
+    if ( !.missing(data)) { ## data must be NULL
+        .stop(message = "data should be a MultiAssayExperiment class, or NULL",
+              .subclass = "inv_signature")
+    }
+    if ( !.missing(formula) ) { ## formula must be NULL
+        .stop(message = "With numerical X and Y, formula should not be provided. 
+              See ?block.pls",
+              .subclass = "inv_signature")
+    }
+    
+    mc <- match.call()
+    mc[-1L] <- lapply(mc[-1L], eval)
+    mc$data <- mc$formula <- NULL 
+    mc[[1L]] <- quote(.block.pls)
+    result <- eval(mc)
+    .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'block.pls')
+})
+
+#### signature(data = 'MultiAssayExperiment', formula = "formula") ####
+## expect X and Y to be NULL
+#' @export
+#' @rdname block.pls
+setMethod('block.pls', signature(data = 'MultiAssayExperiment', formula = 'formula'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+              ## X and Y NULL or missing
+              if ( !((missing(X) || is.null(X)) && (missing(Y) || is.null(Y)) ) )
+                  .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
+                        .subclass = "inv_signature")
+              mc <- match.call()
+              mc[-1L] <- lapply(mc[-1L], eval.parent)
+              .sformula_checker(mc) ## check formula validity
+              mc[c('Y', 'X')] <- as.character(formula[2:3])
+              mc <- .get_xy(mc = mc)
+              mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.block.pls)
+              result <- eval(mc)
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'block.pls')
+          })
+
+
+#### signature(data != 'MultiAssayExperiment', formula = "formula") ####
+## expect X and Y to be NULL
+#' @export
+#' @rdname block.pls
+setMethod('block.pls', signature(formula = 'formula'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+              mc <- match.call()
+              mc[-1L] <- lapply(mc[-1L], eval.parent)
+              .sformula_checker(mc) ## check formula validity
+              mc$X <- eval.parent(as.list(formula)[[3]], n = 2)
+              mc$Y <- eval.parent(as.list(formula)[[2]], n = 2)
+              # mc <- .get_xy(mc = mc)
+              mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.block.pls)
+              result <- eval(mc)
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'block.pls')
+          })
+
+
+#### signature(data = 'MultiAssayExperiment', formula != "formula") ####
+## expect X and Y to be valid characters
+#' @export
+#' @rdname block.pls
+setMethod('block.pls', signature(data = 'MultiAssayExperiment'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+              ## X and Y NULL or missing
+              if ( !(missing(formula) || is.null(formula)) ) { ## formula must be NULL
+                  .stop(message = "With numerical X and Y, formula should not be provided. See ?block.pls", 
+                        .subclass = "inv_signature")
+              }
+              
+              mc <- match.call()
+              mc[-1L] <- lapply(mc[-1L], eval.parent)
+              mc <- .get_xy(mc = mc)
+              mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.block.pls)
+              result <- eval(mc)
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'block.pls')
+          })
