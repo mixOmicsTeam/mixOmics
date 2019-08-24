@@ -19,7 +19,9 @@ iYc_index_num <- 1 ## "patientID" - must be numeric
 iYc_index_char <- 7 ## pathologic_stage" - is in fact a valid class but not factor
 ## phenotypes column name for discriminatory analyses
 phen_col <- "gender" ## uses Xa for single plsda and list(Xa, Ya) for block.plsda
-## ----------------------------------------------------- no need to change the following
+
+## -------------- no need to change the following --------------
+## the names used down here must be unique across all helper-* files
 
 Xa <- names(assays(mae_data))[X_index] ## X assay
 Ya <- names(assays(mae_data))[Ya_index] ## Y assay
