@@ -41,9 +41,10 @@
 #' @importFrom methods is
 #' @export logratio.transfo
 logratio.transfo = function(X,
-logratio = "none", # one of ('none','CLR','ILR')
+logratio = c('none','CLR','ILR'),
 offset = 0)
 {
+    logratio <- .matchArg(logratio)
     if (!(logratio %in% c("none", "CLR", "ILR")))
     stop("Choose one of the three following logratio transformation: 'none', 'CLR' or 'ILR'")
 
