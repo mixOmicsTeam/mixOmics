@@ -614,7 +614,7 @@ plot_parameters){
     #at this stage, we have a 'group' - user defined or DA, or by default 1 single group
 
     # col and col.per.group
-    if (!is_null.group) # group is user defined or DA; we require a col.per.group input, if only a 'col' input: we use it as col.per.group
+    if (!is_null(group)) # group is user defined or DA; we require a col.per.group input, if only a 'col' input: we use it as col.per.group
     {
         if(is_null(col.per.group) & !missing(col))  # we use col as a col.per.group
         {

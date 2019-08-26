@@ -723,7 +723,7 @@ label.axes.box = "both"  )
     ind.group = cumsum(c(0, sapply(cord.X, nrow)))
     if (is.null(var.names)){
         var.names.list = unlist(sapply(cord.X, rownames))
-        if (!is_null.pch) {
+        if (!missing.pch) {
             var.names = rep(FALSE, length(cord.X))
         } else {
             var.names = rep(TRUE, length(cord.X))
@@ -787,7 +787,7 @@ label.axes.box = "both"  )
 
     df$pch = pch; df$cex = cex; df$col = col; df$font = font
 
-    if (is_null.pch)
+    if (missing.pch)
     df$pch=1
 
     if (overlap)

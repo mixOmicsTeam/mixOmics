@@ -396,7 +396,7 @@ position.names = 'centroid'
         stop("Length of 'col' should be of length inferior or equal to ", length(x[[1]]),".")
 
         col = factor(rep(col, ceiling(length(x[[1]])/length(col)))[1 : length(x[[1]])])
-        if (!is_null.group)
+        if (!missing.group)
         {
             group = col
             levels.color = col
@@ -428,7 +428,7 @@ position.names = 'centroid'
     #-- pch argument
     if (is_null(pch))
     {
-        if (is_null.col)
+        if (missing.col)
         {
             pch = as.numeric(col)
         } else {
@@ -587,7 +587,7 @@ position.names = 'centroid'
 
 
     pch.legend=NULL
-    if (is_null.col)
+    if (missing.col)
     {
         for (i in 1:nlevels(factor(col)))
         pch.legend=c(pch.legend,df[df$col == levels(factor(col))[i], ]$pch)
