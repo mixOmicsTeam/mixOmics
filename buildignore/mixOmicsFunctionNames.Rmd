@@ -1,0 +1,32 @@
+---
+title: "mixOmcis function names"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Why
+
+dot in the middle/end of a function triggers an attempt to dispatch S3 methods. For example, for
+function name `background.predict`, R will try to find a `background` method for
+signature `predict`, and so on. The function names should describe function's act and be
+either be all lower case separated by `_` (e.g. `do_this_thing`), or 
+`camelCase` with first one being lower case (e.g. `constructBlockFromElements`)
+
+It is encouraged to begin internal function's name with dot (e.g. `.helper_plsda`)
+
+
+# mixOmcis functions
+
+  * background.predict
+    + suggestion: background_predict
+  * block.{s}]pls{da}
+    + suggestion: drop block and infer method from inputs, soft deprecating current 
+    ones (one Generic to rule them all) and maintaining separate classes for outputs so
+    plot methods do just fine.
+    
+    
+  * all `mint`/`network`/`perf`/`tune`/`plot` variation need to get unified
+  

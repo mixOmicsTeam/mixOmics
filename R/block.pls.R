@@ -108,12 +108,14 @@ NULL
                       tol = 1e-06,
                       max.iter = 100,
                       near.zero.var = FALSE,
-                      all.outputs = TRUE)
+                      all.outputs = TRUE,
+                      ret.call=FALSE)
 {
     mc <- match.call.defaults()
     mc$scheme <- .matchArg(scheme)
     mc$mode <- .matchArg(mode)
     mc$init <- .matchArg(init)
+    mc$ret.call <- NULL ## drop as it is not used by internal wrapper
     # call to '.mintWrapperBlock'
     mc[[1L]] <- quote(.mintWrapperBlock)
     result <- eval(mc)
@@ -160,31 +162,35 @@ setGeneric('block.pls', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...)
 #' @export
 #' @rdname block.pls
 setMethod('block.pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
-    mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+    
+    tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
+                   error = function(e) stop(e$message, call. = FALSE))
+    mc <- match.call()
     
     ## legacy code
-    if ( class(try(data)) %in% c("data.frame", "matrix") )
+    if ( class(try(mc$data)) %in% c("data.frame", "matrix") )
         .stop(message = "mixOmics arguments have changed.
               Please carefully read the documentation and try to use named 
               arguments such as block.pls(X=list(), ...) as opposed to block.pls(mat, ...).",
               .subclass = "defunct")
     
-    if ( !is_null(data)) { ## data must be NULL
+    if ( !is_null(mc$data)) { ## data must be NULL
         .stop(message = "data should be a MultiAssayExperiment class, or NULL",
               .subclass = "inv_signature")
     }
-    if ( !is_null(formula) ) { ## formula must be NULL
+    if ( !is_null(mc$formula) ) { ## formula must be NULL
         .stop(message = "With numerical X and Y, formula should not be provided. 
               See ?block.pls",
               .subclass = "inv_signature")
     }
     
-    mc <- match.call()
-    mc[-1L] <- lapply(mc[-1L], eval)
+    
+    mc[-1L] <- lapply(mc[-1L], eval.parent)
     mc$data <- mc$formula <- NULL 
     mc[[1L]] <- quote(.block.pls)
     result <- eval(mc)
-    .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'block.pls')
+    
+    .call_return(result, match.call(), fun.name = 'block.pls')
 })
 
 #### signature(data = 'MultiAssayExperiment', formula = "formula") ####
@@ -201,7 +207,7 @@ setMethod('block.pls', signature(data = 'MultiAssayExperiment', formula = 'formu
                         .subclass = "inv_signature")
 
               .formula_checker(mc, block = TRUE) ## check formula validity
-              mc[c('Y', 'X')] <- as.character(formula[2:3])
+              mc[c('Y', 'X')] <- as.character(mc$formula[2:3])
               mc <- .get_xy(mc = mc)
               mc$data <- mc$formula <- NULL 
               mc[[1L]] <- quote(.block.pls)

@@ -305,15 +305,19 @@
   return(mc)
   }
 
-## ----------- .call_return  ----------- 
+## ----------- .call_return ----------- 
+## TODO keep only one returner function
 ## function to add the call to the result if asked
+## The aim is to reduce the methods code
+## Handling it in here to avoid unnecessary copy of the fully evaluated call
+## unless user asks for it. No full copy is made unless ret.call=TRUE.
 .call_return <-
   function(result = list(), ## result from internal
            mcr, ## always match.call()
            fun.name = 'pca', ## name of the function
            pframe = 3L) {  ## how many frames above to evaluate in?
     
-  if ( is(mcr$ret.call, 'logical') && isTRUE(mcr$ret.call) ) {
+  if ( isTRUE(mcr$ret.call) ) {
     {
       mcr[[1]] = as.name(fun.name)
       mcr[-1L] <- lapply(mcr[-1L], function(x) eval.parent(x, n = pframe))
@@ -326,6 +330,24 @@
     return(result)
 }
 
+## ----------- .ret_call ----------- 
+## function to add the call to the result if asked
+.ret_call <-
+  function(result = list(), ## result from internal
+           mcr, ## always evaluated mc
+           fun.name = 'pca') { ## name of the function
+    
+    if (isTRUE(mcr$ret.call) ) {
+      {
+        mcr[[1]] = as.name(fun.name)
+      }
+      ## makes expect_identical() easy to have call as first arg and just
+      ## drop it using pca.res[-1]
+      
+      result <- structure(c(list(call = mcr), result), class = class(result))
+    }
+    return(result)
+  }
 ## ----------- .switch_arg_names ----------- #TODO drop it?
 ## customised from scran/R/utils_other.R
 .switch_arg_names <- function(old.val, new.val, msg=NULL) {
@@ -344,3 +366,27 @@
   }
 }
 
+
+## ----------- .call_internal ----------- 
+## function to add the call to the result if asked
+.call_internal <-
+  function(mc, ## always match.call()
+           fun.name = 'pca', ## name of the function
+           pframe = 3L) {  ## how many frames above to evaluate in?
+    mc[-1L] <- lapply(mc[-1L], eval.parent)
+    mc$data <- mc$formula <- NULL 
+    mc[[1L]] <- as.name(sprintf(".%s", fun.name))
+    result <- eval(mc)
+    
+    if ( isTRUE(mc$ret.call) ) {
+      {
+        mcr[[1]] = as.name(fun.name)
+        mcr[-1L] <- lapply(mcr[-1L], function(x) eval.parent(x, n = pframe))
+      }
+      ## makes expect_identical() easy to have call as first arg and just
+      ## drop it using pca.res[-1]
+      
+      result <- structure(c(list(call = mcr), result), class = class(result))
+    }
+    return(result)
+  }
