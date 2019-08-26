@@ -630,7 +630,7 @@ label.axes.box = "both"  )
 
     #-- pch argument
     missing.pch = FALSE
-    if (missing(pch))
+    if (is_null(pch))
     {
         missing.pch = TRUE
         if(style=="3d")
@@ -661,7 +661,7 @@ label.axes.box = "both"  )
     }
 
     #-- col argument
-    if (missing(col)) {
+    if (is_null(col)) {
         if (length(cord.X) < 10) {
             col = unlist(lapply(seq_len(length(cord.X)), function(x){rep(color.mixo(x), sum(sapply(cord.X[x], nrow)))}))
         } else {
@@ -682,7 +682,7 @@ label.axes.box = "both"  )
     }
 
     #-- cex argument
-    if (missing(cex)){
+    if (is_null(cex)){
         if (style == "ggplot2"){
             cex = rep(5, sum(sapply(cord.X, nrow)))
         } else {
@@ -703,7 +703,7 @@ label.axes.box = "both"  )
     }
 
     #-- font argument
-    if (missing(font)) {
+    if (is_null(font)) {
         font = rep(1, sum(sapply(cord.X, nrow)))
     } else if (is.vector(font, mode = "numeric")) {
         if (length(font) != length(cord.X))
@@ -723,7 +723,7 @@ label.axes.box = "both"  )
     ind.group = cumsum(c(0, sapply(cord.X, nrow)))
     if (is.null(var.names)){
         var.names.list = unlist(sapply(cord.X, rownames))
-        if (!missing.pch) {
+        if (!is_null.pch) {
             var.names = rep(FALSE, length(cord.X))
         } else {
             var.names = rep(TRUE, length(cord.X))
@@ -787,7 +787,7 @@ label.axes.box = "both"  )
 
     df$pch = pch; df$cex = cex; df$col = col; df$font = font
 
-    if(missing.pch)
+    if (is_null.pch)
     df$pch=1
 
     if (overlap)

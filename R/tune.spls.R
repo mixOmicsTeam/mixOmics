@@ -255,7 +255,7 @@ cpus
 
 
     #-- already.tested.X
-    if (missing(already.tested.X))
+    if (is_null(already.tested.X))
     {
         already.tested.X = NULL
     } else {
@@ -278,7 +278,7 @@ cpus
     if (is.null(test.keepX) | length(test.keepX) == 1 | !is.numeric(test.keepX))
     stop("'test.keepX' must be a numeric vector with more than two entries", call. = FALSE)
 
-    if(!missing(cpus))
+    if (!is_null(cpus))
     {
         if(!is.numeric(cpus) | length(cpus)!=1)
         stop("'cpus' must be a numerical value")
@@ -381,7 +381,7 @@ cpus
 
 
         class.object="mixo_spls"
-        if(!missing(cpus))
+        if (!is_null(cpus))
         clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX", "test.keepY"),envir=environment())
 
         # successively tune the components until ncomp: comp1, then comp2, ...

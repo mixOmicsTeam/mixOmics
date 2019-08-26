@@ -59,10 +59,10 @@ misdata = NULL, is.na.A = NULL, ind.NA = NULL, ind.NA.col = NULL,
 all.outputs=TRUE
 )
 {
-    if (missing(scheme))
+    if (is_null(scheme))
     scheme= "horst"
     
-    if (missing(mode))
+    if (is_null(mode))
     mode="regression"
     
 

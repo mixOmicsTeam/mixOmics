@@ -254,7 +254,7 @@ name.save = NULL)
 
 
     # check inpuy 'Y' and transformation in a dummy matrix
-    if(!missing(Y))
+    if (!is_null(Y))
     {
         if (is.null(dim(Y)))
         {
@@ -266,7 +266,7 @@ name.save = NULL)
         if (nlevels(Y) == 1)
         stop("'Y' should be a factor with more than one level")
 
-    } else if(!missing(indY)) {
+    } else if (!is_null(indY)) {
         Y = X[[indY]]
         if (is.null(dim(Y)))
         {
@@ -280,7 +280,7 @@ name.save = NULL)
 
         X = X[-indY] #remove Y from X to pass the arguments simpler to block.splsda
 
-    } else if(missing(indY)) {
+    } else if (is_null(indY)) {
         stop("Either 'Y' or 'indY' is needed")
 
     }
@@ -327,7 +327,7 @@ name.save = NULL)
 
     #-- already.tested.X
 
-    if (missing(already.tested.X))
+    if (is_null(already.tested.X))
     {
         already.tested.X = NULL
     } else {
@@ -350,7 +350,7 @@ name.save = NULL)
     stop("'validation' should be one of 'Mfold' or 'loo'.", call. = FALSE)
 
     #-- test.keepX
-    if(missing(test.keepX))
+    if (is_null(test.keepX))
     {
         test.keepX = lapply(1:length(X),function(x){c(5,10,15)[which(c(5,10,15)<ncol(X[[x]]))]})
         names(test.keepX) = names(X)
@@ -372,7 +372,7 @@ name.save = NULL)
 
     message(paste("You have provided a sequence of keepX of length: ", paste(apply(temp, 1, function(x) paste(x,collapse=" for block ")), collapse= " and "), ".\nThis results in ",prod(sapply(test.keepX,length)), " models being fitted for each component and each nrepeat, this may take some time to run, be patient!",sep=""))
 
-    if(missing(cpus))
+    if (is_null(cpus))
     {
         parallel = FALSE
         message(paste("You can look into the 'cpus' argument to speed up computation time.",sep=""))

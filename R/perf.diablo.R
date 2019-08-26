@@ -69,7 +69,7 @@ cpus,
     if (!(validation %in% c("Mfold", "loo")))
     stop("Choose 'validation' among the two following possibilities: 'Mfold' or 'loo'")
     
-    if(!missing(cpus))
+    if (!is_null(cpus))
     {
         if(!is.numeric(cpus) | length(cpus)!=1)
         stop("'cpus' must be a numerical value")
@@ -130,7 +130,7 @@ cpus,
         ### End: Training samples (X.training and Y.training) and Test samples (X.test / Y.test)
         
         ### Estimation models
-        if(missing(cpus))
+        if(is_null(cpus))
         {
             model = lapply(1 : M, function(x) {suppressWarnings(block.splsda(X = X.training[[x]], Y = Y.training[[x]], ncomp = max(object$ncomp[-indY]),
                 keepX = keepX,

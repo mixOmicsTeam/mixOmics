@@ -98,7 +98,7 @@ mat.rank = function (mat, tol)
     d = nipals(mat)$eig
     max.d = d[1]
     min.d = d[length(d)]
-    if (missing(tol)) 
+    if (is_null(tol)) 
     tol = max(dim(mat)) * max.d * .Machine$double.eps
     
     r = sum(d > tol)

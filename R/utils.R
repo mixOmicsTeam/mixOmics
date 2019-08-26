@@ -158,7 +158,7 @@
   data <- eval.parent(mc$data, 2L)
   X <-    eval.parent(mc$X, 2L)
   ## check that data is provided
-  if (missing(data) || is.null(data)) {
+  if (is_null(data)) {
     .stop(.subclass = "inv_data",
           "'X' is character but 'data' containing 'X' assay not provided. See ?pca.")
     

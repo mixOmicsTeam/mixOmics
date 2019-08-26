@@ -99,7 +99,7 @@ remove.object=NULL
     #test.keepX and test.keepY must be checked before (in tune)
     
     #set the default study factor
-    if (missing(study))
+    if (is_null(study))
     {
         study = factor(rep(1,nrow(X)))
     } else {

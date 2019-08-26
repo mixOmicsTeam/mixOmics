@@ -161,10 +161,10 @@ legend = TRUE)
     stop("This function is only available when there are more than 3 blocks
     (2 in object$X + an outcome object$Y)") # so 2 blocks in X + the outcome Y
 
-    if (missing(cutoff))
+    if (is_null(cutoff))
     stop("'cutoff' is missing", call.=FALSE) # so 2 blocks in X + the outcome Y
 
-    if(missing(color.Y))
+    if(is_null(color.Y))
     {
         color.Y = color.mixo(1:nlevels(object$Y))
     } else {
@@ -173,7 +173,7 @@ legend = TRUE)
 
     }
 
-    if(missing(color.blocks))
+    if(is_null(color.blocks))
     {
         color.blocks = brewer.pal(n = 12, name = 'Paired') #why 12??
     } else {
@@ -187,7 +187,7 @@ legend = TRUE)
         # to put the color next to its shaded color
     }
 
-    if(missing(color.cor))
+    if(is_null(color.cor))
     {
         color.cor = c(colors()[134],  # blue, negative correlation
                 colors()[128])  # pale red, positive correlation
@@ -1042,10 +1042,10 @@ draw.arc.s = function (xc, yc, r, w1, w2, col="lightblue", lwd=1, lend=1){
 segAnglePo = function (seg.dat=seg.dat, seg=seg, angle.start=angle.start,
 angle.end=angle.end){
 
-    if (missing(angle.start)){
+    if (is_null(angle.start)){
         angle.start = 0
     }
-    if (missing(angle.end)){
+    if (is_null(angle.end)){
         angle.end = 360
     }
     ## check data.frame?
@@ -1126,7 +1126,7 @@ R=R, W=W, s.n=1, col="blue"){
 
 ## Add an alpha value to a colour
 add.alpha = function(col, alpha=1){
-    if(missing(col))
+    if(is_null(col))
     stop("Please provide a vector of colours.")
     apply(sapply(col, col2rgb)/255, 2,
     function(x)

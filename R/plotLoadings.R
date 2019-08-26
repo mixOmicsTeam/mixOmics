@@ -347,7 +347,7 @@ check.input.plotLoadings = function(object, block, study, subtitle, size.name, s
 
     # block
     # --
-    if (missing(block))
+    if (is_null(block))
     {
         if (!is(object, "DA"))
         {
@@ -387,13 +387,13 @@ check.input.plotLoadings = function(object, block, study, subtitle, size.name, s
     }
 
 
-    if (!missing(subtitle))
+    if (!is_null(subtitle))
     {
         if (length(subtitle)!=length(block))
         stop("'subtitle' indicates the subtitle of the plot for each block and it needs to be the same length as 'block'.")
     }
 
-    if(!missing(study))
+    if (!is_null(study))
     {
     #study needs to be either: from levels(object$study), numbers from 1:nlevels(study) or "global"
         if (any(!study%in%c(levels(object$study), "global")))
@@ -408,7 +408,7 @@ check.input.plotLoadings = function(object, block, study, subtitle, size.name, s
     if (size.name <= 0)
     size.name = 0.7
 
-    if (!missing(size.legend))
+    if (!is_null(size.legend))
     {
         if(size.legend <= 0)
         size.legend = 0.8
@@ -418,7 +418,7 @@ check.input.plotLoadings = function(object, block, study, subtitle, size.name, s
 
     # contrib
     # --
-    if(!missing(contrib))
+    if (!is_null(contrib))
     {
         if(length(contrib) > 1 | !all(contrib %in% c("min", "max")))
         stop("'contrib' must be either 'min' or 'max'")
@@ -427,7 +427,7 @@ check.input.plotLoadings = function(object, block, study, subtitle, size.name, s
 
     # xlim
     #---
-    if(!missing(xlim))
+    if (!is_null(xlim))
     {
         # check xlim, has to be a matrix with number of rows=number of blocks, or a vector of two values
         if(length(block) == 1 & !is.null(xlim))

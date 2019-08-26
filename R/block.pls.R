@@ -110,11 +110,11 @@ NULL
                       near.zero.var = FALSE,
                       all.outputs = TRUE)
 {
-    # call to '.mintWrapperBlock'
     mc <- match.call.defaults()
     mc$scheme <- .matchArg(scheme)
     mc$mode <- .matchArg(mode)
     mc$init <- .matchArg(init)
+    # call to '.mintWrapperBlock'
     mc[[1L]] <- quote(.mintWrapperBlock)
     result <- eval(mc)
     
@@ -169,11 +169,11 @@ setMethod('block.pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, 
               arguments such as block.pls(X=list(), ...) as opposed to block.pls(mat, ...).",
               .subclass = "defunct")
     
-    if ( !.missing(data)) { ## data must be NULL
+    if ( !is_null(data)) { ## data must be NULL
         .stop(message = "data should be a MultiAssayExperiment class, or NULL",
               .subclass = "inv_signature")
     }
-    if ( !.missing(formula) ) { ## formula must be NULL
+    if ( !is_null(formula) ) { ## formula must be NULL
         .stop(message = "With numerical X and Y, formula should not be provided. 
               See ?block.pls",
               .subclass = "inv_signature")
@@ -195,7 +195,7 @@ setMethod('block.pls', signature(data = 'MultiAssayExperiment', formula = 'formu
           function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
               mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
               ## X and Y NULL or missing
-              if ( !((missing(X) || is.null(X)) && (missing(Y) || is.null(Y)) ) )
+              if ( !(is_null(X) && is_null(Y)) )
                   .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
                         .subclass = "inv_signature")
               mc <- match.call()
@@ -238,7 +238,7 @@ setMethod('block.pls', signature(data = 'MultiAssayExperiment'),
           function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
               mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
               ## X and Y NULL or missing
-              if ( !(missing(formula) || is.null(formula)) ) { ## formula must be NULL
+              if (!is_null(formula)) { ## formula must be NULL
                   .stop(message = "With numerical X and Y, formula should not be provided. See ?block.pls", 
                         .subclass = "inv_signature")
               }

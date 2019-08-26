@@ -189,7 +189,7 @@ light.output = TRUE # if FALSE, output the prediction and classification of each
 
     #------------------#
     #-- check entries --#
-    if(missing(X))
+    if(is_null(X))
     stop("'X'is missing", call. = FALSE)
 
     X = as.matrix(X)
@@ -199,7 +199,7 @@ light.output = TRUE # if FALSE, output the prediction and classification of each
 
 
     # Testing the input Y
-    if(missing(Y))
+    if(is_null(Y))
     stop("'Y'is missing", call. = FALSE)
     if (is.null(Y))
     stop("'Y' has to be something else than NULL.", call. = FALSE)
@@ -234,7 +234,7 @@ light.output = TRUE # if FALSE, output the prediction and classification of each
 
     #if ((!is.null(already.tested.X)) && (length(already.tested.X) != (ncomp - 1)) )
     #stop("The number of already tested parameters should be NULL or ", ncomp - 1, " since you set ncomp = ", ncomp)
-    if (missing(already.tested.X))
+    if (is_null(already.tested.X))
     {
         already.tested.X = NULL
     } else {
@@ -259,7 +259,7 @@ light.output = TRUE # if FALSE, output the prediction and classification of each
 
     # -- study
     #set the default study factor
-    if (missing(study))
+    if (is_null(study))
     stop("'study' is missing", call. = FALSE)
 
     if (length(study) != nrow(X))

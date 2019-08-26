@@ -367,7 +367,7 @@ auc_roc <- function(roc,
 coords <- function(roc, x, input=c("threshold", "specificity", "sensitivity"), ret=c("threshold", "specificity", "sensitivity"), as.list=FALSE, drop=TRUE, best.method=c("youden", "closest.topleft"), best.weights=c(1, 0.5), ...) {
   # make sure x was provided
   roc$percent=FALSE
-  if (missing(x) || length(x) == 0)
+  if (is_null(x) || length(x) == 0)
     stop("'x' must be a numeric or character vector of positive length.")
   # match input 
   input <- match.arg(input)
@@ -671,7 +671,7 @@ roc.utils.max.partial.auc <- function(partial.auc, percent) {
 # from pROC v1.8.0
 coords.roc <- function(roc, x, input=c("threshold", "specificity", "sensitivity"), ret=c("threshold", "specificity", "sensitivity"), as.list=FALSE, drop=TRUE, best.method=c("youden", "closest.topleft"), best.weights=c(1, 0.5), ...) {
     # make sure x was provided
-    if (missing(x) || length(x) == 0)
+    if (is_null(x) || length(x) == 0)
     stop("'x' must be a numeric or character vector of positive length.")
     # match input
     input <- match.arg(input)

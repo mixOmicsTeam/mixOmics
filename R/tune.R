@@ -253,7 +253,7 @@ light.output = TRUE # mint, splsda
     if (method == "mint.splsda") {
         message("Calling 'tune.mint.splsda' with Leave-One-Group-Out Cross Validation (nrepeat = 1)")
 
-        if (missing(ncomp))
+        if (is_null(ncomp))
         ncomp = 1
 
         result = tune.mint.splsda(X = X, Y = Y,
@@ -285,7 +285,7 @@ light.output = TRUE # mint, splsda
     } else if (method == "pca") {
         message("Calling 'tune.pca'")
 
-        if (missing(ncomp))
+        if (is_null(ncomp))
         ncomp = NULL
 
         result = tune.pca(X = X,
@@ -300,7 +300,7 @@ light.output = TRUE # mint, splsda
 
         message("Calling 'tune.splsda'")
 
-        if (missing(ncomp))
+        if (is_null(ncomp))
         ncomp = 1
 
         result = tune.splsda (X = X, Y = Y,
@@ -320,15 +320,15 @@ light.output = TRUE # mint, splsda
         multilevel = multilevel,
         light.output = light.output)
     } else if (method == "spls") {
-        if(missing(multilevel))
+        if(is_null(multilevel))
         {
             stop("Only a multilevel spls can be tuned")
         } else {
             message("Calling 'tune.splslevel' with method = 'spls'")
 
-            if (missing(ncomp))
+            if (is_null(ncomp))
             ncomp = 1
-            if (missing(already.tested.Y))
+            if (is_null(already.tested.Y))
             already.tested.Y = NULL
 
             result = tune.splslevel(X = X, Y = Y,

@@ -818,7 +818,7 @@ cpus,
     stop("Choose one of the two following logratio transformation: 'none' or 'CLR'")
     #fold is checked in 'MCVfold'
 
-    if(!missing(cpus))
+    if (!is_null(cpus))
     {
         if(!is.numeric(cpus) | length(cpus)!=1)
         stop("'cpus' must be a numerical value")
@@ -928,7 +928,7 @@ cpus,
     }
 
     class.object=class(object)
-    if(!missing(cpus))
+    if (!is_null(cpus))
     clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
 
     for (comp in 1 : ncomp)

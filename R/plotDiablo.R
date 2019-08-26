@@ -111,7 +111,7 @@ legend.ncol,
     stop(paste0("'ncomp' must be a numeric value lower than ", min(object$ncomp),", which is min(object$ncomp)"))
     # end check parameters
 
-    if(missing(legend.ncol))
+    if(is_null(legend.ncol))
     legend.ncol = min(5, nlevels(Y))
 
     numberOfCols = ncol(VarX)-1

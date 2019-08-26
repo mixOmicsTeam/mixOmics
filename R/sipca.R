@@ -250,7 +250,7 @@ setMethod("sipca", "ANY",function(data=NULL, X=NULL, ...){
     mc$X <- mc$data
     mc$data <- NULL
     mc[[1L]] <- quote(.sipca)
-  } else if ( !(missing(data) || is.null(data)) ) {
+  } else if ( !is_null(data) ) {
     .stop("'data' is not valid, see ?sipca.", .subclass = "inv_data")
   }
   mc$data <- NULL ## not needed for the internal

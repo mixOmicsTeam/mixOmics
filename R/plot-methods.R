@@ -486,7 +486,7 @@ plot.perf.plsda.mthd <- function (x,
     if (is.null(dist) || !any(dist %in% colnames(x$error.rate[[1]])))
       stop("'dist' should be among the ones used in your call to 'perf': ", paste(colnames(x$error.rate[[1]]),collapse = ", "),".")
     
-    if(missing(col)) #one col per distance
+    if (is_null(col)) #one col per distance
     {
       col = color.mixo(1:length(dist))
     } else {
@@ -572,7 +572,7 @@ plot.perf.mint.plsda.mthd <- function(x,
     if(length(legend.position) >1 )
       legend.position = legend.position[1]
     
-    if(missing(col)) #one col per distance
+    if (is_null(col)) #one col per distance
     {
       col = color.mixo(1:length(dist))
     } else {
@@ -728,7 +728,7 @@ plot.perf.sgccda.mthd <- function(x,
         "."
       )
     
-    if (missing(col))
+    if (is_null(col))
       #one col per distance
     {
       col = color.mixo(1:length(dist))
@@ -939,11 +939,11 @@ plot.tune.spls <- function(x, optimal = TRUE, sd = TRUE, col, ...)
   if (length(select.keepX) < 10)
   {
     #only 10 colors in color.mixo
-    if (missing(col))
+    if (is_null(col))
       col = color.mixo(seq_len(comp.tuned))
   } else {
     #use color.jet
-    if (missing(col))
+    if (is_null(col))
       col = color.jet(comp.tuned)
   }
   if (length(col) != comp.tuned)
@@ -1050,11 +1050,11 @@ plot.tune.block.splsda <- function(x, sd = TRUE, col, ...)
   if (length(select.keepX) < 10)
   {
     #only 10 colors in color.mixo
-    if(missing(col))
+    if (is_null(col))
       col = color.mixo(seq_len(comp.tuned))
   } else {
     #use color.jet
-    if(missing(col))
+    if (is_null(col))
       col = color.jet(comp.tuned)
   }
   if(length(col) != comp.tuned)

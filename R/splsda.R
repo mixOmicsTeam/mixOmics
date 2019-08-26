@@ -163,11 +163,11 @@ setMethod('splsda', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...
               arguments such as splsda(X=mat, ...) as opposed to splsda(mat, ...).",
           .subclass = "defunct")
   
-  if ( !(missing(data) || is.null(data))) { ## data must be NULL
+  if ( !is_null(data)) { ## data must be NULL
     .stop(message = "data should be a MultiAssayExperiment class, or NULL",
           .subclass = "inv_signature")
   }
-  if ( !(missing(formula) || is.null(formula)) ) { ## formula must be NULL
+  if (!is_null(formula)) { ## formula must be NULL
     .stop(message = "With numerical X and Y, formula should not be provided. 
               See ?splsda",
           .subclass = "inv_signature")
@@ -189,7 +189,7 @@ setMethod('splsda', signature(data = 'MultiAssayExperiment', formula = 'formula'
           function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
             mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
             ## X and Y NULL or missing
-            if ( !((missing(X) || is.null(X)) && (missing(Y) || is.null(Y)) ) )
+            if ( !(is_null(X) && is_null(Y)) )
               .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
                     .subclass = "inv_signature")
             mc <- match.call()
@@ -232,7 +232,7 @@ setMethod('splsda', signature(data = 'MultiAssayExperiment'),
           function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
             mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
             ## X and Y NULL or missing
-            if ( !(missing(formula) || is.null(formula)) ) { ## formula must be NULL
+            if (!is_null(formula)) { ## formula must be NULL
               .stop(message = "With numerical X and Y, formula should not be provided. See ?splsda", 
                     .subclass = "inv_signature")
             }
