@@ -193,13 +193,13 @@ setMethod('block.pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, 
 #' @rdname block.pls
 setMethod('block.pls', signature(data = 'MultiAssayExperiment', formula = 'formula'), 
           function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
-              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
+              mc <- tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
+                              error = function(e) stop(e$message, call. = FALSE))
               ## X and Y NULL or missing
               if ( !(is_null(X) && is_null(Y)) )
                   .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
                         .subclass = "inv_signature")
-              mc <- match.call()
-              mc[-1L] <- lapply(mc[-1L], eval.parent)
+
               .sformula_checker(mc) ## check formula validity
               mc[c('Y', 'X')] <- as.character(formula[2:3])
               mc <- .get_xy(mc = mc)
