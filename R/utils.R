@@ -77,51 +77,60 @@
   return(mc)
 }
 
-## ----------- .sformula_checker -----------  ## single-RHS formula checker
+## ----------- .formula_checker -----------
 #' Check formula's class and ensure non-NULL X and Y are not provided with it
 #'
 #' Gets a call which includes a $formula entry and expects it to be of form
-#' \code{Y~X}, it also checks that $X and $Y are NULL.
+#' \code{Y~X} or \code{Y~X1+X2+...} (for block), it also checks that $X and $Y are NULL.
 #' 
 #' @param mc A call list
 #'
 #' @return Exception handler
 #'
 #' @noRd
-.sformula_checker <- function(mc){
-  if(class(try(mc$formula))!="formula")
-    .inv_sformula()
-  ## check formula is Y~X
-  if(any(sapply(as.list(mc$formula), length)!=1))
-    .inv_sformula()
+.formula_checker <- function(mc, block=FALSE){
+  fl <- vapply(as.list(mc$formula)[-1L], length, 1) ## formula list lengths
+  
+  if (block) {
+    if (class(try(mc$formula)) != "formula")
+      .inv_sformula()
+    ## check formula is Y~X1+X2+...
+    if ( length(fl) != 2 || fl[1] != 1 || fl[2] < 2)
+      .inv_bformula()
+  } else {
+    if (class(try(mc$formula)) != "formula")
+      .inv_bformula()
+    ## check formula is Y~X
+    if ( length(fl) != 2 || fl[1] != 1 || fl[2] != 1)
+      .inv_bformula()
+  }
   ## X and Y must be NULL
-  if(!all(sapply(mc[c("X", "Y")], is.null)))
+  if (!all(vapply(mc[c("X", "Y")], is.null, TRUE)))
     .inv_signature()
 }
-
 ## ----------- .plsMethodsHelper ----------- 
 ####  get call list including potentiall X, Y, formula, and data and retain only valid X and Y
 .plsMethodsHelper <- function(mc){
-  mc <- lapply(mc, eval)
+
   ##============================= if data
   if (!is.null(try(mc$data)
   )) {
     ##--------------- if data=MAE & formula=formula
     ##--- i) if (data,formula) given change it to X and Y matrices
     if (!is.null(mc$formula)) {
-      .sformula_checker(mc = mc) ## check formula format
+      .formula_checker(mc = mc) ## check formula format
       mc[c("X", "Y")] <- as.character(as.list(mc$formula)[3:2])
       mc <- .get_xy(mc)
     }
     ##--------------- if data=MAE & formula=NULL
     else {
       ## check X and Y exist
-      if(any(sapply(mc[c("X", "Y")], function(xy) {class(try(xy))=="NULL"})))
+      if(any(vapply(mc[c("X", "Y")], function(xy) {class(try(xy)) == "NULL"}, TRUE)))
         .inv_assay()
       ## in case they're stored in variables
       mc[c("X", "Y")] <- lapply( mc[c("X", "Y")], eval.parent)
       ## ensure it is a single character
-      if(any(sapply( mc[c("X", "Y")], length)!=1))
+      if(any(vapply( mc[c("X", "Y")], length)!=1, TRUE))
         .stop(.subclass = "inv_XY", message = "'X' and 'Y' must be assay names from 'data'")
       mc <- .get_xy(mc)
     }
@@ -137,7 +146,7 @@
   ##============================= if data=NULL and formula≠NULL
   else if (class(try(mc$formula))!="NULL"){
     mc$formula <- as.formula(mc$formula)
-    .sformula_checker(mc=mc)
+    .formula_checker(mc=mc)
     mc[c('Y','X')] <- as.list(mc$formula)[2:3]
   }
   mc[c("X", "Y")] <- lapply( mc[c("X", "Y")], eval.parent)

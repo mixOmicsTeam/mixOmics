@@ -200,7 +200,7 @@ setMethod('block.pls', signature(data = 'MultiAssayExperiment', formula = 'formu
                   .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
                         .subclass = "inv_signature")
 
-              .sformula_checker(mc) ## check formula validity
+              .formula_checker(mc, block = TRUE) ## check formula validity
               mc[c('Y', 'X')] <- as.character(formula[2:3])
               mc <- .get_xy(mc = mc)
               mc$data <- mc$formula <- NULL 
@@ -219,7 +219,7 @@ setMethod('block.pls', signature(formula = 'formula'),
               mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
               mc <- match.call()
               mc[-1L] <- lapply(mc[-1L], eval.parent)
-              .sformula_checker(mc) ## check formula validity
+              .formula_checker(mc, block=TRUE) ## check formula validity
               mc$X <- eval.parent(as.list(formula)[[3]], n = 2)
               mc$Y <- eval.parent(as.list(formula)[[2]], n = 2)
               # mc <- .get_xy(mc = mc)

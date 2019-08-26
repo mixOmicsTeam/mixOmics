@@ -19,7 +19,7 @@
     ##--- i) if (data,formula) given change it to X and Y matrices
     if (class(try(mc$formula)
     )  !=  "NULL") {
-      .sformula_checker(mc = mc)
+      .formula_checker(mc = mc)
       mc[c("X", "Y")] <- as.character(as.list(mc$formula)[3:2])
       mc <- .get_xy(mc, mcc)
     }
@@ -47,7 +47,7 @@
   ##============================= if data=NULL and formula≠NULL
   else if (class(try(mc$formula))!="NULL"){
     mc$formula <- as.formula(mc$formula)
-    .sformula_checker(mc=mc)
+    .formula_checker(mc=mc)
     mc[c('Y','X')] <- as.list(mc$formula)[2:3]
   }
   mc[c("X", "Y")] <- lapply( mc[c("X", "Y")], eval.parent)
