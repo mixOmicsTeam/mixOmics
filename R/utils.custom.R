@@ -22,11 +22,11 @@
 .inv_data <- function(data='data', msg=" is not a MultiAssayExperiment object.") .stop(.subclass = "inv_data", paste0(sQuote(data), msg))
 ## ----------- for invalid formula for single
 .inv_sformula <- function(msg="'formula' must be a formula object of form Y~X where X and
-                          Y are numeric matrices, or assay names from 'data'") .stop(.subclass = "inv_sformula", msg)
+                          Y are numeric matrices, or assay names from 'data'") .stop(.subclass = "inv_formula", msg)
 ## ----------- for invalid formula for blocks
 .inv_bformula <- function(msg="'formula' must be a formula object of form Y~X where Y is a
                           numeric matrix (or name of such an assay from 'data') and X is a
-                          list of numeric matrices (or assay names)") .stop(.subclass = "inv_bformula", msg)
+                          list of numeric matrices (or assay names)") .stop(.subclass = "inv_formula", msg)
 ## ----------- for invalid X/Y
 .inv_assay <- function(msg="invalid assay/colData name(s).") .stop(.subclass = "inv_assay", msg)
 
@@ -76,7 +76,8 @@
   choices[i]
 }
 
-## ----------- match.call.defaults ----------- 
+## ----------- match.call.defaults -----------
+## TODO drop this as mget(names(formals()), sys.frame(sys.nframe())) is better
 ## match.call including defaults
 ## https://stackoverflow.com/questions/14397364/match-call-with-default-arguments/
 match.call.defaults <- function(...) {

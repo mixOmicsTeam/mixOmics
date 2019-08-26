@@ -61,8 +61,8 @@ test_that("plsda fails with invalid assay and produces appropriate error",{
 
 ## ------ correct error with invalid formula format
 test_that("plsda fails with invalid formula formats and produces expected errors",{
-  expect_condition(plsda(formula = Y~X+Y), class = "inv_sformula")
-  expect_condition(plsda(formula = Y+U~X), class = "inv_sformula")
+  expect_condition(plsda(formula = Y~X+Y), class = "inv_formula")
+  expect_condition(plsda(formula = Y+U~X), class = "inv_formula")
 })
 
 ## ------ correct error with invalid formula elements
