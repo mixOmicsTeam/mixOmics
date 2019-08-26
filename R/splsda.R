@@ -93,7 +93,7 @@ NULL
   mc <- match.call.defaults() 
   mc <- .check_plsda(mc)
   mc$mode <- .matchArg(mode)
-  mc$logratio <- .matchArg(logratio)
+  logratio <- mc$logratio <- .matchArg(logratio)
   mc$DA <- TRUE
   mc$ret.call <- NULL ## not need by wrapper
   # # call to '.mintWrapper'

@@ -204,15 +204,14 @@
 ## ----------- .pcaEntryChecker ----------- 
 #' PCA Entry Checker
 #'
-#' checks X, ncomp, scale, center, max.iter, and tol. Makes adjustments to
-#' them in the parent environment if necessary. for IPCA, 'center' argument does
+#' checks X, ncomp, scale, center, max.iter, and tol and return possibly
+#' adjusted call. for IPCA, 'center' argument does
 #' not apply (is always TRUE) and NA's are not allowed.
-#' Note: it possibly replaces X, ncomp, and max.iter in parent.frame using <<-.
 #' Note: if the error classes are too many, you can batch replace and simplify.
 #' @noRd
 .pcaEntryChecker <-
   function(mc,fun='pca') {
-    if(class(try(mc$ret.call))!="logical") stop("'ret.call' must be logical")
+    if(class(try(mc$ret.call)) != "logical") stop("'ret.call' must be logical")
     ## data.frame that specifies which arguments need checks in each function
     checks_df <- data.frame(
       row.names = c('check.keepX', 'check.center', 'check.NA'),
@@ -286,7 +285,7 @@
   }
 
   #-------- max.iter
-  if (is.null(mc$max.iter) ||!is.numeric(mc$max.iter) || 
+  if (is.null(mc$max.iter) || !is.numeric(mc$max.iter) || 
       mc$max.iter < 1 || !is.finite(mc$max.iter))
     .stop("invalid value for 'max.iter'.")
 
@@ -318,7 +317,7 @@
     return(result)
 }
 
-## ----------- .switch_arg_names ----------- 
+## ----------- .switch_arg_names ----------- #TODO drop it?
 ## customised from scran/R/utils_other.R
 .switch_arg_names <- function(old.val, new.val, msg=NULL) {
   if (!is.null(old.val)) {

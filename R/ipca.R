@@ -84,7 +84,7 @@ NULL
   mode <- .matchArg(mode)
   fun <- .matchArg(fun)
   
-  mcd <- mget(names(formals()),sys.frame(sys.nframe())) ## match.call and defaults
+  mcd <- match.call.defaults() ## match.call and defaults
   err = tryCatch(mcd, error = function(e) e) ## see if arguments can be evaluated
   if ("simpleError" %in% class(err))
     stop(err[[1]], ".", call. = FALSE)

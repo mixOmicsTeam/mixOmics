@@ -127,14 +127,14 @@ NULL
                 ret.call=FALSE) {
    
    ## ----------------------------------- checks
-   logratio <- .matchArg(logratio)
    ## match.call and defaults
-   mcd <- mget(names(formals()),sys.frame(sys.nframe()))
+   mcd <- match.call.defaults()
    ## see if arguments can be evaluated
    err <- tryCatch(mcd, error = function(e) e)
    if ("simpleError" %in% class(err))
       stop(err[[1]], ".", call. = FALSE)
    
+   mcd$logratio <- logratio <- .matchArg(logratio)
    ## check entries for args and do necessary adjustments to them
    mcd <- .pcaEntryChecker(mcd,fun = 'pca')
    

@@ -138,7 +138,7 @@ NULL
     ## make sure mode matches given arguments, 
     ## and if it is not provided put as the first one in the definition
     mc$mode <- .matchArg(mode)
-    mc$logratio <- .matchArg(logratio)
+    logratio <- mc$logratio <- .matchArg(logratio)
     mc$DA <- FALSE
     # # call to '.mintWrapper'
     mc[[1L]] <- quote(.mintWrapper)
