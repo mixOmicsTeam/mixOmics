@@ -403,7 +403,8 @@
 #' @param mc A list with at least (data=MAE, formula = Y~X1+X2+...)
 #' @noRd
 #' @importFrom MultiAssayExperiment MatchedAssayExperiment
-#' @importFrom SummarizedExperiment colData ## TODO does it?
+## TODO does it?
+#' @importFrom SummarizedExperiment colData
 #' @importFrom MultiAssayExperiment experiments
 #' @importFrom SummarizedExperiment assay
 

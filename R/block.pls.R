@@ -203,7 +203,7 @@ setMethod('block.pls', signature(formula = 'formula'),
               mc[-1L] <- lapply(mc[-1L], eval)
               .formula_checker(mc, block = TRUE) ## check formula validity
               mf <- stats::model.frame(mc$formula) ## THANK YOU stats::model.frame *cries*
-              mc$Y <- mf[1]
+              mc$Y <- as.matrix(mf[[1]])
               mc$X <- as.list(mf[-1])
               mc$data <- mc$formula <- NULL 
               mc[[1L]] <- quote(.block.pls)

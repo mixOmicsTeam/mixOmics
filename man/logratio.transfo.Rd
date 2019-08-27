@@ -4,7 +4,7 @@
 \alias{logratio.transfo}
 \title{Log-ratio transformation}
 \usage{
-logratio.transfo(X, logratio = "none", offset = 0)
+logratio.transfo(X, logratio = c("none", "CLR", "ILR"), offset = 0)
 }
 \arguments{
 \item{X}{numeric matrix of predictors}
