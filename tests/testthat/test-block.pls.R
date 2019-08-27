@@ -5,21 +5,24 @@ context("block.spls")
 ## object inputs (e.g. formla stored in a variable)
 ##
 
-test_that("block.pls works for 'ANY' methods",{
+test_that("block.pls works",{
   
   ## suppress NZV warnings
   suppressMessages({
     bpls.res.xy <-          block.pls(X = X_bpls, Y = Y_bpls )
-    bpls.res.xy.ret <-      pls(X = Xm_Yc, Y = Ycn, ret.call = TRUE )
-    expect_true(class( pls.res.xy) == "mixo_pls")
-    expect_true(class( pls.res.xy.ret) == "mixo_pls")
-    expect_identical(unclass(pls.res.xy), unclass(pls.res.xy.ret)[-1])
+    expect_true("block.pls" %in% class( bpls.res.xy))
+    bpls.res.xy.ret <-      block.pls(X = X_bpls, Y = Y_bpls, ret.call = TRUE )
+    expect_identical(unclass(bpls.res.xy), unclass(bpls.res.xy.ret)[-1])
+    bpls.res.formula.xy <-          block.pls(formula = Y_bpls ~ X_bpls[[1]] + X_bpls[[2]])
+    ## because the names will be different :/
+    expect_equal(unname(bpls.res.xy$variates), unname(bpls.res.formula.xy$variates))
+    bpls.res.formula.data <-          block.pls(data = data_bpls, formula = formula_bpls_assay)
+    expect_identical(bpls.res.formula.data, bpls.res.xy)
   })
 })
 
 
-test_that("block.pls works", {
-   block.spls.res1 <- block.pls(X = X_bpls, Y = Y_bpls)
-   block.spls.res2 <- block.pls(formula = formula_bpls_mat)
-   block.spls.res3 <- block.pls(formula = formula_bpls_assay)
+test_that("block.pls fails properly", {
+   expect_error(block.pls(X = X_bpls, Y = Y_bpls, formula = foo~yu+zoo , data = data_bpls), class = "inv_signature")
+  expect_error(block.pls(formula = foo~yu , data = data_bpls), class = "inv_formula")
  })

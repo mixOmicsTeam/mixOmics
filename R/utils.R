@@ -390,3 +390,100 @@
     }
     return(result)
   }
+
+
+## ----------- .bget_xy ----------- 
+#' Create matrices from names of assays and a data object
+#' 
+#' get MAE data and a call list containing either character X and Y,
+#' or a formula of form Y~X1+X2+... and check for validity of X (assay names) 
+#' and Y and return list of matrices of X and matrix Y in mc$X and mc$Y, 
+#' getting rid of  $data and/or $formula args
+#' 
+#' @param mc A list with at least (data=MAE, formula = Y~X1+X2+...)
+#' @noRd
+#' @importFrom MultiAssayExperiment MatchedAssayExperiment
+#' @importFrom SummarizedExperiment colData ## TODO does it?
+#' @importFrom MultiAssayExperiment experiments
+#' @importFrom SummarizedExperiment assay
+
+.block_get_xy <- function(mc){
+  .formula_checker(mc, block = TRUE) ## check formula validity
+  ## ---- if data and X , Y given, expect X,Y
+  if (is.null(mc$formula)) { 
+      if (is_null(mc$X) || is_null(mc$Y)) {
+        .stop("X and/or Y is NULL, should be vector and character of assay names, respectively.")
+      }
+    ## if a X is list, unlist it
+      if (is(mc$X, "list")) { 
+        mc$X <- unlist(mc$X)
+      }
+      assay.names <- c(mc$Y, mc$X)
+      ## expect it to be character
+      if (!is(assay.names, "character"))
+        .stop("X and Y must be characters")
+    
+  } 
+  ## ----- if data and formula given, expect NULL X and Y, and set them from formula
+  else {  ## formula
+    ## esnure X and Y are NULL
+    if ( !(is_null(mc$X) && is_null(mc$Y)) )
+      .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
+            .subclass = "inv_signature")
+    
+    assay.names <- rownames(attr(terms(mc$formula), "factors"))
+  }
+  ## ----- check assay names and create the matrices
+  missing.assays <-  assay.names[!assay.names %in% names(experiments(mc$data))]
+  if (length(missing.assays))
+    .stop(paste("Not valid assay name(s) from data: ", paste(missing.assays, collapse = ", ")), .subclass = "inv_XY")
+  ## get matched samples
+  mc$data <- MatchedAssayExperiment(mc$data)
+  ## get X and Y in X first
+  mc$X <- list()
+  for (asy in assay.names) {
+    mc$X[[asy]] <- as.matrix(t(assay(mc$data, asy)))
+  }
+  
+  ## separate Y
+  mc$Y <- mc$X[[1]]
+  mc$X <- mc$X[-1]
+  
+  mc$data <- mc$formula <- NULL
+  mc
+}
+
+
+## ----------- .check_sig_ANY ----------- 
+#' Handle arguments possibly from old code
+#'
+#' Arguments pased to 'ANY' can only include numeric X and Y.
+#' The X, Y arguments should be named, otherwise they'll be taken as data
+#' 
+#' 
+#' @param mc matched call of form (data=MAE, X=X_name, Y=Y_name, formula=NULL)
+#' @noRd
+.check_sig_ANY <- function(mc, fun = "block.pls") {
+  ## TODO ensure all referrals to help by this handler are doc backed.
+  ## ---- if data matches what we expect X to be, it might be old code
+  if ( class(try(mc$data)) %in% c("data.frame", "matrix", "list") ) {
+    .stop(message = sprintf("mixOmics arguments have changed.
+              Please carefully read the documentation and try to use named 
+              arguments such as %s(X=list(), ...) as opposed to %s(mat, ...).",
+                            fun, fun) ,
+          .subclass = "defunct")
+  }
+  ## ---- if still data is not NULL and not above, it's messed up
+  if ( !is_null(mc$data)) { ## data must be NULL
+    .stop(message = "data should be a MultiAssayExperiment class, or NULL",
+          .subclass = "inv_signature")
+  }
+  ## ---- to ensure formula class never makes it to 'ANY' - dear Lord!
+  if ( !is_null(mc$formula) ) { ## formula must be NULL
+    msg <- sprintf("With numerical X and Y, formula should not be provided. 
+              See ?%s", fun)
+    .stop(message = msg,
+          .subclass = "inv_signature")
+  }
+}
+

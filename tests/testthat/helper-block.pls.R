@@ -32,6 +32,6 @@ Ya_bpls <-  names(experiments(data_bpls))[Y_index] ## Y assay
 ## ## matrices
 formula_bpls_mat <- Y_bpls ~ X_bpls
 ## assays
-formula_bpls_assay <- sprintf(fmt = "%s ~ %s", Ya_bpls, 
-                            paste(Xa_bpls, collapse = " + "))
+formula_bpls_assay <- as.formula(sprintf(fmt = "%s ~ %s", Ya_bpls, 
+                            paste(Xa_bpls, collapse = " + ")))
 
