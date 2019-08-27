@@ -34,7 +34,7 @@ function(mat, cutoff, breaks, col, symkey)
         min.mat = min(mat)
     }
     
-    if (is_null(breaks)) {
+    if (isNULL(breaks)) {
         if (is(col,"function")) breaks = 32
         else breaks = length(col)
     }

@@ -583,12 +583,12 @@ plot_parameters){
 
     #-- Define group
     missing.group = TRUE
-    if (is_null(group) & is(object, "DA"))
+    if (isNULL(group) & is(object, "DA"))
     {
         group = object$Y#factor(map(object$ind.mat), labels = object$names$colnames$Y)
         object$ind.mat = unmap(group) # added in v6 cause $ind.mat is the scaled (if scale = TRUE) version of ind.mat( = unmap(Y))
         missing.group = FALSE #not user defined
-    } else if (!is_null(group)) {
+    } else if (!isNULL(group)) {
         missing.group = FALSE
         if (!is.factor(group))
         group = as.factor(group)
@@ -614,15 +614,15 @@ plot_parameters){
     #at this stage, we have a 'group' - user defined or DA, or by default 1 single group
 
     # col and col.per.group
-    if (!is_null(group)) # group is user defined or DA; we require a col.per.group input, if only a 'col' input: we use it as col.per.group
+    if (!isNULL(group)) # group is user defined or DA; we require a col.per.group input, if only a 'col' input: we use it as col.per.group
     {
-        if(is_null(col.per.group) & !missing(col))  # we use col as a col.per.group
+        if(isNULL(col.per.group) & !missing(col))  # we use col as a col.per.group
         {
             if(length(col) !=  nlevels(group))
             stop("Length of 'col' should be of length ", nlevels(group), " (the number of groups).")
             col.per.group = col
 
-        } else if (is_null(col.per.group) & missing(col)) { # we create a col.per.group
+        } else if (isNULL(col.per.group) & missing(col)) { # we create a col.per.group
 
             if (nlevels(group) < 10)
             {
@@ -634,10 +634,10 @@ plot_parameters){
             }
 
 
-        } else if (!is_null(col.per.group) & !missing(col)) { # we ignore 'col'
+        } else if (!isNULL(col.per.group) & !missing(col)) { # we ignore 'col'
             warning("'col' is ignored as 'group' has been set.")
 
-        } else if (!is_null(col.per.group) & missing(col)) {# all good
+        } else if (!isNULL(col.per.group) & missing(col)) {# all good
 
         }
 
@@ -657,10 +657,10 @@ plot_parameters){
 
     } else { #missing group, we require a 'col' of length n (or repeated to length n) and not a 'col.per.group'
         # col creates a group argument, which creates a col.per.group (levels from 'col')
-        if (!is_null(col.per.group))
+        if (!isNULL(col.per.group))
         warning("'col.per.group' is ignored as 'group' has not been set.")
 
-        if (!is_null(col))
+        if (!isNULL(col))
         {
             if (length(col) > n)
             stop("Length of 'col' should be of length inferior or equal to ", n, ".")
@@ -682,7 +682,7 @@ plot_parameters){
 
 
     #-- cex argument
-    if (is_null(cex))
+    if (isNULL(cex))
     {
         if (style == "ggplot2")
         {
@@ -762,7 +762,7 @@ plot_parameters){
     # --------------------------------------------------------------------------------------
 
     #-- pch argument
-    if (is_null(pch) & !any(class.object%in%object.mint))
+    if (isNULL(pch) & !any(class.object%in%object.mint))
     {
 
         if (style == "3d")
@@ -775,7 +775,7 @@ plot_parameters){
         pch.levels = pch
 
     }else if (any(class.object%in%object.mint)) {
-        if (is_null(pch))
+        if (isNULL(pch))
         {
             # a pch per study, forced
             pch = as.numeric(object$study)
@@ -793,7 +793,7 @@ plot_parameters){
             call. = FALSE)
         }
 
-        if (!is_null(pch.levels))
+        if (!isNULL(pch.levels))
         {
             if(length(pch.levels) != length(pch))
             stop("'pch.levels' needs to be a vector of the same length as 'pch': ", length(pch))

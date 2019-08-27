@@ -105,7 +105,7 @@ get.confusion_matrix = function(truth, all.levels, predicted)
     if(!is.factor(truth))
     truth = factor(truth)
 
-    if(is_null(all.levels))
+    if(isNULL(all.levels))
     all.levels = levels(truth)
 
     #print(all.levels)

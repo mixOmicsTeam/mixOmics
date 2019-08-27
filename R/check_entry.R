@@ -31,7 +31,7 @@ get.keepA = function(X, keepX, ncomp)
     # keepA
 
     keepA = list()
-    if (is_null(keepX) || length(keepX) == 0)
+    if (isNULL(keepX) || length(keepX) == 0)
     {
         #if keepX is missing, pls-like: keepX=ncol(X)
         for (q in 1:length(X))
@@ -326,7 +326,7 @@ mode=c("regression","canonical", "invariant", "classic"), scale, near.zero.var, 
 
 
     # check keepX
-    if (is_null(keepX))
+    if (isNULL(keepX))
     {
         keepX = rep(P, ncomp)
     } else {
@@ -336,7 +336,7 @@ mode=c("regression","canonical", "invariant", "classic"), scale, near.zero.var, 
     }
 
     # check keepY
-    if (is_null(keepY))
+    if (isNULL(keepY))
     {
         keepY = rep(Q, ncomp)
     } else {
@@ -473,7 +473,7 @@ max.iter)
     if ((missing(indY) & missing(Y)))
     stop("Either 'Y' or 'indY' is needed")
 
-    if (is_null(ncomp))
+    if (isNULL(ncomp))
     ncomp = 1
 
     #check length(ncomp)=1
@@ -510,9 +510,9 @@ max.iter)
     keepA = check$keepA
 
 
-    if (!is_null(Y))# Y is not missing, so we don't care about indY
+    if (!isNULL(Y))# Y is not missing, so we don't care about indY
     {
-        if (!is_null(indY))
+        if (!isNULL(indY))
         warning("'Y' and 'indY' are provided, 'Y' is used.")
 
         if (is.list(Y) | length(dim(Y)) != 2 | !is.numeric(Y))
@@ -526,7 +526,7 @@ max.iter)
         stop("Different number of samples between the blocks and Y")
 
         # if not missing, we transform keepY in list to input them in get.keepA
-        if (!is_null(keepY))
+        if (!isNULL(keepY))
         keepY = list(Y = keepY)
 
         check.temp.Y = get.keepA(X = list(Y = Y), keepX = keepY, ncomp = ncomp)
@@ -537,7 +537,7 @@ max.iter)
         # check design matrix before adding Y in
         A = X
         ### Start check design matrix
-        if (is_null(design))
+        if (isNULL(design))
         {
             design = 1 - diag(length(A)+1)
             rownames(design) = colnames(design) = c(names(A), "Y")
@@ -568,14 +568,14 @@ max.iter)
 
     } else {        #missing(Y) but indY not missing
 
-        if (!is_null(keepY))
+        if (!isNULL(keepY))
         warning("indY is provided: 'keepY' is ignored and only
             'keepX' is used.")
 
         A = X #list provided as input
 
         ### Start check design matrix
-        if (is_null(design))
+        if (isNULL(design))
         {
             design = 1 - diag(length(A))
         } else if (ncol(design) != nrow(design) || ncol(design) < length(A) ||
@@ -612,7 +612,7 @@ max.iter)
     classic or regression")
 
     #set the default study factor
-    if (is_null(study))
+    if (isNULL(study))
     {
         study = factor(rep(1, nrow(A[[1]])))
     } else {
@@ -628,7 +628,7 @@ max.iter)
     warning("At least one study has less than 5 samples, mean centering
         might not do as expected")
 
-    if (is_null(init))
+    if (isNULL(init))
     init = "svd.single"
 
     if (!init%in%c("svd","svd.single"))
@@ -753,7 +753,7 @@ keepX)
     #names(X)=paste0("block", 1:length(X)) #add names to the blocks if no
     #names or not unique name for each block
 
-    if (is_null(ncomp))
+    if (isNULL(ncomp))
     ncomp = 1
 
     #check length(ncomp)=1
@@ -785,7 +785,7 @@ keepX)
 
     A = X#input
 
-    if (is_null(init))
+    if (isNULL(init))
     init="svd"
 
     if (!init%in%c("svd", "svd.single"))
@@ -797,7 +797,7 @@ keepX)
 
 
     #check scheme
-    if (is_null(scheme))
+    if (isNULL(scheme))
     scheme= "horst"
 
     if (!(scheme %in% c("horst", "factorial","centroid")))
@@ -806,7 +806,7 @@ keepX)
         factorial")
     }
 
-    if(is_null(design))
+    if(isNULL(design))
     design = 1 - diag(length(A))
 
     # check design matrix
@@ -925,7 +925,7 @@ keepX)
     if (is.null(tau))
     stop("'tau' is needed")
 
-    if (is_null(ncomp))
+    if (isNULL(ncomp))
     ncomp = 1
 
     #check length(ncomp)=1
@@ -976,14 +976,14 @@ keepX)
         stop("'tau' contains either values between 0 and 1, or 'optimal'.")
     }
 
-    if (is_null(init))
+    if (isNULL(init))
     init = "svd.single"
 
     if (init != "svd.single")
     stop("init should be 'svd.single'.")
 
     # check scheme
-    if(is_null(scheme))
+    if(isNULL(scheme))
         scheme = "horst"
     if (!(scheme %in% c("horst", "factorial", "centroid")))
     {
@@ -992,7 +992,7 @@ keepX)
     }
 
 
-    if (is_null(design))
+    if (isNULL(design))
     design = 1 - diag(length(A))
 
     #check design matrix
@@ -1002,7 +1002,7 @@ keepX)
     stop(paste0("'design' must be a square matrix with", length(A), "columns."))
 
 
-    if (is_null(near.zero.var))
+    if (isNULL(near.zero.var))
     near.zero.var = FALSE
 
     if (tol <= 0)

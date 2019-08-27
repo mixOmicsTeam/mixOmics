@@ -187,7 +187,7 @@ max.iter = 100)
     stop("invalid value for 'tol'.", call. = FALSE)
 
     #set the default study factor
-    if (is_null(study))
+    if (isNULL(study))
     {
         study = factor(rep(1,nrow(X)))
     } else {

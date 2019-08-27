@@ -232,7 +232,7 @@ near.zero.var = FALSE,
 all.outputs = TRUE)
 {
     # check inpuy 'Y' and transformation in a dummy matrix
-    if (!is_null(Y))
+    if (!isNULL(Y))
     {
         if (is.null(dim(Y)))
         {
@@ -249,7 +249,7 @@ all.outputs = TRUE)
         colnames(Y) = levels(Y.input)
         rownames(Y) = rownames(X[[1]])
 
-    } else if (!is_null(indY)) {
+    } else if (!isNULL(indY)) {
         temp = X[[indY]]
         #not called Y to not be an input of the wrapper.sparse.mint.block
         if (is.null(dim(temp)))
@@ -267,7 +267,7 @@ all.outputs = TRUE)
         colnames(X[[indY]]) = levels(Y.input)
         rownames(X[[indY]]) = rownames(X[[ifelse(indY==1,2,1)]])
 
-    } else if(is_null(indY)) {
+    } else if(isNULL(indY)) {
         stop("Either 'Y' or 'indY' is needed")
 
     }

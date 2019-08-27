@@ -390,7 +390,7 @@ position.names = 'centroid'
 
     #-- col argument
     missing.col = FALSE
-    if (!is_null(col))
+    if (!isNULL(col))
     {
         if (length(col) > length(x[[1]]))
         stop("Length of 'col' should be of length inferior or equal to ", length(x[[1]]),".")
@@ -409,7 +409,7 @@ position.names = 'centroid'
     }
 
     #-- cex argument
-    if (is_null(cex))
+    if (isNULL(cex))
     {
         cex = rep(1, length(x[[1]]))
     } else {
@@ -426,7 +426,7 @@ position.names = 'centroid'
     }
 
     #-- pch argument
-    if (is_null(pch))
+    if (isNULL(pch))
     {
         if (missing.col)
         {

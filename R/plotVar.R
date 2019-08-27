@@ -630,7 +630,7 @@ label.axes.box = "both"  )
 
     #-- pch argument
     missing.pch = FALSE
-    if (is_null(pch))
+    if (isNULL(pch))
     {
         missing.pch = TRUE
         if(style=="3d")
@@ -661,7 +661,7 @@ label.axes.box = "both"  )
     }
 
     #-- col argument
-    if (is_null(col)) {
+    if (isNULL(col)) {
         if (length(cord.X) < 10) {
             col = unlist(lapply(seq_len(length(cord.X)), function(x){rep(color.mixo(x), sum(sapply(cord.X[x], nrow)))}))
         } else {
@@ -682,7 +682,7 @@ label.axes.box = "both"  )
     }
 
     #-- cex argument
-    if (is_null(cex)){
+    if (isNULL(cex)){
         if (style == "ggplot2"){
             cex = rep(5, sum(sapply(cord.X, nrow)))
         } else {
@@ -703,7 +703,7 @@ label.axes.box = "both"  )
     }
 
     #-- font argument
-    if (is_null(font)) {
+    if (isNULL(font)) {
         font = rep(1, sum(sapply(cord.X, nrow)))
     } else if (is.vector(font, mode = "numeric")) {
         if (length(font) != length(cord.X))

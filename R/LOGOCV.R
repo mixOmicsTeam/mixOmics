@@ -53,22 +53,22 @@ scale)
     # showProgress=TRUE, show the progress of the iteration
     
     
-    if(is_null(X))
+    if(isNULL(X))
     stop("missing X")
     
-    if(is_null(Y))
+    if(isNULL(Y))
     stop("missing Y")
     
-    if(is_null(study))
+    if(isNULL(study))
     stop("missing study")
     
-    if(is_null(ncomp))
+    if(isNULL(ncomp))
     ncomp = 1
     
-    if(is_null(scale))
+    if(isNULL(scale))
     scale = FALSE
     
-    if(is_null(dist))
+    if(isNULL(dist))
     dist = "max.dist"
     
     if(length(Y) != nrow(X))

@@ -126,7 +126,7 @@ plotIndiv.mixo_pls <-
     if (length(blocks)!= length(unique(blocks)))
     stop("Duplicate in 'blocks' not allowed")
 
-    if (!is_null(subtitle))
+    if (!isNULL(subtitle))
     {
         if (length(subtitle)!= length(blocks) | length(subtitle)!= length(unique(subtitle)))
         stop("'subtitle' indicates the subtitle of the plot for each 'blocks'; it needs to be the same length as 'blocks' and duplicate are not allowed.")
@@ -181,7 +181,7 @@ plotIndiv.mixo_pls <-
     plot_parameters = out$plot_parameters
 
     # change the levels of df$Block to "subtitle"
-    if (!is_null(subtitle) & nlevels(df$Block)>1)#& !is.null(title)) # commented so that subtitle can be change without changing the title
+    if (!isNULL(subtitle) & nlevels(df$Block)>1)#& !is.null(title)) # commented so that subtitle can be change without changing the title
     {
         df$Block = factor(df$Block, labels = subtitle)
         if (ellipse)

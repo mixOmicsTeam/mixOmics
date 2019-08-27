@@ -336,7 +336,7 @@ cpus
     #if ((!is.null(already.tested.X)) && (length(already.tested.X) != (ncomp - 1)) )
     #stop("The number of already tested parameters should be NULL or ", ncomp - 1, " since you set ncomp = ", ncomp)
 
-    if (is_null(already.tested.X))
+    if (isNULL(already.tested.X))
     {
         already.tested.X = NULL
     } else {
@@ -375,7 +375,7 @@ cpus
     }
 
 
-    if (!is_null(cpus))
+    if (!isNULL(cpus))
     {
         if(!is.numeric(cpus) | length(cpus)!=1)
         stop("'cpus' must be a numerical value")
@@ -517,7 +517,7 @@ cpus
         }
 
         class.object=c("mixo_splsda","DA")
-        if (!is_null(cpus))
+        if (!isNULL(cpus))
             clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
 
         error.per.class.keepX.opt = list()

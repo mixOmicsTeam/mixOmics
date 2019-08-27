@@ -105,7 +105,7 @@ plotIndiv.sgcca <- plotIndiv.rgcca <-  function(object,
     if(length(blocks)!= length(unique(blocks)))
     stop("Duplicate in 'blocks' not allowed")
 
-    if (!is_null(subtitle))
+    if (!isNULL(subtitle))
     {
         if(length(subtitle)!= length(blocks) | length(subtitle)!= length(unique(subtitle)))
         stop("'subtitle' indicates the subtitle of the plot for each 'blocks'; it needs to be the same length as 'blocks' and duplicate are not allowed.")
@@ -160,7 +160,7 @@ plotIndiv.sgcca <- plotIndiv.rgcca <-  function(object,
 
 
     # change the levels of df.final$Block to "subtitle"
-    if (!is_null(subtitle))
+    if (!isNULL(subtitle))
     {
         df$Block = factor(df$Block, labels = subtitle)
         if(ellipse)

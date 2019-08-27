@@ -167,7 +167,7 @@
   data <- eval.parent(mc$data, 2L)
   X <-    eval.parent(mc$X, 2L)
   ## check that data is provided
-  if (is_null(data)) {
+  if (isNULL(data)) {
     .stop(.subclass = "inv_data",
           "'X' is character but 'data' containing 'X' assay not provided. See ?pca.")
     
@@ -411,7 +411,7 @@
   .formula_checker(mc, block = TRUE) ## check formula validity
   ## ---- if data and X , Y given, expect X,Y
   if (is.null(mc$formula)) { 
-      if (is_null(mc$X) || is_null(mc$Y)) {
+      if (isNULL(mc$X) || isNULL(mc$Y)) {
         .stop("X and/or Y is NULL, should be vector and character of assay names, respectively.")
       }
     ## if a X is list, unlist it
@@ -427,7 +427,7 @@
   ## ----- if data and formula given, expect NULL X and Y, and set them from formula
   else {  ## formula
     ## esnure X and Y are NULL
-    if ( !(is_null(mc$X) && is_null(mc$Y)) )
+    if ( !(isNULL(mc$X) && isNULL(mc$Y)) )
       .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
             .subclass = "inv_signature")
     
@@ -474,12 +474,12 @@
           .subclass = "defunct")
   }
   ## ---- if still data is not NULL and not above, it's messed up
-  if ( !is_null(mc$data)) { ## data must be NULL
+  if ( !isNULL(mc$data)) { ## data must be NULL
     .stop(message = "data should be a MultiAssayExperiment class, or NULL",
           .subclass = "inv_signature")
   }
   ## ---- to ensure formula class never makes it to 'ANY' - dear Lord!
-  if ( !is_null(mc$formula) ) { ## formula must be NULL
+  if ( !isNULL(mc$formula) ) { ## formula must be NULL
     msg <- sprintf("With numerical X and Y, formula should not be provided. 
               See ?%s", fun)
     .stop(message = msg,

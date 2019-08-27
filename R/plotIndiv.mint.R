@@ -139,7 +139,7 @@ plotIndiv.mint.pls   <-
 
     study.init = unique(study.init) #once again cause we added studies if "all.partial"
 
-    if (!is_null(subtitle))
+    if (!isNULL(subtitle))
     {
         if (length(subtitle)!=length(study.init)| length(subtitle)!=length(unique(subtitle)))
         stop("'subtitle' indicates the subtitle of the plot for each study and it needs to be the same length as 'study' (", length(study.init),") and duplicate are not allowed. 'study' includes: ", paste(study.init, collapse = ", "))
@@ -331,7 +331,7 @@ plotIndiv.mint.pls   <-
 
 
     # change the levels of df.final$Block to "subtitle"
-    if (!is_null(subtitle))
+    if (!isNULL(subtitle))
     {
         df.final$Block = factor(df.final$Block, labels = subtitle)
 

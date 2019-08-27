@@ -168,7 +168,7 @@ size.legend=1.5)
     comp = round(comp)
 
     # color
-    if(is_null(color.Y))
+    if(isNULL(color.Y))
     {
         color.Y = color.mixo(1:nlevels(object$Y))
     } else {
@@ -177,7 +177,7 @@ size.legend=1.5)
     }
 
 
-    if(is_null(color.blocks))
+    if(isNULL(color.blocks))
     {
         color.blocks = brewer.pal(n = 12, name = 'Paired')[seq(2, 12, by = 2)]
     } else {

@@ -49,7 +49,7 @@
 ## custom match.arg with call.=FALSE for stop()
 .matchArg <- function(arg, choices, several.ok = FALSE)
 {
-  if (is_null(choices)) {
+  if (isNULL(choices)) {
     formal.args <- formals(sys.function(sysP <- sys.parent()))
     choices <- eval(formal.args[[as.character(substitute(arg))]],
                     envir = sys.frame(sysP))
@@ -91,9 +91,9 @@ match.call.defaults <- function(...) {
   match.call(sys.function(sys.parent()), call)
 }
 
-## ----------- is_null ----------- 
+## ----------- isNULL ----------- 
 ## missing or NULL
 
-is_null <- function(arg) {
+isNULL <- function(arg) {
   missing(arg) || is.null(arg)
 }

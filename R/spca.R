@@ -279,7 +279,7 @@ setMethod("spca", signature(data = "ANY"),function(data=NULL, X=NULL, ...){
     mc$X <- mc$data
     mc$data <- NULL
     mc[[1L]] <- quote(.spca)
-  } else if ( !is_null(data) ) {
+  } else if ( !isNULL(data) ) {
     .stop("'data' is not valid, see ?spca.", .subclass = "inv_data")
   }
   mc$data <- NULL ## not needed for the internal

@@ -274,7 +274,7 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
             # a mint analysis
 
             #check study.test
-            if(is_null(study.test))
+            if(isNULL(study.test))
             {
                 if(nlevels(object$study)==1)
                 {study.test=factor(rep(1,nrow(newdata[[1]])))}else{

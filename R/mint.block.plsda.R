@@ -203,7 +203,7 @@ near.zero.var = FALSE,
 all.outputs = TRUE)
 {
     # checking that the outcome, either in Y or X[indY] is a factor with more than 1 level
-    if (!is_null(Y))
+    if (!isNULL(Y))
     {
         if (is.null(dim(Y)))
         {
@@ -220,7 +220,7 @@ all.outputs = TRUE)
         colnames(Y) = paste0("Y", 1:ncol(Y))
         rownames(Y) = rownames(X[[1]])
 
-    }else if (!is_null(indY)) {
+    }else if (!isNULL(indY)) {
         temp=X[[indY]] #not called Y to not be an input of the wrapper.sparse.mint.block
         if (is.null(dim(temp)))
         {
@@ -234,7 +234,7 @@ all.outputs = TRUE)
         Y.input=temp
         X[[indY]]=unmap(temp)
         rownames(X[[indY]]) = rownames(X[[ifelse(indY==1,2,1)]])
-    } else if(is_null(indY)) {
+    } else if(isNULL(indY)) {
         stop("Either 'Y' or 'indY' is needed")
     }
 

@@ -121,7 +121,7 @@ xlim = NULL,
         study.init = unique(study.init) #once again cause we added studies if "all.partial"
         study = study.init
         
-        if (!is_null(subtitle))
+        if (!isNULL(subtitle))
         {
             if (length(subtitle)!=length(study))
             stop("'subtitle' indicates the subtitle of the plot for each study and it needs to be the same length as 'study' (", length(study),"), which includes: ", paste(study, collapse = ", "))
