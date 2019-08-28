@@ -10,7 +10,9 @@ test_that("block.pls works",{
   ## suppress NZV warnings
   suppressMessages({
     bpls.res.xy <-          block.pls(X = X_bpls, Y = Y_bpls )
+    bpls.res.xindY <-          block.pls(X = c( X_bpls, list(Y = Y_bpls)), indY=3)
     expect_true("block.pls" %in% class( bpls.res.xy))
+    expect_equal(bpls.res.xy, bpls.res.xindY)
     bpls.res.xy.ret <-      block.pls(X = X_bpls, Y = Y_bpls, ret.call = TRUE )
     expect_identical(unclass(bpls.res.xy), unclass(bpls.res.xy.ret)[-1])
     bpls.res.formula.xy <-          block.pls(formula = Y_bpls ~ X_bpls[[1]] + X_bpls[[2]])
@@ -20,9 +22,10 @@ test_that("block.pls works",{
     expect_identical(bpls.res.formula.data, bpls.res.xy)
   })
 })
-
-
+lapply(bpls.res.xy$X, function(x) head(x[,1:5]))
+lapply(bpls.res.xindY$X, function(x) head(x[,1:5]))
 test_that("block.pls fails properly", {
-   expect_error(block.pls(X = X_bpls, Y = Y_bpls, formula = foo~yu+zoo , data = data_bpls), class = "inv_signature")
+
+  expect_error(block.pls(X = X_bpls, Y = Y_bpls, formula = foo~yu+zoo , data = data_bpls), class = "inv_signature")
   expect_error(block.pls(formula = foo~yu , data = data_bpls), class = "inv_formula")
  })
