@@ -184,7 +184,7 @@ setMethod('block.spls', signature(data = 'MultiAssayExperiment'),
                        error = function(e) stop(e$message, call. = FALSE))
               mc <- match.call()
               mc[-1] <- lapply(mc[-1], eval)
-              mc <- .block_get_xy(mc = mc)
+              mc <- .get_xy(mc = mc, block = TRUE, DA = FALSE)
               mc$data <- mc$formula <- NULL 
               mc[[1L]] <- quote(.block.spls)
               result <- eval(mc)

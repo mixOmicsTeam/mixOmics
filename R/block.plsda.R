@@ -196,7 +196,7 @@ setMethod('block.plsda', signature(data = 'MultiAssayExperiment'),
                        error = function(e) stop(e$message, call. = FALSE))
               mc <- match.call()
               mc[-1] <- lapply(mc[-1], eval)
-              mc <- .block_get_xy(mc = mc)
+              mc <- .get_xy(mc = mc, DA = TRUE, block = TRUE)
               mc$data <- mc$formula <- NULL 
               mc[[1L]] <- quote(.block.plsda)
               result <- eval(mc)
