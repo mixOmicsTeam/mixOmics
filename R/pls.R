@@ -195,97 +195,73 @@ NULL
 setGeneric('pls', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) 
     standardGeneric('pls'))
 
-## ----------- Methods ----------- 
+### ----------- Methods ----------- 
 #### ANY ####
 #' @export
 #' @rdname pls
 setMethod('pls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
-    mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
     
-    ## legacy code
-    if ( class(try(data)) %in% c("data.frame", "matrix") )
-        .stop(message = "mixOmics arguments have changed.
-              Please carefully read the documentation and try to use named 
-              arguments such as pls(X=mat, ...) as opposed to pls(mat, ...).",
-              .subclass = "defunct")
-    
-    if ( !isNULL(data)) { ## data must be NULL
-        .stop(message = "data should be a MultiAssayExperiment class, or NULL",
-              .subclass = "inv_signature")
-    }
-    if (!isNULL(formula)) { ## formula must be NULL
-        .stop(message = "With numerical X and Y, formula should not be provided. 
-              See ?pls",
-              .subclass = "inv_signature")
-    }
-
+    tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
+             error = function(e) stop(e$message, call. = FALSE))
     mc <- match.call()
-    mc[-1L] <- lapply(mc[-1L], eval.parent)
-    mc$data <- mc$formula <- NULL 
+    mc[-1L] <- lapply(mc[-1L], eval)
+    
+    ## check signature format
+    .check_sig_ANY(mc, fun = "pls")
+    
     mc[[1L]] <- quote(.pls)
     result <- eval(mc)
-    .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'pls')
+    
+    .call_return(result, match.call(), fun.name = 'pls')
 })
 
-#### signature(data = 'MultiAssayExperiment', formula = "formula") ####
-## expect X and Y to be NULL
-#' @export
-#' @rdname pls
-setMethod('pls', signature(data = 'MultiAssayExperiment', formula = 'formula'), 
-          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
-              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
-              ## X and Y NULL or missing
-              if ( !(isNULL(X) && isNULL(Y)) )
-                  .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
-                        .subclass = "inv_signature")
-              mc <- match.call()
-              mc[-1L] <- lapply(mc[-1L], eval.parent)
-              .formula_checker(mc) ## check formula validity
-              mc[c('Y', 'X')] <- as.character(formula[2:3])
-              mc <- .get_xy(mc = mc)
-              mc$data <- mc$formula <- NULL 
-              mc[[1L]] <- quote(.pls)
-              result <- eval(mc)
-              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'pls')
-          })
-
-
-#### signature(data != 'MultiAssayExperiment', formula = "formula") ####
-## expect X and Y to be NULL
-#' @export
-#' @rdname pls
-setMethod('pls', signature(formula = 'formula'), 
-          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
-              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
-              mc <- match.call()
-              mc[-1L] <- lapply(mc[-1L], eval.parent)
-              .formula_checker(mc) ## check formula validity
-              mc$X <- eval.parent(as.list(formula)[[3]], n = 2)
-              mc$Y <- eval.parent(as.list(formula)[[2]], n = 2)
-              # mc <- .get_xy(mc = mc)
-              mc$data <- mc$formula <- NULL 
-              mc[[1L]] <- quote(.pls)
-              result <- eval(mc)
-              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'pls')
-          })
-
-
 #### signature(data = 'MultiAssayExperiment', formula != "formula") ####
-## expect X and Y to be valid characters
 #' @export
 #' @rdname pls
 setMethod('pls', signature(data = 'MultiAssayExperiment'), 
           function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
-              mget(names(formals()), sys.frame(sys.nframe())) ## just to evaluate
-              ## X and Y NULL or missing
-              if (!isNULL(formula)) { ## formula must be NULL
-                  .stop(message = "With numerical X and Y, formula should not be provided. See ?pls", 
-                        .subclass = "inv_signature")
-              }
-              
+              tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
+                       error = function(e) stop(e$message, call. = FALSE))
               mc <- match.call()
-              mc[-1L] <- lapply(mc[-1L], eval.parent)
-              mc <- .get_xy(mc = mc)
+              mc[-1] <- lapply(mc[-1], eval)
+              mc$data <- .matched_samples(mc$data)
+              mc <- .get_xy(mc = mc, DA = FALSE, block = FALSE)
+              mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.pls)
+              result <- eval(mc)
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'pls')
+          })
+
+#### signature(data = 'MatchedAssayExperiment', formula != "formula") ####
+## same as MultiAssayExperiment with different signature only
+#' @export
+#' @rdname pls
+setMethod('pls', signature(data = 'MatchedAssayExperiment'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+              tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
+                       error = function(e) stop(e$message, call. = FALSE))
+              mc <- match.call()
+              mc[-1] <- lapply(mc[-1], eval)
+              mc <- .get_xy(mc = mc, DA = FALSE, block = FALSE)
+              mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.pls)
+              result <- eval(mc)
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'pls')
+          })
+
+#### signature(data != 'MultiAssayExperiment', formula = "formula") ####
+#' @export
+#' @rdname pls
+setMethod('pls', signature(formula = 'formula'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+              tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
+                       error = function(e) stop(e$message, call. = FALSE))
+              mc <- match.call()
+              mc[-1L] <- lapply(mc[-1L], eval)
+              .formula_checker(mc, block = FALSE) ## check formula validity
+              mf <- stats::model.frame(mc$formula) ## THANK YOU stats::model.frame *cries*
+              mc$Y <- as.matrix(mf[[1]])
+              mc$X <- as.matrix(mf[[2]])
               mc$data <- mc$formula <- NULL 
               mc[[1L]] <- quote(.pls)
               result <- eval(mc)
