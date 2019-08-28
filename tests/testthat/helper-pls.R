@@ -2,11 +2,11 @@ library(mixOmicsData)
 library(MultiAssayExperiment)
 ## This is a parametrised test set for combinations of X, Y, formula, and daya in pls
 ## the tests should satisfy the conditions explained in documentation of pls function.
-## the 'miniACC' data with s
 ## ----------------------------------------------------- parameters to change
 ## MAE data
 mae_data <- miniACC
 
+mae_data <- MatchedAssayExperiment(mae_data) ## keep matching cells
 ## index of the X assay in MAE data
 X_index <- 1 ## RNASeq2GeneNorm
 ## index of Y (when it's assay and not colData) assay in MAE data
@@ -31,10 +31,10 @@ Yc <- names(colData(mae_data))[Yc_index] ## Y column data
 f_Yc <- as.formula(paste0(Yc, " ~ ", Xa)) ## formula with Y column data
 
 Xm_Yc <- t(as.matrix(assay(mae_data, Xa))) ## X matrix when Y column data
-Xm_Ya <- t(as.matrix(assay(mae_data[,complete.cases(mae_data[,,c(Xa, Ya)])], Xa))) ## X matrix when Y is assay
+Xm_Ya <- t(as.matrix(assay(mae_data, Xa))) ## X matrix when Y is assay
 
-Yam <- t(assay(mae_data[,complete.cases(mae_data[,,c(Xa, Ya)])], Ya)) ## Y assay matrix
-Ycn <-  colData(mae_data[,,Xa])[,Yc] ## Y column data numeric
+Yam <- t(assay(mae_data, Ya)) ## Y assay matrix
+Ycn <-  colData(mae_data)[,Yc] ## Y column data numeric
 
 Y_inv <- colnames(colData(mae_data))[iYc_index_num] ## invalid coldata y
 Y_inv.vec <- colData(mae_data)[,iYc_index_num] ## vector
@@ -42,5 +42,5 @@ Y_inv.vec <- colData(mae_data)[,iYc_index_num] ## vector
 Y_char <-colnames(colData(mae_data))[iYc_index_char]
 Y_char.vec <- colData(mae_data)[,iYc_index_char]
 
-phenXa <- colData(mae_data[,,Xa])[,phen_col] ## phenotype for plsda with Xa
-phenXaYa <- colData(mae_data[,complete.cases(mae_data[,,c(Xa, Ya)])])[,phen_col] ## phenotype for block.plsda with Xa, Ya
+phenXa <- colData(mae_data)[,phen_col] ## phenotype for plsda with Xa
+phenXaYa <- colData(mae_data)[,phen_col] ## phenotype for block.plsda with Xa, Ya

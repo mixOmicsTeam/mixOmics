@@ -22,8 +22,7 @@ test_that("block.pls works",{
     expect_identical(bpls.res.formula.data, bpls.res.xy)
   })
 })
-lapply(bpls.res.xy$X, function(x) head(x[,1:5]))
-lapply(bpls.res.xindY$X, function(x) head(x[,1:5]))
+
 test_that("block.pls fails properly", {
 
   expect_error(block.pls(X = X_bpls, Y = Y_bpls, formula = foo~yu+zoo , data = data_bpls), class = "inv_signature")
