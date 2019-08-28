@@ -123,7 +123,8 @@ NULL
     
     ## check entries
     mc <- .check_plsda_block(mc)
-    
+    Y.input <- mc$Y.input
+    mc$Y.input <- NULL ## not needed by wrapper
     # call to '.mintWrapperBlock'
     mc[[1L]] <- quote(.mintWrapperBlock)
     result <- eval(mc)
@@ -132,8 +133,9 @@ NULL
     weights = .getWeights(result$variates, indY = result$indY)
     
     # choose the desired output from 'result'
-    out <- list(X = result$A,
-                indY = result$indY,
+    out <- list(X = result$A[-result$indY],
+                Y = Y.input,
+                ind.mat = result$A[result$indY][[1]],
                 ncomp = result$ncomp,
                 mode = result$mode,
                 variates = result$variates,
@@ -149,6 +151,7 @@ NULL
                 scale = result$scale,
                 design = result$design,
                 scheme = result$scheme,
+                indY = result$indY,
                 weights = weights,
                 explained_variance = result$explained_variance)
     
@@ -161,7 +164,7 @@ NULL
 ## ----------- Generic ----------- 
 #' @export
 #' @rdname block.plsda
-setGeneric('block.da', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) 
+setGeneric('block.plsda', function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) 
     standardGeneric('block.plsda'))
 
 ## ----------- Methods ----------- 
@@ -183,7 +186,7 @@ setMethod('block.plsda', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL
     
     .call_return(result, match.call(), fun.name = 'block.plsda')
 })
-})
+
 #### signature(data = 'MultiAssayExperiment', formula != "formula") ####
 #' @export
 #' @rdname block.plsda

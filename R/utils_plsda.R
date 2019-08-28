@@ -74,11 +74,11 @@
     Y.input = temp
     X[[indY]] = unmap(temp)
     colnames(X[[indY]]) = levels(Y.input)
-    rownames(X[[indY]]) = rownames(X[[ifelse(indY==1,2,1)]])
+    rownames(X[[indY]]) = rownames(X[-indY][[1]])
     
   } else if (isNULL(indY)) {
     stop("Either 'Y' or 'indY' is needed")
   }
-  mc[c("X", "Y", "indY")] <- list(X, Y, indY)
+  mc[c("X", "Y", "indY", "Y.input")] <- list(X, Y, indY, Y.input)
   mc
 }

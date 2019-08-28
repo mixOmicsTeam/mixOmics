@@ -419,6 +419,10 @@
       if (is(mc$X, "list")) { 
         mc$X <- unlist(mc$X)
       }
+    if (!is.null(mc$indY)) { ## if indY provided
+      mc$Y <- mc$X[indY]
+      mc$X <- mc$X[-indY]
+      }
       assay.names <- c(mc$Y, mc$X)
       ## expect it to be character
       if (!is(assay.names, "character"))
