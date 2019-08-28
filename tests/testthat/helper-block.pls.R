@@ -6,7 +6,7 @@ data(breast.TCGA.mae)
 
 ## -------------- parameters to change --------------
 ## MAE data
-data_bpls <- breast.TCGA.mae
+data_bpls <- MatchedAssayExperiment(breast.TCGA.mae)
 
 ## index of the X assays in MAE data
 X_indices <- 1:2 ## mrna, mirna
@@ -21,6 +21,7 @@ Yc_index <- 1 ## "subtype" - must be numeric
 ## list and matrix inputs
 X_bpls <- as.list(experiments(data_bpls)[X_indices])
 Y_bpls <- experiments(data_bpls)[[Y_index]]
+Y_bpls_DA <- colData(data_bpls)[,Yc_index]
 ## transpose
 X_bpls <- lapply(X_bpls, t)
 Y_bpls <- t(Y_bpls)
@@ -28,6 +29,7 @@ Y_bpls <- t(Y_bpls)
 
 Xa_bpls <- names(experiments(data_bpls))[X_indices] ## X assays
 Ya_bpls <-  names(experiments(data_bpls))[Y_index] ## Y assay
+Yc_bpls <- names(colData(data_bpls))[Yc_index]
 ## formula build
 ## ## matrices
 formula_bpls_mat <- Y_bpls ~ X_bpls

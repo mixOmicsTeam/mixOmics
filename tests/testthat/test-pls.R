@@ -33,7 +33,7 @@ test_that("pls works for 'formula AND data' methods",{
   ## suppress NZV warnings
   suppressMessages({
     pls.res.xy <-          pls(X = Xm_Yc, Y = Ycn )
-    pls.res.formula.mae <- pls(formula = f_Yc, data = mae_data)
+    pls.res.formula.mae <- pls(data = mae_data, formula = f_Yc)
     expect_identical(pls.res.xy[-1] ,pls.res.formula.mae[-1])
   })
 })
@@ -75,8 +75,6 @@ test_that("pls fails with invalid assay and produces appropriate error",{
   expect_condition(pls(X = "invalidX", Y="invalidY", data = mae_data ), class = "inv_XY")
 
   ##---- "formula"
-  ##---- 'formula_mae'
-  expect_condition(pls(formula = Y~X, data = mae_data ), class = "inv_XY")
   expect_condition(pls(formula = wrong_LHS ~ gistict, data = mae_data ), class = "inv_XY")
 })
 
