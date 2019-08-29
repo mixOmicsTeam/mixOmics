@@ -70,18 +70,11 @@
 #'
 #' @return Evaluated call to internal (.fun)
 #' @noRd
-.pcaMethodsHelper <- function(mc, fun='pca', pframe=3L){
-  mc[-1L] <- lapply(mc[-1L], function(x) eval.parent(x, n = pframe))
-  .check_data_assay(mc)
-  # mcr <- mc ## to return as output
-  # mcr[[1L]] <- as.name(fun) ## returned call to have 'pca' as function
-  mc$X <- t(assay(mc$data, mc$X)) ## change X into matrix of assay name
+.pcaMethodsHelper <- function(mc, fun='pca'){
+  mc <- .get_x(mc)
   mc$data <- NULL ## remove data as not needed in internal
   mc[[1L]] <- as.name(sprintf(".%s", fun)) ## add internal to the call's function
-  result <- eval.parent(mc) ## evaluate the call
-  # if(isTRUE(mc$ret.call))
-  # result$call <- mcr ## replace the returned call from internal by the current one
-  return(result)
+  eval.parent(mc) ## evaluate the call
 }
 
 ## ----------- .pcaEntryChecker ----------- 
