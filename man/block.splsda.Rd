@@ -5,6 +5,7 @@
 \alias{block.splsda}
 \alias{block.splsda,ANY,ANY,ANY,ANY-method}
 \alias{block.splsda,MultiAssayExperiment,ANY,ANY,ANY-method}
+\alias{block.splsda,MatchedAssayExperiment,ANY,ANY,ANY-method}
 \alias{block.splsda,ANY,ANY,ANY,formula-method}
 \title{N-integration and feature selection with Projection to Latent Structures
 models (PLS) with sparse Discriminant Analysis}
@@ -15,6 +16,9 @@ block.splsda(data = NULL, X = NULL, Y = NULL, formula = NULL, ...)
   Y = NULL, formula = NULL, ...)
 
 \S4method{block.splsda}{MultiAssayExperiment,ANY,ANY,ANY}(data = NULL,
+  X = NULL, Y = NULL, formula = NULL, ...)
+
+\S4method{block.splsda}{MatchedAssayExperiment,ANY,ANY,ANY}(data = NULL,
   X = NULL, Y = NULL, formula = NULL, ...)
 
 \S4method{block.splsda}{ANY,ANY,ANY,formula}(data = NULL, X = NULL,

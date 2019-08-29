@@ -5,6 +5,7 @@
 \alias{block.plsda}
 \alias{block.plsda,ANY,ANY,ANY,ANY-method}
 \alias{block.plsda,MultiAssayExperiment,ANY,ANY,ANY-method}
+\alias{block.plsda,MatchedAssayExperiment,ANY,ANY,ANY-method}
 \alias{block.plsda,ANY,ANY,ANY,formula-method}
 \title{N-integration with Projection to Latent Structures models (PLS) with
 Discriminant Analysis}
@@ -15,6 +16,9 @@ block.plsda(data = NULL, X = NULL, Y = NULL, formula = NULL, ...)
   Y = NULL, formula = NULL, ...)
 
 \S4method{block.plsda}{MultiAssayExperiment,ANY,ANY,ANY}(data = NULL,
+  X = NULL, Y = NULL, formula = NULL, ...)
+
+\S4method{block.plsda}{MatchedAssayExperiment,ANY,ANY,ANY}(data = NULL,
   X = NULL, Y = NULL, formula = NULL, ...)
 
 \S4method{block.plsda}{ANY,ANY,ANY,formula}(data = NULL, X = NULL,

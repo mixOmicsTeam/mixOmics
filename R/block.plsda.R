@@ -187,10 +187,28 @@ setMethod('block.plsda', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL
     .call_return(result, match.call(), fun.name = 'block.plsda')
 })
 
-#### signature(data = 'MultiAssayExperiment', formula != "formula") ####
+#### signature(data = 'MultiAssayExperiment') ####
 #' @export
 #' @rdname block.plsda
 setMethod('block.plsda', signature(data = 'MultiAssayExperiment'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+              tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
+                       error = function(e) stop(e$message, call. = FALSE))
+              mc <- match.call()
+              mc[-1] <- lapply(mc[-1], eval)
+              mc$data <- .matched_samples(mc$data)
+              mc <- .get_xy(mc = mc, DA = TRUE, block = TRUE)
+              mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.block.plsda)
+              result <- eval(mc)
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'block.plsda')
+          })
+
+#### signature(data = 'MatchedAssayExperiment') ####
+## same as MultiAssayExperiment with different and no sample matching
+#' @export
+#' @rdname block.plsda
+setMethod('block.plsda', signature(data = 'MatchedAssayExperiment'), 
           function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
               tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
                        error = function(e) stop(e$message, call. = FALSE))
@@ -202,7 +220,6 @@ setMethod('block.plsda', signature(data = 'MultiAssayExperiment'),
               result <- eval(mc)
               .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'block.plsda')
           })
-
 
 #### signature(data != 'MultiAssayExperiment', formula = "formula") ####
 #' @export
