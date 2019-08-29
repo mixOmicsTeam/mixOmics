@@ -11,6 +11,32 @@
 }
 
 ## ------------------------------------------------ ##
+## Given data in mc, get X for PCA family
+#'
+#' @param mc A match.call
+#' @importFrom SummarizedExperiment colData assays
+#' @return Adjusted mc with \code{(N x P)}  \code{X} to pass to internal
+#' @noRd
+.get_x <- function(mc) {
+  
+  ## ensure X and Y are character
+  if (!(is(mc$X, "character") & length(mc$X) == 1 )) {
+    .stop("'X' must be one valid assay name from 'data'", 
+          .subclass = "inv_XY")
+  }
+  
+  ## ensure X is a valid assay
+  invalid_X <- !(mc$X %in% names(assays(mc$data)))
+  if (invalid_X) {
+    .stop(.subclass = "inv_XY",
+          message = sprintf("%s is not a valid assay name from 'data'", sQuote(mc$X)))
+  }
+  
+  ## get X
+  mc$X <- .getMatrix(assay.name = mc$X, mc$data)
+  mc
+}
+## ------------------------------------------------ ##
 #' Given a formula, get assay names for .get_xy
 #'
 #' @param mc A match.call
