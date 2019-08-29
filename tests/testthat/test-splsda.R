@@ -1,4 +1,5 @@
 context("splsda")
+## TODO add tests  with keepX
 ## the tests are parameterised in helper-pls.R (any helper-*.R file in ./testthatis run
 ## before tests) so we can try different datasets if need be, and also to cope with
 ## object inputs (e.g. formla stored in a variable)

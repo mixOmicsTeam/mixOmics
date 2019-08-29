@@ -1,4 +1,4 @@
-context("block.spls")
+context("block.plsda")
 
 ## the tests are parameterised in helper-block.pls.R (any helper-*.R file in ./testthatis run
 ## before tests) so we can try different datasets if need be, and also to cope with
@@ -18,7 +18,7 @@ test_that("block.plsda works",{
   })
 })
 
-test_that("block.pls fails properly", {
+test_that("block.plsda fails properly", {
 
   expect_error(block.plsda(X = X_bpls, Y = Y_bpls_DA, formula = foo~yu+zoo , data = data_bpls), class = "inv_signature")
   expect_error(block.plsda(formula = foo~yu , data = data_bpls), class = "inv_formula")
