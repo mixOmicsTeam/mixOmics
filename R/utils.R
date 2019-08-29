@@ -1,15 +1,15 @@
 ### TODO drop deprecated utils
 
 ## ----------- .formula_checker -----------
-#' Check formula's class and ensure non-NULL X and Y are not provided with it
-#'
-#' Gets a call which includes a $formula entry and expects it to be of form
-#' \code{Y~X} or \code{Y~X1+X2+...} (for block), it also checks that $X and $Y are NULL.
-#' 
-#' @param mc A call list
-#'
-#' @return Exception handler
-#'
+#Check formula's class and ensure non-NULL X and Y are not provided with it
+#
+#'Gets a call which includes a $formula entry and expects it to be of form
+#\code{Y~X} or \code{Y~X1+X2+...} (for block), it also checks that $X and $Y are NULL.
+#
+#@param mc A call list
+#
+#@return Exception handler
+#
 #' @noRd
 .formula_checker <- function(mc, block=FALSE){
   fl <- vapply(as.list(mc$formula)[-1L], length, 1) ## formula list lengths
@@ -28,47 +28,15 @@
     .inv_signature()
 }
 
-## ----------- .check_data_assay ----------- 
-#' Check validity of (data = data, X = assay) in call
-#' @param mc A call object
-#' @param vcs Valid classes for 'data'
-#' @noRd
-#' @importFrom SummarizedExperiment assay assays
-# .check_data_assay <- function(mc, ## the call
-#                               vcs = c("MultiAssayExperiment",
-#                                       "SummarizedExperiment",
-#                                       "SingleCellExperiment")){
-#   data <- eval.parent(mc$data, 2L)
-#   X <-    eval.parent(mc$X, 2L)
-#   ## check that data is provided
-#   if (isNULL(data)) {
-#     .stop(.subclass = "inv_data",
-#           "'X' is character but 'data' containing 'X' assay not provided. See ?pca.")
-#     
-#     ## check it is of valid class
-#   } else if ( !class(try(data)) %in%  vcs) {
-#     .stop(.subclass = "inv_data",
-#           message = paste0("'data' must be of class: ",
-#                            paste0(vcs, collapse = ", or ")))
-#   }
-#   
-#   ## if X is not a valid assay throw appropriate error
-#   if (!X %in% tryCatch(names(assays(data)), error = function(e) e)) {
-#     .stop(.subclass = "inv_assay",
-#           message = "'X' is not a valid assay name from 'data', it should be one of: ",
-#           paste0(names(assays(data)), collapse = ", "))
-#   }
-# }
-
 ## ----------- .pcaMethodsHelper  ----------- 
-#' Adjust methods for pca family and call internal
-#'
-#' @param mc The call object containing 'data', 'X', ... .
-#' @param fun The function originally called, pca, ipca, spca, ... .
-#' @param pframe How many levels higher should the arguments be evaluated.
-#' Assumes the internal name in parent.frame is .fun (.pca, .ipca, ... .)
-#'
-#' @return Evaluated call to internal (.fun)
+# Adjust methods for pca family and call internal
+#
+# @param mc The call object containing 'data', 'X', ... .
+# @param fun The function originally called, pca, ipca, spca, ... .
+# @param pframe How many levels higher should the arguments be evaluated.
+# Assumes the internal name in parent.frame is .fun (.pca, .ipca, ... .)
+#
+# @return Evaluated call to internal (.fun)
 #' @noRd
 .pcaMethodsHelper <- function(mc, fun='pca'){
   mc <- .get_x(mc)
@@ -197,213 +165,14 @@
     return(result)
 }
 
-## ----------- .ret_call ----------- 
-## function to add the call to the result if asked
-# .ret_call <-
-#   function(result = list(), ## result from internal
-#            mcr, ## always evaluated mc
-#            fun.name = 'pca') { ## name of the function
-#     
-#     if (isTRUE(mcr$ret.call) ) {
-#       {
-#         mcr[[1]] = as.name(fun.name)
-#       }
-#       ## makes expect_identical() easy to have call as first arg and just
-#       ## drop it using pca.res[-1]
-#       
-#       result <- structure(c(list(call = mcr), result), class = class(result))
-#     }
-#     return(result)
-#   }
-# ## ----------- .switch_arg_names ----------- #TODO drop it?
-# ## customised from scran/R/utils_other.R
-# .switch_arg_names <- function(old.val, new.val, msg=NULL) {
-#   if (!is.null(old.val)) {
-#     old.arg <- deparse(substitute(old.val))
-#     new.arg <- deparse(substitute(new.val))
-#     if ( is.null(msg) ) {
-#       msg <- sprintf("The use of %s as data matrix is deprecated and is only used for assay names
-#                      from'data' now, use %s instead.
-#                      See documentation for details.", old.arg, new.arg)
-#     }
-#     .Deprecated(new = new.arg, old = old.arg)
-#     old.val
-#   } else {
-#     new.val
-#   }
-# }
-
-
-## ----------- .call_internal ----------- 
-## function to add the call to the result if asked
-# .call_internal <-
-#   function(mc, ## always match.call()
-#            fun.name = 'pca', ## name of the function
-#            pframe = 3L) {  ## how many frames above to evaluate in?
-#     mc[-1L] <- lapply(mc[-1L], eval.parent)
-#     mc$data <- mc$formula <- NULL 
-#     mc[[1L]] <- as.name(sprintf(".%s", fun.name))
-#     result <- eval(mc)
-#     
-#     if ( isTRUE(mc$ret.call) ) {
-#       {
-#         mcr[[1]] = as.name(fun.name)
-#         mcr[-1L] <- lapply(mcr[-1L], function(x) eval.parent(x, n = pframe))
-#       }
-#       ## makes expect_identical() easy to have call as first arg and just
-#       ## drop it using pca.res[-1]
-#       
-#       result <- structure(c(list(call = mcr), result), class = class(result))
-#     }
-#     return(result)
-#   }
-
-
-## ----------- .block_get_xy ----------- 
-#' Create matrices from names of assays and a data object
-#' 
-#' get MAE data and a call list containing either character X and Y,
-#' or a formula of form Y~X1+X2+... and check for validity of X (assay names) 
-#' and Y and return list of matrices of X and matrix Y in mc$X and mc$Y, 
-#' getting rid of  $data and/or $formula args
-#' 
-#' @param mc A list with at least (data=MAE, formula = Y~X1+X2+...)
-#' @noRd
-## TODO does it?
-#' @importFrom SummarizedExperiment colData
-#' @importFrom MultiAssayExperiment experiments
-#' @importFrom SummarizedExperiment assay
-
-.block_get_xy <- function(mc){
-  ## ---- if data and X , Y given, expect X,Y
-  if (is.null(mc$formula)) { 
-      if (isNULL(mc$X) || isNULL(mc$Y)) {
-        .stop("X and/or Y is NULL, should be vector and character of assay names, respectively.")
-      }
-    ## if a X is list, unlist it
-      if (is(mc$X, "list")) { 
-        mc$X <- unlist(mc$X)
-      }
-    if (!is.null(mc$indY)) { ## if indY provided
-      mc$Y <- mc$X[indY]
-      mc$X <- mc$X[-indY]
-      }
-      assay.names <- c(mc$Y, mc$X)
-      ## expect it to be character
-      if (!is(assay.names, "character"))
-        .stop("X and Y must be characters")
-    
-  } 
-  ## ----- if data and formula given, expect NULL X and Y, and set them from formula
-  else {  ## formula
-    .formula_checker(mc, block = TRUE) ## check formula validity
-    ## esnure X and Y are NULL
-    if ( !(isNULL(mc$X) && isNULL(mc$Y)) )
-      .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
-            .subclass = "inv_signature")
-    
-    assay.names <- rownames(attr(terms(mc$formula), "factors"))
-  }
-  ## ----- check assay names and create the matrices
-  missing.assays <-  assay.names[!assay.names %in% names(experiments(mc$data))]
-  if (length(missing.assays))
-    .stop(paste("Not valid assay name(s) from data: ", paste(missing.assays, collapse = ", ")), .subclass = "inv_XY")
-  ## get X and Y in X first
-  mc$X <- list()
-  for (asy in assay.names) {
-    mc$X[[asy]] <- as.matrix(t(assay(mc$data, asy)))
-  }
-  
-  ## separate Y
-  mc$Y <- mc$X[[1]]
-  mc$X <- mc$X[-1]
-  
-  mc$data <- mc$formula <- NULL
-  mc
-}
-
-## ----------- .blockDA_get_xy ----------- 
-#' Create matrices from names of assays and a data object
-#' 
-#' get MAE data and a call list containing either character X and Y,
-#' or a formula of form Y~X1+X2+... and check for validity of X (assay names) 
-#' and Y and return list of matrices of X and matrix Y in mc$X and mc$Y, 
-#' getting rid of  $data and/or $formula args
-#' 
-#' @param mc A list with at least (data=MAE, formula = Y~X1+X2+...)
-#' @noRd
-#' @importFrom MultiAssayExperiment MatchedAssayExperiment
-## TODO does it?
-#' @importFrom SummarizedExperiment colData
-#' @importFrom MultiAssayExperiment experiments
-#' @importFrom SummarizedExperiment assay
-
-# .blockDA_get_xy <- function(mc){
-#   ## ---- if data and X , Y given, expect X,Y
-#   # TODO make this internal and re-use
-#   if (is.null(mc$formula)) { 
-#     if (isNULL(mc$X) || isNULL(mc$Y)) {
-#       .stop("X should be vector of assay names, and Y a column data name from data.")
-#     }
-#     ## if a X is list, unlist it
-#     if (is(mc$X, "list")) { 
-#       mc$X <- unlist(mc$X)
-#     }
-#     ## expect it to be character
-#     if (!is(c(mc$X, mc$Y), "character"))
-#       .stop("X and Y must be characters")
-#     Y.input <- mc$Y
-#     X.input <- mc$X
-#   } 
-#   ## ----- if data and formula given, expect NULL X and Y, and set them from formula
-#   else {  ## formula
-#     .formula_checker(mc, block = TRUE) ## check formula validity
-#     ## esnure X and Y are NULL
-#     if ( !(isNULL(mc$X) && isNULL(mc$Y)) )
-#       .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
-#             .subclass = "inv_signature")
-#     
-#     trms <- rownames(attr(terms(mc$formula), "factors"))
-#     Y.input <- trms[1]
-#     X.input <- trms[-1]
-#   }
-#   ## ----- check assay names and create the matrices
-#   missing.assays <-  X.input[!X.input %in% names(experiments(mc$data))]
-#   missing.coldata <-  !(Y.input %in% names(colData(mc$data)))
-#   if (length(missing.assays))
-#     .stop(paste("Not valid assay name(s) from data: ", paste(missing.assays, collapse = ", ")), .subclass = "inv_XY")
-#   
-#   if (isTRUE(missing.coldata))
-#     .stop(sprintf("LHS of formula should be a valid column data from 
-#                   'data', (i.e. one of: %s) . %s is not.", 
-#                   paste(names(colData(mc$data)), collapse = ", " ), sQuote(Y.input)), 
-#           .subclass = "inv_XY")
-#   
-#   ## get matched samples
-#   mc$data <- MatchedAssayExperiment(mc$data)
-#   ## get X 
-#   mc$X <- list()
-#   for (asy in X.input) {
-#     mc$X[[asy]] <- as.matrix(t(assay(mc$data, asy)))
-#   }
-#   
-#   ## separate Y
-#   mc$Y <- colData(mc$data)[,Y.in]
-#   
-#   mc$data <- mc$formula <- NULL
-#   mc
-# }
-
-
-
 ## ----------- .check_sig_ANY ----------- 
-#' Handle arguments possibly from old code
-#'
-#' Arguments pased to 'ANY' can only include numeric X and Y.
-#' The X, Y arguments should be named, otherwise they'll be taken as data
-#' 
-#' 
-#' @param mc matched call of form (data=MAE, X=X_name, Y=Y_name, formula=NULL)
+# Handle arguments possibly from old code
+#
+# Arguments pased to 'ANY' can only include numeric X and Y.
+# The X, Y arguments should be named, otherwise they'll be taken as data
+# 
+# 
+# @param mc matched call of form (data=MAE, X=X_name, Y=Y_name, formula=NULL)
 #' @noRd
 .check_sig_ANY <- function(mc, fun = "block.pls") {
   ## TODO ensure all referrals to help by this handler are doc backed.
@@ -435,7 +204,7 @@
 #' Creating this so I would not have to import every time
 #' 
 #' 
-#' @param mae 
+# @param mae 
 #' @importFrom MultiAssayExperiment MatchedAssayExperiment
 #' @noRd
 .matched_samples <- function(mae) {

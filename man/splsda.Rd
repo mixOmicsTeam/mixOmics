@@ -4,9 +4,9 @@
 \name{splsda}
 \alias{splsda}
 \alias{splsda,ANY,ANY,ANY,ANY-method}
-\alias{splsda,MultiAssayExperiment,ANY,ANY,formula-method}
-\alias{splsda,ANY,ANY,ANY,formula-method}
 \alias{splsda,MultiAssayExperiment,ANY,ANY,ANY-method}
+\alias{splsda,MatchedAssayExperiment,ANY,ANY,ANY-method}
+\alias{splsda,ANY,ANY,ANY,formula-method}
 \title{Sparse Partial Least Squares Discriminant Analysis (sPLS-DA)}
 \usage{
 splsda(data = NULL, X = NULL, Y = NULL, formula = NULL, ...)
@@ -14,14 +14,14 @@ splsda(data = NULL, X = NULL, Y = NULL, formula = NULL, ...)
 \S4method{splsda}{ANY,ANY,ANY,ANY}(data = NULL, X = NULL, Y = NULL,
   formula = NULL, ...)
 
-\S4method{splsda}{MultiAssayExperiment,ANY,ANY,formula}(data = NULL,
+\S4method{splsda}{MultiAssayExperiment,ANY,ANY,ANY}(data = NULL,
+  X = NULL, Y = NULL, formula = NULL, ...)
+
+\S4method{splsda}{MatchedAssayExperiment,ANY,ANY,ANY}(data = NULL,
   X = NULL, Y = NULL, formula = NULL, ...)
 
 \S4method{splsda}{ANY,ANY,ANY,formula}(data = NULL, X = NULL,
   Y = NULL, formula = NULL, ...)
-
-\S4method{splsda}{MultiAssayExperiment,ANY,ANY,ANY}(data = NULL,
-  X = NULL, Y = NULL, formula = NULL, ...)
 }
 \arguments{
 \item{data}{An object of class \code{MultiAssayExperiment} or similar.

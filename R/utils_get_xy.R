@@ -1,9 +1,10 @@
 ## ------------------------------------------------ ##
-#' Get matrix from assay name
+#' @title Get matrix from assay name
 #'
 #' @param assay.name Name of assay
 #' @param mae_data MAE data
 #' @importFrom SummarizedExperiment assay
+#' 
 #' @return tansposed assay data
 #' @noRd
 .getMatrix <- function(assay.name, mae_data) {
@@ -11,11 +12,12 @@
 }
 
 ## ------------------------------------------------ ##
-## Given data in mc, get X for PCA family
+#' @title Given data in mc, get X for PCA family
 #'
 #' @param mc A match.call
-#' @importFrom SummarizedExperiment colData assays
 #' @return Adjusted mc with \code{(N x P)}  \code{X} to pass to internal
+#' @importFrom SummarizedExperiment colData assays
+#' 
 #' @noRd
 .get_x <- function(mc) {
   
@@ -27,7 +29,7 @@
   
   ## ensure X is a valid assay
   invalid_X <- !(mc$X %in% names(assays(mc$data)))
-  if (invalid_X) {
+  if (any(invalid_X)) {
     .stop(.subclass = "inv_XY",
           message = sprintf("%s is not a valid assay name from 'data'", sQuote(mc$X)))
   }
@@ -37,7 +39,7 @@
   mc
 }
 ## ------------------------------------------------ ##
-#' Given a formula, get assay names for .get_xy
+#' @title Given a formula, get assay names for .get_xy
 #'
 #' @param mc A match.call
 #'
@@ -57,7 +59,7 @@
 }
 
 ## ------------------------------------------------ ##
-#' Given a formula of matrices, get X and Y
+#' @title Given a formula of matrices, get X and Y
 #'
 #' @param mc A match.call
 #' @param DA Logical, TRUE if DA analysis
@@ -77,12 +79,13 @@
 ## ------------------------------------------------ ##
 ## Given data in mc, get X and Y from assay/colData for PLS and PLSDA family
 ## First, we'll define a function that assumes X and Y are given
-#' Get X and Y to pass to internal PLS(DA) functions
+#' @title Get X and Y to pass to internal PLS(DA) functions
 #'
 #' @param mc A match.call
 #' @param DA Logical, TRUE if discriminatory analysis
 #' @param block Logical, TRUE if block.pls family
 #' @importFrom SummarizedExperiment colData assays
+#' 
 #' @return Adjusted mc with X and Y ready to pass to internal
 #' @noRd
 .get_xy <- function(mc, DA=FALSE, block=FALSE) {

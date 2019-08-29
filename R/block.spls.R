@@ -175,7 +175,7 @@ setMethod('block.spls', 'ANY', function(data=NULL, X=NULL, Y=NULL, formula=NULL,
     .call_return(result, match.call(), fun.name = 'block.spls')
 })
 
-#### signature(data = 'MultiAssayExperiment', formula != "formula") ####
+#### signature(data = 'MultiAssayExperiment') ####
 #' @export
 #' @rdname block.spls
 setMethod('block.spls', signature(data = 'MultiAssayExperiment'), 
@@ -184,13 +184,30 @@ setMethod('block.spls', signature(data = 'MultiAssayExperiment'),
                        error = function(e) stop(e$message, call. = FALSE))
               mc <- match.call()
               mc[-1] <- lapply(mc[-1], eval)
-              mc <- .get_xy(mc = mc, block = TRUE, DA = FALSE)
+              mc$data <- .matched_samples(mc$data)
+              mc <- .get_xy(mc = mc, DA = FALSE, block = TRUE)
               mc$data <- mc$formula <- NULL 
               mc[[1L]] <- quote(.block.spls)
               result <- eval(mc)
               .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'block.spls')
           })
 
+#### signature(data = 'MatchedAssayExperiment') ####
+## same as MultiAssayExperiment with different and no sample matching
+#' @export
+#' @rdname block.spls
+setMethod('block.spls', signature(data = 'MatchedAssayExperiment'), 
+          function(data=NULL, X=NULL, Y=NULL, formula=NULL, ...) {
+              tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
+                       error = function(e) stop(e$message, call. = FALSE))
+              mc <- match.call()
+              mc[-1] <- lapply(mc[-1], eval)
+              mc <- .get_xy(mc = mc, DA = FALSE, block = TRUE)
+              mc$data <- mc$formula <- NULL 
+              mc[[1L]] <- quote(.block.spls)
+              result <- eval(mc)
+              .call_return(result, mc$ret.call, mcr = match.call(), fun.name = 'block.spls')
+          })
 
 #### signature(data != 'MultiAssayExperiment', formula = "formula") ####
 #' @export

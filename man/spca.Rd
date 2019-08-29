@@ -4,11 +4,14 @@
 \name{spca}
 \alias{spca}
 \alias{spca,MultiAssayExperiment-method}
+\alias{spca,MatchedAssayExperiment-method}
 \title{Sparse Principal Components Analysis}
 \usage{
 spca(data = NULL, X = NULL, ...)
 
 \S4method{spca}{MultiAssayExperiment}(data = NULL, X = NULL, ...)
+
+\S4method{spca}{MatchedAssayExperiment}(data = NULL, X = NULL, ...)
 }
 \arguments{
 \item{data}{An object of class \code{MultiAssayExperiment} or similar.

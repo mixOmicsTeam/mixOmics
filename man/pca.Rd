@@ -4,11 +4,14 @@
 \name{pca}
 \alias{pca}
 \alias{pca,MultiAssayExperiment-method}
+\alias{pca,MatchedAssayExperiment-method}
 \title{Principal Components Analysis}
 \usage{
 pca(data = NULL, X = NULL, ...)
 
 \S4method{pca}{MultiAssayExperiment}(data = NULL, X = NULL, ...)
+
+\S4method{pca}{MatchedAssayExperiment}(data = NULL, X = NULL, ...)
 }
 \arguments{
 \item{data}{An object of class \code{MultiAssayExperiment} or similar.

@@ -4,9 +4,9 @@
 \name{spls}
 \alias{spls}
 \alias{spls,ANY,ANY,ANY,ANY-method}
-\alias{spls,MultiAssayExperiment,ANY,ANY,formula-method}
-\alias{spls,ANY,ANY,ANY,formula-method}
 \alias{spls,MultiAssayExperiment,ANY,ANY,ANY-method}
+\alias{spls,MatchedAssayExperiment,ANY,ANY,ANY-method}
+\alias{spls,ANY,ANY,ANY,formula-method}
 \title{Sparse Partial Least Squares (sPLS)}
 \usage{
 spls(data = NULL, X = NULL, Y = NULL, formula = NULL, ...)
@@ -14,14 +14,14 @@ spls(data = NULL, X = NULL, Y = NULL, formula = NULL, ...)
 \S4method{spls}{ANY,ANY,ANY,ANY}(data = NULL, X = NULL, Y = NULL,
   formula = NULL, ...)
 
-\S4method{spls}{MultiAssayExperiment,ANY,ANY,formula}(data = NULL,
+\S4method{spls}{MultiAssayExperiment,ANY,ANY,ANY}(data = NULL,
+  X = NULL, Y = NULL, formula = NULL, ...)
+
+\S4method{spls}{MatchedAssayExperiment,ANY,ANY,ANY}(data = NULL,
   X = NULL, Y = NULL, formula = NULL, ...)
 
 \S4method{spls}{ANY,ANY,ANY,formula}(data = NULL, X = NULL, Y = NULL,
   formula = NULL, ...)
-
-\S4method{spls}{MultiAssayExperiment,ANY,ANY,ANY}(data = NULL,
-  X = NULL, Y = NULL, formula = NULL, ...)
 }
 \arguments{
 \item{data}{An object of class \code{MultiAssayExperiment} or similar.

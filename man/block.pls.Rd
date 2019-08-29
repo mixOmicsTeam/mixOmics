@@ -5,6 +5,7 @@
 \alias{block.pls}
 \alias{block.pls,ANY,ANY,ANY,ANY-method}
 \alias{block.pls,MultiAssayExperiment,ANY,ANY,ANY-method}
+\alias{block.pls,MatchedAssayExperiment,ANY,ANY,ANY-method}
 \alias{block.pls,ANY,ANY,ANY,formula-method}
 \title{N-integration with Projection to Latent Structures models (PLS)}
 \usage{
@@ -14,6 +15,9 @@ block.pls(data = NULL, X = NULL, Y = NULL, formula = NULL, ...)
   Y = NULL, formula = NULL, ...)
 
 \S4method{block.pls}{MultiAssayExperiment,ANY,ANY,ANY}(data = NULL,
+  X = NULL, Y = NULL, formula = NULL, ...)
+
+\S4method{block.pls}{MatchedAssayExperiment,ANY,ANY,ANY}(data = NULL,
   X = NULL, Y = NULL, formula = NULL, ...)
 
 \S4method{block.pls}{ANY,ANY,ANY,formula}(data = NULL, X = NULL,

@@ -4,11 +4,14 @@
 \name{ipca}
 \alias{ipca}
 \alias{ipca,MultiAssayExperiment-method}
+\alias{ipca,MatchedAssayExperiment-method}
 \title{Independent Principal Component Analysis}
 \usage{
 ipca(data = NULL, X = NULL, ...)
 
 \S4method{ipca}{MultiAssayExperiment}(data = NULL, X = NULL, ...)
+
+\S4method{ipca}{MatchedAssayExperiment}(data = NULL, X = NULL, ...)
 }
 \arguments{
 \item{data}{An object of class \code{MultiAssayExperiment} or similar.
