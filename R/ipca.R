@@ -70,7 +70,7 @@
 #' @name ipca
 NULL
 ## ----------- Internal ----------- 
-.ipca = function(X,
+.ipca = function(X=NULL,
                  ncomp=2,
                  mode=c("deflation", "parallel"),
                  fun=c("logcosh", "exp", "kur"),
