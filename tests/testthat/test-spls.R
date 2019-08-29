@@ -46,7 +46,7 @@ test_that("spls fails with invalid signature and produces appropriate error",{
 
   expect_error(spls(X=Xm_Ya, Y=Ycn,formula = Y~X ))
   expect_condition(spls(X=Y~Z ), regexp = 'must be a numeric matrix')
-  expect_condition(spls(X=NULL, Y=Yam,formula = RNASeq2GeneNorm ~ gistict, data = mae_data ), class = "inv_signature")
+  expect_condition(spls(X=NULL, Y=Yam,formula = RNASeq2GeneNorm ~ gistict, data = mae_data ), class = "ambiguousMethodSelection")
 })
 
 ## ------ correct error with invalid assays
@@ -76,5 +76,5 @@ test_that("spls fails with invalid formula formats and produces expected errors"
 
 ## ------ correct error with non-numeric/factor Y coldata
 test_that("spls fails with invalid Y",{
-  expect_condition(spls(X=Xa , Y=Y_inv , data = mae_data), class = "inv_XY")
+  expect_condition(spls(X=Xa , Y=Y_inv , data = mae_data))
 })

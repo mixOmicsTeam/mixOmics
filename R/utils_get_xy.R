@@ -43,8 +43,8 @@
 #'
 #' @return Adjusted mc to pass to .get_xy
 #' @noRd
-.get_xy_names_from_formula <- function(mc) {
-  .formula_checker(mc, block = isTRUE(mc$block)) ## check formula validity
+.get_xy_names_from_formula <- function(mc, block=FALSE) {
+  .formula_checker(mc, block = block) ## check formula validity
   ## esnure X and Y are NULL
   if ( !(is.null(mc$X) && is.null(mc$Y)) )
     .stop(message = "Where 'data' and 'formula' are provided 'X' and 'Y' should be NULL.", 
@@ -56,6 +56,24 @@
   mc
 }
 
+## ------------------------------------------------ ##
+#' Given a formula of matrices, get X and Y
+#'
+#' @param mc A match.call
+#' @param DA Logical, TRUE if DA analysis
+#' @param block Logical, TRUE if block analysis
+#'
+#' @return Adjusted mc to pass to internal
+#' @noRd
+.get_xy_from_formula <- function(mc, DA=FALSE, block=FALSE) {
+
+  .formula_checker(mc = mc, block = block) ## check formula validity
+  mf <- stats::model.frame(mc$formula) ## THANK YOU stats::model.frame *cries*
+  mc$Y <- mf[[1]]
+  if (isFALSE(DA)) mc$Y <- as.matrix(mc$Y)
+  mc$X <- as.matrix(mf[[2]])
+  mc$data <- mc$formula <- NULL 
+}
 ## ------------------------------------------------ ##
 ## Given data in mc, get X and Y from assay/colData for PLS and PLSDA family
 ## First, we'll define a function that assumes X and Y are given
@@ -71,7 +89,7 @@
   
   ## if formula given, check and get names
   if (!is.null(mc$formula)) {
-    mc <- .get_xy_names_from_formula(mc)
+    mc <- .get_xy_names_from_formula(mc= mc, block = block)
   }
   
   ## if a X is list, unlist it

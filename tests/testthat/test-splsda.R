@@ -43,7 +43,7 @@ test_that("splsda fails with invalid signature and produces appropriate error",{
   
   expect_error(splsda(X=Xm_Ya, Y=Ycn,formula = Y~X ), class = "inv_signature")
   expect_condition(splsda(formula=Y~Z), regexp = 'not found')
-  expect_condition(splsda(X=NULL, Y=Yam,formula = RNASeq2GeneNorm ~ gistict, data = mae_data ), class = "inv_signature")
+  expect_condition(splsda(X=NULL, Y=Yam,formula = RNASeq2GeneNorm ~ gistict, data = mae_data ), class = "ambiguousMethodSelection")
 })
 
 ## ------ correct error with invalid assays
@@ -69,11 +69,6 @@ test_that("splsda fails with invalid formula formats and produces expected error
 test_that("splsda fails with invalid formula formats and produces expected errors",{
   expect_condition(splsda(formula = Y~U), class = "simpleError")
   expect_condition(splsda(data = mae_data, formula = foo~bar), class = "inv_XY")
-})
-
-## ------ correct error with non-numeric/factor Y coldata
-test_that("splsda fails with invalid Y",{
-  expect_condition(splsda(X=Xa , Y=Y_inv , data = mae_data), class = "inv_XY")
 })
 
 ## ------ correct error with legacy code
