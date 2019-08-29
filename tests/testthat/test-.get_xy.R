@@ -8,3 +8,21 @@ test_that(".get_xy works", {
   expect_true(is(.get_xy(mc = list(data = mae_data, X = Xa, Y = Ya))$X, "matrix"))
   expect_error(object = .get_xy(mc = list(data = mae_data, X=Xa, Y=Ya), DA=TRUE), class = "inv_XY")
 })
+
+
+context(".get_x")
+## TODO more descriptive and segmented tests for all functions
+test_that(".get_x creates a matrix of assay given assay name and data", {
+  get_x.res <- .get_x(mc = list(data = mae_data, X = names(experiments(mae_data))[1]))
+  expect_true(is(get_x.res$X, "matrix"))
+})
+
+test_that(".get_x fails with correct class with invalid assay name", {
+  expect_error(object = .get_x(mc = list(data = mae_data, X = "foo")), class = "inv_XY")
+})
+test_that(".get_x fails with correct class with assay length > 1", {
+  expect_error(object = .get_x(mc = list(data = mae_data, X = names(experiments(mae_data))[1:2])), class = "inv_XY")
+})
+test_that(".get_x fails with correct class with non-character assay", {
+  expect_error(object = .get_x(mc = list(data = mae_data, X = assay(mae_data,1))), class = "inv_XY")
+})
