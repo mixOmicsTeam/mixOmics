@@ -341,3 +341,18 @@ setMethod("pca", "MultiAssayExperiment", function(data=NULL, X=NULL, ...){
    .call_return(result, mc$ret.call,
                 mcr = match.call(), fun.name = 'pca')
 })
+
+#### MatchedAssayExperiment ####
+#' @export
+#' @rdname pca
+setMethod("pca", "MatchedAssayExperiment", function(data=NULL, X=NULL, ...){
+   ## evaluate matched call with defaults
+   mget(names(formals()), sys.frame(sys.nframe()))
+   mc <- match.call()
+   mc[-1] <- lapply(mc[-1], eval.parent)
+   ## pipeline to adjust and send the method args to the internal
+   result <- .pcaMethodsHelper(mc, fun = 'pca')
+   ## if asked, append the evaluted args to the output list
+   .call_return(result, mc$ret.call,
+                mcr = match.call(), fun.name = 'pca')
+})

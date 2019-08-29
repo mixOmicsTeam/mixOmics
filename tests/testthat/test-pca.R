@@ -9,6 +9,11 @@ test_that('pca results for nutrimouse are the same when
   expect_identical(pca.res1[-1], pca.res2[-1])
 })
 
+test_that('pca works with MatchedAssayExperiment',{
+            pca.res2 <- pca(data = MatchedAssayExperiment(nutrimouse.mae) , X = "lipid", ret.call = TRUE)
+            expect_true(is(pca.res2, "pca"))
+          })
+
 test_that('assay can be input as a variables',{
   pca.res1 <- pca(X = nutrimouse$lipid)
   pca.assay <- 'lipid'
