@@ -9,7 +9,7 @@ test_that('ipca results for nutrimouse are the same when using either list or MA
 
 test_that('ipca returns appropriate error for invalid assay/data',{
   ## expect error
-  expect_error(ipca(data = nutrimouse.mae, X = "not-an-assay"), class = "inv_assay")
+  expect_error(ipca(data = nutrimouse.mae, X = "not-an-assay"), class = "inv_XY")
   expect_error(ipca(data = nutrimouse, X = "lipid"), class = "inv_data")
   expect_error(ipca(X = "lipid"), class = "inv_X")
 })

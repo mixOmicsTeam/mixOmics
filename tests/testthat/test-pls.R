@@ -64,7 +64,7 @@ test_that("pls fails with invalid signature and produces appropriate error",{
 
   expect_error(pls(X=Xm_Ya, Y=Ycn,formula = Y~X ), class = "inv_signature")
   expect_condition(pls(X=Y~Z), regexp = 'must be a numeric matrix')
-  expect_condition(pls(X=NULL, Y=Yam,formula = RNASeq2GeneNorm ~ gistict, data = mae_data ), class = "inv_signature")
+  expect_condition(pls(X=NULL, Y=Yam,formula = RNASeq2GeneNorm ~ gistict, data = mae_data ), class = "ambiguousMethodSelection")
 })
 
 ## ------ correct error with invalid assays
@@ -92,7 +92,7 @@ test_that("pls fails with invalid formula formats and produces expected errors",
 
 ## ------ correct error with non-numeric/factor Y coldata
 test_that("pls fails with invalid Y",{
-  expect_condition(pls(X=Xa , Y=Y_inv , data = mae_data), class = "inv_XY")
+  expect_error(pls(X=Xa , Y=Y_inv , data = mae_data))
 })
 
 ## ------ correct error with legacy code

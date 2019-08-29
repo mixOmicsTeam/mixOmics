@@ -28,7 +28,7 @@
                           numeric matrix (or name of such an assay from 'data') and X is a
                           list of numeric matrices (or assay names)") .stop(.subclass = "inv_formula", msg)
 ## ----------- for invalid X/Y
-.inv_assay <- function(msg="invalid assay/colData name(s).") .stop(.subclass = "inv_assay", msg)
+.inv_assay <- function(msg="invalid assay/colData name(s).") .stop(.subclass = "inv_XY", msg)
 
 ## ----------- .warning ----------- 
 ## custom warnings with specified class

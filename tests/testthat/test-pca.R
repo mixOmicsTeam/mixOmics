@@ -19,7 +19,7 @@ test_that('assay can be input as a variables',{
 test_that('pca returns appropriate error for invalid assay/data',{
   ## expect error
   expect_error(pca(data = nutrimouse.mae, X = "not-an-assay"), 
-               class = "inv_assay")
+               class = "inv_XY")
   expect_error(pca(data = nutrimouse, X = "lipid"), class = "inv_data")
   expect_error(pca(X = "lipid"), class = "inv_X")
 })
@@ -28,7 +28,7 @@ test_that('pca entry checker works',{
   pca.res1 <- pca(X = nutrimouse$lipid)
   ## expect error
   expect_error(pca(data = nutrimouse.mae, X = "not-an-assay"), 
-               class = "inv_assay")
+               class = "inv_XY")
   expect_error(pca(data = nutrimouse, X = "lipid"), class = "inv_data")
   expect_error(pca(X = "lipid"), class = "inv_X")
 })

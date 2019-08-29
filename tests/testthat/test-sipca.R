@@ -16,7 +16,7 @@ test_that('assay name can be input as a variable',{
 
 test_that('sipca returns appropriate error for invalid assay/data',{
   ## expect error
-  expect_error(sipca(data = nutrimouse.mae, X = "not-an-assay", ncomp = 2,  keepX = c(5,5)), class = "inv_assay")
+  expect_error(sipca(data = nutrimouse.mae, X = "not-an-assay", ncomp = 2,  keepX = c(5,5)), class = "inv_XY")
   expect_error(sipca(data = nutrimouse, X = "lipid", ncomp = 2, keepX = c(5,5)), class = "inv_data")
   expect_error(sipca(X = "lipid"), class = "inv_X")
 })
