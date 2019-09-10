@@ -543,8 +543,10 @@ cpus,
     }
     
     class.object=class(object)
-    if(!missing(cpus))
-    clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
+    if(!missing(cpus)) {
+        if (class.object)
+        clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","keepX"),envir=environment())
+    }
 
     for (comp in 1 : ncomp)
     {
