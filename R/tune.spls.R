@@ -246,7 +246,7 @@ cpus
 
         class.object="mixo_spls"
         if(!missing(cpus))
-        clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX", "test.keepY"),envir=environment())
+        clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
 
         # successively tune the components until ncomp: comp1, then comp2, ...
         for(comp in seq_len(length(comp.real)))
