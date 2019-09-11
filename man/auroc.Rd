@@ -45,7 +45,8 @@ analysis function: "plsda", "splsda", "mint.plsda", "mint.splsda", "block.splsda
 \item{roc.comp}{Specify the component (integer) for which the ROC will be plotted from the multivariate model, default to 1.}
 \item{roc.block}{Specify the block number (integer) or the name of the block (set of characters) for which the ROC will be plotted for a block.plsda or block.splsda object, default to 1.}
 \item{roc.study}{Specify the study for which the ROC will be plotted for a mint.plsda or mint.splsda object, default to "global".}
-\item{...}{external optional arguments for plotting}
+\item{title}{Character, specifies the title of the plot.}
+\item{...}{external optional arguments for plotting - \code{line.col} for custom colors and \code{legend.title} for custom legend title}
 }
 
 \details{
@@ -127,13 +128,13 @@ design = matrix(c(0,1,1,0), ncol = 2, nrow = 2,
 byrow = TRUE, dimnames = list(names(data), names(data)))
 
 block.plsda.nutri = block.plsda(X = data, Y = nutrimouse$diet)
-auc.block.plsda.nutri = auroc(block.plsda.nutri, block = 'lipid')
+auc.block.plsda.nutri = auroc(block.plsda.nutri, roc.block = 'lipid')
 
 ## example with block.splsda
 # ---------------
 list.keepX = list(gene = rep(10, 2), lipid = rep(5,2))
 block.splsda.nutri = block.splsda(X = data, Y = nutrimouse$diet, keepX = list.keepX)
-auc.block.splsda.nutri = auroc(block.splsda.nutri, block = 1)
+auc.block.splsda.nutri = auroc(block.splsda.nutri, roc.block = 1)
 }
 }
 
