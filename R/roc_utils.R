@@ -24,7 +24,7 @@
 #############################################################################################################
 
 
-statauc <- function(data = NULL, plot = FALSE, title = NULL){
+statauc <- function(data = NULL, plot = FALSE, title = NULL, line.col = NULL, legend.title = NULL){
   res.predict = data$data; outcome = data$outcome
   
   
@@ -92,6 +92,17 @@ statauc <- function(data = NULL, plot = FALSE, title = NULL){
       title=title
     p = ggplot(df, aes(x=Specificity, y=Sensitivity, group = Outcome, colour = Outcome)) + xlab("100 - Specificity (%)") + ylab("Sensitivity (%)") + geom_line(size = 1.5) + scale_x_continuous(breaks=seq(0, 100, by = 10)) + scale_y_continuous(breaks=seq(0, 100, by = 10))
     p = p + geom_abline(intercept = 1) + theme(legend.key.size = unit(1.5, "cm"), plot.title = element_text(lineheight=.8, face="bold"), legend.title = element_text(size=14, face="bold")) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5))
+    
+    if (!is.null(line.col)) {
+      lc <- length(unique(df$Outcome))
+      if ( !identical(lc, length(try(line.col))) ) stop(sprintf("line.col should be character string of length %s", lc))
+      p <- p + scale_color_manual(values = line.col)
+    }
+    
+    if (!is.null(legend.title)) {
+      if ( !is(legend.title, "character" )) stop("lgened.title should be character")
+      p <- p + guides(col = guide_legend(title = legend.title))
+    }
     
     plot(p)
   } else {

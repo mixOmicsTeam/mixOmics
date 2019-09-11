@@ -119,7 +119,6 @@ roc.study = "global",
     for (i in seq_len(object$ncomp))
     {
         data$data=res.predict[,,i]
-        title=paste0("ROC Curve Comp ",i, title.temp)
         temp = statauc(data, plot = ifelse(i%in%roc.comp,plot,FALSE),
         title = title)
         statauc[[paste0("Comp", i, sep = "")]] = temp[[1]]
