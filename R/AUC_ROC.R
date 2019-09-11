@@ -38,6 +38,7 @@ outcome.test = as.factor(object$Y),
 multilevel = NULL,
 plot = TRUE,
 roc.comp = 1,
+title=paste("ROC Curve Comp",roc.comp),
 ...)
 {
     if(dim(newdata)[[1]] != length(outcome.test))
@@ -55,9 +56,7 @@ roc.comp = 1,
     for (i in seq_len(object$ncomp))
     {
         data$data=res.predict[,,i]
-        title=paste("ROC Curve Comp",i)
-        temp = statauc(data, plot = ifelse(i%in%roc.comp,plot,FALSE),
-        title = title)
+        temp = statauc(data, plot = ifelse(i%in%roc.comp,plot,FALSE), title=title,...)
         statauc[[paste0("Comp", i, sep = "")]] = temp[[1]]
         graph[[paste0("Comp", i, sep = "")]] = temp$graph
     }
@@ -77,6 +76,7 @@ multilevel = NULL,
 plot = TRUE,
 roc.comp = 1,
 roc.study = "global",
+title=NULL,
 ...)
 {
     if(length(roc.study) != 1)
@@ -119,9 +119,12 @@ roc.study = "global",
     for (i in seq_len(object$ncomp))
     {
         data$data=res.predict[,,i]
-        title=paste0("ROC Curve Comp ",i, title.temp)
-        temp = statauc(data, plot = ifelse(i%in%roc.comp,plot,FALSE),
-        title = title)
+        
+        if (is.null(title)) {
+            title=paste0("ROC Curve Comp ",i, title.temp)
+        }
+        
+        temp = statauc(data, plot = ifelse(i%in%roc.comp,plot,FALSE), title=title,...)
         statauc[[paste0("Comp", i, sep = "")]] = temp[[1]]
         graph[[paste0("Comp", i, sep = "")]] = temp$graph
     }
@@ -139,8 +142,9 @@ newdata = object$X,
 outcome.test = as.factor(object$Y),
 multilevel = NULL,
 plot = TRUE,
-roc.block = 1,
-roc.comp = 1,
+roc.block = 1L,
+roc.comp = 1L,
+title=NULL,
 ...)
 {
     
@@ -152,20 +156,32 @@ roc.comp = 1,
     res.predict  =  predict.block.spls(object, newdata = newdata,
         dist = "max.dist", multilevel = multilevel)$predict
     block.all = names(res.predict)
-    block.temp = names(res.predict[roc.block])
-    
+    if (is(roc.block, "numeric")) {
+        roc.block <- as.integer(roc.block)
+        lb <- length(names(res.predict))
+        if (roc.block > lb)
+            stop(sprintf("roc.block cannot be greater than %s", lb ))
+        block.temp = names(res.predict[roc.block])
+    } else if (is(roc.block, "character")) {
+        block.temp = roc.block 
+    } else {
+        stop("'roc.block' should be an integer or character")
+    }
+    title.temp = title
     for(j in seq_len(length(res.predict)))
     {
         for (i in seq_len(object$ncomp[j]))
         {
             data$data=res.predict[[j]][,,i]
-            title=paste("ROC Curve\nBlock: ", names(res.predict)[j],
-                ", comp: ",i, sep="")
+            if (is.null(title.temp)) {
+                title=paste("ROC Curve\nBlock: ", names(res.predict)[j],
+                            ", comp: ",i, sep="")
+            }
             
             plot.temp =
                 ifelse(i%in%roc.comp && names(res.predict)[j]%in%block.temp,
                 plot, FALSE)
-            temp = statauc(data, plot = plot.temp, title = title)
+            temp = statauc(data, plot = plot.temp, title = title, ...)
             auc.mean[[names(res.predict)[j]]][[paste0("comp",i,sep = "")]] =
                 temp[[1]]
             graph[[names(res.predict)[j]]][[paste0("comp",i,sep = "")]] =
@@ -183,13 +199,13 @@ roc.comp = 1,
 auroc.mint.block.splsda=auroc.mint.block.plsda = function(
 object,
 newdata = object$X,
-
 study.test = object$study,
 outcome.test = as.factor(object$Y),
 multilevel = NULL,
 plot = TRUE,
 roc.block = 1,
 roc.comp = 1,
+title=NULL,
 ...)
 {
     
@@ -209,13 +225,15 @@ roc.comp = 1,
         for (i in seq_len(object$ncomp[j]))
         {
             data$data=res.predict[[j]][,,i]
-            title=paste("ROC Curve\nBlock: ", names(res.predict)[j],
-            ", comp: ",i, sep="")
-            
+            if (is.null(title)) {
+                title=paste("ROC Curve\nBlock: ", names(res.predict)[j],
+                            ", comp: ",i, sep="")
+            }
+
             plot.temp =
                 ifelse(i%in%roc.comp && names(res.predict)[j]%in%block.temp,
                 plot, FALSE)
-            temp = statauc(data, plot = plot.temp, title = title)
+            temp = statauc(data, plot = plot.temp, title = title, ...)
             auc.mean[[names(res.predict)[j]]][[paste0("comp",i,sep = "")]] =
                 temp[[1]]
             graph[[names(res.predict)[j]]][[paste0("comp",i,sep = "")]] =
