@@ -82,7 +82,7 @@ X <- breast.tumors$gene.exp
 Y <- breast.tumors$sample$treatment
 
 plsda.breast <- plsda(X, Y, ncomp = 2)
-auc.plsda.breast = auroc(plsda.breast, ncomp = 1)
+auc.plsda.breast = auroc(plsda.breast, roc.comp = 1)
 
 \dontrun{
 ## example with sPLSDA
@@ -100,7 +100,7 @@ X <- as.matrix(liver.toxicity$gene)
 Y <- as.factor(liver.toxicity$treatment[, 4])
 
 splsda.liver <- splsda(X, Y, ncomp = 2, keepX = c(20, 20))
-auc.splsda.liver = auroc(splsda.liver, ncomp = 1)
+auc.splsda.liver = auroc(splsda.liver, roc.comp = 1)
 
 
 ## example with mint.plsda
