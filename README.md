@@ -58,24 +58,24 @@ library(mixOmics)
 #> Loaded mixOmics ?.?.?
 ```
 
-## Community
+## Contribution
 
-### Contributions
-
-We welcome contributions that respect [our code of
+We welcome community contributions concordant with [our code of
 conduct](https://github.com/mixOmicsTeam/mixOmics/blob/master/CODE_OF_CONDUCT.md).
-We also strongly recommend adhering to [Bioconductor’s coding
-guidelines](https://bioconductor.org/developers/how-to/coding-style/) when possible, for
-software consistency and smooth integration in our package. Thank you\!
+We strongly recommend adhering to [Bioconductor’s coding
+guide](https://bioconductor.org/developers/how-to/coding-style/) for
+software consistenncy.
 
 ### Bug reports and pull requests
 
-To report a bug (or to offer a solution for a bug\!):
-<https://github.com/mixOmicsTeam/mixOmics/issues>. We welcome well-formatted and detailed pull requests with examples run on our datasets.
+To report a bug (or offer a solution for a bug\!):
+<https://github.com/mixOmicsTeam/mixOmics/issues>. We fully welcome and
+appreciate well-formatted and detailed pull requests. Preferrably with
+tests on our datasets.
 
 ### Discussion forum
 
-We wish to make our discussions transparent! Direct your
+We wish to make our discussions transparent so please direct your
 questions to our discussion forum
 <https://mixomics-users.discourse.group>. This forum is aimed to host
 discussions on choices of multivariate analyses, bug report as well as
@@ -136,3 +136,19 @@ Thank you for using
 `mixOmics`\!
 
 ![](http://mixomics.org/wp-content/uploads/2012/04/framework-mixOmics-June2016.jpg)
+
+## What’s New
+
+#### September 2019
+
+  - **You can now customise `auroc` plots in version 6.8.3**
+
+You can find an example in
+[here](https://github.com/mixOmicsTeam/mixOmics/issues/35).
+
+#### August 2019
+
+  - **The infamous `plot.perf` bug has been fixed in version 6.8.2**
+
+You can find the details and an example in
+[here](https://github.com/mixOmicsTeam/mixOmics/issues/27).

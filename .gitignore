@@ -22,6 +22,7 @@ README.html
 
 ## override ignores for these
 !README.md
+!NEWS.md
 !CODE_OF_CONDUCT.md
 !data/*
 !vignettes/*
@@ -33,3 +34,5 @@ README.html
 .Ruserdata
 *.Rproj
 .DS_Store
+
+inst/*.html

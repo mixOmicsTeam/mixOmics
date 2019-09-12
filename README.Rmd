@@ -1,9 +1,14 @@
 ---
 output: github_document
+description: |
+  "This file creates README.md, README.md MUST NOT BE CHANGED MANUALLY"
+  "The last chunk includes the What's New file, can safely be excluded by eval=FALSE"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+library(knitr)
+opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, fig.path = "./inst/whatsnew-files/", fig.asp = 1, out.width = "50%", cache = FALSE)
+opts_knit$set( cache.path = "./inst/whatsnew-files/")
 ```
 
 ![](http://mixomics.org/wp-content/uploads/2019/07/MixOmics-Logo-1.png)
@@ -90,3 +95,5 @@ Thank you for using `mixOmics`!
 
 ![](http://mixomics.org/wp-content/uploads/2012/04/framework-mixOmics-June2016.jpg)
 
+```{r, eval=TRUE, child = './inst/README-WhatsNew.Rmd'}
+```

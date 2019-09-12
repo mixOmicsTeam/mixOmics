@@ -1,0 +1,34 @@
+---
+description: |
+  "This is a child document for README.Rmd to isolate What's New updates (last section of README)"
+  "see README.Rmd's last chunk"
+  "No need to knot this. Knitting README will automatically include this"
+  "The html style is also stored only in this file"
+---
+
+```{r setup-news, include=FALSE}
+library(knitr)
+opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE)
+```
+
+
+```{r, echo=FALSE, eval=FALSE, message='hide', fig.asp=1, out.width="50%"}
+## template chunk - don't change/delete
+```
+
+## What's New
+
+#### September 2019
+
+  * **You can now customise `auroc` plots in version 6.8.3**
+
+You can find an example in [here](https://github.com/mixOmicsTeam/mixOmics/issues/35).
+
+####  August 2019
+
+  * **The infamous `plot.perf` bug has been fixed in version 6.8.2**
+
+You can find the details and an example in [here](https://github.com/mixOmicsTeam/mixOmics/issues/27).
+
+
+
