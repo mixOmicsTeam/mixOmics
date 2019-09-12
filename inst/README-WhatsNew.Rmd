@@ -1,9 +1,8 @@
 ---
 description: |
   "This is a child document for README.Rmd to isolate What's New updates (last section of README)"
-  "see README.Rmd's last chunk"
-  "No need to knot this. Knitting README will automatically include this"
-  "The html style is also stored only in this file"
+  "see README.Rmd's last chunk."
+  "No need to knit this. Knitting README will automatically include this."
 ---
 
 ```{r setup-news, include=FALSE}
