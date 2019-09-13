@@ -16,21 +16,21 @@ Calculates the AUC and plots ROC for supervised objects from s/plsda, mint.s/pls
 
 \usage{
 \method{auroc}{mixo_plsda}(object, newdata = object$input.X, outcome.test = as.factor(object$Y),
-multilevel = NULL, plot = TRUE, roc.comp = 1, ...)
+multilevel = NULL, plot = TRUE, roc.comp = 1, title=paste("ROC Curve Comp",roc.comp), ...)
 
 \method{auroc}{mixo_splsda}(object, newdata = object$input.X, outcome.test = as.factor(object$Y),
-multilevel = NULL, plot = TRUE, roc.comp = 1, ...)
+multilevel = NULL, plot = TRUE, roc.comp = 1, title=paste("ROC Curve Comp",roc.comp), ...)
 
 \method{auroc}{mint.plsda}(object, newdata = object$X, outcome.test = as.factor(object$Y),
 study.test = object$study, multilevel = NULL,plot = TRUE, roc.comp = 1,
-roc.study = "global", ...)
+roc.study = "global", title=NULL, ...)
 
 \method{auroc}{mint.splsda}(object, newdata = object$X, outcome.test = as.factor(object$Y),
 study.test = object$study, multilevel = NULL,plot = TRUE, roc.comp = 1,
-roc.study = "global", ...)
+roc.study = "global", title=NULL, ...)
 
 \method{auroc}{sgccda}(object, newdata = object$X, outcome.test = as.factor(object$Y),
-multilevel = NULL,plot = TRUE, roc.block = 1, roc.comp = 1, ...)
+multilevel = NULL,plot = TRUE, roc.block = 1, roc.comp = 1, title=NULL, ...)
 
 }
 

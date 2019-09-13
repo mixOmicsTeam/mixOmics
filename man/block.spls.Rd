@@ -131,8 +131,9 @@ plotIndiv(TCGA.block.spls, group =  breast.TCGA$data.train$subtype, ind.names = 
 # illustrates coefficient weights in each block
 plotLoadings(TCGA.block.spls, ncomp = 1)
 plotVar(TCGA.block.spls, style = 'graphics', legend = TRUE)
+\dontrun{
 network(TCGA.block.spls)
-
+}
 }
 
 \keyword{regression}
