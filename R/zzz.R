@@ -24,10 +24,11 @@
 #############################################################################################################
 
 
-.onAttach <- function(libname, pkgname){ packageStartupMessage(
-    "Thank you for using mixOmics!\n",
-    "Tutorials: http://mixomics.org, Bookdown vignette: https://mixomicsteam.github.io/Bookdown/",
-    "\nQuestions, issues: Follow the prompts at http://mixomics.org/contact-us/",
-    "\nCite us:  citation('mixOmics')"
+.onAttach <- function(libname, pkgname){ packageStartupMessage( "\nLoaded mixOmics ", as.character(packageDescription("mixOmics")[["Version"]]),
+    "\nThank you for using mixOmics!",
+    "\nTutorials: http://mixomics.org",
+    "\nBookdown vignette: https://mixomicsteam.github.io/Bookdown",
+    "\nQuestions, issues: Follow the prompts at http://mixomics.org/contact-us",
+    "\nCite us:  citation('mixOmics')\n"
     
 )}
