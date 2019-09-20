@@ -143,7 +143,6 @@ signif.threshold=0.01,
         if (progressBar ==  TRUE)
         {
             pb = txtProgressBar(style = 3)
-            nBar = 1
         } else {
             pb = FALSE
         }
