@@ -60,7 +60,7 @@ point.lwd = 1, ... )
 \item{object}{object of class inherited from any \pkg{mixOmics}:  \code{PLS, sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA}}
 \item{comp}{integer vector of length two (or three to 3d). The components that will be used on the horizontal
 and the vertical axis respectively to project the individuals.}
-\item{rep.space}{For objects inherited from \code{"rcc"}, \code{"pls"}, \code{"spls"}, character string, (partially) matching one of \code{"X-variate"}, \code{"Y-variate"} ,or \code{"XY-variate"}, determining the subspace to project the individuals. Defaults to \code{"X-variate"} \code{"pca"} object and for \code{"plsda"} objects. For objects of class \code{"pls"} and \code{"rcc"},defaults, the tree subspaces  represent the individuals. For objects of class \code{"rgcca"} and \code{"sgcca"}, numerical value indicating the block data set form which to represent the individuals.}
+\item{rep.space}{For objects of class \code{"pca", "plsda", "plsda"} default is \code{"X-variate"}.  For the objects of class \code{"pls", "rcc"} default is a panel plot representing each data subspace. For objects of class \code{"rgcca"} and \code{"sgcca"}, numerical value(s) indicating the block data set to represent needs to be specified.}
 
 \item{blocks}{integer value of name of a block to be plotted using the GCCA module. See examples.}
 \item{study}{Indicates which study-specific outputs to plot. A character vector containing some levels of \code{object$study}, "all.partial" to plot all studies or "global" is expected. Default to "global".}
@@ -145,7 +145,7 @@ X <- nutrimouse$lipid
 Y <- nutrimouse$gene
 nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
 
-# default, only in the X space
+# default, panel plot for X and Y subspaces
 plotIndiv(nutri.res)
 
 
