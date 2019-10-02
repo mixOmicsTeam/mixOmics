@@ -1,3 +1,37 @@
+## version 6.8.5
+
+### new features / enhancements
+
+* 
+
+### bug fixes
+
+* names of `linnerud` datasets fixed.
+
+### minor improvements
+
+* 
+
+-------------------------------------------------------------------------------
+
+## version 6.8.4
+
+### new features / enhancements
+
+* 
+
+### bug fixes
+
+* 
+
+### minor improvements
+
+* package startup message with direct liks to useful resources
+* `mixOmics` function documentation disambiguated with instruction on how to get
+package help.
+
+-------------------------------------------------------------------------------
+
 ## version 6.8.3
 
 ### new features / enhancements
@@ -6,11 +40,12 @@
 
 ### bug fixes
 
-* Fixed `tune.spls` and `pef.plsda` bugs when using `cpus` argument for parallel processing
+* Fixed `tune.spls` and `pef.plsda` bugs when using `cpus` argument for parallel 
+processing
 
 ### minor improvements
 
-* 
+* `auroc` help files now updated with latest changes
 
 -------------------------------------------------------------------------------
 
