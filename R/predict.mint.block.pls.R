@@ -328,7 +328,16 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
                         
                     }else{
                     # case 2: sample test is a new study # a new study which was not in the learning set
-                        newdata.list.study.scale.temp=scale(newdata.list.study[[j]][[m]],center=TRUE,scale=scale)
+                        if (J>1){ 
+                            newdata.list.study.scale.temp=scale(newdata.list.study[[j]][[m]],center=TRUE,scale=scale)
+                        } else { ## if it's one sample from a new study do not scale and create a warning
+                            
+                            if( scale == TRUE )
+                                warning("Train data are scaled but test data is a single sample from a new study (which cannot be scaled). Using unscaled new data for prediction instead. Consider scale=FALSE for model, or using more samples for prediction, or using a sample from model studies. ")
+                                    
+                            newdata.list.study.scale.temp = newdata.list.study[[j]][[m]]
+
+                        }
                     }
                     #concatenation of the scaled data
                     concat.newdata[[j]] = rbind(concat.newdata[[j]], unlist(newdata.list.study.scale.temp))#[[j]][[m]]))
@@ -343,6 +352,9 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
                 concat.newdata[[j]]=concat.newdata[[j]][indice.match,]
                 concat.newdata[[j]][which(is.na(concat.newdata[[j]]))]=0 # taking care of the NA due to normalisation: put to 0 so they don't influence the product below (in Y.hat), reviens au meme que de supprimer les colonnes sans variances au depart.
                 
+                ## if only one sample, it would be a numeric which needs to change to matrix
+                if (!is.array(concat.newdata[[j]])) 
+                    concat.newdata[[j]] <- t(concat.newdata[[j]])
             }
             names(concat.newdata)=names(X)
 

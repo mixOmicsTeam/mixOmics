@@ -1,3 +1,19 @@
+## version 6.8.6
+
+### new features / enhancements
+
+* 
+
+### bug fixes
+
+* 
+
+### minor improvements
+
+* `predict` function now supports single sample prediction
+
+-------------------------------------------------------------------------------
+
 ## version 6.8.5
 
 ### new features / enhancements
