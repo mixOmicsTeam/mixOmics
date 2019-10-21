@@ -181,7 +181,7 @@ xlim = NULL,
                 {
                     par(mar = c(5, 0, 4, 3) + 0.1)
                     plot(1,1, type = "n", axes = FALSE, ann = FALSE)
-                    legend(0.8, 1, col = legend.color[1:nlevels(Y)], legend = levels(Y), pch = 19,
+                    legend(0.8, 1.1, col = legend.color[1:nlevels(Y)], legend = levels(Y), pch = 19,
                     title = paste(legend.title),
                     cex = size.legend)
                 }
