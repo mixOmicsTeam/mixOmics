@@ -6,11 +6,10 @@
 
 ### bug fixes
 
-* 
+* `predict` function bug for single sample prediction fixed
 
 ### minor improvements
 
-* `predict` function now supports single sample prediction
 * missing values in `plotIndiv`'s `group` argument no more throw error
 
 -------------------------------------------------------------------------------
