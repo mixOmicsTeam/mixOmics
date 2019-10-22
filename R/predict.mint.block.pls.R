@@ -331,7 +331,7 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
                         
                         ## if there is one sample from a new study to be scaled throw a condition and do not scale
                         if (scale == TRUE & dim(newdata.list.study[[j]][[m]])[1] == 1 ) {
-                            warning("\n\nTrain data are scaled but the test data include a single sample from a new study (which cannot be scaled). Mkaing prediction without scaling this test sample and thus prediction for this sample should be given with care. Consider scale=FALSE for model, or using more samples for prediction, or using a sample from model studies.\n\n")
+                            warning("Train data are scaled but the test data include a single sample from a new study (which cannot be scaled). Mkaing prediction without scaling this test sample and thus prediction for this sample should be given with care. Consider scale=FALSE for model, or using more samples for prediction, or using a sample from model studies.\n")
                             newdata.list.study.scale.temp = newdata.list.study[[j]][[m]]
                         } else {
                             newdata.list.study.scale.temp=scale(newdata.list.study[[j]][[m]],center=TRUE,scale=scale)
