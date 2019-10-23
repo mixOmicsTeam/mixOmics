@@ -1,28 +1,13 @@
 ## version 6.8.5
 
-### new features / enhancements
-
-* 
-
 ### bug fixes
 
 * names of `linnerud` datasets fixed.
 
-### minor improvements
-
-* 
 
 -------------------------------------------------------------------------------
 
 ## version 6.8.4
-
-### new features / enhancements
-
-* 
-
-### bug fixes
-
-* 
 
 ### minor improvements
 
@@ -51,14 +36,6 @@ processing
 
 ## version 6.8.2
 
-### new features / enhancements
-
-* 
-
-### bug fixes
-
-* 
-
 ### minor improvements
 
 * Updated onLoad message with discussion forum info, bug reports, and more
@@ -67,10 +44,6 @@ processing
 -------------------------------------------------------------------------------
 
 ## version 6.8.1
-
-### new features / enhancements
-
-* 
 
 ### bug fixes
 
