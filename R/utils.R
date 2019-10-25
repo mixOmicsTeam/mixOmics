@@ -15,7 +15,7 @@
 #' @examples
 #' .trim_long_names(var_names = c("long-variable-name-of-length-31", "short-variable"))
 #' @noRd
-.trim_long_names <- function(var_names=c("long-variable-name-of-length-31", "short-variable"), len=23) {
+.trim_long_names <- function(var_names=NULL, len=23) {
     if (any(nchar(var_names) > len)) {
         message(sprintf("Some variable names are too long. Trimmed for visualisation purposes."))
                 
