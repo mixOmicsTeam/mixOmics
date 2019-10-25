@@ -160,10 +160,10 @@ legend = TRUE)
             simMatList[[i]][[j]] = cord[[i]] %*% t(cord[[j]])
         }
     }
-    corMat = do.call(rbind, lapply(simMatList, function(i) do.call(cbind, i)))
+    simMat = do.call(rbind, lapply(simMatList, function(i) do.call(cbind, i)))
     
     ## Expression levels
-    Xdat = as.data.frame(do.call(cbind, X)[, colnames(corMat)])
+    Xdat = as.data.frame(do.call(cbind, X)[, colnames(simMat)])
     
     AvgFeatExp0 = Xdat %>% mutate(Y = Y) %>% gather(Features, Exp, -Y) %>%
     group_by(Y, Features) %>% dplyr::summarise(Mean = mean(Exp), SD = sd(Exp))
@@ -174,7 +174,7 @@ legend = TRUE)
     #Generate a circular plot (circos like) from a correlation matrix (pairwise)
     #
     # Args:
-    #   corMat: the main correlation matrix.
+    #   simMat: the main correlation matrix.
     #         -> colnames == rownames (pairwise)  values = correlations
     #   featExp: data.frame holding the expression data.
     #   cutoff: minimum value for correlations (<threshold will be ignored)
@@ -193,7 +193,7 @@ legend = TRUE)
     db = data.frame(db)
     
     # 2) Generate Links
-    links = genLinks(chr, corMat, threshold=cutoff)
+    links = genLinks(chr, simMat, threshold=cutoff)
     if (nrow(links) < 1)
     warning("Choose a lower correlation threshold to highlight
     links between datasets")
@@ -286,7 +286,7 @@ legend = TRUE)
         col = "black", cex=size.legend, bty = "n")
     }
     par(xpd=opar,mar=opar1)# put the previous defaut parameter for xpd
-    return(invisible(corMat))
+    return(invisible(simMat))
 }
 
 drawIdeogram = function(R, xc=400, yc=400, cir, W,
@@ -584,7 +584,7 @@ genChr =function (expr, bandWidth = 1.0, color.blocks)
     return(seg.out) 
 }
 
-genLinks = function(chr, corMat, threshold)
+genLinks = function(chr, simMat, threshold)
 {
     
     # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
@@ -595,7 +595,7 @@ genLinks = function(chr, corMat, threshold)
     #
     # Args:
     #   chr: ideogram structure (generated from genChr)
-    #   corMat: main correlation matrix
+    #   simMat: main correlation matrix
     #   threshold: minimum correlation value
     #
     # Return:
@@ -603,7 +603,7 @@ genLinks = function(chr, corMat, threshold)
     #
     linkList = c() 
     # Remove matrix diagonal and the the mat in a list
-    linkList = subset(melt(corMat), Var1!=Var2 ) 
+    linkList = subset(melt(simMat), Var1!=Var2 ) 
     # Remove links below the threshold
     linkList = subset(linkList, abs(linkList$value) >= threshold) 
     
