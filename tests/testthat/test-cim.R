@@ -37,6 +37,16 @@ test_that("CIM works for spls", code = {
     expect_is(cim_res[[1]], "matrix")
 })
 
+test_that("CIM works for spls with X mapping", code = {
+    data(liver.toxicity)
+    X <- liver.toxicity$gene
+    Y <- liver.toxicity$clinic
+    liver.spls <- spls(X, Y, ncomp = 3,
+                       keepX = c(2, 5, 5), keepY = c(10, 10, 10))
+    cim_res <- cim(liver.spls, mapping = "X")
+    expect_is(cim_res[[1]], "matrix")
+})
+
 test_that("CIM works for multilevel", code = {
     data(liver.toxicity)
     repeat.indiv <- c(1, 2, 1, 2, 1, 2, 1, 2, 3, 3, 4, 3, 4, 3, 4, 4, 5, 6, 5, 5,
