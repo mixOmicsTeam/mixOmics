@@ -1,10 +1,10 @@
 \name{network}
 \encoding{UTF-8}
+\alias{network}
 \alias{network.default}
 \alias{network.rcc}
 \alias{network.pls}
 \alias{network.spls}
-\alias{network}
 
 \title{Relevance Network for (r)CCA and (s)PLS regression}
 
