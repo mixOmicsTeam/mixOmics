@@ -320,7 +320,7 @@ cim <-
         if (length(comp) == 1) {
             if (is.null(comp) || !is.numeric(comp) || comp <= 0 || comp > ncomp)
                 stop("invalid value for 'comp'.", call. = FALSE)
-            comp <- c(comp, comp)
+            # comp <- c(comp, comp)
         }
         
         comp <- round(comp)
