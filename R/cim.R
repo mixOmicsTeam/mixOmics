@@ -296,10 +296,10 @@ cim <-
     stop("'mat' has to be a matrix or one of the following object: ",
     paste(object.list, collapse =", "), ".", call. = FALSE)
     
-    #-- if mixOmics class  -------------------------------------
+    #-- if mixOmics class
     if(any(class.object  %in%  object.list))
     {
-        #-- general checks  ----
+        #-- general checks  -------------
         p = ncol(mat$X)
         q = ncol(mat$Y)
         n = nrow(mat$X)
@@ -517,8 +517,7 @@ cim <-
             }
             sample.sideColors = row.sideColors
             
-            #-- clustering ---------------------------------------------------#
-            #-----------------------------------------------------------------#
+            ## ----- DA object
             if(any(class.object %in%  c("mixo_splsda","mixo_plsda",
             'mixo_mlsplsda')))
             {
@@ -578,7 +577,7 @@ cim <-
                 vector of length equal to the number of columns of 'X'.",
                 call. = FALSE)
             }
-            
+            ## ---- clustering ----------------------------------------------
             object = scale(mat$X[, keep.X], center = center, scale = scale)
             col.names = col.names[keep.X]
             
@@ -907,10 +906,11 @@ cim <-
             
             
             if (mat$mode == "canonical") {
+                bisect = mat$variates$X[, comp] + mat$variates$Y[, comp]
                 cord.X = cor(mat$X[, keep.X, drop = FALSE],
-                mat$variates$X[, comp], use = "pairwise")
+                             bisect, use = "pairwise")
                 cord.Y = cor(mat$Y[, keep.Y, drop = FALSE],
-                mat$variates$Y[, comp], use = "pairwise")
+                             bisect, use = "pairwise")
             }
             else {
                 cord.X = cor(mat$X[, keep.X, drop = FALSE],
