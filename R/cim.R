@@ -24,49 +24,50 @@
 ################################################################################
 
 
-# --------------------------------------------
+# -------------------------------------------- #
 # CIM for objects "pca","spca","ipca","sipca","mlsplsda","splsda","plsda","rcc",
 #   "pls","spls","mlspls"
-# --------------------------------------------
-cim =
-function(mat,
-color = NULL,
-row.names = TRUE,
-col.names = TRUE,
-row.sideColors = NULL,
-col.sideColors = NULL,
-row.cex = NULL,
-col.cex = NULL,
-threshold = 0,
-cluster = "both",
-dist.method = c("euclidean", "euclidean"),
-clust.method = c("complete", "complete"),
-cut.tree = c(0, 0),
-transpose = FALSE,
-symkey = TRUE,
-keysize = c(1, 1),
-keysize.label = 1,
-zoom = FALSE,
-title = NULL,
-xlab = NULL,
-ylab = NULL,
-margins = c(5, 5),
-lhei = NULL,
-lwid = NULL,
-comp=NULL,
-center = TRUE,
-scale = FALSE,
-mapping = "XY",
-legend= NULL,
-save = NULL,
-name.save = NULL)
+# -------------------------------------------- #
+cim <-
+    function(mat=NULL,
+             color = NULL,
+             row.names = TRUE,
+             col.names = TRUE,
+             row.sideColors = NULL,
+             col.sideColors = NULL,
+             row.cex = NULL,
+             col.cex = NULL,
+             threshold = 0,
+             cluster = "both",
+             dist.method = c("euclidean", "euclidean"),
+             clust.method = c("complete", "complete"),
+             cut.tree = c(0, 0),
+             transpose = FALSE,
+             symkey = TRUE,
+             keysize = c(1, 1),
+             keysize.label = 1,
+             zoom = FALSE,
+             title = NULL,
+             xlab = NULL,
+             ylab = NULL,
+             margins = c(5, 5),
+             lhei = NULL,
+             lwid = NULL,
+             comp = NULL,
+             center = TRUE,
+             scale = FALSE,
+             mapping = "XY",
+             legend = NULL,
+             save = NULL,
+             name.save = NULL)
 
-{
-    class.object=class(mat)
+    {
+        
+    class.object <- class(mat)
     
     
     
-    #-- checking general input parameters -------------------------------------#
+    #-- checking general input parameters -------------------------------------
     #--------------------------------------------------------------------------#
     
     #-- check that the user did not enter extra arguments
@@ -118,7 +119,7 @@ name.save = NULL)
     stop("invalid distance method.", call. = FALSE)
     
     
-    #-- checking general input arguments -------------------------------------#
+    #-- checking general input arguments -------------------------------------
     #-------------------------------------------------------------------------#
     
     #-- color
@@ -279,7 +280,6 @@ name.save = NULL)
     }
     
     
-    
     object.pca=c("pca","spca","ipca","sipca","mixo_mlsplsda","mixo_splsda",
     "mixo_plsda")
     object.rcc=c("rcc")
@@ -296,57 +296,61 @@ name.save = NULL)
     stop("'mat' has to be a matrix or one of the following object: ",
     paste(object.list, collapse =", "), ".", call. = FALSE)
     
-    
+    #-- if mixOmics class
     if(any(class.object  %in%  object.list))
     {
+        #-- general checks  -------------
         p = ncol(mat$X)
         q = ncol(mat$Y)
         n = nrow(mat$X)
         ncomp = mat$ncomp
         #-- comp
-        if(is.null(comp))
-        {comp=1:mat$ncomp}
+        if (is.null(comp)) {
+            comp = 1:mat$ncomp
+        }
         if (length(comp) > 1) {
-            comp=unique(comp)
+            comp = unique(comp)
             if (!is.numeric(comp) || any(comp < 1))
-            stop("invalid vector for 'comp'.", call. = FALSE)
+                stop("invalid vector for 'comp'.", call. = FALSE)
             if (any(comp > ncomp))
-            stop("the elements of 'comp' must be smaller or equal than ",
-            ncomp, ".", call. = FALSE)
+                stop("the elements of 'comp' must be smaller or equal than ",
+                     ncomp, ".", call. = FALSE)
         }
         
         if (length(comp) == 1) {
             if (is.null(comp) || !is.numeric(comp) || comp <= 0 || comp > ncomp)
-            stop("invalid value for 'comp'.", call. = FALSE)
-            comp=c(comp,comp)
+                stop("invalid value for 'comp'.", call. = FALSE)
+            # comp <- c(comp, comp)
         }
         
-        comp = round(comp)
+        comp <- round(comp)
         
         # if object is a pls or spls with a univariate Y, or multivariate but
         # only 1 variable selected on all comp, we only plot a heatmap of X
         if(any(class.object %in%  object.pls))
         {
             temp = apply(mat$loadings$Y, 2,
-            function(x){which(x!=0, arr.ind=TRUE)})
+                         function(x) {
+                             which(x != 0, arr.ind = TRUE)
+                         })
             # gives which variables are selected
             num.variable.selected.Y = table(unlist(temp))
             
             if (length(num.variable.selected.Y) == 1)
-            #only one variable in Y to plot, will raise trouble so we
-            # switch from (s)pls to (s)plsda
-            class.object = "mixo_splsda"
+                #only one variable in Y to plot, will raise trouble so we
+                # switch from (s)pls to (s)plsda
+                class.object = "mixo_splsda"
         }
+        #-- if c("mixo_pls","mixo_spls","mixo_mlspls") or pls with univarite Y ----
+        ## or multivariate but only one Y kept in sparse model
         
-        if( ! any(class.object  %in%  object.pca))
-        {
-            
+        if (!any(class.object  %in%  object.pca)) {
             #-- mapping
             choices = c("XY", "X", "Y")
             mapping = choices[pmatch(mapping, choices)]
             
             if (is.na(mapping))
-            stop("'mapping' should be one of 'XY', 'X' or 'Y'.", call. = FALSE)
+                stop("'mapping' should be one of 'XY', 'X' or 'Y'.", call. = FALSE)
             
             if (mapping == "XY")
             {
@@ -398,9 +402,7 @@ name.save = NULL)
                 if (is.logical(row.names))
                 {
                     if (isTRUE(row.names)) {
-                        if (any(class.object %in% object.rcc))
                         row.names = mat$names$sample
-                        else row.names = mat$names$sample
                     }
                     else
                     row.names = rep("", n)
@@ -491,10 +493,9 @@ name.save = NULL)
             }
         }
         
+        #-- if NOT c("mixo_pls","mixo_spls","mixo_mlspls") or pls with univarite Y ----
         if(any(class.object %in%  object.pca))
         {
-            
-            
             #-- row.sideColors
             if (!is.null(row.sideColors))
             {
@@ -516,8 +517,7 @@ name.save = NULL)
             }
             sample.sideColors = row.sideColors
             
-            #-- clustering ---------------------------------------------------#
-            #-----------------------------------------------------------------#
+            ## ----- DA object
             if(any(class.object %in%  c("mixo_splsda","mixo_plsda",
             'mixo_mlsplsda')))
             {
@@ -577,7 +577,7 @@ name.save = NULL)
                 vector of length equal to the number of columns of 'X'.",
                 call. = FALSE)
             }
-            
+            ## ---- clustering ----------------------------------------------
             object = scale(mat$X[, keep.X], center = center, scale = scale)
             col.names = col.names[keep.X]
             
@@ -906,10 +906,11 @@ name.save = NULL)
             
             
             if (mat$mode == "canonical") {
+                bisect = mat$variates$X[, comp] + mat$variates$Y[, comp]
                 cord.X = cor(mat$X[, keep.X, drop = FALSE],
-                mat$variates$X[, comp], use = "pairwise")
+                             bisect, use = "pairwise")
                 cord.Y = cor(mat$Y[, keep.Y, drop = FALSE],
-                mat$variates$Y[, comp], use = "pairwise")
+                             bisect, use = "pairwise")
             }
             else {
                 cord.X = cor(mat$X[, keep.X, drop = FALSE],
@@ -1177,9 +1178,9 @@ name.save = NULL)
                 res$ddc = ddc
             }
             class(res) = paste("cim",class.object[1],sep="_")
-        }}
-    else
-    {
+        }} else {
+    #-- if matrix class  -------------------------------------
+            
         #-- mat
         isMat = tryCatch(is.matrix(mat), error = function(e) e)
         
@@ -1294,9 +1295,10 @@ name.save = NULL)
         class(res) = "cim_default"
         
     }
-    #--------------------------------------------------------------------------#
+    #-- call imageMap  -------------------------------------
     opar = par(no.readonly = TRUE)
     
+    try_plot <- tryCatch({
     imageMap(object,
     color = color,
     row.names = row.names,
@@ -1319,9 +1321,14 @@ name.save = NULL)
     ylab = ylab,
     margins = margins,
     lhei = lhei,
-    lwid = lwid)
-    if (!is.null(legend))
-    {if(is.null(legend$x)) legend$x = "topright"
+    lwid = lwid)}, error = function(e) e)
+
+    if (is(try_plot, "error")) {
+        message(sprintf("Error in cim: %s. Try expanding the plot pane in RStudio and deleteing existing plots. If this error persists put save=TRUE, name.save = 'a_name_for_plot.pdf' to save the plot.", try_plot$message))
+    } else {
+        #-- add to plot  -------------------------------------
+        if (!is.null(legend))
+        {if(is.null(legend$x)) legend$x = "topright"
         if(is.null(legend$bty)) legend$bty = "n"
         if (is.null(legend$cex)) legend$cex = 0.8
         if(any(class.object %in%  c("mixo_splsda","mixo_plsda")))
@@ -1331,8 +1338,8 @@ name.save = NULL)
             #-- col
             if (is.null(legend$col)) {
                 if (!is.null(sample.sideColors))
-                legend$col = unique(as.matrix(sample.sideColors[order(
-                map(mat$ind.mat)), 1]))
+                    legend$col = unique(as.matrix(sample.sideColors[order(
+                        map(mat$ind.mat)), 1]))
             }
             
         }
@@ -1359,14 +1366,14 @@ name.save = NULL)
                 if (is.null(legend$legend) && is.null(legend$col)) {
                     if (ncol(mat$multilevel) >= 2) {
                         df = data.frame(mat$multilevel[, 2],
-                        sample.sideColors[, 1])
+                                        sample.sideColors[, 1])
                         df = unique(df)
                         legend$legend = as.character(df[, 1])
                         legend$col = as.character(df[, 2])
                     }
                     if (ncol(mat$multilevel) == 3) {
                         df = data.frame(mat$multilevel[, 3],
-                        sample.sideColors[, 2])
+                                        sample.sideColors[, 2])
                         df = unique(df)
                         legend$legend = c(legend$legend, as.character(df[, 1]))
                         legend$col = c(legend$col, as.character(df[, 2]))
@@ -1375,7 +1382,7 @@ name.save = NULL)
             }
         }
         if (is.null(legend$legend))
-        stop("argument \"legend$legend\" is missing, with no default")
+            stop("argument \"legend$legend\" is missing, with no default")
         
         #-- fill
         if (is.null(legend$fill)) legend$fill = legend$col
@@ -1387,19 +1394,20 @@ name.save = NULL)
         if (!is.null(legend$title))
         {
             legend(x = legend$x, y = legend$y, legend = legend$legend,
-            col = legend$col, fill = legend$fill, bty = legend$bty,
-            title=legend$title,cex=legend$cex)
+                   col = legend$col, fill = legend$fill, bty = legend$bty,
+                   title=legend$title,cex=legend$cex)
         }else{
             legend(x = legend$x, y = legend$y, legend = legend$legend,
-            col = legend$col, fill = legend$fill, bty = legend$bty,
-            cex=legend$cex)
+                   col = legend$col, fill = legend$fill, bty = legend$bty,
+                   cex=legend$cex)
         }
         
         
+        }
+        if (any(class.object %in% object.list) & !any(class.object %in%
+                                                      object.pca) & mapping =="XY")
+            res$mat.cor=object
     }
-    if (any(class.object %in% object.list) & !any(class.object %in%
-    object.pca) & mapping =="XY")
-    res$mat.cor=object
     
     par(opar)
     

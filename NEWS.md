@@ -1,3 +1,21 @@
+## version 6.8.6
+
+### new features / enhancements
+
+* 
+
+### bug fixes
+
+* `predict` function bug for single sample prediction fixed
+* `plotLoadings` bug for long variable names fixed
+
+### minor improvements
+
+* missing values in `plotIndiv`'s `group` argument no more throws error
+* `mixOmics::predict` function documentation now more accessible
+
+-------------------------------------------------------------------------------
+
 ## version 6.8.5
 
 ### bug fixes

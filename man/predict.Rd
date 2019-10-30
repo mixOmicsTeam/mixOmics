@@ -1,5 +1,6 @@
 \name{predict}
 \encoding{UTF-8}
+\alias{predict}
 \alias{predict.pls}
 \alias{predict.spls}
 \alias{predict.plsda}
