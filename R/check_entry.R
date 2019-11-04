@@ -210,6 +210,7 @@ mode, scale, near.zero.var, max.iter, tol, logratio, DA, multilevel)
         {
             Y = multilevel
         }else{
+            multilevel = data.frame(multilevel)
             if ((nrow(X) != nrow(multilevel)))
             stop("unequal number of rows in 'X' and 'multilevel'.")
             
@@ -372,7 +373,7 @@ mode, scale, near.zero.var, max.iter, tol, logratio, DA, multilevel)
     
     
     return(list(X=X, Y=Y, ncomp=ncomp, X.names=X.names, Y.names=Y.names,
-    ind.names=ind.names, mode=mode, keepX=keepX, keepY=keepY, nzv.A=nzv.A))
+    ind.names=ind.names, mode=mode, multilevel=multilevel, keepX=keepX, keepY=keepY, nzv.A=nzv.A))
 }
 
 
