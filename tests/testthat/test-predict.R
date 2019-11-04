@@ -94,5 +94,5 @@ test_that("predict.mint.splsda works", code = {
     pred = predict(res, newdata = gene.test, study.test = study.test)
     # saveRDS(pred, file = 'inst/tests/predict.mint.splsda.rda')
     pred_ref <- readRDS(system.file("testdata", "predict.mint.splsda.rda", package = 'mixOmics'))
-    expect_identical(pred_ref, pred)
+    expect_equal(pred_ref, pred)
 })

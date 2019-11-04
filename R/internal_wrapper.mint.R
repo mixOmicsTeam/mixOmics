@@ -90,7 +90,7 @@ remove.object=NULL
     keepX = check$keepX
     keepY = check$keepY
     nzv.A = check$nzv.A
-    
+    multilevel <- check$multilevel
     rm(check) # free memory
     #remove `X' from the previous environment
     if(!is.null(remove.object))
