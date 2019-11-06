@@ -445,10 +445,7 @@ parallel
         } # end fonction.j.folds
         
         result.all = lapply(1:M, fonction.j.folds)
-        
-        keepA = result.all[[1]]$keepA
-        test.keepA = keepA[[ncomp]]
-
+    
         # combine the results
         for(j in 1:M)
         {
