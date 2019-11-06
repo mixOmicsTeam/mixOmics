@@ -285,6 +285,7 @@ name.save = NULL)
     {
         cluster_type <-
             ifelse(.Platform$OS.type == "windows", "PSOCKS", "FORK")
+        closeAllConnections()
         cl <- makeCluster(cpus, type = cluster_type)
         clusterEvalQ(cl, library(mixOmics))
     } else{
