@@ -166,7 +166,7 @@ parallel
         # prediction.all = vector(length = nrow(X))
         # in case the test set only includes one sample, it is better to advise
         #the user to perform loocv
-        stop.user = FALSE
+        # stop.user = FALSE
         
         #result.all=list()
         fonction.j.folds =function(j)#for(j in 1:M)
@@ -462,7 +462,7 @@ parallel
         }
         
         if (progressBar ==  TRUE)
-        setTxtProgressBar(pb, (M*nrep)/(M*nrepeat))
+        setTxtProgressBar(pb, nrep/nrepeat)
         
         # return(list(class.comp.rep=class.comp.rep, keepA=keepA))
     } #end nrep 1:nrepeat
@@ -490,11 +490,10 @@ parallel
     test.keepA <- result.all[[1]]$keepA[[ncomp]]
     keepA.names = apply(test.keepA[,1:length(X)],1,function(x)
     paste(x,collapse="_"))#, sep=":")
-        
 
     result = list()
     error.mean = error.sd = error.per.class.keepX.opt.comp = keepX.opt =
-    test.keepX.out = mat.error.final = choice.keepX.out = list()
+    test.keepX.out = mat.error.final = list()
     #save(list=ls(), file="temp22.Rdata")
 
     if (any(measure == "overall"))
