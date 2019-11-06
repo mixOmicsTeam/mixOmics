@@ -186,7 +186,7 @@ name.save = NULL)
     #-- test.keepX
     if(missing(test.keepX))
     {
-        test.keepX = lapply(1:length(X),function(x){c(5,10,15)[which(c(5,10,15)<ncol(X[[x]]))]})
+        test.keepX = lapply(seq_along(X), function(x){c(5,10,15)[which(c(5,10,15)<ncol(X[[x]]))]})
         names(test.keepX) = names(X)
         
     } else {
@@ -225,7 +225,7 @@ name.save = NULL)
     misdata = c(sapply(X,anyNA), Y=FALSE) # Detection of missing data. we assume no missing values in the factor Y
     
     is.na.A = vector("list", length = length(X))
-    for(q in 1:length(X))
+    for(q in seq_along(X))
     {
         if(misdata[q])
         {
@@ -252,14 +252,14 @@ name.save = NULL)
         }
         
     } else {
-        comp.real = 1:ncomp
+        comp.real = seq_len(ncomp)
     }
     
     # near zero var on the whole data sets. It will be performed inside each fold as well
     if(near.zero.var == TRUE)
     {
         nzv.A = lapply(X, nearZeroVar)
-        for(q in 1:length(X))
+        for(q in seq_along(X))
         {
             if (length(nzv.A[[q]]$Position) > 0)
             {
@@ -303,19 +303,20 @@ name.save = NULL)
     error.per.class.keepX.opt.mean = matrix(0, nrow = nlevels(Y), ncol = length(comp.real),
     dimnames = list(c(levels(Y)), c(paste0('comp', comp.real))))
 
-    error.opt.per.comp = matrix(nrow = nrepeat, ncol = length(comp.real), dimnames=list(paste("nrep",1:nrepeat,sep="."), paste0("comp", comp.real)))
+    error.opt.per.comp = matrix(nrow = nrepeat, ncol = length(comp.real), dimnames=list(paste("nrep",seq_len(nrepeat),sep="."), paste0("comp", comp.real)))
     
     if(light.output == FALSE)
     prediction.all = class.all = list()
 
     #save(list=ls(),file="temp3.Rdata")
     # successively tune the components until ncomp: comp1, then comp2, ...
-    for(comp in 1:length(comp.real))
+    for(comp in seq_along(comp.real))
     {
+      tune_comp <- comp.real[comp]
         if (progressBar == TRUE)
-        cat("\ncomp",comp.real[comp], "\n")
-        
-        result = MCVfold.block.splsda (X, Y, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = 1 + length(already.tested.X[[1]]),
+          cat(sprintf("\ntuning component %s\n", paste0(tune_comp)))
+
+        result = MCVfold.block.splsda (X, Y, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = tune_comp,
         choice.keepX = already.tested.X, scheme = scheme, design=design, init=init, tol=tol,
         test.keepX = test.keepX, measure = measure, dist = dist, scale=scale, weighted=weighted,
         near.zero.var = near.zero.var, progressBar = progressBar, max.iter = max.iter, 
@@ -353,8 +354,8 @@ name.save = NULL)
         {
             rownames(mat.mean.error) = rownames(result[[measure]]$mat.error.rate[[1]])
             colnames(mat.mean.error) = paste0("comp", comp.real)
-            names(mat.error.rate) = c(paste0("comp", comp.real[1:comp]))
-            names(error.per.class.keepX.opt) = c(paste0("comp", comp.real[1:comp]))
+            names(mat.error.rate) = c(paste0("comp", comp.real[seq_len(comp)]))
+            names(error.per.class.keepX.opt) = c(paste0("comp", comp.real[seq_len(comp)]))
             if(nrepeat > 1)
             {
                 rownames(mat.sd.error) = rownames(result[[measure]]$mat.error.rate[[1]])
