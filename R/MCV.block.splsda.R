@@ -443,17 +443,8 @@ parallel
             class.comp.j = class.comp.j, omit = omit, keepA = keepA))
         } # end fonction.j.folds
         
-
-
-        if (parallel == TRUE)
-        {
-            clusterEvalQ(cl, library(mixOmics))
-            clusterExport(cl, ls(), envir=environment())
-           result.all = parLapply(cl, 1: M, fonction.j.folds)
-        } else {
-           result.all = lapply(1: M, fonction.j.folds)
-        }
-
+        result.all = lapply(1:M, fonction.j.folds)
+        
         keepA = result.all[[1]]$keepA
         test.keepA = keepA[[ncomp]]
 
