@@ -90,11 +90,11 @@ tol,
 max.iter = 100,
 near.zero.var = FALSE,
 progressBar = TRUE,
-cl,
 scale,
 misdata,
 is.na.A,
-parallel
+cpus=1,
+cl=NULL
 )
 {    #-- checking general input parameters ------------------------------------#
     #--------------------------------------------------------------------------#
@@ -467,7 +467,15 @@ parallel
         return(list(class.comp.rep=class.comp.rep, keepA=keepA))
     } #end nrep 1:nrepeat
     
-    class.comp.reps <- lapply(seq_len(nrepeat), repeat_cv)
+    if (cpus >= 2)
+    {
+        clusterExport(cl, ls(), envir=environment())
+        class.comp.reps <- parLapply(cl, seq_len(nrepeat), repeat_cv)
+    } else {
+        class.comp.reps <- lapply(seq_len(nrepeat), repeat_cv)
+    }
+    
+    
     
     list2array <- function(cc) {
         ## function to make an array of results of all repeats ino the former form

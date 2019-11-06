@@ -204,18 +204,15 @@ name.save = NULL)
     temp = data.frame(l, n)
     
     
-    message(paste("You have provided a sequence of keepX of length: ", paste(apply(temp, 1, function(x) paste(x,collapse=" for block ")), collapse= " and "), ".\nThis results in ",prod(sapply(test.keepX,length)), " models being fitted for each component and each nrepeat, this may take some time to run, be patient!",sep=""))
+    message(paste("\nYou have provided a sequence of keepX of length: ", paste(apply(temp, 1, function(x) paste(x,collapse=" for block ")), collapse= " and "), ".\nThis results in ",prod(sapply(test.keepX,length)), " models being fitted for each component and each nrepeat, this may take some time to run, be patient!",sep=""))
     
-    if(cpus<2)
+    if ( cpus < 2 )
     {
-        parallel = FALSE
-        message(paste("You can look into the 'cpus' argument to speed up computation time.",sep=""))
+        message(paste0("\nYou can look into the 'cpus' argument to speed up computation time."))
 
     } else {
-        parallel = TRUE
         if(progressBar == TRUE)
-        message(paste("As code is running in parallel, the progressBar will only show 100% upon completion of each nrepeat/ component.",sep=""))
-
+            message(paste0("\nAs code is running in parallel, the progressBar is not available."))
     }
     
     #-- end checking --#
@@ -280,19 +277,16 @@ name.save = NULL)
         }
     }
     
-    
-    if (parallel == TRUE)
+    if (cpus >= 2)
     {
         cluster_type <-
             ifelse(.Platform$OS.type == "windows", "PSOCKS", "FORK")
-        closeAllConnections()
         cl <- makeCluster(cpus, type = cluster_type)
         clusterEvalQ(cl, library(mixOmics))
-    } else{
-        cl = NULL
+    } else {
+        cl=NULL
     }
-    
-    
+
     N.test.keepX = nrow(expand.grid(test.keepX))
     
     mat.error.rate = list()
@@ -324,9 +318,10 @@ name.save = NULL)
         result = MCVfold.block.splsda (X, Y, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = 1 + length(already.tested.X[[1]]),
         choice.keepX = already.tested.X, scheme = scheme, design=design, init=init, tol=tol,
         test.keepX = test.keepX, measure = measure, dist = dist, scale=scale, weighted=weighted,
-        near.zero.var = near.zero.var, progressBar = progressBar, max.iter = max.iter, cl = cl,
-        misdata = misdata, is.na.A = is.na.A, parallel = parallel)
+        near.zero.var = near.zero.var, progressBar = progressBar, max.iter = max.iter, 
+        misdata = misdata, is.na.A = is.na.A, cpus=cpus, cl=cl)
         
+  
         #returns error.rate for all test.keepX
     
         
@@ -383,6 +378,12 @@ name.save = NULL)
         }
 
     }
+    
+    if (cpus >= 2)
+    {
+        stopCluster(cl)
+    }
+    
     rownames(mat.mean.error) = rownames(result[[measure]]$mat.error.rate[[1]])
     colnames(mat.mean.error) = paste0("comp", comp.real)
     names(mat.error.rate) = c(paste0("comp", comp.real))
@@ -392,12 +393,6 @@ name.save = NULL)
         rownames(mat.sd.error) = rownames(result[[measure]]$mat.error.rate[[1]])
         colnames(mat.sd.error) = paste0("comp", comp.real)
     }
-    
-    #close the cluster after ncomp
-    if (parallel == TRUE)
-    stopCluster(cl)
-    
-    cat("\n")
     
     
     # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
