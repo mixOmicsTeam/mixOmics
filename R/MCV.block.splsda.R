@@ -485,9 +485,6 @@ parallel
         return(dist.array)
     }
     
-    browser()
-    identical(list2array(class.comp.rep), class.comp)
-    
     class.comp <- list2array(class.comp.rep)
     
     #names(prediction.comp) =
