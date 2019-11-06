@@ -115,11 +115,7 @@ parallel
     } else {keepY = NULL}
     
     M = length(folds)
-    prediction.comp = class.comp = list()
     class.comp.rep <- list()
-    for(ijk in dist)
-    class.comp[[ijk]] = array(0, c(nrow(X[[1]]), nrepeat,
-    nrow(expand.grid(test.keepX))))
     # prediction of all samples for each test.keepX and  nrep at comp fixed
     folds.input = folds
     for(nrep in 1:nrepeat)
@@ -463,7 +459,6 @@ parallel
             #prediction.comp[[nrep]][omit, , ] = prediction.comp.j
             for(ijk in dist) {
                 class.comp.rep[[nrep]][[ijk]][omit, ] = class.comp.j[[ijk]]
-                class.comp[[ijk]][omit,nrep, ] = class.comp.j[[ijk]]
             }
                 
             
@@ -493,6 +488,7 @@ parallel
     browser()
     identical(list2array(class.comp.rep), class.comp)
     
+    class.comp <- list2array(class.comp.rep)
     
     #names(prediction.comp) =
     # class.comp[[ijk]] is a matrix containing all prediction for test.keepX,
