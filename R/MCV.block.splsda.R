@@ -115,14 +115,13 @@ parallel
     } else {keepY = NULL}
     
     M = length(folds)
-    class.comp.rep <- list()
     # prediction of all samples for each test.keepX and  nrep at comp fixed
     folds.input = folds
-    for(nrep in 1:nrepeat)
+    repeat_cv <- function(nrep)
     {
-        class.comp.rep[[nrep]] <- list()
+        class.comp.rep <- list()
         for(ijk in dist)
-            class.comp.rep[[nrep]][[ijk]] = array(0, c(nrow(X[[1]]),
+            class.comp.rep[[ijk]] = array(0, c(nrow(X[[1]]),
                                            nrow(expand.grid(test.keepX))))
         # we don't record all the predictions for all fold and all blocks,
         #   too much data
@@ -445,7 +444,8 @@ parallel
         } # end fonction.j.folds
         
         result.all = lapply(1:M, fonction.j.folds)
-    
+        
+        keepA <- result.all[[1]]$keepA[[ncomp]]
         # combine the results
         for(j in 1:M)
         {
@@ -455,7 +455,7 @@ parallel
 
             #prediction.comp[[nrep]][omit, , ] = prediction.comp.j
             for(ijk in dist) {
-                class.comp.rep[[nrep]][[ijk]][omit, ] = class.comp.j[[ijk]]
+                class.comp.rep[[ijk]][omit, ] = class.comp.j[[ijk]]
             }
                 
             
@@ -464,30 +464,30 @@ parallel
         if (progressBar ==  TRUE)
         setTxtProgressBar(pb, nrep/nrepeat)
         
-        # return(list(class.comp.rep=class.comp.rep, keepA=keepA))
+        return(list(class.comp.rep=class.comp.rep, keepA=keepA))
     } #end nrep 1:nrepeat
     
+    class.comp.reps <- lapply(seq_len(nrepeat), repeat_cv)
     
     list2array <- function(cc) {
         ## function to make an array of results of all repeats ino the former form
         ## before nrepeat loop becomes a function
-        dims <- dim(cc[[1]][[1]])
+        dims <- dim(cc[[1]][[1]][[1]])
         dist.array <- list()
-        for (dist in names(cc[[1]])) {
+        for (dist in names(cc[[1]][[1]])) {
             dist.array[[dist]] <- array(0, dim = c(dims[1], length(cc), dims[2]))
             for (rep in seq_len(length(cc))) {
-                dist.array[[dist]][,rep,] <- cc[[rep]][[dist]]
+                dist.array[[dist]][,rep,] <- cc[[rep]][[1]][[dist]]
             }
         }
         return(dist.array)
     }
     
-    class.comp <- list2array(class.comp.rep)
-    
+    class.comp <- list2array(class.comp.reps)
     #names(prediction.comp) =
     # class.comp[[ijk]] is a matrix containing all prediction for test.keepX,
     # all nrepeat and all distance, at comp fixed
-    test.keepA <- result.all[[1]]$keepA[[ncomp]]
+    test.keepA <- class.comp.reps[[1]][["keepA"]]
     keepA.names = apply(test.keepA[,1:length(X)],1,function(x)
     paste(x,collapse="_"))#, sep=":")
 
