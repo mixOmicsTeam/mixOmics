@@ -283,9 +283,13 @@ name.save = NULL)
     
     if (parallel == TRUE)
     {
-        cl <- makeCluster(cpus, type = "SOCK")
+        cluster_type <-
+            ifelse(.Platform$OS.type == "windows", "PSOCKS", "FORK")
+        cl <- makeCluster(cpus, type = cluster_type)
         clusterEvalQ(cl, library(mixOmics))
-    } else{cl=NULL}
+    } else{
+        cl = NULL
+    }
     
     
     N.test.keepX = nrow(expand.grid(test.keepX))
