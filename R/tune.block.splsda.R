@@ -128,7 +128,7 @@ name.save = NULL)
 
     
     #-- dist
-    dist = match.arg(dist, choices = c("max.dist", "centroids.dist", "mahalanobis.dist"), several.ok = FALSE)
+    dist = match.arg(dist, choices = c("max.dist", "centroids.dist", "mahalanobis.dist"), several.ok = TRUE)
 
     #-- progressBar
     if (!is.logical(progressBar))
