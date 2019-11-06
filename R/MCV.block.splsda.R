@@ -106,7 +106,7 @@ parallel
     } else {
         pb = FALSE
     }
-    
+    test.keepA <- NULL
     #design = matrix(c(0,1,1,0), ncol = 2, nrow = 2, byrow = TRUE)
     
     if(ncomp>1)
@@ -116,6 +116,7 @@ parallel
     
     M = length(folds)
     prediction.comp = class.comp = list()
+    class.comp.rep <- list()
     for(ijk in dist)
     class.comp[[ijk]] = array(0, c(nrow(X[[1]]), nrepeat,
     nrow(expand.grid(test.keepX))))
@@ -123,6 +124,10 @@ parallel
     folds.input = folds
     for(nrep in 1:nrepeat)
     {
+        class.comp.rep[[nrep]] <- list()
+        for(ijk in dist)
+            class.comp.rep[[nrep]][[ijk]] = array(0, c(nrow(X[[1]]),
+                                           nrow(expand.grid(test.keepX))))
         # we don't record all the predictions for all fold and all blocks,
         #   too much data
 
@@ -456,15 +461,39 @@ parallel
             class.comp.j = result.all[[j]]$class.comp.j
 
             #prediction.comp[[nrep]][omit, , ] = prediction.comp.j
-            for(ijk in dist)
-            class.comp[[ijk]][omit,nrep, ] = class.comp.j[[ijk]]
+            for(ijk in dist) {
+                class.comp.rep[[nrep]][[ijk]][omit, ] = class.comp.j[[ijk]]
+                class.comp[[ijk]][omit,nrep, ] = class.comp.j[[ijk]]
+            }
+                
+            
         }
         
         if (progressBar ==  TRUE)
         setTxtProgressBar(pb, (M*nrep)/(M*nrepeat))
         
+        # return(list(class.comp.rep=class.comp.rep, keepA=keepA))
     } #end nrep 1:nrepeat
-
+    
+    
+    list2array <- function(cc) {
+        ## function to make an array of results of all repeats ino the former form
+        ## before nrepeat loop becomes a function
+        dims <- dim(cc[[1]][[1]])
+        dist.array <- list()
+        for (dist in names(cc[[1]])) {
+            dist.array[[dist]] <- array(0, dim = c(dims[1], length(cc), dims[2]))
+            for (rep in seq_len(length(cc))) {
+                dist.array[[dist]][,rep,] <- cc[[rep]][[dist]]
+            }
+        }
+        return(dist.array)
+    }
+    
+    browser()
+    identical(list2array(class.comp.rep), class.comp)
+    
+    
     #names(prediction.comp) =
     # class.comp[[ijk]] is a matrix containing all prediction for test.keepX,
     # all nrepeat and all distance, at comp fixed
