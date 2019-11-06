@@ -497,7 +497,7 @@ parallel
     #names(prediction.comp) =
     # class.comp[[ijk]] is a matrix containing all prediction for test.keepX,
     # all nrepeat and all distance, at comp fixed
-    
+    test.keepA <- result.all[[1]]$keepA[[ncomp]]
     keepA.names = apply(test.keepA[,1:length(X)],1,function(x)
     paste(x,collapse="_"))#, sep=":")
         
