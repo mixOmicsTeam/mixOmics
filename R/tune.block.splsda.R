@@ -77,7 +77,7 @@ scheme= "horst",
 scale = TRUE,
 init = "svd",
 light.output = TRUE, # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
-cpus,
+cpus=1,
 name.save = NULL)
 {
     #-- checking general input parameters --------------------------------------#
@@ -206,7 +206,7 @@ name.save = NULL)
     
     message(paste("You have provided a sequence of keepX of length: ", paste(apply(temp, 1, function(x) paste(x,collapse=" for block ")), collapse= " and "), ".\nThis results in ",prod(sapply(test.keepX,length)), " models being fitted for each component and each nrepeat, this may take some time to run, be patient!",sep=""))
     
-    if(missing(cpus))
+    if(cpus<2)
     {
         parallel = FALSE
         message(paste("You can look into the 'cpus' argument to speed up computation time.",sep=""))
