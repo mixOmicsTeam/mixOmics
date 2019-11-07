@@ -90,11 +90,11 @@ tol,
 max.iter = 100,
 near.zero.var = FALSE,
 progressBar = TRUE,
-cl,
 scale,
 misdata,
 is.na.A,
-parallel
+cpus=1,
+cl=NULL
 )
 {    #-- checking general input parameters ------------------------------------#
     #--------------------------------------------------------------------------#
@@ -106,7 +106,7 @@ parallel
     } else {
         pb = FALSE
     }
-    
+    test.keepA <- NULL
     #design = matrix(c(0,1,1,0), ncol = 2, nrow = 2, byrow = TRUE)
     
     if(ncomp>1)
@@ -115,14 +115,14 @@ parallel
     } else {keepY = NULL}
     
     M = length(folds)
-    prediction.comp = class.comp = list()
-    for(ijk in dist)
-    class.comp[[ijk]] = array(0, c(nrow(X[[1]]), nrepeat,
-    nrow(expand.grid(test.keepX))))
     # prediction of all samples for each test.keepX and  nrep at comp fixed
     folds.input = folds
-    for(nrep in 1:nrepeat)
+    repeat_cv <- function(nrep)
     {
+        class.comp.rep <- list()
+        for(ijk in dist)
+            class.comp.rep[[ijk]] = array(0, c(nrow(X[[1]]),
+                                           nrow(expand.grid(test.keepX))))
         # we don't record all the predictions for all fold and all blocks,
         #   too much data
 
@@ -165,7 +165,7 @@ parallel
         # prediction.all = vector(length = nrow(X))
         # in case the test set only includes one sample, it is better to advise
         #the user to perform loocv
-        stop.user = FALSE
+        # stop.user = FALSE
         
         #result.all=list()
         fonction.j.folds =function(j)#for(j in 1:M)
@@ -442,21 +442,17 @@ parallel
             return(list(
             class.comp.j = class.comp.j, omit = omit, keepA = keepA))
         } # end fonction.j.folds
-        
-
-
-        if (parallel == TRUE)
-        {
-            clusterEvalQ(cl, library(mixOmics))
-            clusterExport(cl, ls(), envir=environment())
-           result.all = parLapply(cl, 1: M, fonction.j.folds)
+        ## mclapply unavailable on windows
+        parallel.both = (.Platform$OS.type != "windows") & (cpus > nrepeat)
+        ## if number of CPUs greater than nrepeat, also parallel on folds
+        if (parallel.both) {
+            # message("\ndetected cores: ", parallel::detectCores())
+            result.all = mclapply(1:M, fonction.j.folds, mc.cores = ceiling(cpus/nrepeat))
         } else {
-           result.all = lapply(1: M, fonction.j.folds)
+            result.all = lapply(1:M, fonction.j.folds)
         }
-
-        keepA = result.all[[1]]$keepA
-        test.keepA = keepA[[ncomp]]
-
+        
+        keepA <- result.all[[1]]$keepA[[ncomp]]
         # combine the results
         for(j in 1:M)
         {
@@ -465,26 +461,54 @@ parallel
             class.comp.j = result.all[[j]]$class.comp.j
 
             #prediction.comp[[nrep]][omit, , ] = prediction.comp.j
-            for(ijk in dist)
-            class.comp[[ijk]][omit,nrep, ] = class.comp.j[[ijk]]
+            for(ijk in dist) {
+                class.comp.rep[[ijk]][omit, ] = class.comp.j[[ijk]]
+            }
+                
+            
         }
         
         if (progressBar ==  TRUE)
-        setTxtProgressBar(pb, (M*nrep)/(M*nrepeat))
+        setTxtProgressBar(pb, nrep/nrepeat)
         
+        return(list(class.comp.rep=class.comp.rep, keepA=keepA))
     } #end nrep 1:nrepeat
-
+    
+    if (cpus >= 2)
+    {
+        clusterExport(cl, ls(), envir=environment())
+        class.comp.reps <- parLapply(cl, seq_len(nrepeat), repeat_cv)
+    } else {
+        class.comp.reps <- lapply(seq_len(nrepeat), repeat_cv)
+    }
+    
+    
+    
+    list2array <- function(cc) {
+        ## function to make an array of results of all repeats ino the former form
+        ## before nrepeat loop becomes a function
+        dims <- dim(cc[[1]][[1]][[1]])
+        dist.array <- list()
+        for (dist in names(cc[[1]][[1]])) {
+            dist.array[[dist]] <- array(0, dim = c(dims[1], length(cc), dims[2]))
+            for (rep in seq_len(length(cc))) {
+                dist.array[[dist]][,rep,] <- cc[[rep]][[1]][[dist]]
+            }
+        }
+        return(dist.array)
+    }
+    
+    class.comp <- list2array(class.comp.reps)
     #names(prediction.comp) =
     # class.comp[[ijk]] is a matrix containing all prediction for test.keepX,
     # all nrepeat and all distance, at comp fixed
-    
+    test.keepA <- class.comp.reps[[1]][["keepA"]]
     keepA.names = apply(test.keepA[,1:length(X)],1,function(x)
     paste(x,collapse="_"))#, sep=":")
-        
 
     result = list()
     error.mean = error.sd = error.per.class.keepX.opt.comp = keepX.opt =
-    test.keepX.out = mat.error.final = choice.keepX.out = list()
+    test.keepX.out = mat.error.final = list()
     #save(list=ls(), file="temp22.Rdata")
 
     if (any(measure == "overall"))

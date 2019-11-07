@@ -31,7 +31,7 @@ scheme= "horst",
 scale = TRUE,
 init = "svd",
 light.output = TRUE,
-cpus,
+cpus=1,
 name.save=NULL
 )
 }
@@ -64,7 +64,7 @@ should be a subset of \code{"centroids.dist"}, \code{"mahalanobis.dist"} or \cod
 to zero means and unit variances. Default = \code{TRUE}.}
 \item{init}{Mode of initialization use in the algorithm, either by Singular Value Decompostion of the product of each block of X with Y ("svd") or each block independently ("svd.single"). Default = \code{svd}.}
 \item{light.output}{if set to FALSE, the prediction/classification of each sample for each of \code{test.keepX} and each comp is returned.}
-\item{cpus}{Number of cpus to use when running the code in parallel.}
+\item{cpus}{Integer, number of cpus to use. If greater than 1, the code will run in parallel when repeating the cross-validatio, which is usually the most computationally intensive process.}
 \item{name.save}{character string for the name of the file to be saved.}
 
 }
@@ -159,7 +159,7 @@ already.mrna = 4 # 4 variables selected on comp1 for mrna
 already.mirna  = 2 # 2 variables selected on comp1 for mirna
 already.prot  = 1 # 1 variables selected on comp1 for protein
 
-already.tested.X = list(mrna = already.mrna, mirna = already.mirna, prot = already.prot)
+already.tested.X = list(mrna = already.mrna, mirna = already.mirna, protein = already.prot)
 
 tune = tune.block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
 ncomp = 2, test.keepX = test.keepX, design = design,

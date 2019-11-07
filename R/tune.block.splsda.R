@@ -77,7 +77,7 @@ scheme= "horst",
 scale = TRUE,
 init = "svd",
 light.output = TRUE, # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
-cpus,
+cpus=1,
 name.save = NULL)
 {
     #-- checking general input parameters --------------------------------------#
@@ -128,7 +128,7 @@ name.save = NULL)
 
     
     #-- dist
-    dist = match.arg(dist, choices = c("max.dist", "centroids.dist", "mahalanobis.dist"), several.ok = FALSE)
+    dist = match.arg(dist, choices = c("max.dist", "centroids.dist", "mahalanobis.dist"), several.ok = TRUE)
 
     #-- progressBar
     if (!is.logical(progressBar))
@@ -186,7 +186,7 @@ name.save = NULL)
     #-- test.keepX
     if(missing(test.keepX))
     {
-        test.keepX = lapply(1:length(X),function(x){c(5,10,15)[which(c(5,10,15)<ncol(X[[x]]))]})
+        test.keepX = lapply(seq_along(X), function(x){c(5,10,15)[which(c(5,10,15)<ncol(X[[x]]))]})
         names(test.keepX) = names(X)
         
     } else {
@@ -204,18 +204,15 @@ name.save = NULL)
     temp = data.frame(l, n)
     
     
-    message(paste("You have provided a sequence of keepX of length: ", paste(apply(temp, 1, function(x) paste(x,collapse=" for block ")), collapse= " and "), ".\nThis results in ",prod(sapply(test.keepX,length)), " models being fitted for each component and each nrepeat, this may take some time to run, be patient!",sep=""))
+    message(paste("\nYou have provided a sequence of keepX of length: ", paste(apply(temp, 1, function(x) paste(x,collapse=" for block ")), collapse= " and "), ".\nThis results in ",prod(sapply(test.keepX,length)), " models being fitted for each component and each nrepeat, this may take some time to run, be patient!",sep=""))
     
-    if(missing(cpus))
+    if ( cpus < 2 )
     {
-        parallel = FALSE
-        message(paste("You can look into the 'cpus' argument to speed up computation time.",sep=""))
+        message(paste0("\nYou can look into the 'cpus' argument to speed up computation time."))
 
     } else {
-        parallel = TRUE
         if(progressBar == TRUE)
-        message(paste("As code is running in parallel, the progressBar will only show 100% upon completion of each nrepeat/ component.",sep=""))
-
+            message(paste0("\nAs code is running in parallel, the progressBar is not available."))
     }
     
     #-- end checking --#
@@ -228,7 +225,7 @@ name.save = NULL)
     misdata = c(sapply(X,anyNA), Y=FALSE) # Detection of missing data. we assume no missing values in the factor Y
     
     is.na.A = vector("list", length = length(X))
-    for(q in 1:length(X))
+    for(q in seq_along(X))
     {
         if(misdata[q])
         {
@@ -255,14 +252,14 @@ name.save = NULL)
         }
         
     } else {
-        comp.real = 1:ncomp
+        comp.real = seq_len(ncomp)
     }
     
     # near zero var on the whole data sets. It will be performed inside each fold as well
     if(near.zero.var == TRUE)
     {
         nzv.A = lapply(X, nearZeroVar)
-        for(q in 1:length(X))
+        for(q in seq_along(X))
         {
             if (length(nzv.A[[q]]$Position) > 0)
             {
@@ -280,14 +277,16 @@ name.save = NULL)
         }
     }
     
-    
-    if (parallel == TRUE)
+    if (cpus >= 2)
     {
-        cl <- makeCluster(cpus, type = "SOCK")
+        cluster_type <-
+            ifelse(.Platform$OS.type == "windows", "PSOCKS", "FORK")
+        cl <- makeCluster(cpus, type = cluster_type)
         clusterEvalQ(cl, library(mixOmics))
-    } else{cl=NULL}
-    
-    
+    } else {
+        cl=NULL
+    }
+
     N.test.keepX = nrow(expand.grid(test.keepX))
     
     mat.error.rate = list()
@@ -304,24 +303,26 @@ name.save = NULL)
     error.per.class.keepX.opt.mean = matrix(0, nrow = nlevels(Y), ncol = length(comp.real),
     dimnames = list(c(levels(Y)), c(paste0('comp', comp.real))))
 
-    error.opt.per.comp = matrix(nrow = nrepeat, ncol = length(comp.real), dimnames=list(paste("nrep",1:nrepeat,sep="."), paste0("comp", comp.real)))
+    error.opt.per.comp = matrix(nrow = nrepeat, ncol = length(comp.real), dimnames=list(paste("nrep",seq_len(nrepeat),sep="."), paste0("comp", comp.real)))
     
     if(light.output == FALSE)
     prediction.all = class.all = list()
 
     #save(list=ls(),file="temp3.Rdata")
     # successively tune the components until ncomp: comp1, then comp2, ...
-    for(comp in 1:length(comp.real))
+    for(comp in seq_along(comp.real))
     {
+      tune_comp <- comp.real[comp]
         if (progressBar == TRUE)
-        cat("\ncomp",comp.real[comp], "\n")
-        
-        result = MCVfold.block.splsda (X, Y, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = 1 + length(already.tested.X[[1]]),
+          cat(sprintf("\ntuning component %s\n", paste0(tune_comp)))
+
+        result = MCVfold.block.splsda (X, Y, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = tune_comp,
         choice.keepX = already.tested.X, scheme = scheme, design=design, init=init, tol=tol,
         test.keepX = test.keepX, measure = measure, dist = dist, scale=scale, weighted=weighted,
-        near.zero.var = near.zero.var, progressBar = progressBar, max.iter = max.iter, cl = cl,
-        misdata = misdata, is.na.A = is.na.A, parallel = parallel)
+        near.zero.var = near.zero.var, progressBar = progressBar, max.iter = max.iter, 
+        misdata = misdata, is.na.A = is.na.A, cpus=cpus, cl=cl)
         
+  
         #returns error.rate for all test.keepX
     
         
@@ -353,8 +354,8 @@ name.save = NULL)
         {
             rownames(mat.mean.error) = rownames(result[[measure]]$mat.error.rate[[1]])
             colnames(mat.mean.error) = paste0("comp", comp.real)
-            names(mat.error.rate) = c(paste0("comp", comp.real[1:comp]))
-            names(error.per.class.keepX.opt) = c(paste0("comp", comp.real[1:comp]))
+            names(mat.error.rate) = c(paste0("comp", comp.real[seq_len(comp)]))
+            names(error.per.class.keepX.opt) = c(paste0("comp", comp.real[seq_len(comp)]))
             if(nrepeat > 1)
             {
                 rownames(mat.sd.error) = rownames(result[[measure]]$mat.error.rate[[1]])
@@ -378,6 +379,12 @@ name.save = NULL)
         }
 
     }
+    
+    if (cpus >= 2)
+    {
+        stopCluster(cl)
+    }
+    
     rownames(mat.mean.error) = rownames(result[[measure]]$mat.error.rate[[1]])
     colnames(mat.mean.error) = paste0("comp", comp.real)
     names(mat.error.rate) = c(paste0("comp", comp.real))
@@ -387,12 +394,6 @@ name.save = NULL)
         rownames(mat.sd.error) = rownames(result[[measure]]$mat.error.rate[[1]])
         colnames(mat.sd.error) = paste0("comp", comp.real)
     }
-    
-    #close the cluster after ncomp
-    if (parallel == TRUE)
-    stopCluster(cl)
-    
-    cat("\n")
     
     
     # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
