@@ -109,7 +109,7 @@ name.save = NULL)
             stop("'Y' should be a factor or a class vector.")
         }
         
-        if (nlevels(temp) == 1)
+        if (nlevels(Y) == 1)
         stop("'X[[indY]]' should be a factor with more than one level")
         
         X = X[-indY] #remove Y from X to pass the arguments simpler to block.splsda
