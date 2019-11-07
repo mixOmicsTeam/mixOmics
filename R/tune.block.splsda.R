@@ -120,8 +120,8 @@ name.save = NULL)
     }
     
     # there's a X and a Y, we force the data to be matrices
-    cl = lapply(X,class)
-    ind.no.matrix = which(sapply(cl, function(x) !any(x == "matrix")))
+    Xcl = lapply(X,class)
+    ind.no.matrix = which(sapply(Xcl, function(x) !any(x == "matrix")))
     if(length(ind.no.matrix)>0){
         X[ind.no.matrix] = lapply(X[ind.no.matrix], function(x) as.matrix(x))
     }
