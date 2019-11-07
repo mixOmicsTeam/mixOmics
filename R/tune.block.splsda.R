@@ -152,6 +152,8 @@ name.save = NULL)
         nrepeat = 1
     }
     
+    #-- cpus
+    cpus <- .check_cpus(cpus)
     
     #-- measure
     measure.input = measure

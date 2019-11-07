@@ -26,4 +26,21 @@
     
     return(var_names)
 }
-
+## ----------- .check_cpus ----------- 
+#' Check cpus argument
+#'
+#' @param cpus Integer, the number of cpus for parallel processing.
+#'
+#' @return The number of cpus available/applicable, or condition.
+#'
+.check_cpus <- function(cpus) {
+    if (!is.numeric(cpus) || cpus <= 0)
+        stop("Number of CPUs should be a positive integer.", call. = FALSE)
+    
+    if (cpus < 0 || is.null(cpus))
+        cpus <- 1
+    
+    if (cpus > detectCores())
+        message(sprintf("\nOnly %s CPUs available for parallel processing.\n", detectCores()))
+        
+}
