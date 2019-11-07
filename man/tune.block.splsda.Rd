@@ -159,7 +159,7 @@ already.mrna = 4 # 4 variables selected on comp1 for mrna
 already.mirna  = 2 # 2 variables selected on comp1 for mirna
 already.prot  = 1 # 1 variables selected on comp1 for protein
 
-already.tested.X = list(mrna = already.mrna, mirna = already.mirna, prot = already.prot)
+already.tested.X = list(mrna = already.mrna, mirna = already.mirna, protein = already.prot)
 
 tune = tune.block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
 ncomp = 2, test.keepX = test.keepX, design = design,
