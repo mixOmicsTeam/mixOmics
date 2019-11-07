@@ -442,8 +442,15 @@ cl=NULL
             return(list(
             class.comp.j = class.comp.j, omit = omit, keepA = keepA))
         } # end fonction.j.folds
-        
-        result.all = lapply(1:M, fonction.j.folds)
+        ## mclapply unavailable on windows
+        parallel.both = (.Platform$OS.type != "windows") & (cpus > nrepeat)
+        ## if number of CPUs greater than nrepeat, also parallel on folds
+        if (parallel.both) {
+            # message("\ndetected cores: ", parallel::detectCores())
+            result.all = mclapply(1:M, fonction.j.folds, mc.cores = ceiling(cpus/nrepeat))
+        } else {
+            result.all = lapply(1:M, fonction.j.folds)
+        }
         
         keepA <- result.all[[1]]$keepA[[ncomp]]
         # combine the results
