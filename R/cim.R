@@ -1324,7 +1324,7 @@ cim <-
     lwid = lwid)}, error = function(e) e)
 
     if (is(try_plot, "error")) {
-        message(sprintf("Error in cim: %s. Try expanding the plot pane in RStudio and deleteing existing plots. If this error persists put save=TRUE, name.save = 'a_name_for_plot.pdf' to save the plot.", try_plot$message))
+        message(sprintf("Error in cim plot: %s. See ?cim for help.", try_plot$message))
     } else {
         #-- add to plot  -------------------------------------
         if (!is.null(legend))
