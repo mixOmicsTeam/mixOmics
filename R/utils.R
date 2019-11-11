@@ -42,5 +42,6 @@
     
     if (cpus > detectCores())
         message(sprintf("\nOnly %s CPUs available for parallel processing.\n", detectCores()))
+    return(cpus)
         
 }
