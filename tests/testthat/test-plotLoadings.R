@@ -1,3 +1,5 @@
+context("test-plotLoadings")
+
 test_that("plotLoadings.spls works", code = {
     data(liver.toxicity)
     X = liver.toxicity$gene
