@@ -1,69 +1,68 @@
 #############################################################################################################
 # Author :
 #   Florian Rohart, Australian Institute for Bioengineering and Nanotechnology, The University of Queensland, Brisbane, QLD
+#   Al J Abadi, Melbourne Integartive Genomics, The University of Melbourne, VIC
 #
 # created:  27-07-2017
-# last modified: 27-07-2017
+# last modified: 2019
 #
-# Copyright (C) 2017
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+# Copyright (C) 2019
 #############################################################################################################
 
-t.test.process = function(mat.error.rate, alpha = 0.01)
+#' Test whether adding a component improves the results
+#'
+#' determines the optimum number of components based on significance of
+#' improvement in error rates
+#' @param mat.error.rate matrix of error rates, each column corresponding to
+#' a component's classification error rate, in increasing order for components.
+#' @param alpha significance threshold for t test. By default 0.01.
+#'
+#' @return integer, the optimal number of components
+#'
+#' @examples 
+#' t.test.process(data.frame(comp1=100:104, comp2=20:24, comp3=10:14))
+#' #> 3
+#' t.test.process(data.frame(comp1=100:114, comp2=20:24, comp3=50:54))
+#' #> 2
+#' t.test.process(data.frame(comp1=10:14, comp2=20:24, comp3=50:54))
+#' #> 1
+
+t.test.process <- function(mat.error.rate, alpha = 0.01)
 {
-    # mat.error.rate has nrep rows and ncomp columns
-    # we test successively whether adding a component improves the results
-    
-    max = ncol(mat.error.rate) #number max of components included
-    pval = NULL
-    opt = 1 #initialise the first optimal number of components
-    for(opt in 1:max)
-    {
-        j=opt+1
-        temp = try(t.test(mat.error.rate[,opt],mat.error.rate[,j],alternative="greater")$p.value, silent=TRUE) #t.test of "is adding X comp improves the overall results"
-        if(is(temp, "try-error") || is.na(temp)) # temp can be NaN when error.keepX is constant
-        {
-            pval = 1
-        } else {
-            pval = temp
-        }
-        #print(opt)
-        #print(j)
-        #print(pval)
-
-        while(pval> (alpha) & j<max)
-        {
-            j=j+1
-            temp = try(t.test(mat.error.rate[,opt],mat.error.rate[,j],alternative="greater")$p.value, silent=TRUE) #t.test of "is adding X comp improves the overall results"
-            if(is(temp, "try-error") || is.na(temp)) # temp can be NaN when error.keepX is constant
-            {
-                pval = 1
-            } else {
-                pval = temp
-            }
-            #print(opt)
-            #print(j)
-            #print(pval)
-        }
+    ## ----- helper function to calculate pvalues for two columns of a data.frame:
+    .calc_pval <- function(df, col1, col2) {
+        x <- df[, col1]
+        y <- df[, col2]
+        pval <- tryCatch({t.test(x, y, alternative = "greater")$p.value},
+                         error = function(e) e)
         
-        if( (pval> (alpha))) #if all pvalues were greater than alpha, then we do not increase opt and get out of the loop
-        break
+        if (!is.numeric(pval)) {
+            ## if error rates constant - look at means only (super rare)
+            if (is(pval, "error") && grepl("data are essentially constant", x = pval$message)) {
+                ## significant if there's at least 5% improvement in error rates
+                if (mean(y)/(mean(x) + 0.01) < 0.95) {
+                    pval <- 0
+                }
+            } else { ## if unexpected condition
+                .unexpected_err(trying_to = "choose the optimum number of components")
+            }
+        }
+        return(pval)
     }
-    ncomp_opt = opt
     
-    return(ncomp_opt)
+    max_comp <- ncol(mat.error.rate) ## number max of components included
+    pval <- 1
+    opt_comp <- 1 ## initialise the first optimal number of components
+    next_comp <- 2 # initialise the first candidate component to compare
+    while (opt_comp < max_comp & next_comp <= max_comp)
+    {
+        ## t.test of "is adding X comp improves the overall results"
+        pval <- .calc_pval(mat.error.rate, opt_comp, next_comp)
+        if (pval < alpha) {
+            opt_comp <- next_comp
+        }
+        next_comp <- next_comp + 1
+    }
+    
+    return(opt_comp)
 }
-
