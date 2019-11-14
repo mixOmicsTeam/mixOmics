@@ -45,3 +45,17 @@
     return(cpus)
         
 }
+
+## ----------- .unexpected_err ----------- 
+#' Unexpected error handler for the package
+#'
+#' To be used in unexperimented situations where handlers fail
+#' @param trying_to character, the context in which unexpected error occurred.
+#'
+#' @return Error message
+#'
+.unexpected_err <- function(trying_to = NULL) {
+    trying_to <- ifelse(is.null(trying_to), "", sprintf(" while trying to %s", trying_to))
+    msg <- sprintf("Unexpected error%s. Please check the inputs and if problem persists submit an issue to https://github.com/mixOmicsTeam/mixOmics/issues", trying_to)
+    stop(msg, call. = FALSE)
+}
