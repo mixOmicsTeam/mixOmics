@@ -36,3 +36,4 @@ README.html
 .DS_Store
 
 inst/*.html
+gitignore
