@@ -12,7 +12,8 @@ grid to determine optimal values for the sparsity parameters in \code{mint.splsd
 \usage{
 tune.mint.splsda(X, Y, ncomp = 1, study, test.keepX = c(5, 10, 15), already.tested.X,
 dist = "max.dist", measure = "BER", auc = FALSE, progressBar = TRUE,
-scale = TRUE, tol = 1e-06, max.iter = 100, near.zero.var = FALSE, light.output = TRUE )
+scale = TRUE, tol = 1e-06, max.iter = 100, near.zero.var = FALSE, light.output = TRUE, 
+signif.threshold=0.01)
 }
 
 \arguments{
@@ -32,6 +33,7 @@ to zero means and unit variances (default: TRUE)}
 \item{max.iter}{integer, the maximum number of iterations.}
 \item{near.zero.var}{boolean, see the internal \code{\link{nearZeroVar}} function (should be set to TRUE in particular for data with many zero values). Default value is FALSE}
 \item{light.output}{if set to FALSE, the prediction/classification of each sample for each of \code{test.keepX} and each comp is returned.}
+\item{signif.threshold}{numeric between 0 and 1 indicating the significance threshold required for improvement in error rate of the components. Default to 0.01.}
 }
 
 

@@ -359,6 +359,7 @@ folds = 10,
 nrepeat = 1,
 auc = FALSE,
 progressBar = TRUE,
+signif.threshold = 0.01,
 cpus,
 ...)
 {
@@ -432,7 +433,11 @@ cpus,
     if (!(logratio %in% c("none", "CLR")))
     stop("Choose one of the two following logratio transformation: 'none' or 'CLR'")
     #fold is checked in 'MCVfold'
-
+    
+    
+    #-- check significance threshold
+    signif.threshold <- .check_alpha(signif.threshold)
+    
     if(!missing(cpus))
     {
         if(!is.numeric(cpus) | length(cpus)!=1)
@@ -620,7 +625,7 @@ cpus,
         for (measure_i in measure)
         {
             for (ijk in dist)
-            ncomp_opt[measure, ijk] = t.test.process(t(mat.error.rate[[measure_i]][[ijk]]))
+            ncomp_opt[measure, ijk] = t.test.process(t(mat.error.rate[[measure_i]][[ijk]]), alpha = signif.threshold)
         }
     }
 

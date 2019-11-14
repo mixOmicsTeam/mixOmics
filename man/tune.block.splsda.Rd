@@ -31,6 +31,7 @@ scheme= "horst",
 scale = TRUE,
 init = "svd",
 light.output = TRUE,
+signif.threshold=0.01,
 cpus=1,
 name.save=NULL
 )
@@ -63,6 +64,7 @@ should be a subset of \code{"centroids.dist"}, \code{"mahalanobis.dist"} or \cod
 \item{scale}{boleean. If scale = TRUE, each block is standardized
 to zero means and unit variances. Default = \code{TRUE}.}
 \item{init}{Mode of initialization use in the algorithm, either by Singular Value Decompostion of the product of each block of X with Y ("svd") or each block independently ("svd.single"). Default = \code{svd}.}
+\item{signif.threshold}{numeric between 0 and 1 indicating the significance threshold required for improvement in error rate of the components. Default to 0.01.}
 \item{light.output}{if set to FALSE, the prediction/classification of each sample for each of \code{test.keepX} and each comp is returned.}
 \item{cpus}{Integer, number of cpus to use. If greater than 1, the code will run in parallel when repeating the cross-validatio, which is usually the most computationally intensive process. If there is excess CPU, the cross-vaidation is also parallelised on *nix-based OS which support \code{mclapply}.}
 \item{name.save}{character string for the name of the file to be saved.}

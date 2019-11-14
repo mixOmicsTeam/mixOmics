@@ -81,6 +81,7 @@ tune.block.splsda = function (X,
                               init = "svd",
                               light.output = TRUE,
                               # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
+                              signif.threshold=0.01,
                               cpus = 1,
                               name.save = NULL)
 {
@@ -166,6 +167,8 @@ tune.block.splsda = function (X,
   if (!measure %in% c("overall", "BER"))
     stop("'measure' must be 'overall' or 'BER'")
   
+  #-- check significance threshold
+  signif.threshold <- .check_alpha(signif.threshold)
   
   #-- already.tested.X
   
@@ -483,7 +486,7 @@ tune.block.splsda = function (X,
   if (nrepeat > 2 & length(comp.real) > 1)
   {
     error.keepX = error.opt.per.comp
-    opt = t.test.process(error.opt.per.comp)
+    opt = t.test.process(error.opt.per.comp, alpha = signif.threshold)
     ncomp_opt = comp.real[opt]
   } else {
     ncomp_opt = error.keepX = NULL

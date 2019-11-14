@@ -46,6 +46,22 @@
         
 }
 
+## ----------- .check_alpha ----------- 
+#' Check significance threshold sanity
+#'
+#' @param alpha numeric, significance threshold for t.test
+#'
+#' @return NULL if acceptable value, otherwise condition
+#'
+.check_alpha <- function(alpha=NULL) {
+    if (is.null(alpha))
+        alpha <- 0.01
+    
+    if (!is.numeric(alpha) || alpha < 0 || alpha > 1)
+        stop("invalid 'signif.threshold'. Use 0.01 or 0.05.", call. = FALSE)
+    alpha
+}
+
 ## ----------- .unexpected_err ----------- 
 #' Unexpected error handler for the package
 #'

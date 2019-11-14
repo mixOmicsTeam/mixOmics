@@ -57,7 +57,8 @@ scale = TRUE,
 tol = 1e-06,
 max.iter = 100,
 near.zero.var = FALSE,
-light.output = TRUE # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
+light.output = TRUE, # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
+signif.threshold=0.01
 )
 {    #-- checking general input parameters --------------------------------------#
     #---------------------------------------------------------------------------#
@@ -89,7 +90,8 @@ light.output = TRUE # if FALSE, output the prediction and classification of each
     if (nlevels(Y) == 1)
     stop("'Y' should be a factor with more than one level", call. = FALSE)
     
-    
+    #-- check significance threshold
+    signif.threshold <- .check_alpha(signif.threshold)
     
     #-- progressBar
     if (!is.logical(progressBar))
@@ -255,7 +257,7 @@ light.output = TRUE # if FALSE, output the prediction and classification of each
     # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
     if(nlevels(study) > 2 & length(comp.real) >1)
     {
-        opt = t.test.process(error.per.study.keepX.opt)
+        opt = t.test.process(error.per.study.keepX.opt, alpha=signif.threshold)
         ncomp_opt = comp.real[opt]
     } else {
         ncomp_opt = NULL

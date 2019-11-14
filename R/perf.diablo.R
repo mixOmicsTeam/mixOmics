@@ -38,6 +38,7 @@ dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
 validation = c("Mfold", "loo"),
 folds = 10,
 nrepeat = 1,
+signif.threshold=0.01,
 cpus,
 ...)
 {
@@ -62,7 +63,10 @@ cpus,
     dist = match.arg(dist.select, choices = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"), several.ok = TRUE)
     
     ### Start: Check parameter validation / set up sample
-        
+
+    #-- check significance threshold
+    signif.threshold <- .check_alpha(signif.threshold)
+    
     if (length(validation) > 1 )
     validation = validation [1]
     
@@ -764,7 +768,7 @@ cpus,
                 for (measure_i in measure)
                 {
                     mat.error.rate = sapply(get(paste0(prediction_framework, ".error.rate.all")), function(x){x[measure_i,]})
-                    ncomp_opt[[prediction_framework]][measure_i,] = t.test.process(t(mat.error.rate))
+                    ncomp_opt[[prediction_framework]][measure_i,] = t.test.process(t(mat.error.rate), alpha = signif.threshold)
                 }
 
             } else {
@@ -776,7 +780,7 @@ cpus,
                     for (ijk in dist.select)
                     {
                         mat.error.rate = sapply(get(paste0(prediction_framework, ".error.rate.all")), function(x){x[[ijk]][measure_i,]})
-                        ncomp_opt[[prediction_framework]][measure_i, ijk] = t.test.process(t(mat.error.rate))
+                        ncomp_opt[[prediction_framework]][measure_i, ijk] = t.test.process(t(mat.error.rate), alpha = signif.threshold)
                     }
                 }
             }

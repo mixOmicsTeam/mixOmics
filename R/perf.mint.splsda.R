@@ -42,6 +42,7 @@ perf.mint.splsda = perf.mint.plsda = function (object,
 dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
 auc = FALSE,
 progressBar = TRUE,
+signif.threshold=0.01,
 ...
 )
 {    #-- checking general input parameters --------------------------------------#
@@ -71,6 +72,9 @@ progressBar = TRUE,
     
     if (!is.logical(progressBar))
     stop("'progressBar' must be either TRUE or FALSE")
+    
+    #-- check significance threshold
+    signif.threshold <- .check_alpha(signif.threshold)
     
     #-- end checking --#
     #------------------#
@@ -306,7 +310,7 @@ progressBar = TRUE,
             for (ijk in dist)
             {
                 mat.error.rate = sapply(study.specific, function(x){x[[measure_i]][,ijk]})
-                ncomp_opt[measure_i, ijk] = t.test.process(t(mat.error.rate))
+                ncomp_opt[measure_i, ijk] = t.test.process(t(mat.error.rate), alpha = signif.threshold)
             }
         }
     } else {

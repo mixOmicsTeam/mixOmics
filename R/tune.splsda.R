@@ -69,10 +69,14 @@ nrepeat = 1,
 logratio = c('none','CLR'),
 multilevel = NULL,
 light.output = TRUE,
+signif.threshold = 0.01, 
 cpus
 )
 {    #-- checking general input parameters --------------------------------------#
     #---------------------------------------------------------------------------#
+    
+    #-- check significance threshold
+    signif.threshold <- .check_alpha(signif.threshold)
     
     #------------------#
     #-- check entries --#
@@ -423,7 +427,7 @@ cpus
             colnames(error.keepX) = c(paste0('comp', comp.real))
             
             #1- to change the AUC to an 'error' and check for decrease
-            opt = t.test.process(1-error.keepX)
+            opt = t.test.process(1-error.keepX, alpha = signif.threshold)
             
             ncomp_opt = comp.real[opt]
         } else {

@@ -15,7 +15,8 @@ tune.splsda(X, Y, ncomp = 1,
 test.keepX = c(5, 10, 15), already.tested.X, validation = "Mfold",
 folds = 10, dist = "max.dist", measure = "BER", scale = TRUE, auc = FALSE,
 progressBar = TRUE, tol = 1e-06,max.iter = 100, near.zero.var = FALSE,
-nrepeat = 1, logratio = c('none','CLR'), multilevel = NULL, light.output = TRUE, cpus)
+nrepeat = 1, logratio = c('none','CLR'), multilevel = NULL, light.output = TRUE, 
+signif.threshold = 0.01, cpus)
 
 }
 
@@ -43,6 +44,7 @@ to zero means and unit variances (default: TRUE)}
 \item{multilevel}{Design matrix for multilevel analysis (for repeated measurements) that indicates the repeated measures on each individual, i.e. the individuals ID. See Details.}
 
 \item{light.output}{if set to FALSE, the prediction/classification of each sample for each of \code{test.keepX} and each comp is returned.}
+\item{signif.threshold}{numeric between 0 and 1 indicating the significance threshold required for improvement in error rate of the components. Default to 0.01.}
 \item{cpus}{Number of cpus to use when running the code in parallel.}
 
 }
