@@ -75,3 +75,12 @@
     msg <- sprintf("Unexpected error%s. Please check the inputs and if problem persists submit an issue to https://github.com/mixOmicsTeam/mixOmics/issues", trying_to)
     stop(msg, call. = FALSE)
 }
+
+## ----------- .on_unix ----------- 
+#' Check OS type for parallel processing
+#'
+#' @return Logical, FALSE if windows OS, TRUE if unix OS.
+#'
+.onUnix <- function() {
+    return(ifelse(.Platform$OS.type == "unix", TRUE, FALSE))
+}

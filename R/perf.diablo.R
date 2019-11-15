@@ -89,6 +89,12 @@ cpus,
     if (length(X) > 1)
     Y.mean = Y.mean.res = Y.weighted.vote = Y.weighted.vote.res = Y.vote = Y.vote.res = Y.WeightedPredict = Y.WeightedPredict.res = list()
     
+    ### parallel
+    if (!missing(cpus)) {
+        cluster_type <- ifelse(.onUnix(), "FORK", "SOCK")
+             clusterExport(cl, c("auroc", "block.splsda"))
+    }
+    
     
     for(nrep in 1:nrepeat)
     {
@@ -141,15 +147,10 @@ cpus,
                 design = object$design, max.iter = object$max.iter, tol = object$tol, init = object$init, scheme = object$scheme,
                 mode = object$mode, near.zero.var=near.zero.var))})
         } else {
-            cl <- makeCluster(cpus, type = "SOCK")
-            clusterExport(cl, c("block.splsda"))
-            
             model = parLapply(cl, 1 : M, function(x) {suppressWarnings(block.splsda(X = X.training[[x]], Y = Y.training[[x]], ncomp = max(object$ncomp[-indY]),
                 keepX = keepX,
                 design = object$design, max.iter = object$max.iter, tol = object$tol, init = object$init, scheme = object$scheme,
                 mode = object$mode, near.zero.var=near.zero.var ))})
-            
-            stopCluster(cl)
         }
         
         ### Retrieve convergence criterion
@@ -564,6 +565,10 @@ cpus,
         }
         ### End: Supplementary analysis for sgcca
     } ### end nrepeat
+    
+    if (!missing(cpus)) {
+        stopCluster(cl)
+    }
     
     #save(list=ls(),file="temp.Rdata")
     
