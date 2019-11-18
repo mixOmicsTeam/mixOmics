@@ -42,6 +42,8 @@ t.test.process <- function(mat.error.rate, alpha = 0.01)
                 ## significant if there's at least 5% improvement in error rates
                 if (mean(y)/(mean(x) + 0.01) < 0.95) {
                     pval <- 0
+                } else {
+                    pval <- 1
                 }
             } else { ## if unexpected condition
                 .unexpected_err(trying_to = "choose the optimum number of components")
