@@ -87,7 +87,8 @@ cpus=1,
     ### parallel
     if (parallel) {
         cluster_type <- ifelse(.onUnix(), "FORK", "SOCK")
-             clusterExport(cl, c("auroc", "block.splsda"))
+        cl <- makeCluster(cpus, type = cluster_type)
+        clusterEvalQ(cl, c("auroc", "block.splsda"))
     }
     
     
