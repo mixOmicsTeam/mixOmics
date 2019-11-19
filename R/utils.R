@@ -168,3 +168,18 @@ stratified.subsampling <- function(Y, folds = 10)
     return(list(SAMPLE = SAMPLE, stop = stop))
 }
 
+## ----------- .name_list ----------- 
+#' Create a named list
+#'
+#' Creates a named list of a character vector where names and values
+#' are the same, useful for lapply family.
+#' @param char Character vector.
+#'
+#' @return A named list.
+#'
+#' @noRd
+.name_list <- function(char) {
+    out <- as.list(char)
+    names(out) <- char
+    return(out)
+}

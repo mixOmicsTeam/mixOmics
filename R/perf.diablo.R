@@ -38,6 +38,7 @@ dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
 validation = c("Mfold", "loo"),
 folds = 10,
 nrepeat = 1,
+auc=FALSE,
 signif.threshold=0.01,
 cpus=1,
 ...)
@@ -129,6 +130,44 @@ cpus=1,
         }
         
         model = lapply(1:M, function(x) {suppressWarnings(do.call("block.splsda", block.splsda.args(x)))})
+        ### CV AUC
+        auc.perf <- NULL
+        if (auc) {
+            auc.perf.list <-
+                lapply(1:M, function(x) {
+                    auroc.sgccda(
+                        object = model[[x]],
+                        newdata = X.test[[x]],
+                        outcome.test = Y.test[[x]],
+                        print=FALSE
+                    )
+                })
+            
+            auc.perf <- list()
+            auc.perf.combined <- list()
+            blocks <- names(X)
+            comps <- object$ncomp[[1]]
+            
+            ## average AUC data.frames over componets, for all repeats, for each block
+            for (i_ncomp in 1:comps) {
+                ## calculate a combined one over all blocks for each component
+                auc_combined_df <- 0
+                for (i_block in blocks) {
+                    auc_df <- 0
+                    for (i_repeat in 1:M) {
+                        auc_df  <- auc_df + auc.perf.list[[i_repeat]][[i_block]][[i_ncomp]]
+                    }
+                    auc_df  <- auc_df / M
+                    auc_combined_df <- auc_combined_df + auc_df
+                    auc.perf[[paste0("comp", i_ncomp)]][[i_block]] <-
+                        auc_df
+                }
+                auc.perf[[paste0("comp", i_ncomp)]][["blocks_combined"]] <-
+                    auc_combined_df / length(blocks)
+            }
+        
+            }
+        
         ### Retrieve convergence criterion
         crit = lapply(1:M, function(x){model[[x]]$crit})
         
@@ -189,7 +228,7 @@ cpus=1,
         ### Warning: no near.zero.var applies with sgcca
         
         ### Start: Prediction (score / class) sample test
-        # Prediction model on test dataset
+        # Prediction model on test block
         predict.all = lapply(1:M, function(x) {predict.block.spls(model[[x]], X.test[[x]], dist = "all")})
         
         # Retrieve class prediction
@@ -553,6 +592,10 @@ cpus=1,
                 weights = weights
             )
             
+            if (auc) {
+                repeat_cv_res$auc.perf <- auc.perf
+            }
+            
             return(repeat_cv_res)
         }
         ### End: Supplementary analysis for sgcca
@@ -567,7 +610,8 @@ cpus=1,
     
     ### parallel
     if (parallel) {
-        cluster_type <- ifelse(.onUnix(), "FORK", "PSOCK")
+        ## for some reason, FORK freezes when auc == TRUE
+        cluster_type <- ifelse(.onUnix() && !auc, "FORK", "PSOCK")
         cl <- makeCluster(cpus, type = cluster_type)
         on.exit(stopCluster(cl))
         clusterEvalQ(cl, c("repeat_cv_perf.diablo"))
@@ -801,6 +845,22 @@ cpus=1,
     result$call = match.call()
     result$crit = crit
     result$choice.ncomp = ncomp_opt
+    if (auc) {
+        ## average of auc across all repeats for all datasets (and combined), for all components
+        auc.perf <- lapply(.name_list(names(auc.perf[[1]][[1]])), function(block) {
+            lapply(.name_list(names(auc.perf[[1]])), function(comp) {
+                Reduce("+", lapply(auc.perf, function(rep) {
+                    rep[[comp]][[block]]
+                })) / nrepeat
+            })
+        })
+        
+        ## combined AUC is the last one
+        result$auc <- rev(auc.perf)[[1]]
+        ## per-study
+        result$auc.study <- rev(rev(auc.perf)[-1])
+    }
+
     
     return(invisible(result))
 }
