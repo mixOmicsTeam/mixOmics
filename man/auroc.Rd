@@ -16,21 +16,21 @@ Calculates the AUC and plots ROC for supervised objects from s/plsda, mint.s/pls
 
 \usage{
 \method{auroc}{mixo_plsda}(object, newdata = object$input.X, outcome.test = as.factor(object$Y),
-multilevel = NULL, plot = TRUE, roc.comp = 1, title=paste("ROC Curve Comp",roc.comp), ...)
+multilevel = NULL, plot = TRUE, roc.comp = 1, title=paste("ROC Curve Comp",roc.comp), print = TRUE, ...)
 
 \method{auroc}{mixo_splsda}(object, newdata = object$input.X, outcome.test = as.factor(object$Y),
-multilevel = NULL, plot = TRUE, roc.comp = 1, title=paste("ROC Curve Comp",roc.comp), ...)
+multilevel = NULL, plot = TRUE, roc.comp = 1, title=paste("ROC Curve Comp",roc.comp), print = TRUE, ...)
 
 \method{auroc}{mint.plsda}(object, newdata = object$X, outcome.test = as.factor(object$Y),
 study.test = object$study, multilevel = NULL,plot = TRUE, roc.comp = 1,
-roc.study = "global", title=NULL, ...)
+roc.study = "global", title=NULL, print = TRUE, ...)
 
 \method{auroc}{mint.splsda}(object, newdata = object$X, outcome.test = as.factor(object$Y),
 study.test = object$study, multilevel = NULL,plot = TRUE, roc.comp = 1,
-roc.study = "global", title=NULL, ...)
+roc.study = "global", title=NULL, print = TRUE, ...)
 
 \method{auroc}{sgccda}(object, newdata = object$X, outcome.test = as.factor(object$Y),
-multilevel = NULL,plot = TRUE, roc.block = 1, roc.comp = 1, title=NULL, ...)
+multilevel = NULL,plot = TRUE, roc.block = 1, roc.comp = 1, title=NULL, print = TRUE, ...)
 
 }
 
@@ -46,6 +46,7 @@ analysis function: "plsda", "splsda", "mint.plsda", "mint.splsda", "block.splsda
 \item{roc.block}{Specify the block number (integer) or the name of the block (set of characters) for which the ROC will be plotted for a block.plsda or block.splsda object, default to 1.}
 \item{roc.study}{Specify the study for which the ROC will be plotted for a mint.plsda or mint.splsda object, default to "global".}
 \item{title}{Character, specifies the title of the plot.}
+\item{print}{Logical, specifies whether the output should be printed.}
 \item{...}{external optional arguments for plotting - \code{line.col} for custom colors and \code{legend.title} for custom legend title}
 }
 

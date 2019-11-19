@@ -39,6 +39,7 @@ multilevel = NULL,
 plot = TRUE,
 roc.comp = 1,
 title=paste("ROC Curve Comp",roc.comp),
+print=TRUE,
 ...)
 {
     if(dim(newdata)[[1]] != length(outcome.test))
@@ -60,7 +61,9 @@ title=paste("ROC Curve Comp",roc.comp),
         statauc[[paste0("Comp", i, sep = "")]] = temp[[1]]
         graph[[paste0("Comp", i, sep = "")]] = temp$graph
     }
-    print(statauc)
+    if (isTRUE(print))
+        print(statauc)
+    
     return(invisible(c(statauc,graph=graph)))
 }
 
@@ -77,6 +80,7 @@ plot = TRUE,
 roc.comp = 1,
 roc.study = "global",
 title=NULL,
+print=TRUE,
 ...)
 {
     if(length(roc.study) != 1)
@@ -128,7 +132,9 @@ title=NULL,
         statauc[[paste0("Comp", i, sep = "")]] = temp[[1]]
         graph[[paste0("Comp", i, sep = "")]] = temp$graph
     }
-    print(statauc)
+    if (isTRUE(print))
+        print(statauc)
+
     return(invisible(c(statauc,graph=graph)))
     
 }
@@ -145,6 +151,7 @@ plot = TRUE,
 roc.block = 1L,
 roc.comp = 1L,
 title=NULL,
+print=TRUE,
 ...)
 {
     
@@ -190,7 +197,9 @@ title=NULL,
         }
         out = c(auc.mean,graph=graph)
     }
-    print(auc.mean)
+    if (isTRUE(print))
+        print(statauc)
+    
     return(invisible(out))
 }
 
@@ -206,6 +215,7 @@ plot = TRUE,
 roc.block = 1,
 roc.comp = 1,
 title=NULL,
+print=TRUE,
 ...)
 {
     
@@ -242,7 +252,9 @@ title=NULL,
         }
         out = c(auc.mean,graph=graph)
     }
-    print(auc.mean)
+    if (isTRUE(print))
+        print(statauc)
+    
     return(invisible(out))
 }
 
