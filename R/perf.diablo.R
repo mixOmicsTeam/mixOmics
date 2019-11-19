@@ -39,7 +39,7 @@ validation = c("Mfold", "loo"),
 folds = 10,
 nrepeat = 1,
 signif.threshold=0.01,
-cpus,
+cpus=1,
 ...)
 {
     
@@ -73,14 +73,6 @@ cpus,
     if (!(validation %in% c("Mfold", "loo")))
     stop("Choose 'validation' among the two following possibilities: 'Mfold' or 'loo'")
     
-    if(!missing(cpus))
-    {
-        if(!is.numeric(cpus) | length(cpus)!=1)
-        stop("'cpus' must be a numerical value")
-        
-    }
-    
-    
     #-- tells which variables are selected in the blocks --#
     
     keepX = object$keepX
@@ -89,8 +81,11 @@ cpus,
     if (length(X) > 1)
     Y.mean = Y.mean.res = Y.weighted.vote = Y.weighted.vote.res = Y.vote = Y.vote.res = Y.WeightedPredict = Y.WeightedPredict.res = list()
     
+    cpus <- .check_cpus(cpus)
+    parallel <- cpus > 1
+    
     ### parallel
-    if (!missing(cpus)) {
+    if (parallel) {
         cluster_type <- ifelse(.onUnix(), "FORK", "SOCK")
              clusterExport(cl, c("auroc", "block.splsda"))
     }
@@ -566,7 +561,7 @@ cpus,
         ### End: Supplementary analysis for sgcca
     } ### end nrepeat
     
-    if (!missing(cpus)) {
+    if (parallel) {
         stopCluster(cl)
     }
     
