@@ -17,3 +17,4 @@ Library
 
 .github
 gitignore
+.Renviron

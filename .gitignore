@@ -37,3 +37,5 @@ README.html
 
 inst/*.html
 gitignore
+.Renviron
+
