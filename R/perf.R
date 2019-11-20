@@ -443,7 +443,8 @@ cpus =1,
     
     if (parallel)
     {
-        cl = makeCluster(cpus, type = "SOCK")
+        cluster_type <- ifelse(.onUnix(), "FORK", "PSOCK")
+        cl = makeCluster(cpus, type = cluster_type)
         on.exit(stopCluster(cl))
         #clusterExport(cl, c("splsda","selectVar"))
         clusterEvalQ(cl, library(mixOmics))
