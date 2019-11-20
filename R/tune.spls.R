@@ -71,7 +71,7 @@ near.zero.var = FALSE,
 nrepeat = 1,
 multilevel = NULL,
 light.output = TRUE,
-cpus
+cpus = 1
 )
 {    #-- checking general input parameters --------------------------------------#
     #---------------------------------------------------------------------------#
@@ -142,21 +142,20 @@ cpus
     if (is.null(test.keepX) | length(test.keepX) == 1 | !is.numeric(test.keepX))
     stop("'test.keepX' must be a numeric vector with more than two entries", call. = FALSE)
     
-    if(!missing(cpus))
+    #-- cpus
+    cpus <- .check_cpus(cpus)
+    parallel <- cpus > 1
+    
+    if (parallel)
     {
-        if(!is.numeric(cpus) | length(cpus)!=1)
-        stop("'cpus' must be a numerical value")
-        
-        parallel = TRUE
-        cl = makeCluster(cpus, type = "SOCK")
+        cluster_type <- ifelse (.onUnix(), "FORK", "PSOCK")
+        cl <- makeCluster(cpus, type = cluster_type)
+        on.exit(stopCluster(cl))
         clusterEvalQ(cl, library(mixOmics))
 
         if(progressBar == TRUE)
         message(paste("As code is running in parallel, the progressBar will only show 100% upon completion of each nrepeat/ component.",sep=""))
 
-    } else {
-        parallel = FALSE
-        cl = NULL
     }
     
     # add colnames and rownames if missing
@@ -245,8 +244,9 @@ cpus
         
 
         class.object="mixo_spls"
-        if(!missing(cpus))
-        clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
+
+        if (parallel)
+            clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
 
         # successively tune the components until ncomp: comp1, then comp2, ...
         for(comp in seq_len(length(comp.real)))
@@ -255,7 +255,7 @@ cpus
             if (progressBar == TRUE)
             cat("\ncomp",comp.real[comp], "\n")
             
-            result = MCVfold.spls (X, Y, multilevel = multilevel, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = 1 + length(already.tested.X),
+            result = MCVfold.spls(X, Y, multilevel = multilevel, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = 1 + length(already.tested.X),
             choice.keepX = already.tested.X,
             test.keepX = test.keepX, test.keepY = ncol(Y), measure = measure, dist = NULL, auc=FALSE, scale=scale,
             near.zero.var = near.zero.var, progressBar = progressBar, tol = tol, max.iter = max.iter,
@@ -282,8 +282,6 @@ cpus
 
 
         } # end comp
-        if (parallel == TRUE)
-        stopCluster(cl)
         
         names(mat.error.rate) = c(paste0('comp', comp.real))
         names(already.tested.X) = c(paste0('comp', seq_len(ncomp)))

@@ -15,7 +15,7 @@ tune.spls(X, Y, ncomp = 1,
 test.keepX = c(5, 10, 15), already.tested.X,
 validation = "Mfold", folds = 10, measure = "MSE", scale = TRUE,
 progressBar = TRUE, tol = 1e-06, max.iter = 100, near.zero.var = FALSE,
-nrepeat = 1, multilevel = NULL, light.output = TRUE, cpus)
+nrepeat = 1, multilevel = NULL, light.output = TRUE, cpus = 1)
 
 }	
 
@@ -39,7 +39,7 @@ to zero means and unit variances (default: TRUE)}
     \item{multilevel}{Design matrix for multilevel analysis (for repeated measurements) that indicates the repeated measures on each individual, i.e. the individuals ID. See Details.}
 
     \item{light.output}{if set to FALSE, the prediction/classification of each sample for each of \code{test.keepX} and each comp is returned.}
-    \item{cpus}{Number of cpus to use when running the code in parallel.}
+    \item{cpus}{Number of cpus to use. If greater than 1, the code is run in parallel.}
 
 }
 
