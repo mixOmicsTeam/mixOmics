@@ -550,7 +550,6 @@ cpus =1,
     
     class.object=class(object)
     if (parallel) {
-        if (class.object)
         clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","keepX"),envir=environment())
     }
 
