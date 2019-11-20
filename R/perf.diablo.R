@@ -49,7 +49,8 @@ cpus=1,
     Y = object$Y#ind.mat; Y = map(Y); Y = factor(Y, labels = level.Y)
     n = nrow(X[[1]]);
     indY = object$indY
-    max.iter = object$max.iter
+    max.iter =  object$max.iter
+    ncomp <- max(object$ncomp[-indY])
     near.zero.var = !is.null(object$nzv) # if near.zero.var was used, we set it to TRUE. if not used, object$nzv is NULL
 
     if (any(dist == "all"))
@@ -91,16 +92,8 @@ cpus=1,
         clusterEvalQ(cl, c("auroc", "block.splsda"))
     }
     
-    
-    for(nrep in 1:nrepeat)
+    repeat_cv_perf.diablo <- function(nrep)
     {
-        if(nrep==1)
-        {
-            folds.save = folds
-        } else {
-            folds = folds.save
-        }
-        
         #-- define the folds --#
         if (validation ==  "Mfold")
         {
@@ -113,7 +106,7 @@ cpus=1,
                 temp = stratified.subsampling(Y, folds = M)
                 folds = temp$SAMPLE
                 if(temp$stop > 0) # to show only once
-                warning("At least one class is not represented in one fold, which may unbalance the error rate.\n  Consider a number of folds lower than the minimum in table(Y): ", min(table(Y)))
+                    warning("At least one class is not represented in one fold, which may unbalance the error rate.\n  Consider a number of folds lower than the minimum in table(Y): ", min(table(Y)))
                 
             }
         } else if (validation ==  "loo") {
@@ -136,53 +129,50 @@ cpus=1,
         ### End: Training samples (X.training and Y.training) and Test samples (X.test / Y.test)
         
         ### Estimation models
-        if(missing(cpus))
-        {
-            model = lapply(1 : M, function(x) {suppressWarnings(block.splsda(X = X.training[[x]], Y = Y.training[[x]], ncomp = max(object$ncomp[-indY]),
-                keepX = keepX,
-                design = object$design, max.iter = object$max.iter, tol = object$tol, init = object$init, scheme = object$scheme,
-                mode = object$mode, near.zero.var=near.zero.var))})
-        } else {
-            model = parLapply(cl, 1 : M, function(x) {suppressWarnings(block.splsda(X = X.training[[x]], Y = Y.training[[x]], ncomp = max(object$ncomp[-indY]),
-                keepX = keepX,
-                design = object$design, max.iter = object$max.iter, tol = object$tol, init = object$init, scheme = object$scheme,
-                mode = object$mode, near.zero.var=near.zero.var ))})
+        
+        ## helper function to return appropriate block.splsda args for CV
+        block.splsda.args <- function(ind) {
+            return(list(X = X.training[[ind]], Y = Y.training[[ind]], ncomp = ncomp, 
+                 keepX = keepX,
+                 design = object$design, max.iter =  max.iter, tol = object$tol, init = object$init, scheme = object$scheme,
+                 mode = object$mode, near.zero.var = near.zero.var))
         }
         
+        model = lapply(1:M, function(x) {suppressWarnings(do.call("block.splsda", block.splsda.args(x)))})
         ### Retrieve convergence criterion
-        crit[[nrep]] = lapply(1 : M, function(x){model[[x]]$crit})
+        crit = lapply(1:M, function(x){model[[x]]$crit})
         
         ### Retrieve weights
-        weights[[nrep]] = sapply(1 : M, function(x){model[[x]]$weights})
-        colnames(weights[[nrep]]) = names(crit[[nrep]]) = paste0("fold",1:M)
+        weights = sapply(1:M, function(x){model[[x]]$weights})
+        colnames(weights) = names(crit) = paste0("fold",1:M)
         
         ### Retrieve selected variables per component
         features = lapply(1 : J, function(x)
         {
             lapply(1 : object$ncomp[x], ### List level / ncomp level
-            function(y)
-            {
-                unlist(lapply(1 : M,  ### Validation level
-                function(z)
-                {
-                    if (is.null(colnames(X[[x]])))
-                    {
-                        paste0("X", which(model[[z]]$loadings[[x]][, y] != 0))
-                    } else {
-                        if (!is.null(colnames(X[[x]])))
-                        colnames(X[[x]])[model[[z]]$loadings[[x]][, y] != 0]
-                    }
-                }
-                ))
-            })
+                   function(y)
+                   {
+                       unlist(lapply(1:M,  ### Validation level
+                                     function(z)
+                                     {
+                                         if (is.null(colnames(X[[x]])))
+                                         {
+                                             paste0("X", which(model[[z]]$loadings[[x]][, y] != 0))
+                                         } else {
+                                             if (!is.null(colnames(X[[x]])))
+                                                 colnames(X[[x]])[model[[z]]$loadings[[x]][, y] != 0]
+                                         }
+                                     }
+                       ))
+                   })
         })
         
         ### Start: Analysis feature selection
         # Statistics: stability
-        list.features[[nrep]] = lapply(1 : J, function(x){lapply(features[[x]], function(y){(sort(table(factor(y))/M, decreasing = TRUE))})})
+        list.features = lapply(1 : J, function(x){lapply(features[[x]], function(y){(sort(table(factor(y))/M, decreasing = TRUE))})})
         
         # Statistics: original model (object)
-        final.features[[nrep]] = lapply(1 : J, function(x)
+        final.features = lapply(1 : J, function(x)
         {
             lapply(1 : object$ncomp[x],function(y)
             {
@@ -192,73 +182,73 @@ cpus=1,
                     row.names(temp) = paste0("X", which(object$loadings[[x]][, y] != 0))
                 } else {
                     if (!is.null(colnames(X[[x]])))
-                    row.names(temp) = colnames(X[[x]])[which(object$loadings[[x]][, y] != 0)]
+                        row.names(temp) = colnames(X[[x]])[which(object$loadings[[x]][, y] != 0)]
                 }
                 names(temp) = "value.var"
                 return(temp[sort(abs(temp[, 1]), index.return = TRUE, decreasing = TRUE)$ix, 1, drop = FALSE])
             })
         })
         
-        list.features[[nrep]] = lapply(1 : J, function(x){ names(list.features[[nrep]][[x]]) = paste0("comp", 1 : object$ncomp[x])
-            return(list.features[[nrep]][[x]])})
+        list.features = lapply(1 : J, function(x){ names(list.features[[x]]) = paste0("comp", 1 : object$ncomp[x])
+        return(list.features[[x]])})
         
-        final.features[[nrep]] = lapply(1 : J, function(x){ names(final.features[[nrep]][[x]]) = paste0("comp", 1 : object$ncomp[x])
-            return(final.features[[nrep]][[x]])})
+        final.features = lapply(1 : J, function(x){ names(final.features[[x]]) = paste0("comp", 1 : object$ncomp[x])
+        return(final.features[[x]])})
         ### End: Analysis feature selection
         
         ### Warning: no near.zero.var applies with sgcca
         
         ### Start: Prediction (score / class) sample test
         # Prediction model on test dataset
-        predict.all[[nrep]] = lapply(1 : M, function(x) {predict.block.spls(model[[x]], X.test[[x]], dist = "all")})
+        predict.all = lapply(1:M, function(x) {predict.block.spls(model[[x]], X.test[[x]], dist = "all")})
         
         # Retrieve class prediction
-        Y.predict[[nrep]] = lapply(1 : M, function(x) {predict.all[[nrep]][[x]]$class})
+        Y.predict = lapply(1:M, function(x) {predict.all[[x]]$class})
         
         ## Start: retrieve score for each component
         # Keep score values
-        Y.all[[nrep]] = lapply(1 : M, function(x) {predict.all[[nrep]][[x]]$predict})
+        Y.all = lapply(1:M, function(x) {predict.all[[x]]$predict})
         
-        # Reorganization list Y.all[[nrep]] data / ncomp / folds
-        Y.all[[nrep]] = lapply(1 : J, function(x)
+        # Reorganization list Y.all data / ncomp / folds
+        Y.all = lapply(1 : J, function(x)
         {
             lapply(1 : object$ncomp[x], function(y)
             {
-                lapply(1 : M, function(z)
+                lapply(1:M, function(z)
                 {
-                    Y.all[[nrep]][[z]][[x]][, , y]
+                    Y.all[[z]][[x]][, , y]
                 })
             })
         })
         # Merge score
-        Y.all[[nrep]] = lapply(1 : J, function(x)
+        Y.all = lapply(1 : J, function(x)
         {
             lapply(1 : object$ncomp[x], function(y)
             {
-                do.call(rbind, Y.all[[nrep]][[x]][[y]])
+                do.call(rbind, Y.all[[x]][[y]])
             })
         })
         
         # Define row.names
-        Y.all[[nrep]] = lapply(1 : J, function(x)
+        Y.all = lapply(1 : J, function(x)
         {
             lapply(1 : object$ncomp[x], function(y)
             {
-                row.names(Y.all[[nrep]][[x]][[y]]) = row.names(X[[x]])[unlist(folds)]
-                return(Y.all[[nrep]][[x]][[y]])
+                row.names(Y.all[[x]][[y]]) = row.names(X[[x]])[unlist(folds)]
+                return(Y.all[[x]][[y]])
             })
         })
         
         # Define colnames
-        Y.all[[nrep]] = lapply(1 : J, function(x)
+        Y.all = lapply(1 : J, function(x)
         {
             lapply(1 : object$ncomp[x], function(y)
             {
-                colnames(Y.all[[nrep]][[x]][[y]]) = levels(Y)
-                return(Y.all[[nrep]][[x]][[y]])
+                colnames(Y.all[[x]][[y]]) = levels(Y)
+                return(Y.all[[x]][[y]])
             })
-            names(Y.all[[nrep]][[x]])=paste0("comp", 1:object$ncomp[x])
-            return(Y.all[[nrep]][[x]])
+            names(Y.all[[x]])=paste0("comp", 1:object$ncomp[x])
+            return(Y.all[[x]])
         })
         ## End: retrieve score for each component
         
@@ -266,60 +256,60 @@ cpus=1,
         
         ## Start: retrieve class for each component
         # Reorganization input data / folds / dist.select
-        Y.predict[[nrep]] = lapply(1 : J, function(x)
+        Y.predict = lapply(1 : J, function(x)
         {
-            lapply(1 : M, function(y)
+            lapply(1:M, function(y)
             {
                 lapply(which(c("max.dist", "centroids.dist", "mahalanobis.dist") %in% dist.select), function(z)
                 {
-                    Y.predict[[nrep]][[y]][[z]][[x]]
+                    Y.predict[[y]][[z]][[x]]
                 })
             })
         })
         
         # Define row.names
-        Y.predict[[nrep]] = lapply(1 : J, function(x)
+        Y.predict = lapply(1 : J, function(x)
         {
-            lapply(1 : M, function(y)
+            lapply(1:M, function(y)
             {
                 lapply(1 : length(dist.select), function(z)
                 {
                     if (!is.null(row.names(X[[x]])[folds[[y]]]))
                     {
-                        row.names(Y.predict[[nrep]][[x]][[y]][[z]]) = row.names(X[[x]])[folds[[y]]]
+                        row.names(Y.predict[[x]][[y]][[z]]) = row.names(X[[x]])[folds[[y]]]
                     } else {
-                        row.names(Y.predict[[nrep]][[x]][[y]][[z]]) = paste0("Ind", unlist(folds))
+                        row.names(Y.predict[[x]][[y]][[z]]) = paste0("Ind", unlist(folds))
                     }
-                    return(Y.predict[[nrep]][[x]][[y]][[z]])
+                    return(Y.predict[[x]][[y]][[z]])
                 })
             })
         })
         
         # Reorganization list input / dist.select / folds
-        Y.predict[[nrep]] = lapply(1 : J, function(x)
+        Y.predict = lapply(1 : J, function(x)
         {
             lapply(1 : length(dist.select), function(y)
             {
-                lapply(1 : M, function(z)
+                lapply(1:M, function(z)
                 {
-                    Y.predict[[nrep]][[x]][[z]][[y]]
+                    Y.predict[[x]][[z]][[y]]
                 })
             })
         })
         # Merge Score
-        Y.predict[[nrep]] = lapply(1 : J, function(x)
+        Y.predict = lapply(1 : J, function(x)
         {
             lapply(1 : length(dist.select), function(y)
             {
-                do.call(rbind, Y.predict[[nrep]][[x]][[y]])
+                do.call(rbind, Y.predict[[x]][[y]])
             })
         })
         
         # Define names
-        Y.predict[[nrep]] = lapply(1 : J, function(x)
+        Y.predict = lapply(1 : J, function(x)
         {
-            names(Y.predict[[nrep]][[x]]) = dist.select
-            return(Y.predict[[nrep]][[x]])
+            names(Y.predict[[x]]) = dist.select
+            return(Y.predict[[x]])
         })
         ## End: retrieve class for each component
         ### End: Prediction (score / class) sample test
@@ -327,11 +317,11 @@ cpus=1,
         ### Start: Estimation error rate
         ## Start: Estimation overall error rate
         #Statistics overall error rate
-        error.mat[[nrep]] = lapply(1 : J, function(x)
+        error.mat = lapply(1 : J, function(x)
         {
             lapply(dist.select , function(y)
             {
-                apply(Y.predict[[nrep]][[x]][[y]], 2, function(z)
+                apply(Y.predict[[x]][[y]], 2, function(z)
                 {
                     1 - sum(diag(table(factor(z, levels = levels(Y)), Y[unlist(folds)])))/length(Y)
                 })
@@ -339,26 +329,26 @@ cpus=1,
         })
         
         # Merge error rate according to dist
-        error.mat[[nrep]] = lapply(1 : J, function(x)
+        error.mat = lapply(1 : J, function(x)
         {
-            do.call(cbind, error.mat[[nrep]][[x]])
+            do.call(cbind, error.mat[[x]])
         })
         
         # Define name
-        error.mat[[nrep]] = lapply(1 : J, function(x)
+        error.mat = lapply(1 : J, function(x)
         {
-            colnames(error.mat[[nrep]][[x]]) = dist.select
-            return(error.mat[[nrep]][[x]])
+            colnames(error.mat[[x]]) = dist.select
+            return(error.mat[[x]])
         })
         ## End: Estimation overall error rate
         
         ## Start: Estimation error rate per class
         # Statistics error rate per class
-        error.mat.class[[nrep]] = lapply(1 : J, function(x)
+        error.mat.class = lapply(1 : J, function(x)
         {
             lapply(dist.select , function(y)
             {
-                apply(Y.predict[[nrep]][[x]][[y]], 2, function(z)
+                apply(Y.predict[[x]][[y]], 2, function(z)
                 {
                     temp = diag(table(factor(z, levels = levels(Y)), Y[unlist(folds)]))
                     1 - c(temp/summary(Y))#, sum(temp)/length(Y))
@@ -367,10 +357,10 @@ cpus=1,
         })
         
         # Define names
-        error.mat.class[[nrep]] = lapply(1 : J, function(x)
+        error.mat.class = lapply(1 : J, function(x)
         {
-            names(error.mat.class[[nrep]][[x]]) = dist.select
-            return(error.mat.class[[nrep]][[x]])
+            names(error.mat.class[[x]]) = dist.select
+            return(error.mat.class[[x]])
         })
         
         ## End: Estimation error rate per class
@@ -378,9 +368,9 @@ cpus=1,
         
         if (!is.null(names(X)))
         {
-            names(error.mat[[nrep]]) = names(X); names(error.mat.class[[nrep]]) = names(X)
-            names(list.features[[nrep]]) = names(X); names(final.features[[nrep]]) = names(X);
-            names(Y.all[[nrep]]) = names(X); names(Y.predict[[nrep]]) = names(X)
+            names(error.mat) = names(X); names(error.mat.class) = names(X)
+            names(list.features) = names(X); names(final.features) = names(X);
+            names(Y.all) = names(X); names(Y.predict) = names(X)
         }
         
         
@@ -390,31 +380,31 @@ cpus=1,
             ###------------------------------------------------------------###
             ### Start: class of Average prediction
             # Reorganization dist.select / folds
-            Y.mean[[nrep]] =lapply(1 : M, function(y)
+            Y.mean =lapply(1:M, function(y)
             {
-                predict.all[[nrep]][[y]][["AveragedPredict.class"]][[1]]
+                predict.all[[y]][["AveragedPredict.class"]][[1]]
             })
             # Merge Score
-            Y.mean[[nrep]] = do.call(rbind, Y.mean[[nrep]])
+            Y.mean = do.call(rbind, Y.mean)
             
             # Sort matrix
-            Y.mean[[nrep]] = Y.mean[[nrep]][sort(unlist(folds), index.return = TRUE)$ix, , drop = FALSE]
+            Y.mean = Y.mean[sort(unlist(folds), index.return = TRUE)$ix, , drop = FALSE]
             
             
             # Estimation error.rate
             #Y.mean.res = sapply(1:max(object$ncomp[-(J + 1)]), function(x){temp = diag(table(factor(Y.mean[, x], levels = c(1:nlevels(Y))), Y))
             #                                                              c(temp/summary(Y), sum(temp)/length(Y))})
-            Y.mean.res[[nrep]] = sapply(1:max(object$ncomp[-indY]), function(x)
+            Y.mean.res = sapply(1:ncomp, function(x)
             {
-                mat = table(factor(Y.mean[[nrep]][, x], levels = levels(Y)), Y)
+                mat = table(factor(Y.mean[, x], levels = levels(Y)), Y)
                 mat2 <- mat
                 diag(mat2) <- 0
                 err = c(c(colSums(mat2)/summary(Y), sum(mat2)/length(Y)), mean(colSums(mat2)/colSums(mat)))
             })
             
             #Y.mean.res = t(Y.mean.res)
-            colnames(Y.mean.res[[nrep]]) = paste0("comp", 1:max(object$ncomp[-indY]))
-            row.names(Y.mean.res[[nrep]]) = c(levels(Y), "Overall.ER", "Overall.BER")
+            colnames(Y.mean.res) = paste0("comp", 1:ncomp)
+            row.names(Y.mean.res) = c(levels(Y), "Overall.ER", "Overall.BER")
             ### End: Average prediction
             ###------------------------------------------------------------###
             
@@ -423,31 +413,31 @@ cpus=1,
             ###------------------------------------------------------------###
             ### Start: class of Weighted prediction
             # Reorganization dist.select / folds
-            Y.WeightedPredict[[nrep]] =lapply(1 : M, function(y)
+            Y.WeightedPredict =lapply(1:M, function(y)
             {
-                predict.all[[nrep]][[y]][["WeightedPredict.class"]][[1]]
+                predict.all[[y]][["WeightedPredict.class"]][[1]]
             })
             # Merge Score
-            Y.WeightedPredict[[nrep]] = do.call(rbind, Y.WeightedPredict[[nrep]])
+            Y.WeightedPredict = do.call(rbind, Y.WeightedPredict)
             
             # Sort matrix
-            Y.WeightedPredict[[nrep]] = Y.WeightedPredict[[nrep]][sort(unlist(folds), index.return = TRUE)$ix, , drop = FALSE]
+            Y.WeightedPredict = Y.WeightedPredict[sort(unlist(folds), index.return = TRUE)$ix, , drop = FALSE]
             
             
             # Estimation error.rate
             #Y.mean.res = sapply(1:max(object$ncomp[-(J + 1)]), function(x){temp = diag(table(factor(Y.mean[, x], levels = c(1:nlevels(Y))), Y))
             #                                                              c(temp/summary(Y), sum(temp)/length(Y))})
-            Y.WeightedPredict.res[[nrep]] = sapply(1:max(object$ncomp[-indY]), function(x)
+            Y.WeightedPredict.res = sapply(1:ncomp, function(x)
             {
-                mat = table(factor(Y.WeightedPredict[[nrep]][, x], levels = levels(Y)), Y)
+                mat = table(factor(Y.WeightedPredict[, x], levels = levels(Y)), Y)
                 mat2 <- mat
                 diag(mat2) <- 0
                 err = c(c(colSums(mat2)/summary(Y), sum(mat2)/length(Y)), mean(colSums(mat2)/colSums(mat)))
             })
             
             #Y.mean.res = t(Y.mean.res)
-            colnames(Y.WeightedPredict.res[[nrep]]) = paste0("comp", 1:max(object$ncomp[-indY]))
-            row.names(Y.WeightedPredict.res[[nrep]]) = c(levels(Y), "Overall.ER", "Overall.BER")
+            colnames(Y.WeightedPredict.res) = paste0("comp", 1:ncomp)
+            row.names(Y.WeightedPredict.res) = c(levels(Y), "Overall.ER", "Overall.BER")
             ### End: Average prediction
             ###------------------------------------------------------------###
             
@@ -455,35 +445,35 @@ cpus=1,
             ###------------------------------------------------------------###
             ## Start: retrieve (weighted) vote for each component
             # Reorganization dist.select / folds
-            Y.weighted.vote[[nrep]] = lapply(dist.select, function(x)
+            Y.weighted.vote = lapply(dist.select, function(x)
             {
-                lapply(1 : M, function(y)
+                lapply(1:M, function(y)
                 {
-                    predict.all[[nrep]][[y]][["WeightedVote"]][[x]]
+                    predict.all[[y]][["WeightedVote"]][[x]]
                 })
             })
             # Merge Score
-            Y.weighted.vote[[nrep]] = lapply(1 : length(dist.select), function(x)
+            Y.weighted.vote = lapply(1 : length(dist.select), function(x)
             {
-                do.call(rbind, Y.weighted.vote[[nrep]][[x]])
+                do.call(rbind, Y.weighted.vote[[x]])
             })
             
             # Sort matrix
-            Y.weighted.vote[[nrep]] = lapply(1 : length(dist.select), function(x)
+            Y.weighted.vote = lapply(1 : length(dist.select), function(x)
             {
-                Y.weighted.vote[[nrep]][[x]][sort(unlist(folds), index.return = TRUE)$ix, , drop = FALSE]
+                Y.weighted.vote[[x]][sort(unlist(folds), index.return = TRUE)$ix, , drop = FALSE]
             })
             
-            names(Y.weighted.vote[[nrep]]) = dist.select
+            names(Y.weighted.vote) = dist.select
             
             ## End: retrieve (weighted) vote for each component
             ### End: Prediction (score / class) sample test
             
             
             ## subjects with NA are considered false
-            Y.weighted.vote.res[[nrep]] = lapply(1 : length(dist.select), function(x)
+            Y.weighted.vote.res = lapply(1 : length(dist.select), function(x)
             {
-                apply(Y.weighted.vote[[nrep]][[x]], 2, function(y)
+                apply(Y.weighted.vote[[x]], 2, function(y)
                 {
                     y[is.na(y)] <- nlevels(Y)+5   ## adding a new level for unsure subjects (replacing NA with this level)
                     temp=table(factor(y, levels = c(levels(Y), nlevels(Y)+5)), Y)
@@ -494,13 +484,13 @@ cpus=1,
             })
             
             
-            Y.weighted.vote.res[[nrep]] = lapply(1 : length(dist.select), function(x)
+            Y.weighted.vote.res = lapply(1 : length(dist.select), function(x)
             {
-                colnames(Y.weighted.vote.res[[nrep]][[x]]) = paste0("comp", 1:max(object$ncomp[-(J + 1)]))
-                row.names(Y.weighted.vote.res[[nrep]][[x]]) = c(levels(Y), "Overall.ER", "Overall.BER")
-                return((Y.weighted.vote.res[[nrep]][[x]]))
+                colnames(Y.weighted.vote.res[[x]]) = paste0("comp", 1:max(object$ncomp[-(J + 1)]))
+                row.names(Y.weighted.vote.res[[x]]) = c(levels(Y), "Overall.ER", "Overall.BER")
+                return((Y.weighted.vote.res[[x]]))
             })
-            names(Y.weighted.vote[[nrep]]) = dist.select; names(Y.weighted.vote.res[[nrep]]) = dist.select
+            names(Y.weighted.vote) = dist.select; names(Y.weighted.vote.res) = dist.select
             ###------------------------------------------------------------###
             
             
@@ -508,35 +498,35 @@ cpus=1,
             ###------------------------------------------------------------###
             ## Start: retrieve Majority Vote (non weighted) for each component
             # Reorganization dist.select / folds
-            Y.vote[[nrep]] = lapply(dist.select, function(x)
+            Y.vote = lapply(dist.select, function(x)
             {
-                lapply(1 : M, function(y)
+                lapply(1:M, function(y)
                 {
-                    predict.all[[nrep]][[y]][["MajorityVote"]][[x]]
+                    predict.all[[y]][["MajorityVote"]][[x]]
                 })
             })
             # Merge Score
-            Y.vote[[nrep]] = lapply(1 : length(dist.select), function(x)
+            Y.vote = lapply(1 : length(dist.select), function(x)
             {
-                do.call(rbind, Y.vote[[nrep]][[x]])
+                do.call(rbind, Y.vote[[x]])
             })
             
             # Sort matrix
-            Y.vote[[nrep]] = lapply(1 : length(dist.select), function(x)
+            Y.vote = lapply(1 : length(dist.select), function(x)
             {
-                Y.vote[[nrep]][[x]][sort(unlist(folds), index.return = TRUE)$ix, , drop = FALSE]
+                Y.vote[[x]][sort(unlist(folds), index.return = TRUE)$ix, , drop = FALSE]
             })
             
-            names(Y.vote[[nrep]]) = dist.select
+            names(Y.vote) = dist.select
             
             ## End: retrieve (weighted) vote for each component
             ### End: Prediction (score / class) sample test
             
             
             ## subjects with NA are considered false
-            Y.vote.res[[nrep]] = lapply(1 : length(dist.select), function(x)
+            Y.vote.res = lapply(1 : length(dist.select), function(x)
             {
-                apply(Y.vote[[nrep]][[x]], 2, function(y)
+                apply(Y.vote[[x]], 2, function(y)
                 {
                     y[is.na(y)] <- nlevels(Y)+5   ## adding a new level for unsure subjects (replacing NA with this level)
                     temp=table(factor(y, levels = c(levels(Y), nlevels(Y)+5)), Y)
@@ -547,42 +537,62 @@ cpus=1,
             })
             
             
-            Y.vote.res[[nrep]] = lapply(1 : length(dist.select), function(x)
+            Y.vote.res = lapply(1 : length(dist.select), function(x)
             {
-                colnames(Y.vote.res[[nrep]][[x]]) = paste0("comp", 1:max(object$ncomp[-(J + 1)]))
-                row.names(Y.vote.res[[nrep]][[x]]) = c(levels(Y), "Overall.ER", "Overall.BER")
-                return((Y.vote.res[[nrep]][[x]]))
+                colnames(Y.vote.res[[x]]) = paste0("comp", 1:max(object$ncomp[-(J + 1)]))
+                row.names(Y.vote.res[[x]]) = c(levels(Y), "Overall.ER", "Overall.BER")
+                return((Y.vote.res[[x]]))
             })
-            names(Y.vote[[nrep]]) = dist.select; names(Y.vote.res[[nrep]]) = dist.select
+            names(Y.vote) = dist.select; names(Y.vote.res) = dist.select
             
             ## End: retrieve non weighted vote for each component
             ###------------------------------------------------------------###
+            repeat_cv_res <- list(
+                error.mat = error.mat,
+                error.mat.class = error.mat.class,
+                Y.mean.res = Y.mean.res,
+                Y.WeightedPredict.res = Y.WeightedPredict.res,
+                Y.weighted.vote.res = Y.weighted.vote.res,
+                Y.vote.res = Y.vote.res,
+                Y.all = Y.all,
+                predict.all = predict.all,
+                Y.predict = Y.predict,
+                list.features = list.features,
+                final.features = final.features,
+                crit = crit,
+                weights = weights
+            )
             
+            return(repeat_cv_res)
         }
         ### End: Supplementary analysis for sgcca
     } ### end nrepeat
     
+    ## a list of nreps for lapply
+    nrep_list <- as.list(seq_len(nrepeat))
+    names(nrep_list) <- paste0("nrep", nrep_list)
+    
     if (parallel) {
+        repeat_cv_perf.diablo_res <- parLapply(cl, nrep_list, function(nrep) repeat_cv_perf.diablo(nrep))
         stopCluster(cl)
+    } else {
+        repeat_cv_perf.diablo_res <- lapply(nrep_list, function(nrep) repeat_cv_perf.diablo(nrep))
     }
     
-    #save(list=ls(),file="temp.Rdata")
-    
-    names(error.mat) = names(error.mat.class) = names(Y.all) = names(predict.all) = names(Y.predict) =
-    names(list.features) = names(final.features) = names(crit) = names(weights) = paste0("nrep",1:nrepeat)
-    
+    repeat_cv_perf.diablo_res  <- .unlist_repeat_cv_output(repeat_cv_perf.diablo_res)
+
+    list2env(repeat_cv_perf.diablo_res, envir = environment())
+    rm(repeat_cv_perf.diablo_res)
+
     
     ###------------------------------------------------------------###
     ## we want to average the error per dataset over nrepeat for
     # error.rate, error.rate.per.class, AveragedPredict.error.rate, WeightedPredict.error.rate, MajorityVote.error.rate, WeightedVote.error.rate
     # with each time: error.rate, error.rate.sd, error.rate.all
     ###------------------------------------------------------------###
-    
+
     if(nrepeat > 1)
     {
-        names(Y.mean) = names(Y.mean.res) = names(Y.weighted.vote) = names(Y.weighted.vote.res) = names(Y.vote) =
-        names(Y.vote.res) = names(Y.WeightedPredict) = names(Y.WeightedPredict.res) = paste0("nrep",1:nrepeat)
-        
         #### error.rate and error.rate.per.class over nrepeat
         error.rate.all = error.mat
         error.rate = list()
@@ -788,8 +798,6 @@ cpus=1,
         }
     }
 
-
-    method = "sgccda.mthd"
     result$meth = "sgccda.mthd"
     class(result) = "perf.sgccda.mthd"
     result$call = match.call()

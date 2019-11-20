@@ -33,6 +33,7 @@
 #'
 #' @return The number of cpus available/applicable, or condition.
 #'
+#' @noRd
 .check_cpus <- function(cpus) {
     if (!is.numeric(cpus) || cpus <= 0)
         stop("Number of CPUs should be a positive integer.", call. = FALSE)
@@ -53,6 +54,7 @@
 #'
 #' @return NULL if acceptable value, otherwise condition
 #'
+#' @noRd
 .check_alpha <- function(alpha=NULL) {
     if (is.null(alpha))
         alpha <- 0.01
@@ -70,6 +72,7 @@
 #'
 #' @return Error message
 #'
+#' @noRd
 .unexpected_err <- function(trying_to = NULL) {
     trying_to <- ifelse(is.null(trying_to), "", sprintf(" while trying to %s", trying_to))
     msg <- sprintf("Unexpected error%s. Please check the inputs and if problem persists submit an issue to https://github.com/mixOmicsTeam/mixOmics/issues", trying_to)
@@ -81,9 +84,32 @@
 #'
 #' @return Logical, FALSE if windows OS, TRUE if unix OS.
 #'
+#' @noRd
 .onUnix <- function() {
     return(ifelse(.Platform$OS.type == "unix", TRUE, FALSE))
 }
+
+## ----------- .unlist_repeat_cv_output ----------- 
+#' repeat_cv_perf.diablo helper to unlist internal outputs to
+#' previous list format for downstream work
+#'
+#' @return list of outputs needed for downstream work
+#'
+#' @noRd
+.unlist_repeat_cv_output <- function(list_rep=NULL) {
+    
+    ## so lapply will return a named list
+    names_list <- as.list(names(list_rep[[1]]))
+    names(names_list) <- names(list_rep[[1]])
+    
+    list_nrep <- lapply(names_list, function(x){
+        lapply(list_rep, function(y) {y[[x]]})
+    })
+    
+    
+    return(list_nrep)
+}
+
 ## ----------- stratified_subsampling ----------- 
 #' Perform stratified subsampling for cross-validation
 #'
