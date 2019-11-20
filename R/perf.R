@@ -360,7 +360,7 @@ nrepeat = 1,
 auc = FALSE,
 progressBar = TRUE,
 signif.threshold = 0.01,
-cpus,
+cpus =1,
 ...)
 {
     
@@ -438,13 +438,13 @@ cpus,
     #-- check significance threshold
     signif.threshold <- .check_alpha(signif.threshold)
     
-    if(!missing(cpus))
+    cpus <- .check_cpus(cpus)
+    parallel <- cpus > 1
+    
+    if (parallel)
     {
-        if(!is.numeric(cpus) | length(cpus)!=1)
-        stop("'cpus' must be a numerical value")
-        
-        parallel = TRUE
         cl = makeCluster(cpus, type = "SOCK")
+        on.exit(stopCluster(cl))
         #clusterExport(cl, c("splsda","selectVar"))
         clusterEvalQ(cl, library(mixOmics))
 
@@ -548,7 +548,7 @@ cpus,
     }
     
     class.object=class(object)
-    if(!missing(cpus)) {
+    if (parallel) {
         if (class.object)
         clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","keepX"),envir=environment())
     }
@@ -612,8 +612,6 @@ cpus,
             auc.mean[[comp]] = result$auc[, , 1]
         }
     }
-    if (parallel == TRUE)
-    stopCluster(cl)
 
     names(prediction.all) = paste0('comp', 1:ncomp)
     
