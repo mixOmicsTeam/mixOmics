@@ -54,44 +54,6 @@
 # ind.NA.col: optional. which col have missing values? list, ind.NA.col[[q]] for each data set.
 # parallel: logical.
 
-stratified.subsampling = function(Y, folds = 10)
-{
-    stop = 0
-    for(i in seq_len(nlevels(Y)))
-    {
-        ai=sample(which(Y==levels(Y)[i]),replace=FALSE) # random sampling of the samples from level i
-        aai=suppressWarnings(split(ai,factor(seq_len(min(folds,length(ai))))))                       # split of the samples in k-folds
-        if(length(ai)<folds)                                                # if one level doesn't have at least k samples, the list is completed with "integer(0)"
-        {
-            for(j in (length(ai)+1):folds)
-            aai[[j]]=integer(0)
-            stop = stop +1
-        }
-        assign(paste("aa",i,sep="_"),sample(aai,replace=FALSE))         # the `sample(aai)' is to avoid the first group to have a lot more data than the rest
-    }
-    
-    # combination of the different split aa_i into SAMPLE
-    SAMPLE=list()
-    for(j in seq_len(folds))
-    {
-        SAMPLE[[j]]=integer(0)
-        for(i in seq_len(nlevels(Y)))
-        {
-            SAMPLE[[j]]=c(SAMPLE[[j]],get(paste("aa",i,sep="_"))[[j]])
-        }
-    }# SAMPLE is a list of k splits
-    
-    ind0 = sapply(SAMPLE, length)
-    if(any(ind0 == 0))
-    {
-        SAMPLE = SAMPLE [-which(ind0 == 0)]
-        message("Because of a too high number of 'folds' required, ",length(which(ind0 == 0))," folds were randomly assigned no data: the number of 'folds' is reduced to ", length(SAMPLE))
-    }
-    
-    return(list(SAMPLE = SAMPLE, stop = stop))
-}
-
-
 MCVfold.spls = function(
 X,
 Y,
