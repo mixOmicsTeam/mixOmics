@@ -263,7 +263,7 @@ cpus = 1
             misdata = misdata, is.na.A = is.na.A, class.object=class.object)
             
             #save(list=ls(),file="temp.Rdata")
-            # in the following, there is [[1]] because 'tune' is working with only 1 distance and 'MCVfold.splsda' can work with multiple distances
+            # in the following, there is [[1]] because 'tune' is working with only 1 distance and 'MCVfold.spls' can work with multiple distances
             mat.error.rate[[comp]] = result[[measure]]$mat.error.rate[[1]]
             mat.mean.error[, comp]=result[[measure]]$error.rate.mean[[1]]
             if (!is.null(result[[measure]]$error.rate.sd[[1]]))

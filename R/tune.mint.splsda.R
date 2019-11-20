@@ -224,7 +224,7 @@ signif.threshold=0.01
         dist = dist, near.zero.var = near.zero.var, progressBar = progressBar, scale = scale, max.iter = max.iter, auc = auc)
         
 
-        # in the following, there is [[1]] because 'tune' is working with only 1 distance and 'MCVfold.splsda' can work with multiple distances
+        # in the following, there is [[1]] because 'tune' is working with only 1 distance and 'MCVfold.spls' can work with multiple distances
         mat.mean.error[, comp]=result[[measure]]$error.rate.mean[[1]]
         if (!is.null(result[[measure]]$error.rate.sd[[1]]))
         mat.sd.error[, comp]=result[[measure]]$error.rate.sd[[1]]
