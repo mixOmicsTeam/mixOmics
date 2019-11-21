@@ -62,7 +62,7 @@ print=TRUE,
         graph[[paste0("Comp", i, sep = "")]] = temp$graph
     }
     if (isTRUE(print))
-        print(statauc)
+        print(auc.mean)
     
     return(invisible(c(statauc,graph=graph)))
 }
@@ -133,7 +133,7 @@ print=TRUE,
         graph[[paste0("Comp", i, sep = "")]] = temp$graph
     }
     if (isTRUE(print))
-        print(statauc)
+        print(auc.mean)
 
     return(invisible(c(statauc,graph=graph)))
     
@@ -198,7 +198,7 @@ print=TRUE,
         out = c(auc.mean,graph=graph)
     }
     if (isTRUE(print))
-        print(statauc)
+        print(auc.mean)
     
     return(invisible(out))
 }
@@ -253,7 +253,7 @@ print=TRUE,
         out = c(auc.mean,graph=graph)
     }
     if (isTRUE(print))
-        print(statauc)
+        print(auc.mean)
     
     return(invisible(out))
 }
