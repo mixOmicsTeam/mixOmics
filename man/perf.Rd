@@ -40,7 +40,7 @@ auc = FALSE, progressBar = FALSE, signif.threshold=0.01, \ldots)
 \method{perf}{sgccda}(object,
 dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
 validation = c("Mfold", "loo"),
-folds = 10, nrepeat =1, auc = FALSE, signif.threshold=0.01, cpus = 1, \ldots)
+folds = 10, nrepeat =1, auc = FALSE, progressBar = FALSE, signif.threshold=0.01, cpus = 1, \ldots)
 
 }
 

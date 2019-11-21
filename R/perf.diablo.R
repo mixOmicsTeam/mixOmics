@@ -39,6 +39,7 @@ validation = c("Mfold", "loo"),
 folds = 10,
 nrepeat = 1,
 auc=FALSE,
+progressBar=FALSE,
 signif.threshold=0.01,
 cpus=1,
 ...)
@@ -107,7 +108,6 @@ cpus=1,
             stop("validation can be only 'Mfold' or 'loo'")
         }
         M = length(folds)
-        
         
         ### Start: Check parameter validation / set up sample
         
@@ -610,6 +610,10 @@ cpus=1,
     
     ### parallel
     if (parallel) {
+        if (progressBar ==  TRUE) {
+            message("progressBar unavailable in parallel computing mode for perf.block.splsda ...")
+        }
+        
         ## for some reason, FORK freezes when auc == TRUE
         cluster_type <- ifelse(.onUnix() && !auc, "FORK", "PSOCK")
         cl <- makeCluster(cpus, type = cluster_type)
@@ -618,7 +622,13 @@ cpus=1,
         clusterExport(cl, ls(), environment())
         repeat_cv_perf.diablo_res <- parLapply(cl, nrep_list, function(nrep) repeat_cv_perf.diablo(nrep))
     } else {
-        repeat_cv_perf.diablo_res <- lapply(nrep_list, function(nrep) repeat_cv_perf.diablo(nrep))
+        repeat_cv_perf.diablo_res <- lapply(nrep_list, function(nrep) {
+            if (progressBar ==  TRUE) {
+                pb = txtProgressBar(style = 3)
+                setTxtProgressBar(pb = pb, value = nrep/nrepeat)
+            }
+            repeat_cv_perf.diablo(nrep)
+        })
     }
     
     repeat_cv_perf.diablo_res  <- .unlist_repeat_cv_output(repeat_cv_perf.diablo_res)
