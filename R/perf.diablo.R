@@ -83,10 +83,19 @@ cpus=1,
     error.mat = error.mat.class = Y.all = predict.all = Y.predict = list.features = final.features = weights = crit = list()
     if (length(X) > 1)
     Y.mean = Y.mean.res = Y.weighted.vote = Y.weighted.vote.res = Y.vote = Y.vote.res = Y.WeightedPredict = Y.WeightedPredict.res = list()
-
+    
+    if (progressBar ==  TRUE) {
+        cat(sprintf("\nPerforming repeated cross-validation...\n", nrep))
+        pb = txtProgressBar(style = 3)
+    }
+    
     ## ------------ function to perform repeat CV
     repeat_cv_perf.diablo <- function(nrep)
     {
+        if (progressBar ==  TRUE) {
+            setTxtProgressBar(pb = pb, value = nrep/nrepeat)
+        }
+        
         #-- define the folds --#
         if (validation ==  "Mfold")
         {
@@ -623,10 +632,6 @@ cpus=1,
         repeat_cv_perf.diablo_res <- parLapply(cl, nrep_list, function(nrep) repeat_cv_perf.diablo(nrep))
     } else {
         repeat_cv_perf.diablo_res <- lapply(nrep_list, function(nrep) {
-            if (progressBar ==  TRUE) {
-                pb = txtProgressBar(style = 3)
-                setTxtProgressBar(pb = pb, value = nrep/nrepeat)
-            }
             repeat_cv_perf.diablo(nrep)
         })
     }

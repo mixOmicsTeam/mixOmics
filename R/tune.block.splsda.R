@@ -320,21 +320,20 @@ tune.block.splsda = function (X,
       
     }
   }
+  cpus <- .check_cpus(cpus)
+  parallel <- cpus > 1
   
-  if (cpus >= 2)
+  if (parallel)
   {
     cluster_type <-
-      ifelse(.Platform$OS.type == "windows", "PSOCKS", "FORK")
+      ifelse(.onUnix(), "FORK", "PSOCKS")
     cl <- makeCluster(cpus, type = cluster_type)
-    clusterEvalQ(cl, library(mixOmics))
-  } else {
-    cl = NULL
+    on.exit(stopCluster(cl))
   }
   
   N.test.keepX = nrow(expand.grid(test.keepX))
   
   mat.error.rate = list()
-  error.per.class = list()
   
   mat.sd.error = matrix(0,
                         nrow = N.test.keepX,
@@ -369,9 +368,9 @@ tune.block.splsda = function (X,
   {
     tune_comp <- comp.real[comp]
     if (progressBar == TRUE)
-      cat(sprintf("\ntuning component %s\n", paste0(tune_comp)))
+      cat(sprintf("\ntuning component %s\n", tune_comp))
     
-    result = MCVfold.block.splsda (
+    result = MCVfold.block.splsda(
       X,
       Y,
       validation = validation,
@@ -463,11 +462,6 @@ tune.block.splsda = function (X,
   }
   
   ## ----------- END tune components ----------- #
-  
-  if (cpus >= 2)
-  {
-    stopCluster(cl) ## finish parallel processing
-  }
   
   ## ----------- output ----------- 
   
