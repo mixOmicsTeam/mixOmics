@@ -64,7 +64,7 @@ measure = "MSE", # MAE (Mean Absolute Error: MSE without the square), Bias (aver
 # can do a R2 per Y (correlation, linear regression R2),
 # need to call MSEP (see perf.spls)
 scale = TRUE,
-progressBar = TRUE,
+progressBar = FALSE,
 tol = 1e-06,
 max.iter = 100,
 near.zero.var = FALSE,

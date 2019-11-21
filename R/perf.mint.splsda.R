@@ -29,7 +29,7 @@
 perf.mint.spls  = perf.mint.pls = function(object,
 validation = c("Mfold", "loo"),
 folds = 10,
-progressBar = TRUE,
+progressBar = FALSE,
 ...)
 {
     stop("Yet to be implemented")
@@ -41,7 +41,7 @@ progressBar = TRUE,
 perf.mint.splsda = perf.mint.plsda = function (object,
 dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
 auc = FALSE,
-progressBar = TRUE,
+progressBar = FALSE,
 signif.threshold=0.01,
 ...
 )

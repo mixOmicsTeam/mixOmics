@@ -52,7 +52,7 @@ already.tested.X,
 dist = "max.dist",
 measure = "BER", # one of c("overall","BER")
 auc = FALSE,
-progressBar = TRUE,
+progressBar = FALSE,
 scale = TRUE,
 tol = 1e-06,
 max.iter = 100,

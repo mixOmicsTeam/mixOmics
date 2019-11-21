@@ -44,7 +44,7 @@ perf = function(object, ...) UseMethod("perf")
 perf.mixo_spls  = perf.mixo_pls = function(object,
 validation = c("Mfold", "loo"),
 folds = 10,
-progressBar = TRUE,
+progressBar = FALSE,
 ...)
 {
     #------------------#
@@ -358,7 +358,7 @@ validation = c("Mfold", "loo"),
 folds = 10,
 nrepeat = 1,
 auc = FALSE,
-progressBar = TRUE,
+progressBar = FALSE,
 signif.threshold = 0.01,
 cpus =1,
 ...)

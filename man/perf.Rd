@@ -18,24 +18,24 @@ PLS-DA, sparse PLS-DA, MINT (mint.splsda) and DIABLO (block.splsda) models using
 \usage{
 
 \method{perf}{mixo_pls}(object,validation = c("Mfold", "loo"),
-folds = 10, progressBar = TRUE, \ldots)
+folds = 10, progressBar = FALSE, \ldots)
 
 \method{perf}{mixo_spls}(object,validation = c("Mfold", "loo"),
-folds = 10, progressBar = TRUE, \ldots)
+folds = 10, progressBar = FALSE, \ldots)
 
 \method{perf}{mixo_plsda}(object,
 dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
 validation = c("Mfold", "loo"),
-folds = 10, nrepeat =1, auc = FALSE, progressBar = TRUE, signif.threshold=0.01, cpus, \ldots)
+folds = 10, nrepeat =1, auc = FALSE, progressBar = FALSE, signif.threshold=0.01, cpus, \ldots)
 
 \method{perf}{mixo_splsda}(object,
 dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
 validation = c("Mfold", "loo"),
-folds = 10, nrepeat =1, auc = FALSE, progressBar = TRUE, signif.threshold=0.01, cpus, \ldots)
+folds = 10, nrepeat =1, auc = FALSE, progressBar = FALSE, signif.threshold=0.01, cpus, \ldots)
 
 \method{perf}{mint.splsda}(object,
 dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
-auc = FALSE, progressBar = TRUE, signif.threshold=0.01, \ldots)
+auc = FALSE, progressBar = FALSE, signif.threshold=0.01, \ldots)
 
 \method{perf}{sgccda}(object,
 dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
@@ -53,7 +53,7 @@ folds = 10, nrepeat =1, auc = FALSE, signif.threshold=0.01, cpus = 1, \ldots)
 \item{folds}{the folds in the Mfold cross-validation. See Details.}
 \item{nrepeat}{Number of times the Cross-Validation process is repeated. This is an important argument to ensure the estimation of the performance to be as accurate as possible.}
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC) performance of the model.}
-\item{progressBar}{by default set to \code{TRUE} to output the progress bar of the computation.}
+\item{progressBar}{by default set to \code{FALSE} to output the progress bar of the computation.}
 \item{signif.threshold}{numeric between 0 and 1 indicating the significance threshold required for improvement in error rate of the components. Default to 0.01.}
 \item{cpus}{Number of cpus to use when running the code in parallel.}
 \item{...}{not used}

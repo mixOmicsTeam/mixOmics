@@ -39,7 +39,7 @@ dist = "max.dist",
 measure = c("BER"), # one of c("overall","BER")
 auc = auc,
 max.iter = 100,
-progressBar = TRUE,
+progressBar = FALSE,
 near.zero.var = FALSE,
 scale)
 {
