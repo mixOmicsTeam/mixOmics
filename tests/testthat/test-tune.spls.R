@@ -19,5 +19,5 @@ test_that("tune.spls works with and without parallel", code = {
     set.seed(100)
     tune.spls31 <- tune.spls(X, Y, ncomp = ncomp, test.keepX = test.keepX,
                              nrepeat = nrepeat, cpus = 2)
-    expect_identical2(tune.spls11, tune.spls31)
+    .almost_identical(tune.spls11, tune.spls31)
 })

@@ -6,7 +6,7 @@
 #'
 #' @return Logical, TRUE if all elements expect $call are identical
 #'
-expect_identical2 <- function(object, expected, ...) {
+.almost_identical <- function(object, expected, ...) {
     require(testthat)
     object$call <- expected$call <- NULL
     expect_identical(object, expected, ...)
