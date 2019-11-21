@@ -197,7 +197,7 @@ cpus=1
     
     if (parallel)
     {
-        cluster_type <- ifelse(.onUnix(), "FORK", "PSOCK")
+        cluster_type <- ifelse(.onUnix(), "FORK", "SOCK")
         cl = makeCluster(cpus, type = cluster_type)
         on.exit(stopCluster(cl))
         #clusterExport(cl, c("splsda","selectVar"))

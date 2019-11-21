@@ -326,7 +326,7 @@ tune.block.splsda = function (X,
   if (parallel)
   {
     cluster_type <-
-      ifelse(.onUnix(), "FORK", "PSOCKS")
+      ifelse(.onUnix(), "FORK", "SOCK")
     cl <- makeCluster(cpus, type = cluster_type)
     on.exit(stopCluster(cl))
   }

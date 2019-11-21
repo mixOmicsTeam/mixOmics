@@ -624,7 +624,7 @@ cpus=1,
         }
         
         ## for some reason, FORK freezes when auc == TRUE
-        cluster_type <- ifelse(.onUnix() && !auc, "FORK", "PSOCK")
+        cluster_type <- ifelse(.onUnix() && !auc, "FORK", "SOCK")
         cl <- makeCluster(cpus, type = cluster_type)
         on.exit(stopCluster(cl))
         clusterEvalQ(cl, c("repeat_cv_perf.diablo"))
