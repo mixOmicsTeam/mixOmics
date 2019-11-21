@@ -36,6 +36,6 @@ README.html
 .DS_Store
 
 inst/*.html
-gitignore
+ignore
 .Renviron
 
