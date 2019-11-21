@@ -228,7 +228,7 @@ cpus=1,
         ### Warning: no near.zero.var applies with sgcca
         
         ### Start: Prediction (score / class) sample test
-        # Prediction model on test block
+        # Prediction model on test dataset
         predict.all = lapply(1:M, function(x) {predict.block.spls(model[[x]], X.test[[x]], dist = "all")})
         
         # Retrieve class prediction
