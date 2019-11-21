@@ -70,7 +70,7 @@ logratio = c('none','CLR'),
 multilevel = NULL,
 light.output = TRUE,
 signif.threshold = 0.01, 
-cpus
+cpus=1
 )
 {    #-- checking general input parameters --------------------------------------#
     #---------------------------------------------------------------------------#
@@ -192,23 +192,20 @@ cpus
         too few entries (<2)", call. = FALSE)
     }
     
+    cpus <- .check_cpus(cpus)
+    parallel <- cpus > 1
     
-    if(!missing(cpus))
+    if (parallel)
     {
-        if(!is.numeric(cpus) | length(cpus)!=1)
-        stop("'cpus' must be a numerical value")
-        
-        parallel = TRUE
-        cl = makeCluster(cpus, type = "SOCK")
+        cluster_type <- ifelse(.onUnix(), "FORK", "PSOCK")
+        cl = makeCluster(cpus, type = cluster_type)
+        on.exit(stopCluster(cl))
         #clusterExport(cl, c("splsda","selectVar"))
         clusterEvalQ(cl, library(mixOmics))
 
         if(progressBar == TRUE)
         message(paste("As code is running in parallel, the progressBar will only show 100% upon completion of each nrepeat/ component.",sep=""))
 
-    } else {
-        parallel = FALSE
-        cl = NULL
     }
     
     # add colnames and rownames if missing
@@ -335,7 +332,7 @@ cpus
         }
         
         class.object=c("mixo_splsda","DA")
-        if(!missing(cpus))
+        if (parallel)
             clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
 
         error.per.class.keepX.opt = list()
@@ -352,7 +349,7 @@ cpus
             if (progressBar == TRUE)
             cat("\ncomp",comp.real[comp], "\n")
             
-            result = MCVfold.spls (X, Y, multilevel = multilevel, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = 1 + length(already.tested.X),
+            result = MCVfold.spls(X, Y, multilevel = multilevel, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = 1 + length(already.tested.X),
             choice.keepX = already.tested.X,
             test.keepX = test.keepX, test.keepY = nlevels(Y), measure = measure, dist = dist, scale=scale,
             near.zero.var = near.zero.var, progressBar = progressBar, tol = tol, max.iter = max.iter, auc = auc,
@@ -389,8 +386,7 @@ cpus
             }
             
         } # end comp
-        if (parallel == TRUE)
-        stopCluster(cl)
+        
         names(mat.error.rate) = c(paste0('comp', comp.real))
         if (all(measure!="AUC"))
             names(error.per.class.keepX.opt) = c(paste0('comp', comp.real))
