@@ -45,7 +45,7 @@ test_that("tune.block.splsda works with and without parallel without auc", {
         test.keepX = test.keepX,
         design = design,
         nrepeat = nrep,
-        cpus = detectCores()-2
+        cpus = 2
     )
     expect_is(tune41, "tune.block.splsda")
     expect_equal(tune41$choice.ncomp$ncomp, 2)
@@ -62,7 +62,7 @@ test_that("tune.block.splsda works with and without parallel without auc", {
         test.keepX = test.keepX,
         design = design,
         already.tested.X = already.tested.X,
-        cpus = detectCores()-2
+        cpus = 2
     )
     
     expect_is(tune42, "tune.block.splsda")
