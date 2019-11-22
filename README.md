@@ -139,16 +139,25 @@ Thank you for using
 
 ## What’s New
 
+#### November 2019
+
+  - Parallel computing improved for `tune` and `perf` functions, and
+    even more on Unix-like systems.
+
+  - Fixed margin error problem with `plotLoadings`. See the example in
+    [this issue](https://github.com/mixOmicsTeam/mixOmics/issues/45).
+
+  - `cim` bug which overestimated correlations for single component now
+    fixed.
+
+  - `perf.sgccda` now supports calculation of average combined AUC.
+
 #### September 2019
 
-  - **You can now customise `auroc` plots in version 6.8.3**
-
-You can find an example in
-[here](https://github.com/mixOmicsTeam/mixOmics/issues/35).
+  - You can now customise `auroc` plots in version 6.8.3. See example
+    [here](https://github.com/mixOmicsTeam/mixOmics/issues/35).
 
 #### August 2019
 
-  - **The infamous `plot.perf` bug has been fixed in version 6.8.2**
-
-You can find the details and an example in
-[here](https://github.com/mixOmicsTeam/mixOmics/issues/27).
+  - The infamous `plot.perf` bug has been fixed in version 6.8.2. See
+    example [here](https://github.com/mixOmicsTeam/mixOmics/issues/27).

@@ -17,17 +17,86 @@ opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE)
 
 ## What's New
 
+#### November 2019
+
+* Parallel computing improved for `tune` and `perf` functions, and even more on Unix-like systems.
+
+```{r, eval=FALSE, echo=FALSE}
+library(mixOmics)
+require(microbenchmark)
+require(parallel)
+data(nutrimouse)
+nrep <- 25
+folds <- 2
+Y = nutrimouse$diet
+data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+design = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
+
+nutrimouse.sgccda <- block.splsda(X=data,
+                                  Y = Y,
+                                  design = design,
+                                  keepX = list(gene=c(10,10), lipid=c(15,15)),
+                                  ncomp = 2,
+                                  scheme = "horst")
+microbenchmark::microbenchmark(
+  serial =  perf(nutrimouse.sgccda, folds = folds, nrepeat = nrep),
+  parallel =  perf(nutrimouse.sgccda, folds = folds, nrepeat = nrep, cpus = parallel::detectCores()), times = 2
+)
+#> Unit: seconds
+#>      expr      min       lq      mean    median        uq       max neval
+#>    serial 10.09760 10.09760 12.130116 12.130116 14.162629 14.162629     2
+#>  parallel  5.62336  5.62336  5.756024  5.756024  5.888689  5.888689     2
+```
+
+  
+  
+* Fixed margin error problem with `plotLoadings`. See the example in [this issue](https://github.com/mixOmicsTeam/mixOmics/issues/45).
+* `cim` bug which overestimated correlations for single component now fixed.
+* `perf.sgccda` now supports calculation of average combined AUC.
+
+```{r, eval=FALSE, echo=FALSE}
+library(mixOmics)
+data(nutrimouse)
+nrep <- 4
+folds <- 4
+Y = nutrimouse$diet
+data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+design = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
+set.seed(42)
+nutrimouse.sgccda <- block.splsda(X=data,
+                                  Y = Y,
+                                  design = design,
+                                  keepX = list(gene=c(10,10), lipid=c(15,15)),
+                                  ncomp = 2)
+
+perf.res <- perf(nutrimouse.sgccda, folds = folds, nrepeat = nrep, 
+     auc = TRUE, cpus = parallel::detectCores())
+
+perf.res$auc
+#> $comp1
+#>                        AUC   p-value
+#> coc vs Other(s)  0.8769531 0.2125844
+#> fish vs Other(s) 0.6914062 0.4333581
+#> lin vs Other(s)  0.5449219 0.5615303
+#> ref vs Other(s)  0.5000000 0.5086909
+#> sun vs Other(s)  0.6640625 0.4005816
+#> 
+#> $comp2
+#>                        AUC   p-value
+#> coc vs Other(s)  0.9179688 0.1401584
+#> fish vs Other(s) 0.8164062 0.2083663
+#> lin vs Other(s)  0.7089844 0.3245500
+#> ref vs Other(s)  0.5800781 0.4885250
+#> sun vs Other(s)  0.9238281 0.1132753
+```
+
 #### September 2019
 
-  * **You can now customise `auroc` plots in version 6.8.3**
-
-You can find an example in [here](https://github.com/mixOmicsTeam/mixOmics/issues/35).
+* You can now customise `auroc` plots in version 6.8.3. See example [here](https://github.com/mixOmicsTeam/mixOmics/issues/35).
 
 ####  August 2019
 
-  * **The infamous `plot.perf` bug has been fixed in version 6.8.2**
-
-You can find the details and an example in [here](https://github.com/mixOmicsTeam/mixOmics/issues/27).
+* The infamous `plot.perf` bug has been fixed in version 6.8.2. See example [here](https://github.com/mixOmicsTeam/mixOmics/issues/27).
 
 
 

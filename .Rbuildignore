@@ -18,3 +18,4 @@ Library
 .github
 ignore
 .Renviron
+^.*\.pdf$
