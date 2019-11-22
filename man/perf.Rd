@@ -84,7 +84,7 @@ Note that for PLS-DA and sPLS-DA objects, perf is performed on the original data
 The mint.sPLS-DA function estimates errors based on Leave-one-group-out cross validation (where each levels of object$study is left out (and predicted) once) and provides study-specific outputs (\code{study.specific.error}) as well as global outputs (\code{global.error}).
 
 
-AUROC. For PLS-DA, sPLS-DA, mint.PLS-DA and mint.sPLS-DA, and block.splsda methods: if \code{auc=TRUE}, Area Under the Curve (AUC) values are calculated from the predicted scores obtained from the \code{predict} function applied to the internal test sets in the cross-validation process, either for all samples or for study-specific samples (for mint models). Therefore we minimise the risk of overfitting. For block.splsda models, the calculated AUC is simply the average AUC across all blocks, while th per-study AUCs are also provided.  See \code{\link{auroc}} for more details. Our multivariate supervised methods already use a prediction threshold based on distances (see \code{predict}) that optimally determine class membership of the samples tested. As such AUC and ROC are not needed to estimate the performance of the model. We provide those outputs as complementary performance measures. See more details in our mixOmics article.
+AUROC. For PLS-DA, sPLS-DA, mint.PLS-DA, mint.sPLS-DA, and block.splsda methods: if \code{auc=TRUE}, Area Under the Curve (AUC) values are calculated from the predicted scores obtained from the \code{predict} function applied to the internal test sets in the cross-validation process, either for all samples or for study-specific samples (for mint models). Therefore we minimise the risk of overfitting. For block.splsda model, the calculated AUC is simply the blocks-combined AUC for each component calulcated using \code{auroc.sgccda}.  See \code{\link{auroc}} for more details. Our multivariate supervised methods already use a prediction threshold based on distances (see \code{predict}) that optimally determine class membership of the samples tested. As such AUC and ROC are not needed to estimate the performance of the model. We provide those outputs as complementary performance measures. See more details in our mixOmics article.
 
 Prediction distances. See details from \code{?predict}, and also our supplemental material in the mixOmics article.
 
@@ -116,7 +116,7 @@ For mint.splsda models, \code{perf} produces the following outputs:
 \item{predict}{A list of length \code{ncomp} that produces the predicted values of each sample for each class}
 \item{class}{A list which gives the predicted class of each sample for each \code{dist} and each of the \code{ncomp} components. Directly obtained from the \code{predict} output.}
 \item{auc}{AUC values}
-\item{auc.study}{AUC values for each study}
+\item{auc.study}{AUC values for each study in mint models}
 
 
 

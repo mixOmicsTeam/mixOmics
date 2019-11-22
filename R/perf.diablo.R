@@ -140,43 +140,38 @@ cpus=1,
         
         model = lapply(1:M, function(x) {suppressWarnings(do.call("block.splsda", block.splsda.args(x)))})
         ### CV AUC
-        auc.perf <- NULL
+
         if (auc) {
-            auc.perf.list <-
+            auc.rep.block.comp.fold <-
                 lapply(1:M, function(x) {
                     auroc.sgccda(
                         object = model[[x]],
-                        newdata = X.test[[x]],
-                        outcome.test = Y.test[[x]],
-                        print=FALSE
+                        plot = FALSE,
+                        print = FALSE
                     )
                 })
             
-            auc.perf <- list()
-            auc.perf.combined <- list()
-            blocks <- names(X)
-            comps <- object$ncomp[[1]]
             
-            ## average AUC data.frames over componets, for all repeats, for each block
-            for (i_ncomp in 1:comps) {
-                ## calculate a combined one over all blocks for each component
-                auc_combined_df <- 0
-                for (i_block in blocks) {
-                    auc_df <- 0
-                    for (i_repeat in 1:M) {
-                        auc_df  <- auc_df + auc.perf.list[[i_repeat]][[i_block]][[i_ncomp]]
-                    }
-                    auc_df  <- auc_df / M
-                    auc_combined_df <- auc_combined_df + auc_df
-                    auc.perf[[paste0("comp", i_ncomp)]][[i_block]] <-
-                        auc_df
-                }
-                auc.perf[[paste0("comp", i_ncomp)]][["blocks_combined"]] <-
-                    auc_combined_df / length(blocks)
+            blocks <- .name_list(names(auc.rep.block.comp.fold[[1]]))
+            comps <- .name_list(names(auc.rep.block.comp.fold[[1]][[1]]))
+            ## average AUC for each block and component across folds
+            auc.rep.block.comp <- lapply(blocks, function(block) {
+                lapply(comps, function(comp){
+                    Reduce("+", lapply(auc.rep.block.comp.fold, function(fold){
+                        fold[[block]][[comp]]
+                    }))/M
+                })
             }
-        
-            }
-        
+            )
+            ## combined average AUC for all blocks and component for the repeat
+            auc.rep.comp <- lapply(comps, function(comp){
+                Reduce("+", lapply(blocks, function(block){
+                    auc.rep.block.comp[[block]][[comp]]
+                }))/length(blocks)
+            })
+        }
+  
+
         ### Retrieve convergence criterion
         crit = lapply(1:M, function(x){model[[x]]$crit})
         
@@ -602,7 +597,7 @@ cpus=1,
             )
             
             if (auc) {
-                repeat_cv_res$auc.perf <- auc.perf
+                repeat_cv_res$auc.rep.comp <- auc.rep.comp
             }
             
             return(repeat_cv_res)
@@ -627,7 +622,7 @@ cpus=1,
         cluster_type <- ifelse(.onUnix() && !auc, "FORK", "SOCK")
         cl <- makeCluster(cpus, type = cluster_type)
         on.exit(stopCluster(cl))
-        clusterEvalQ(cl, c("repeat_cv_perf.diablo"))
+        clusterEvalQ(cl, library(mixOmics))
         clusterExport(cl, ls(), environment())
         repeat_cv_perf.diablo_res <- parLapply(cl, nrep_list, function(nrep) repeat_cv_perf.diablo(nrep))
     } else {
@@ -637,7 +632,7 @@ cpus=1,
     }
     
     repeat_cv_perf.diablo_res  <- .unlist_repeat_cv_output(repeat_cv_perf.diablo_res)
-
+    auc.rep.comp <- NULL ## R check pass
     list2env(repeat_cv_perf.diablo_res, envir = environment())
     rm(repeat_cv_perf.diablo_res)
 
@@ -860,20 +855,17 @@ cpus=1,
     result$call = match.call()
     result$crit = crit
     result$choice.ncomp = ncomp_opt
+    
     if (auc) {
-        ## average of auc across all repeats for all datasets (and combined), for all components
-        auc.perf <- lapply(.name_list(names(auc.perf[[1]][[1]])), function(block) {
-            lapply(.name_list(names(auc.perf[[1]])), function(comp) {
-                Reduce("+", lapply(auc.perf, function(rep) {
-                    rep[[comp]][[block]]
-                })) / nrepeat
-            })
+        auc.comp <- lapply(.name_list(names(auc.rep.comp[[1]])), function(comp) {
+            Reduce("+", lapply(seq_len(nrepeat), function(rep){
+            auc.rep.comp[[rep]][[comp]]
         })
-        
-        ## combined AUC is the last one
-        result$auc <- rev(auc.perf)[[1]]
-        ## per-study
-        result$auc.study <- rev(rev(auc.perf)[-1])
+        )/nrepeat
+        })
+   
+        ## mean AUC for all blocks
+        result$auc <- auc.comp
     }
 
     
