@@ -448,7 +448,11 @@ cpus =1,
         on.exit(stopCluster(cl))
         #clusterExport(cl, c("splsda","selectVar"))
         clusterEvalQ(cl, library(mixOmics))
-
+        
+        if (!is.null(list(...)$seed)) { ## for unit tests purpose
+            RNGversion(.mixo_rng()) ## bc different R versions can have different RNGs and we want reproducible unit tests
+            clusterSetRNGStream(cl = cl, iseed = list(...)$seed)
+        }
     } else {
         parallel = FALSE
         cl = NULL

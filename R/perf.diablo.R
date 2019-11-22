@@ -624,6 +624,10 @@ cpus=1,
         on.exit(stopCluster(cl))
         clusterEvalQ(cl, library(mixOmics))
         clusterExport(cl, ls(), environment())
+        if (!is.null(list(...)$seed)) { ## for unit tests purpose
+            RNGversion(.mixo_rng()) ## bc different R versions can have different RNGs and we want reproducible unit tests
+            clusterSetRNGStream(cl = cl, iseed = list(...)$seed)
+        }
         repeat_cv_perf.diablo_res <- parLapply(cl, nrep_list, function(nrep) repeat_cv_perf.diablo(nrep))
     } else {
         repeat_cv_perf.diablo_res <- lapply(nrep_list, function(nrep) {

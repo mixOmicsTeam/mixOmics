@@ -183,3 +183,13 @@ stratified.subsampling <- function(Y, folds = 10)
     names(out) <- char
     return(out)
 }
+
+## ----------- .mixo_rng ----------- 
+#' RNG used for package tests
+#'
+#' Creating a function so that it can easily be changed
+#'
+#' @return An R version.
+#'
+#' @noRd
+.mixo_rng <- function() {"3.6.0"}
