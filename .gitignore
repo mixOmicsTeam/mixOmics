@@ -10,7 +10,6 @@
 Library
 .Rprofile
 
-
 ## log files
 **/*.log
 
@@ -36,6 +35,5 @@ README.html
 .DS_Store
 
 inst/*.html
-ignore
 .Renviron
-
+gitignore
