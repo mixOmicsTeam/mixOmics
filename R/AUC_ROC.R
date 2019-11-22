@@ -47,7 +47,7 @@ print=TRUE,
     " elements.",call. = FALSE)
     
     data = list()
-    statauc = graph = list()
+    statauc.res = graph = list()
     data$outcome=factor(outcome.test)
     
     # note here: the dist does not matter as we used the predicted scores only
@@ -58,13 +58,13 @@ print=TRUE,
     {
         data$data=res.predict[,,i]
         temp = statauc(data, plot = ifelse(i%in%roc.comp,plot,FALSE), title=title,...)
-        statauc[[paste0("Comp", i, sep = "")]] = temp[[1]]
+        statauc.res[[paste0("Comp", i, sep = "")]] = temp[[1]]
         graph[[paste0("Comp", i, sep = "")]] = temp$graph
     }
     if (isTRUE(print))
-        print(auc.mean)
+        print(statauc.res)
     
-    return(invisible(c(statauc,graph=graph)))
+    return(invisible(c(statauc.res,graph=graph)))
 }
 
 
@@ -113,7 +113,7 @@ print=TRUE,
     }
     
     data=list()
-    statauc = graph = list()
+    statauc.res = graph = list()
     data$outcome=factor(outcome.test)
     
     # note here: the dist does not matter as we used the predicted scores only
@@ -129,13 +129,13 @@ print=TRUE,
         }
         
         temp = statauc(data, plot = ifelse(i%in%roc.comp,plot,FALSE), title=title,...)
-        statauc[[paste0("Comp", i, sep = "")]] = temp[[1]]
+        statauc.res[[paste0("Comp", i, sep = "")]] = temp[[1]]
         graph[[paste0("Comp", i, sep = "")]] = temp$graph
     }
     if (isTRUE(print))
-        print(auc.mean)
+        print(statauc.res)
 
-    return(invisible(c(statauc,graph=graph)))
+    return(invisible(c(statauc.res,graph=graph)))
     
 }
 
@@ -227,7 +227,6 @@ print=TRUE,
     # note here: the dist does not matter as we used the predicted scores only
     res.predict  =  predict.mixo_spls(object, newdata = newdata,
     study.test=study.test,dist = "max.dist", multilevel = multilevel)$predict
-    block.all = names(res.predict)
     block.temp = names(res.predict[roc.block])
     
     for(j in seq_len(length(res.predict)))
