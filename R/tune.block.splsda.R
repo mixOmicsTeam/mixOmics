@@ -70,7 +70,7 @@ tune.block.splsda = function (X,
                               # one of c("overall","BER")
                               weighted = TRUE,
                               # optimise the weighted or not-weighted prediction
-                              progressBar = TRUE,
+                              progressBar = FALSE,
                               tol = 1e-06,
                               max.iter = 100,
                               near.zero.var = FALSE,
@@ -158,9 +158,6 @@ tune.block.splsda = function (X,
       warning("Leave-One-Out validation does not need to be repeated: 'nrepeat' is set to '1'.")
     nrepeat = 1
   }
-  
-  #-- cpus
-  cpus <- .check_cpus(cpus)
   
   #-- measure
   measure.input = measure
@@ -320,6 +317,8 @@ tune.block.splsda = function (X,
       
     }
   }
+  
+  ## ---- cpus
   cpus <- .check_cpus(cpus)
   parallel <- cpus > 1
   

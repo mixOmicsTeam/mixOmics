@@ -11,7 +11,7 @@ grid to determine optimal values for the sparsity parameters in \code{mint.splsd
 
 \usage{
 tune.mint.splsda(X, Y, ncomp = 1, study, test.keepX = c(5, 10, 15), already.tested.X,
-dist = "max.dist", measure = "BER", auc = FALSE, progressBar = TRUE,
+dist = "max.dist", measure = "BER", auc = FALSE, progressBar = FALSE,
 scale = TRUE, tol = 1e-06, max.iter = 100, near.zero.var = FALSE, light.output = TRUE, 
 signif.threshold=0.01)
 }

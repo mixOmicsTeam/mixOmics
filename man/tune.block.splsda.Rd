@@ -21,7 +21,7 @@ folds = 10,
 dist = "max.dist",
 measure = "BER",
 weighted = TRUE,
-progressBar = TRUE,
+progressBar = FALSE,
 tol = 1e-06,
 max.iter = 100,
 near.zero.var = FALSE,
@@ -32,7 +32,7 @@ scale = TRUE,
 init = "svd",
 light.output = TRUE,
 signif.threshold=0.01,
-cpus=1,
+cpus = 1,
 name.save=NULL
 )
 }

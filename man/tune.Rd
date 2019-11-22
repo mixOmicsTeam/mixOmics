@@ -13,7 +13,7 @@ Wrapper of all tuning functions.
 tune(method,
 X,
 Y,
-multilevel,
+multilevel = NULL,
 ncomp,
 study, # mint.splsda
 test.keepX = c(5, 10, 15), # all but pca, rcc
@@ -29,7 +29,7 @@ folds = 10, # all but pca
 dist = "max.dist", # all but pca, rcc
 measure = c("BER"), # all but pca, rcc
 auc = FALSE,
-progressBar = TRUE, # all but pca, rcc
+progressBar = FALSE, # all but pca, rcc
 near.zero.var = FALSE, # all but pca, rcc
 logratio = "none", # all but pca, rcc
 center = TRUE, # pca

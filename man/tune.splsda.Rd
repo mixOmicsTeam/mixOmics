@@ -14,9 +14,9 @@ grid to determine optimal values for the sparsity parameters in \code{splsda}.
 tune.splsda(X, Y, ncomp = 1,
 test.keepX = c(5, 10, 15), already.tested.X, validation = "Mfold",
 folds = 10, dist = "max.dist", measure = "BER", scale = TRUE, auc = FALSE,
-progressBar = TRUE, tol = 1e-06,max.iter = 100, near.zero.var = FALSE,
+progressBar = FALSE, tol = 1e-06,max.iter = 100, near.zero.var = FALSE,
 nrepeat = 1, logratio = c('none','CLR'), multilevel = NULL, light.output = TRUE, 
-signif.threshold = 0.01, cpus)
+signif.threshold = 0.01, cpus = 1)
 
 }
 
@@ -125,7 +125,7 @@ progressBar = TRUE)
 
 # 5 components, optimising 'keepX' and 'ncomp'
 tune = tune.splsda(X, Y, ncomp = 5, test.keepX = c(5, 10, 15),
-folds = 10, dist = "max.dist", nrepeat = 5, progressBar = TRUE)
+folds = 10, dist = "max.dist", nrepeat = 5, progressBar = FALSE)
 
 tune$choice.ncomp
 tune$choice.keepX

@@ -26,16 +26,18 @@ folds = 10, progressBar = FALSE, \ldots)
 \method{perf}{mixo_plsda}(object,
 dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
 validation = c("Mfold", "loo"),
-folds = 10, nrepeat =1, auc = FALSE, progressBar = FALSE, signif.threshold=0.01, cpus, \ldots)
+folds = 10, nrepeat =1, auc = FALSE, progressBar = FALSE, 
+signif.threshold=0.01, cpus, \ldots)
 
 \method{perf}{mixo_splsda}(object,
 dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
 validation = c("Mfold", "loo"),
-folds = 10, nrepeat =1, auc = FALSE, progressBar = FALSE, signif.threshold=0.01, cpus, \ldots)
+folds = 10, nrepeat =1, auc = FALSE, progressBar = FALSE, 
+signif.threshold=0.01, cpus, \ldots)
 
 \method{perf}{mint.splsda}(object,
-dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
-auc = FALSE, progressBar = FALSE, signif.threshold=0.01, \ldots)
+dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"), auc = FALSE, 
+progressBar = FALSE, signif.threshold=0.01, \ldots)
 
 \method{perf}{sgccda}(object,
 dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),

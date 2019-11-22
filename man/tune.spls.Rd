@@ -14,7 +14,7 @@ grid to determine optimal values for the sparsity parameters in \code{spls}.
 tune.spls(X, Y, ncomp = 1,
 test.keepX = c(5, 10, 15), already.tested.X,
 validation = "Mfold", folds = 10, measure = "MSE", scale = TRUE,
-progressBar = TRUE, tol = 1e-06, max.iter = 100, near.zero.var = FALSE,
+progressBar = FALSE, tol = 1e-06, max.iter = 100, near.zero.var = FALSE,
 nrepeat = 1, multilevel = NULL, light.output = TRUE, cpus = 1)
 
 }	
