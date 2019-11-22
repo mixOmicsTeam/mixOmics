@@ -6,18 +6,19 @@ test_that("tune.spls works with and without parallel", code = {
     Y <- nutrimouse$lipid
     test.keepX <- c(5,10)
     ncomp <- 2
-    nrepeat <- 3
+    nrepeat <- 2
+    folds <- 2
     
-    RNGversion("3.5.0") ## in case RNG changes!
-    RNGkind("L'Ecuyer-CMRG") ## works for parallel as well
-    
-    set.seed(100)
-    tune.spls11 <- tune.spls(X, Y, ncomp = ncomp, test.keepX = test.keepX,
+    RNGversion(.mixo_rng()) ## in case RNG changes!
+
+    set.seed(42)
+    tune.spls11 <- tune.spls(X, Y, ncomp = ncomp, test.keepX = test.keepX, folds = folds,
                               nrepeat = nrepeat)
+    expect_equal(c(comp1 = 5, comp2 = 10), tune.spls11$choice.keepX)
     expect_is(tune.spls11, "tune.spls")
     
-    set.seed(100)
-    tune.spls31 <- tune.spls(X, Y, ncomp = ncomp, test.keepX = test.keepX,
+    
+    tune.spls31 <- tune.spls(X, Y, ncomp = ncomp, test.keepX = test.keepX, folds = folds,
                              nrepeat = nrepeat, cpus = 2)
-    .almost_identical(tune.spls11, tune.spls31)
+    expect_is(tune.spls31, "tune.spls")
 })

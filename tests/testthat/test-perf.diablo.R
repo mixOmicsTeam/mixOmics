@@ -1,6 +1,6 @@
 context("test-perf.diablo")
 
-test_that("perf.diablo works with and without parallel processing and with and without auroc", {
+test_that("perf.diablo works with and without parallel processing and with auroc", {
     data(nutrimouse)
     nrep <- 3
     folds <- 2
@@ -14,19 +14,22 @@ test_that("perf.diablo works with and without parallel processing and with and w
                                       keepX = list(gene=c(10,10), lipid=c(15,15)),
                                       ncomp = 2,
                                       scheme = "horst")
-
-    perf.res11 = perf(nutrimouse.sgccda, folds = folds, nrepeat = nrep)
-    expect_is(perf.res11, "perf.sgccda.mthd")
-
-    perf.res41 = perf(nutrimouse.sgccda, folds = folds, nrepeat = nrep, cpus = 2)
-    expect_is(perf.res41, "perf.sgccda.mthd")
     
+    RNGversion(.mixo_rng()) ## in case RNG changes!
+    set.seed(100)
     perf.res12 = perf.sgccda(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE)
-    expect_true("auc" %in% names(perf.res12))
-    expect_true("auc.study" %in% names(perf.res12))
-    
-    perf.res42 = perf.sgccda(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE, cpus = 2)
-    expect_true("auc" %in% names(perf.res42))
-    expect_true("auc.study" %in% names(perf.res42))
+    choices <- unname(perf.res12$choice.ncomp$AveragedPredict[,1])
+    expect_equal(choices, c(2,2))
+    aucs <- round(unname(perf.res12$auc$comp1[,1]), 2)
+    expect_equal(aucs, c(0.92, 0.74, 0.66, 0.55, 0.69))
 
+    # with cpus seed must be designated after cluster is created so I made it possible
+    # by listening to ... in perf for seed. Results are different even with seeds but reproducible with same cpus
+    # the hassle of making it fully reproducible is a bit too arduous
+    
+    perf.res42 = perf.sgccda(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE, cpus = 2, seed = 100)
+    choices <- unname(perf.res42$choice.ncomp$AveragedPredict[,1])
+    expect_equal(choices, c(1,1))
+    aucs <- round(unname(perf.res42$auc$comp1[,1]), 2)
+    expect_equal(aucs,c(0.97, 0.66, 0.6, 0.59, 0.79))
 })
