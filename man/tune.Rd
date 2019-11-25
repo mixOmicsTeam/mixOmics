@@ -27,7 +27,7 @@ grid2 = seq(0.001, 1, length = 5), # rcc
 validation = "Mfold", # all but pca
 folds = 10, # all but pca
 dist = "max.dist", # all but pca, rcc
-measure = c("BER"), # all but pca, rcc
+measure = ifelse(method == "spls", "MSE", "BER"), # all but pca, rcc
 auc = FALSE,
 progressBar = FALSE, # all but pca, rcc
 near.zero.var = FALSE, # all but pca, rcc
@@ -36,7 +36,8 @@ center = TRUE, # pca
 scale = TRUE, # mint, splsda
 max.iter = 100, #pca
 tol = 1e-09,
-light.output = TRUE # mint, splsda
+light.output = TRUE, # mint, splsda
+cpus = 1
 )
 
 }
@@ -82,7 +83,7 @@ columns of \code{X} can be supplied. The value is passed to \code{\link{scale}}.
 \item{max.iter}{integer, the maximum number of iterations for the NIPALS algorithm.}
 \item{tol}{a positive real, the tolerance used for the NIPALS algorithm.}
 \item{light.output}{if set to FALSE, the prediction/classification of each sample for each of \code{test.keepX} and each comp is returned.}
-
+\item{cpus}{Number of cores to use for parallel processing. Currently only available for mode = "spls"}
 }
 
 \details{

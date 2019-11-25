@@ -47,7 +47,7 @@ grid2 = seq(0.001, 1, length = 5), # rcc
 validation = "Mfold", # all but pca
 folds = 10, # all but pca
 dist = "max.dist", # all but pca, rcc
-measure = c("BER"), # all but pca, rcc
+measure = ifelse(method == "spls", "MSE", "BER"), # all but pca, rcc
 auc = FALSE,
 progressBar = FALSE, # all but pca, rcc
 near.zero.var = FALSE, # all but pca, rcc
@@ -56,7 +56,8 @@ center = TRUE, # pca
 scale = TRUE, # mint, splsda
 max.iter = 100, #pca
 tol = 1e-09, #pca
-light.output = TRUE # mint, splsda
+light.output = TRUE, # mint, splsda
+cpus = 1
 )
 {
     choice.method = c("spls", "splsda", "mint.splsda", "rcc", "pca")
@@ -130,11 +131,19 @@ light.output = TRUE # mint, splsda
         nrepeat = nrepeat,
         logratio = logratio,
         multilevel = multilevel,
-        light.output = light.output)
+        light.output = light.output,
+        cpus = cpus)
     } else if (method == "spls") {
         if(missing(multilevel))
         {
-            stop("Only a multilevel spls can be tuned")
+            message("Calling 'tune.spls'")
+            
+            result = tune.spls(X = X, Y = Y, ncomp = ncomp, test.keepX = test.keepX, 
+                               already.tested.X = already.tested.X, validation = validation, 
+                               folds = folds, measure = measure,scale = scale, 
+                               progressBar = progressBar, tol = tol, max.iter = max.iter, 
+                               near.zero.var = near.zero.var, nrepeat = nrepeat, 
+                               light.output = light.output, cpus = cpus)
         } else {
             message("Calling 'tune.splslevel' with method = 'spls'")
 
