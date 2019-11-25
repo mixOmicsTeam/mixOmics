@@ -49,8 +49,8 @@ ncomp = 1,
 study,
 test.keepX = c(5, 10, 15),
 already.tested.X,
-dist = "max.dist",
-measure = "BER", # one of c("overall","BER")
+dist = c("max.dist", "centroids.dist", "mahalanobis.dist"),
+measure = c("BER", "overall"),
 auc = FALSE,
 progressBar = FALSE,
 scale = TRUE,
@@ -103,11 +103,7 @@ signif.threshold=0.01
     
     
     #-- measure
-    if (length(measure) > 1)
-    measure = measure[1]
-    
-    if (!measure %in% c("overall", "BER"))
-    stop("'measure must be one of 'overall' or 'BER'", call. = FALSE)
+   measure <- match.arg(measure)
     
     #if ((!is.null(already.tested.X)) && (length(already.tested.X) != (ncomp - 1)) )
     #stop("The number of already tested parameters should be NULL or ", ncomp - 1, " since you set ncomp = ", ncomp)
@@ -155,9 +151,7 @@ signif.threshold=0.01
 
 
     #-- dist
-    
-    choices = c("max.dist", "centroids.dist", "mahalanobis.dist")
-    dist = match.arg(dist, choices, several.ok = FALSE)
+    dist = match.arg(dist)
     
     #-- light.output
     if (!is.logical(light.output))
