@@ -187,9 +187,10 @@ stratified.subsampling <- function(Y, folds = 10)
 ## ----------- .mixo_rng ----------- 
 #' RNG used for package tests
 #'
-#' Creating a function so that it can easily be changed
+#' Creating a function so that it can easily be changed.
+#' It's mainly used in form of the given example in unit tests.
 #'
 #' @return An R version.
-#'
+#' @example RNGversion(.mixo_rng())
 #' @noRd
 .mixo_rng <- function() {"3.6.0"}
