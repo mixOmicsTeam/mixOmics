@@ -2,11 +2,33 @@ Package: mixOmics
 Type: Package
 Title: Omics Data Integration Project
 Version: 6.11.5
-Depends: R (>= 3.5.0), MASS, lattice, ggplot2
-Imports: igraph, ellipse, corpcor, RColorBrewer, parallel,
-        dplyr, tidyr, reshape2, methods, matrixStats, rARPACK, gridExtra, grDevices, graphics, stats, utils
-Suggests: BiocStyle, knitr, rmarkdown, testthat, rgl
-Authors@R: c(person("Kim-Anh", "Le Cao", role = c("aut", "cre"), email = "kimanh.lecao@unimelb.edu.au"), 
+Depends:  R (>= 3.5.0), 
+          MASS, 
+          lattice, 
+          ggplot2
+Imports:  igraph,
+          ellipse,
+          corpcor,
+          RColorBrewer,
+          parallel,
+          dplyr,
+          tidyr,
+          reshape2,
+          methods,
+          matrixStats,
+          rARPACK,
+          gridExtra,
+          grDevices,
+          graphics,
+          stats,
+          utils
+Suggests: BiocStyle, 
+          knitr, 
+          rmarkdown, 
+          testthat, 
+          rgl
+Authors@R: 
+    c(person("Kim-Anh", "Le Cao", role = c("aut", "cre"), email = "kimanh.lecao@unimelb.edu.au"), 
       person("Florian", "Rohart", role = "aut"), 
       person("Ignacio", "Gonzalez", role = "aut"),
       person("Sebastien", "Dejean", role = "aut"), 
@@ -29,5 +51,6 @@ VignetteBuilder: knitr
 Date/Publication: 2017-02-06 12:08:22
 Packaged: 2017-02-06 06:49:17 UTC; klecao
 NeedsCompilation: no
-biocViews: ImmunoOncology, Microarray, Sequencing, Metabolomics, Metagenomics, Proteomics,  GenePrediction, MultipleComparison, Classification, Regression
+biocViews: ImmunoOncology, Microarray, Sequencing, Metabolomics, Metagenomics, Proteomics,  
+           GenePrediction, MultipleComparison, Classification, Regression
 RoxygenNote: 6.1.1
