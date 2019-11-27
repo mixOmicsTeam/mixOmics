@@ -113,7 +113,6 @@ cl=NULL
         keepY = rep(nlevels(Y), ncomp-1)
     } else {keepY = NULL}
     parallel <- cpus > 1
-    excess_cpus <- parallel && (cpus > nrepeat) ## to also parallelise the folds
     M = length(folds)
     # prediction of all samples for each test.keepX and  nrep at comp fixed
     folds.input = folds
@@ -443,9 +442,10 @@ cl=NULL
             class.comp.j = class.comp.j, omit = omit, keepA = keepA))
         } # end fonction.j.folds
         ## mclapply unavailable on windows
-        parallel.both = .onUnix() && (cpus > nrepeat)
+        excess_cpus <- cpus > nrepeat
+        use_mclapply <- .onUnix() && excess_cpus ## mclapply doesn't work on Windows
         ## if number of CPUs greater than nrepeat, also parallel on folds
-        if (excess_cpus) {
+        if (use_mclapply) {
             # message("\ndetected cores: ", parallel::detectCores())
             result.all = mclapply(1:M, fonction.j.folds, mc.cores = ceiling(cpus/nrepeat))
         } else {
