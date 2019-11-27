@@ -19,3 +19,4 @@ Library
 ignore
 .Renviron
 ^.*\.pdf$
+^codecov\.yml$

@@ -20,6 +20,9 @@ warnings_are_errors: false
 r_packages: 
   - snow
 
+after_success:
+  - Rscript -e 'covr::codecov()'
+
 git:
   ## clone far back so we can --reset and push --force as far back as we need:
  depth: 9999999
