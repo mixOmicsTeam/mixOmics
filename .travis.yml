@@ -1,0 +1,43 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+## you can check for validity of this config file here:  https://config.travis-ci.com/explore
+sudo: required
+language: r
+cache: packages 
+## test against bioc-release:
+r: bioc-devel
+
+## apparently helps linux systems find rgl:
+before_install: 
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install libcgal-dev libglu1-mesa-dev mesa-common-dev; fi
+## build args here:
+r_build_args: --no-build-vignettes --no-manual --no-resave-data --timings
+## check args here:
+r_check_args: --no-build-vignettes --no-manual
+## build warnings not errors (our pkg size will exceed 5 MB):
+warnings_are_errors: false
+
+## 'snow' is required by parallel but for some reason not automatically installed
+r_packages: 
+  - snow
+
+git:
+  ## clone far back so we can --reset and push --force as far back as we need:
+ depth: 9999999
+
+## branches to build over - .travs.yml needs to be present in these branches
+branches:
+  only:
+     - devel
+     - master
+
+## build notification setup - emails need to be a from a contributor to the package
+notifications:
+  email:
+    recepients:
+    - al.jal.abadi@gmail.com ## does not work atm
+    
+    on_success: always ## or 'change'
+    on_failure: always 
+  ## there is a way to get slack notifications directly: https://docs.travis-ci.com/user/notifications#configuring-slack-notifications
+  slack: lecaolab:Sjzz66mnqBJcmUnH9gVn4CBO
+
