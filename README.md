@@ -1,4 +1,14 @@
 
+[![Build
+Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
+[![packageVersion](https://img.shields.io/badge/Package%20version-6.11.5-orange.svg?style=flat-square)](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION)
+[![codecov](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
+[![bioc-rank](http://bioconductor.org/shields/downloads/release/mixOmics.svg)](http://bioconductor.org/packages/stats/bioc/mixOmics/)
+[![last
+commit](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
+[![license](https://img.shields.io/badge/license-GPL%20\(%3E=%202\)-lightgrey.svg)](https://choosealicense.com/)
+[![dependencies](http://bioconductor.org/shields/dependencies/release/mixOmics.svg)](http://bioconductor.org/packages/release/bioc/html/mixOmics.html#since)
+
 ![](http://mixomics.org/wp-content/uploads/2019/07/MixOmics-Logo-1.png)
 
 This repository contains the `R` package [now hosted on
@@ -7,7 +17,7 @@ and our current `GitHub` version.
 
 ## Installation
 
-**(Mac Users Only:)** Ensure you have installed
+**(Mac OS Users Only:)** Ensure you have installed
 [XQuartz](https://www.xquartz.org/) first.
 
 #### Latest Bioconductor Release
@@ -41,21 +51,25 @@ if (!requireNamespace("devtools", quietly = TRUE))
 devtools::install_github("mixOmicsTeam/mixOmics")
 ```
 
-You can also install the development version:
-
-``` r
-devtools::install_github("mixOmicsTeam/mixOmics", ref="devel")
-```
-
 Check after installation that the following code does not throw any
 error (especially Mac users - refer to [installation
 instructions](#installation)) and that the welcome message confirms you
-have installed latest version as in the latest package [DESCRIPTION
-file](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION#L4):
+have installed
+![](https://img.shields.io/badge/Package%20version-6.11.5-orange.svg?style=flat-square)
+:
 
 ``` r
 library(mixOmics) 
 #> Loaded mixOmics ?.?.?
+```
+
+##### development version
+
+You can also install the development version for new features yet to be
+tested:
+
+``` r
+devtools::install_github("mixOmicsTeam/mixOmics", ref = "devel")
 ```
 
 ## Contribution

@@ -3,12 +3,33 @@ output: github_document
 description: |
   "This file creates README.md, README.md MUST NOT BE CHANGED MANUALLY"
   "The last chunk includes the What's New file, can safely be excluded by eval=FALSE"
+  
+knit: (function(inputFile, encoding) {
+    rmarkdown::render(inputFile, output_file="README.md", encoding = encoding, output_dir = "../") })
 ---
+
+
+```{r create-badges, include=FALSE, eval=TRUE}
+pkg_version <- read.dcf("../DESCRIPTION")[, "Version"]
+pkg_version_badge <- sprintf("https://img.shields.io/badge/Package%%20version-%s-orange.svg?style=flat-square", pkg_version)
+
+pkg_license <- read.dcf("../DESCRIPTION")[, "License"]
+pkg_license_badge <- sprintf("https://img.shields.io/badge/license-%s-lightgrey.svg", pkg_license)
+```
+
+[![Build Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
+[![packageVersion](`r pkg_version_badge`)](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION)
+[![codecov](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
+[![bioc-rank](http://bioconductor.org/shields/downloads/release/mixOmics.svg)](http://bioconductor.org/packages/stats/bioc/mixOmics/)
+[![last commit](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
+[![license](`r pkg_license_badge`)](https://choosealicense.com/)
+[![dependencies](http://bioconductor.org/shields/dependencies/release/mixOmics.svg)](http://bioconductor.org/packages/release/bioc/html/mixOmics.html#since)
+
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, fig.path = "./inst/whatsnew-files/", fig.asp = 1, out.width = "50%", cache = FALSE)
-opts_knit$set( cache.path = "./inst/whatsnew-files/")
+opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, fig.path = "whatsnew-files/", fig.asp = 1, out.width = "50%", cache = FALSE)
+opts_knit$set( cache.path = "whatsnew-files/")
 ```
 
 ![](http://mixomics.org/wp-content/uploads/2019/07/MixOmics-Logo-1.png)
@@ -17,7 +38,7 @@ This repository contains the `R` package [now hosted on Bioconductor](http://bio
 
 ## Installation
 
-**(Mac Users Only:)** Ensure you have installed [XQuartz](https://www.xquartz.org/) first.
+**(Mac OS Users Only:)** Ensure you have installed [XQuartz](https://www.xquartz.org/) first.
 
 
 #### Latest Bioconductor Release
@@ -43,15 +64,18 @@ if (!requireNamespace("devtools", quietly = TRUE))
 devtools::install_github("mixOmicsTeam/mixOmics")
 ```
 
-You can also install the development version:
-```{r}
-devtools::install_github("mixOmicsTeam/mixOmics", ref="devel")
-```
-Check after installation that the following code does not throw any error (especially Mac users - refer to [installation instructions](#installation)) and that the welcome message confirms you have installed latest version as in the latest package [DESCRIPTION file](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION#L4):
+Check after installation that the following code does not throw any error (especially Mac users - refer to [installation instructions](#installation)) and that the welcome message confirms you have installed ![](`r pkg_version_badge`) :
 
 ```{r}
 library(mixOmics) 
 #> Loaded mixOmics ?.?.?
+```
+
+##### development version
+
+You can also install the development version for new features yet to be tested:
+```{r}
+devtools::install_github("mixOmicsTeam/mixOmics", ref = "devel")
 ```
 
 ## Contribution
@@ -95,5 +119,5 @@ Thank you for using `mixOmics`!
 
 ![](http://mixomics.org/wp-content/uploads/2012/04/framework-mixOmics-June2016.jpg)
 
-```{r, eval=TRUE, child = './inst/README-WhatsNew.Rmd'}
+```{r, eval=TRUE, child = 'README-WhatsNew.Rmd'}
 ```
