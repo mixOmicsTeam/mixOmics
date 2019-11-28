@@ -1,7 +1,7 @@
 
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![packageVersion](https://img.shields.io/badge/Package%20version-6.11.5-orange.svg?style=flat-square)](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION)
+[![packageVersion](https://img.shields.io/badge/Package%20version-6.11.6-orange.svg?style=flat-square)](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION)
 [![codecov](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
 [![bioc-rank](http://bioconductor.org/shields/downloads/release/mixOmics.svg)](http://bioconductor.org/packages/stats/bioc/mixOmics/)
 [![last
@@ -55,7 +55,7 @@ Check after installation that the following code does not throw any
 error (especially Mac users - refer to [installation
 instructions](#installation)) and that the welcome message confirms you
 have installed
-![](https://img.shields.io/badge/Package%20version-6.11.5-orange.svg?style=flat-square)
+![](https://img.shields.io/badge/Package%20version-6.11.6-orange.svg?style=flat-square)
 :
 
 ``` r
