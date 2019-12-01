@@ -202,10 +202,6 @@ cpus=1
         on.exit(stopCluster(cl))
         #clusterExport(cl, c("splsda","selectVar"))
         clusterEvalQ(cl, library(mixOmics))
-
-        if(progressBar == TRUE)
-        message(paste("As code is running in parallel, the progressBar will only show 100% upon completion of each nrepeat/ component.",sep=""))
-
     }
     
     # add colnames and rownames if missing
