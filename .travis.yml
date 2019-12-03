@@ -19,6 +19,7 @@ warnings_are_errors: false
 ## 'snow' is required by parallel but for some reason not automatically installed
 r_packages: 
   - snow
+  - covr
 
 after_success:
   - Rscript -e 'covr::codecov()'
