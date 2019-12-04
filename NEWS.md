@@ -9,6 +9,10 @@
 * added option to suppress `auroc` from printing all the AUCs
 * `tune.(s)pls(da)`, `perf.(s)plsda` now support FORK clusters
 
+### bug fixes
+
+* `tune.block.splsda` bug on Windows parallelisation fixed
+* `perf` and `tune` functions' issue  when choosing the optimum component resolved
 -------------------------------------------------------------------------------
 ## version 6.10.2
 
