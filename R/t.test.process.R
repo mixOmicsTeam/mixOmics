@@ -48,6 +48,8 @@ t.test.process <- function(mat.error.rate, alpha = 0.01)
             } else { ## if unexpected condition
                 .unexpected_err(trying_to = "choose the optimum number of components")
             }
+        } else if (is.nan(pval)) { ## error rates constant and the same, not significant
+            pval <- 1
         }
         return(pval)
     }
