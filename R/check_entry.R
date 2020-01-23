@@ -414,6 +414,7 @@ indY, #only use if Y not provided
 ncomp,
 keepX,
 keepY,
+DA=NULL,
 study, #mint
 design, #block
 init,
@@ -649,7 +650,7 @@ max.iter)
         nzv.A = lapply(A, nearZeroVar)
         for(q in 1:length(A))
         {
-            if (length(nzv.A[[q]]$Position) > 0)
+            if (length(nzv.A[[q]]$Position) > 0 &&(!DA & q == indY))
             {
                 names.remove.X = colnames(A[[q]])[nzv.A[[q]]$Position]
                 A[[q]] = A[[q]][, -nzv.A[[q]]$Position, drop=FALSE]
