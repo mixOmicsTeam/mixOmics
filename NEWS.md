@@ -3,6 +3,7 @@
 
 ### new features / enhancements
 
+* `block.splsda` bug which could drop some Y factors with `near.zero.variance=TRUE` fixed.
 * `perf.block.splsda` now supports calculation of combined and per-block AUC
 * improvement significance can be custmoised in all `perf` and `tune` functions
 * `perf.block.splsda` is now much faster and supports FORK clusters
