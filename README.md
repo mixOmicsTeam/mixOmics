@@ -1,7 +1,7 @@
 
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![packageVersion](https://img.shields.io/badge/Package%20version-6.11.6-orange.svg?style=flat-square)](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION)
+[![packageVersion](https://img.shields.io/badge/Package%20version-6.11.8-orange.svg?style=flat-square)](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION)
 [![codecov](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
 [![bioc-rank](http://bioconductor.org/shields/downloads/release/mixOmics.svg)](http://bioconductor.org/packages/stats/bioc/mixOmics/)
 [![last
@@ -55,7 +55,7 @@ Check after installation that the following code does not throw any
 error (especially Mac users - refer to [installation
 instructions](#installation)) and that the welcome message confirms you
 have installed
-![](https://img.shields.io/badge/Package%20version-6.11.6-orange.svg?style=flat-square)
+![](https://img.shields.io/badge/Package%20version-6.11.8-orange.svg?style=flat-square)
 :
 
 ``` r
@@ -152,6 +152,13 @@ Thank you for using
 ![](http://mixomics.org/wp-content/uploads/2012/04/framework-mixOmics-June2016.jpg)
 
 ## What’s New
+
+#### January 2020
+
+  - `perf.block.splsda` now supports calculation of combined AUC.
+
+  - `block.splsda` bug which could drop some classes with
+    `near.zero.variance=TRUE` now fixed
 
 #### November 2019
 

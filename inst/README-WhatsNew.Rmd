@@ -17,10 +17,15 @@ opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE)
 
 ## What's New
 
+#### January 2020
+
+* `perf.block.splsda` now supports calculation of combined AUC.
+
+* `block.splsda` bug which could drop some classes with `near.zero.variance=TRUE` now fixed
+
 #### November 2019
 
 * Parallel computing improved for `tune` and `perf` functions, and even more on Unix-like systems.
-
 ```{r, eval=FALSE, echo=FALSE}
 library(mixOmics)
 require(microbenchmark)
@@ -48,12 +53,11 @@ microbenchmark::microbenchmark(
 #>  parallel  5.62336  5.62336  5.756024  5.756024  5.888689  5.888689     2
 ```
 
-  
-  
 * Fixed margin error problem with `plotLoadings`. See the example in [this issue](https://github.com/mixOmicsTeam/mixOmics/issues/45).
-* `cim` bug which overestimated correlations for single component now fixed.
-* `perf.sgccda` now supports calculation of average combined AUC.
 
+* `cim` bug which overestimated correlations for single component now fixed.
+
+* `perf.sgccda` now supports calculation of average combined AUC.
 ```{r, eval=FALSE, echo=FALSE}
 library(mixOmics)
 data(nutrimouse)
