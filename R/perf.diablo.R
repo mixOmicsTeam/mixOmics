@@ -85,7 +85,7 @@ cpus=1,
     Y.mean = Y.mean.res = Y.weighted.vote = Y.weighted.vote.res = Y.vote = Y.vote.res = Y.WeightedPredict = Y.WeightedPredict.res = list()
     
     if (progressBar ==  TRUE) {
-        cat(sprintf("\nPerforming repeated cross-validation...\n", nrep))
+        cat(sprintf("\nPerforming repeated cross-validation...\n", nrepeat))
         pb = txtProgressBar(style = 3)
     }
     

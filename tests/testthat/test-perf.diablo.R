@@ -17,7 +17,7 @@ test_that("perf.diablo works with and without parallel processing and with auroc
     
     RNGversion(.mixo_rng()) ## in case RNG changes!
     set.seed(100)
-    perf.res12 = perf.sgccda(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE)
+    perf.res12 = perf.sgccda(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE, progressBar = TRUE)
     choices <- unname(perf.res12$choice.ncomp$AveragedPredict[,1])
     expect_equal(choices, c(2,2))
     aucs <- round(unname(perf.res12$auc$comp1[,1]), 2)
@@ -27,7 +27,7 @@ test_that("perf.diablo works with and without parallel processing and with auroc
     # by listening to ... in perf for seed. Results are different even with seeds but reproducible with same cpus
     # the hassle of making it fully reproducible is a bit too arduous
     
-    perf.res42 = perf.sgccda(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE, cpus = 2, seed = 100)
+    perf.res42 = perf.sgccda(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE, cpus = 2, seed = 100, progressBar = TRUE)
     choices <- unname(perf.res42$choice.ncomp$AveragedPredict[,1])
     expect_equal(choices, c(1,1))
     aucs <- round(unname(perf.res42$auc$comp1[,1]), 2)
