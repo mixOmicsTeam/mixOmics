@@ -30,6 +30,10 @@ logratio.transfo = function(X,
 logratio = "none", # one of ('none','CLR','ILR')
 offset = 0)
 {
+    X <- as.matrix(X)
+    if (!is.numeric(X))
+        stop("X must be a numeric matrix", call. = FALSE)
+
     if (!(logratio %in% c("none", "CLR", "ILR")))
     stop("Choose one of the three following logratio transformation: 'none', 'CLR' or 'ILR'")
  
