@@ -1,5 +1,16 @@
 context("test-perf.diablo")
 
+test_that("perf.diablo works ", {
+    data(nutrimouse)
+    Y = nutrimouse$diet
+    data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+    design = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
+    nutrimouse.sgccda <- block.splsda(X=data, Y = Y,design = design, keepX = list(gene=c(10,10), lipid=c(15,15)), ncomp = 2, scheme = "horst")
+    perf = perf(nutrimouse.sgccda)
+    expect_is(perf, "perf.sgccda.mthd")
+})
+
+
 test_that("perf.diablo works with and without parallel processing and with auroc", {
     data(nutrimouse)
     nrep <- 3
@@ -27,7 +38,7 @@ test_that("perf.diablo works with and without parallel processing and with auroc
     # by listening to ... in perf for seed. Results are different even with seeds but reproducible with same cpus
     # the hassle of making it fully reproducible is a bit too arduous
     
-    perf.res42 = perf.sgccda(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE, cpus = 2, seed = 100, progressBar = TRUE)
+    perf.res42 = perf(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE, cpus = 2, seed = 100, progressBar = TRUE)
     choices <- unname(perf.res42$choice.ncomp$AveragedPredict[,1])
     expect_equal(choices, c(1,1))
     aucs <- round(unname(perf.res42$auc$comp1[,1]), 2)
