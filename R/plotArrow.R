@@ -124,10 +124,10 @@ position.names = 'centroid'
     blocks=c("X","Y");object$variates = object$variates[names(object$variates) %in% blocks]
     
     if (is.null(X.label))
-    X.label = 'X'
+        X.label = sprintf("Dimension %s", comp1)
 
     if (is.null(Y.label))
-    Y.label = 'Y'
+        Y.label = sprintf("Dimension %s", comp2)
     
     
     
