@@ -221,8 +221,8 @@ internal_predict.DA = function(object, out, q, dist, weights)
                     weights=rep(weights,each=nrow(out.DA$class[[1]][[1]])))
                     ag = aggregate(temp$weights,
                     by=list(temp$pred, temp$indiv), FUN=sum)
-                    data_max = ag %>% group_by(Group.2) %>%
-                    filter(row_number(x)==n())
+                    data_max <- group_by(.data = ag, Group.2)
+                    data_max <- filter(.data = data_max, row_number(x)==n())
                     out.comp = as.matrix(data_max[,1])
                     rownames(out.comp) = as.matrix(data_max[,2])
                     colnames(out.comp) = paste0("comp",comp)

@@ -165,12 +165,15 @@ legend = TRUE)
     ## Expression levels
     Xdat = as.data.frame(do.call(cbind, X)[, colnames(simMat)])
     
-    AvgFeatExp0 = Xdat %>% mutate(Y = Y) %>% gather(Features, Exp, -Y) %>%
-    group_by(Y, Features) %>% dplyr::summarise(Mean = mean(Exp), SD = sd(Exp))
-    AvgFeatExp0$Dataset = factor(rep(names(X), unlist(lapply(cord, nrow))),
+    AvgFeatExp0 <- mutate(.data = Xdat, Y = Y)
+    AvgFeatExp0 <- gather(data = AvgFeatExp0, Features, Exp, -Y)
+    AvgFeatExp0 <- group_by(.data = AvgFeatExp0, Y, Features)
+    AvgFeatExp0 <- dplyr::summarise(.data = AvgFeatExp0, Mean = mean(Exp), SD = sd(Exp))
+    AvgFeatExp0$Dataset <- factor(rep(names(X), unlist(lapply(cord, nrow))),
     levels = names(X))[match(AvgFeatExp0$Features,colnames(Xdat))]
     # to match Xdat that is reordered in AvgFeatExp0
-    featExp = AvgFeatExp0 %>% group_by(Dataset, Y) %>% arrange(Mean)
+    featExp <- group_by(.data = AvgFeatExp0 , Dataset, Y)
+    featExp <- arrange(.data = featExp , Mean)
     #Generate a circular plot (circos like) from a correlation matrix (pairwise)
     #
     # Args:
