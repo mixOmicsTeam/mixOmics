@@ -217,14 +217,14 @@ background = NULL)
         #-- Modify scale colour - Change X/Ylabel - split plots into Blocks
         p = p + scale_color_manual(values = unique(col.per.group)[match(
         levels(factor(as.character(df$group))), levels(df$group))],
-        name = legend.title, breaks = levels(df$group))
+        name = legend.title, labels = levels(df$group))
         
 
         if(group.pch == "same")
         {
             p = p + scale_shape_manual(values = values.pch[match(
             levels(factor(as.character(df$pch.levels))),levels(df$pch.levels))],
-            name = legend.title, breaks = levels(factor(df$group)),
+            name = legend.title, labels = levels(factor(df$group)),
             guide = FALSE)
             #match(..) reorder the values as the values of pch.levels,
             #if there's more than 10 levels, R/ggplot orders characters
@@ -233,7 +233,7 @@ background = NULL)
             # if pch different factor, then second legend
             p = p + scale_shape_manual(values = values.pch[match(
             levels(factor(as.character(df$pch.levels))),levels(df$pch.levels))],
-            name = legend.title.pch, breaks = levels(df$pch.levels))
+            name = legend.title.pch, labels = levels(df$pch.levels))
         }
         
         p = p + #labs(list(title = title, x = X.label, y = Y.label)) +
@@ -381,7 +381,7 @@ background = NULL)
         #-- Modify scale colour - Change X/Ylabel - split plots into Blocks
         p = p + scale_colour_manual(values = unique(col.per.group)[match(
         levels(factor(as.character(df$group))), levels(df$group))],
-        name = legend.title, breaks = levels(df$group)) +
+        name = legend.title, labels = levels(df$group)) +
         labs(shape = "Study")#levels(object$study)[study.ind])
         
         p = p + scale_shape_manual(values = as.numeric(levels(factor(df$pch))))
