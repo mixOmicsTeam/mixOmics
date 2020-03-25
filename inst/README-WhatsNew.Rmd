@@ -17,15 +17,20 @@ opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE)
 
 ## What's New
 
+#### March 2020
+
+* `plotIndiv` now supports (weighted) consensus plots for block analyses. See the example in [this issue](https://github.com/mixOmicsTeam/mixOmics/issues/57)
+
+* `plotIndiv(..., ind.names=FALSE)` [warning issue](https://github.com/mixOmicsTeam/mixOmics/issues/59) now fixed
+
 #### January 2020
 
-* `perf.block.splsda` now supports calculation of combined AUC.
-
+* `perf.block.splsda` now supports calculation of combined AUC
 * `block.splsda` bug which could drop some classes with `near.zero.variance=TRUE` now fixed
 
 #### November 2019
 
-* Parallel computing improved for `tune` and `perf` functions, and even more on Unix-like systems.
+* Parallel computing improved for `tune` and `perf` functions, and even more on Unix-like systems
 ```{r, eval=FALSE, echo=FALSE}
 library(mixOmics)
 require(microbenchmark)
@@ -52,12 +57,11 @@ microbenchmark::microbenchmark(
 #>    serial 10.09760 10.09760 12.130116 12.130116 14.162629 14.162629     2
 #>  parallel  5.62336  5.62336  5.756024  5.756024  5.888689  5.888689     2
 ```
+* Fixed margin error problem with `plotLoadings`. See the example in [this issue](https://github.com/mixOmicsTeam/mixOmics/issues/45)
 
-* Fixed margin error problem with `plotLoadings`. See the example in [this issue](https://github.com/mixOmicsTeam/mixOmics/issues/45).
+* `cim` bug which overestimated correlations for single component now fixed
 
-* `cim` bug which overestimated correlations for single component now fixed.
-
-* `perf.sgccda` now supports calculation of average combined AUC.
+* `perf.sgccda` now supports calculation of average combined AUC
 ```{r, eval=FALSE, echo=FALSE}
 library(mixOmics)
 data(nutrimouse)
@@ -96,11 +100,11 @@ perf.res$auc
 
 #### September 2019
 
-* You can now customise `auroc` plots in version 6.8.3. See example [here](https://github.com/mixOmicsTeam/mixOmics/issues/35).
+* You can now customise `auroc` plots in version 6.8.3. See example [here](https://github.com/mixOmicsTeam/mixOmics/issues/35)
 
 ####  August 2019
 
-* The infamous `plot.perf` bug has been fixed in version 6.8.2. See example [here](https://github.com/mixOmicsTeam/mixOmics/issues/27).
+* The infamous `plot.perf` bug has been fixed in version 6.8.2. See example [here](https://github.com/mixOmicsTeam/mixOmics/issues/27)
 
 
 

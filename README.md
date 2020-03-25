@@ -1,7 +1,7 @@
 
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![packageVersion](https://img.shields.io/badge/Package%20version-6.11.8-orange.svg?style=flat-square)](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION)
+[![packageVersion](https://img.shields.io/badge/Package%20version-6.11.11-orange.svg?style=flat-square)](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION)
 [![codecov](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
 [![bioc-rank](http://bioconductor.org/shields/downloads/release/mixOmics.svg)](http://bioconductor.org/packages/stats/bioc/mixOmics/)
 [![last
@@ -55,7 +55,7 @@ Check after installation that the following code does not throw any
 error (especially Mac users - refer to [installation
 instructions](#installation)) and that the welcome message confirms you
 have installed
-![](https://img.shields.io/badge/Package%20version-6.11.8-orange.svg?style=flat-square)
+![](https://img.shields.io/badge/Package%20version-6.11.11-orange.svg?style=flat-square)
 :
 
 ``` r
@@ -146,39 +146,46 @@ in this diagram. *PLS* stands for *Projection to Latent Structures*
 
 That’s it\! Ready\! Set\! Go\!
 
-Thank you for using
-`mixOmics`\!
+Thank you for using `mixOmics`\!
 
 ![](http://mixomics.org/wp-content/uploads/2012/04/framework-mixOmics-June2016.jpg)
 
 ## What’s New
 
+#### March 2020
+
+  - `plotIndiv` now supports (weighted) consensus plots for block
+    analyses. See the example in [this
+    issue](https://github.com/mixOmicsTeam/mixOmics/issues/57)
+
+  - `plotIndiv(..., ind.names=FALSE)` [warning
+    issue](https://github.com/mixOmicsTeam/mixOmics/issues/59) now fixed
+
 #### January 2020
 
-  - `perf.block.splsda` now supports calculation of combined AUC.
-
+  - `perf.block.splsda` now supports calculation of combined AUC
   - `block.splsda` bug which could drop some classes with
     `near.zero.variance=TRUE` now fixed
 
 #### November 2019
 
   - Parallel computing improved for `tune` and `perf` functions, and
-    even more on Unix-like systems.
+    even more on Unix-like systems
 
   - Fixed margin error problem with `plotLoadings`. See the example in
-    [this issue](https://github.com/mixOmicsTeam/mixOmics/issues/45).
+    [this issue](https://github.com/mixOmicsTeam/mixOmics/issues/45)
 
   - `cim` bug which overestimated correlations for single component now
-    fixed.
+    fixed
 
-  - `perf.sgccda` now supports calculation of average combined AUC.
+  - `perf.sgccda` now supports calculation of average combined AUC
 
 #### September 2019
 
   - You can now customise `auroc` plots in version 6.8.3. See example
-    [here](https://github.com/mixOmicsTeam/mixOmics/issues/35).
+    [here](https://github.com/mixOmicsTeam/mixOmics/issues/35)
 
 #### August 2019
 
   - The infamous `plot.perf` bug has been fixed in version 6.8.2. See
-    example [here](https://github.com/mixOmicsTeam/mixOmics/issues/27).
+    example [here](https://github.com/mixOmicsTeam/mixOmics/issues/27)
