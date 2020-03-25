@@ -1,4 +1,4 @@
-context("test-plotLoadings")
+context("plotLoadings")
 
 test_that("plotLoadings.spls works", code = {
     data(liver.toxicity)

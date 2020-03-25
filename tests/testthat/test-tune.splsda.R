@@ -1,4 +1,4 @@
-context("test-tune.splsda")
+context("tune.splsda")
 
 test_that("tune.splsda works", {
     data(breast.tumors)

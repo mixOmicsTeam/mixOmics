@@ -68,3 +68,5 @@ test_that("CIM works for multilevel", code = {
                     title = "Dose", cex=0.9))
     expect_is(cim_res[[1]], "matrix")
 })
+
+unlink(list.files(pattern = "*.pdf"))

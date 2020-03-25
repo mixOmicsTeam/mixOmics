@@ -1,4 +1,4 @@
-context("test-auroc")
+context("auroc")
 
 test_that("auroc works", {
     data(breast.tumors)

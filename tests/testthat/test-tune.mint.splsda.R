@@ -1,4 +1,4 @@
-context("test-tune.mint.splsda")
+context("tune.mint.splsda")
 
 test_that("tune.mint.splsda works", code = {
     data(stemcells)

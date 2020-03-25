@@ -1,4 +1,4 @@
-context("test-tune.spls")
+context("tune.spls")
 
 test_that("tune.spls works with and without parallel", code = {
     data("nutrimouse")

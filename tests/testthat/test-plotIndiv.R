@@ -1,4 +1,105 @@
 context("plotIndiv")
+## ------------------------------------------------------------------------ ##
+test_that("plotIndiv works for rcc", {
+  data(nutrimouse)
+  X <- nutrimouse$lipid
+  Y <- nutrimouse$gene
+  nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
+
+  pl.res <- plotIndiv(nutri.res)
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  .expect_numerically_close(pl.res$graph$data$x[1], 0.87088852)
+  
+  pl.res <- plotIndiv(nutri.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
+                      legend = TRUE)
+  .expect_numerically_close(pl.res$graph$data$x[1], 0.8270997)
+})
+
+## ------------------------------------------------------------------------ ##
+test_that("plotIndiv works for (s)pls", {
+  data(liver.toxicity)
+  X <- liver.toxicity$gene
+  Y <- liver.toxicity$clinic
+  toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
+                        keepY = c(10, 10, 10))
+  
+  pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
+                      group = liver.toxicity$treatment[, 'Time.Group'],
+                      pch = as.numeric(factor(liver.toxicity$treatment$Dose.Group)), 
+                      pch.levels =liver.toxicity$treatment$Dose.Group,
+                      legend = TRUE)
+  .expect_numerically_close(pl.res$graph$data$x[1], 4.146771)
+})
+
+## ------------------------------------------------------------------------ ##
+test_that("plotIndiv works for (s)plsda", {
+  data(breast.tumors)
+  X <- breast.tumors$gene.exp
+  Y <- breast.tumors$sample$treatment
+  
+  splsda.breast <- splsda(X, Y,keepX=c(10,10),ncomp=2)
+  
+  pl.res <- plotIndiv(splsda.breast)
+  .expect_numerically_close(pl.res$graph$data$x[1], -1.075222)
+})
+
+## ------------------------------------------------------------------------ ##
+test_that("plotIndiv works for (s)pls", {
+  data(liver.toxicity)
+  X <- liver.toxicity$gene
+  Y <- liver.toxicity$clinic
+  toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
+                        keepY = c(10, 10, 10))
+  
+  pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
+                      group = liver.toxicity$treatment[, 'Time.Group'],
+                      pch = as.numeric(factor(liver.toxicity$treatment$Dose.Group)), 
+                      pch.levels =liver.toxicity$treatment$Dose.Group,
+                      legend = TRUE)
+  .expect_numerically_close(pl.res$graph$data$x[1], 4.146771)
+})
+## ------------------------------------------------------------------------ ##
+test_that("plotIndiv works for mint.(s)plsda", {
+  data(stemcells)
+  res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2, keepX = c(10, 5),
+                    study = stemcells$study)
+  
+  pl.res <-   plotIndiv(res)
+  .expect_numerically_close(pl.res$graph$data$x[1], -1.543685)
+})
+## ------------------------------------------------------------------------ ##
+test_that("plotIndiv works for sgcca and rgcca", {
+  data(nutrimouse)
+  Y = unmap(nutrimouse$diet)
+  data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
+  design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
+  nutrimouse.sgcca <- wrapper.sgcca(X = data,
+                                    design = design1,
+                                    penalty = c(0.3, 0.5, 1),
+                                    ncomp = 3,
+                                    scheme = "horst")
+  
+  pl.res <-  plotIndiv(nutrimouse.sgcca)
+  .expect_numerically_close(pl.res$graph$data$x[1], 3.319955)
+})
+
+## ------------------------------------------------------------------------ ##
+test_that("plotIndiv works for sgccda", {
+  data(nutrimouse)
+  Y = nutrimouse$diet
+  data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+  design1 = matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
+  
+  nutrimouse.sgccda1 <- wrapper.sgccda(X = data,
+                                       Y = Y,
+                                       design = design1,
+                                       ncomp = 2,
+                                       keepX = list(gene = c(10,10), lipid = c(15,15)),
+                                       scheme = "centroid")
+  pl.res <- plotIndiv(nutrimouse.sgccda1)
+  
+  .expect_numerically_close(pl.res$graph$data$x[1], 2.448086)
+})
 
 test_that("plotIndiv.rcc works without ind.names", code = {
     data(nutrimouse)
@@ -68,3 +169,6 @@ test_that("plotIndiv.sgccda(..., blocks = 'consensus') works with ellipse=TRUE",
     diablo_plot <- plotIndiv(TCGA.block.splsda, ind.names = TRUE, blocks = blocks, ellipse = TRUE)
     expect_true(all(unique(diablo_plot$df.ellipse$Block) %in% c('Consensus', 'Block: mrna', 'Consensus (weighted)')))
 })
+
+unlink(list.files(pattern = "*.pdf"))
+

@@ -1,4 +1,4 @@
-context("test-tune.mint.splsda")
+context("tune.mint.splsda")
 
 
 test_that("perf.mint.splsda works", code = {

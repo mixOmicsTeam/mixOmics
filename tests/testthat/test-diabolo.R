@@ -1,4 +1,4 @@
-context("test-diabolo")
+context("diabolo")
 
 test_that("block.splsda works", {
   data(nutrimouse)

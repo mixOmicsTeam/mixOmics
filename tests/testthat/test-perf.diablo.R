@@ -1,4 +1,4 @@
-context("test-perf.diablo")
+context("perf.diablo")
 
 test_that("perf.diablo works ", {
     data(nutrimouse)

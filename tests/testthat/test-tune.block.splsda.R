@@ -1,4 +1,4 @@
-context("test-tune.block.splsda")
+context("tune.block.splsda")
 
 test_that("tune.block.splsda works with and without parallel without auc", {
 
