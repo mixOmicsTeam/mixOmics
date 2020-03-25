@@ -33,38 +33,28 @@
 #   as indicated below
 
 # --------------------------------------
-# study_split: used in 'internal_mint.block.R' and 'predict.mint.block.pls.R'
+# get.weights: used in (MCV.)(block.)(s)pls(da).R
 # --------------------------------------
+#' Get block weights for in analyses
+#'
+#' weights saved in objects and used by \code{internal.predict.DA}
+#'
+#' @param variates Named list of variates from internal_wrapper.mint.block
+#' @param indY Integer, the Y matrix index from internal_wrapper.mint.block
+#'
+#' @return named vector of average correlations b/w block components and Y components
+#' @keywords internal
 get.weights = function(variates, indY)
 {
-    ncomp = min(sapply(variates, ncol))
-    x.xList <- list()
-    compt = 1
-    for(comp in seq_len(ncomp))
-    {
-        for(i in seq_len(length(variates))){
-            corDat <- rep(0, length(variates))
-            names(corDat) <- paste("cor", names(variates)[i], names(variates),
-            sep = "_")
-            for(j in seq_len(length(variates))){
-                corDat[j] <- as.numeric(cor(variates[[i]][,comp],
-                variates[[j]][,comp]))
-            }
-            x.xList[[compt]] <- corDat
-            compt = compt +1
-        }
-    }
-    corMat.diablo <- do.call(rbind, x.xList)
-    rownames(corMat.diablo) <- paste(names(variates),".comp",
-    rep(seq_len(ncomp),each=length(variates)),sep="")
-    colnames(corMat.diablo) <- names(variates)
-    
-    temp = matrix(corMat.diablo[,indY],ncol=ncomp)
-    correlation = apply(temp, 1, function(x){mean(abs(x))})[seq_len(length(variates))]
-    names(correlation) = names(variates)
-    
-    correlation = correlation[-indY]
-    return(correlation)
+    ## for all X blocks, calculate correlation matrix of block components and Y components
+    ## and keep the intra-component correlations only
+    block_correlation_with_Y <- lapply(variates[-indY], function(x) {
+        diag(cor(x, variates[[indY]]))
+        })
+    block_correlation_with_Y <- data.frame(block_correlation_with_Y)
+    ## average across components
+    block_correlation_with_Y_avg <- colMeans(block_correlation_with_Y)
+    return(block_correlation_with_Y_avg)
     
 }
 
