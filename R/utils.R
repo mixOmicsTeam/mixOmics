@@ -1,10 +1,10 @@
+
 ## ----------- .trim_long_names ----------- 
 #' Trim long variable names
 #'
 #' Trims feature names longer than \code{len} adding \code{...} at the end of
 #' the name with a message. This helps avoid margin errors in plots. 
-#' \code{len=23} is chosen as default only because longest ensemble id for
-#' mouse/human genes/transcripts is this length.
+#' \code{len=30} is chosen as default.
 #' 
 #' @param var_names character vector of variable names
 #' @param len integer, names longer than this will be trimmed so total length
@@ -15,7 +15,8 @@
 #' @examples
 #' .trim_long_names(var_names = c("long-variable-name-of-length-31", "short-variable"))
 #' @noRd
-.trim_long_names <- function(var_names=NULL, len=23) {
+.trim_long_names <- function(var_names=NULL, len=NULL) {
+    len <- .change_if_null(len, 30)
     if (any(nchar(var_names) > len)) {
         message(sprintf("Some variable names are too long. Trimmed for visualisation purposes."))
                 
@@ -26,6 +27,7 @@
     
     return(var_names)
 }
+
 ## ----------- .check_cpus ----------- 
 #' Check cpus argument
 #'
@@ -194,3 +196,29 @@ stratified.subsampling <- function(Y, folds = 10)
 #' @example RNGversion(.mixo_rng())
 #' @noRd
 .mixo_rng <- function() {"3.6.0"}
+
+## ----------- .change_if_null ----------- 
+#' Set default value if NULL
+#'
+#' For arguments with default NULL value, sets the desired default value
+#' 
+#' @param arg The function argument with NULL/no default value
+#' @param default The desired default value
+#'
+#' @return The desired default value
+#'
+#' @examples
+#' .change_if_null(NULL, 10)
+#' #> 10
+#' .change_if_null(3, 10)
+#' #> 3
+#' @noRd
+.change_if_null <- function(arg, default) {
+    return(
+        if ( missing(arg) || is.null(arg) )
+            default
+        else
+            arg
+    )
+}
+

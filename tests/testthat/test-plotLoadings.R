@@ -83,3 +83,27 @@ test_that("plotLoadings works with super-long feature names", code = {
     expect_is(pl_res, "data.frame")
     
 })
+
+test_that("plotLoadings max name lengths can be customised", code = {
+    data(nutrimouse)
+    Y = nutrimouse$diet
+    gene = nutrimouse$gene
+    lipid = nutrimouse$lipid
+    ## extend feature names
+    suff <- "-a-long-suffix-from-abolutely-nowhere-which-is-gonna-be-longer-than-margins"
+    colnames(gene) <- paste0(colnames(gene), suff)
+    colnames(lipid) <- paste0(colnames(lipid), suff)
+    data = list(gene = gene, lipid = lipid)
+    design = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
+    
+    nutrimouse.sgccda = block.splsda(X = data,
+                                     Y = Y,
+                                     design = design,
+                                     keepX = list(gene = c(10,10), lipid = c(15,15)),
+                                     ncomp = 2,
+                                     scheme = "centroid")
+    pl_res <- plotLoadings(nutrimouse.sgccda, contrib = "min", max.name.length =  23)
+    
+    expect_is(pl_res, "data.frame")
+    
+})
