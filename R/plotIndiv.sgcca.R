@@ -173,8 +173,8 @@ point.lwd = 1,
     star = out$star
     plot_parameters = out$plot_parameters
 
-    ## ------ drop 'Block: ' from consensus labels
     if (!is.null(input_consensus_blocks)) {
+      ## ------ drop 'Block: ' from consensus labels
       df$Block <- as.character(df$Block)
       
       df$Block[df$Block == 'Block: weighted.consensus'] <- 'Consensus (weighted)'
@@ -184,6 +184,13 @@ point.lwd = 1,
       df.ellipse$Block[df.ellipse$Block == 'Block: consensus'] <- 'Consensus'
       
       df$Block <- factor(df$Block)
+      
+      ## ------ drop explained variance on axes if only consensus asked
+      if (length(unique(df$Block)) == 1) {
+        X.label <- 'variate 1 - consensus'
+        Y.label <- 'variate 2 - consensus'
+        Z.label <- 'variate 3 - consensus'
+      }
     }
 
     # change the levels of df.final$Block to "subtitle"
