@@ -62,7 +62,7 @@ point.lwd = 1, ... )
 and the vertical axis respectively to project the individuals.}
 \item{rep.space}{For objects of class \code{"pca", "plsda", "plsda"} default is \code{"X-variate"}.  For the objects of class \code{"pls", "rcc"} default is a panel plot representing each data subspace. For objects of class \code{"rgcca"} and \code{"sgcca"}, numerical value(s) indicating the block data set to represent needs to be specified.}
 
-\item{blocks}{integer value of name of a block to be plotted using the GCCA module. See examples.}
+\item{blocks}{integer value of name of a block to be plotted using the GCCA module. "consensus" and "weighted.consensus" will create consensus and weighted consensus plots, respectively. See examples.}
 \item{study}{Indicates which study-specific outputs to plot. A character vector containing some levels of \code{object$study}, "all.partial" to plot all studies or "global" is expected. Default to "global".}
 \item{ind.names}{either a character vector of names for the individuals to be plotted,
 or \code{FALSE} for no names. If \code{TRUE}, the row names of the first (or second)
@@ -331,6 +331,12 @@ plotIndiv(nutrimouse.sgccda1)
 
 # displaying only 2 blocks
 plotIndiv(nutrimouse.sgccda1, blocks = c(1,2), group = nutrimouse$diet)
+
+# include the consensus plot (average the components across datasets)
+plotIndiv(nutrimouse.sgccda1, blocks = "consensus", group = nutrimouse$diet)
+
+# include the weighted consensus plot (average of components weighted by correlation of each dataset with Y)
+plotIndiv(nutrimouse.sgccda1, blocks = c("consensus", "weighted.consensus"), group = nutrimouse$diet)
 
 # with some ellipse, legend and title
 plotIndiv(nutrimouse.sgccda1, blocks = c(1,2), group = nutrimouse$diet,

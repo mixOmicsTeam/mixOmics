@@ -222,3 +222,53 @@ stratified.subsampling <- function(Y, folds = 10)
     )
 }
 
+## ----------- .add_consensus_blocks ----------- 
+#' Add consensus blocks to DIABLO object
+#'
+#' For plotIndiv(blocks = "consensus")
+#' 
+#' @param block_object A diablo object
+#' @param consensus_blocks One or both of c('consensus', 'weighted.consensus')
+#'
+#' @return A diablo object with consensus blocks added for smooth input into plotIndiv.sgccda
+#' @noRd
+.add_consensus_blocks <- function(block_object, consensus_blocks = c('consensus', 'weighted.consensus')) {
+    X_blocks <- with(block_object, names$blocks[-which(names$block == 'Y')])
+    consensus_blocks <- match.arg(consensus_blocks, several.ok = TRUE)
+    
+    .get_consensus_variates <- function(object, X_blocks, weighted = FALSE) {
+        
+        arrays <- object$variates
+        arrays <- arrays[X_blocks]
+        
+        if (isTRUE(weighted)) {
+            if (!is(block_object, "sgccda")) {
+                if ('weighted.consensus' %in% consensus_blocks ) {
+                    stop("'weighted.consensus' plots are only available for block.splsda objects ")
+                }
+            }
+            weights <- object$weights
+        } else {
+            weights <- rep(1, length(X_blocks))
+        }
+        arrays <- mapply(x=arrays, w=weights, FUN = function(x, w) x*w, SIMPLIFY = FALSE)
+        Reduce(f = '+', arrays)/sum(weights)
+    }
+    
+    for (consensus_block in consensus_blocks) {
+        block_object$X[[consensus_block]] <-  0
+        if (consensus_block == "weighted.consensus") {
+            block_object$variates[[consensus_block]] <-  .get_consensus_variates(object = block_object, X_blocks = X_blocks, weighted = TRUE)
+        }
+        if (consensus_block == "consensus") {
+            block_object$variates[[consensus_block]] <-  .get_consensus_variates(object = block_object, X_blocks = X_blocks, weighted = FALSE)
+        }
+        block_object$names$blocks <- c(block_object$names$blocks, consensus_block)
+        block_object$ncomp[consensus_block] <- block_object$ncomp[1]
+        block_object$explained_variance[consensus_block] <- 0
+        
+    }
+    
+    block_object
+}
+
