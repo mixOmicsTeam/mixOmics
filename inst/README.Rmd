@@ -10,21 +10,20 @@ knit: (function(inputFile, encoding) {
 
 
 ```{r create-badges, include=FALSE, eval=TRUE}
-pkg_version <- read.dcf("../DESCRIPTION")[, "Version"]
-pkg_version_badge <- sprintf("https://img.shields.io/badge/Package%%20version-%s-orange.svg?style=flat-square", pkg_version)
-
+library(badger)
 pkg_license <- read.dcf("../DESCRIPTION")[, "License"]
 pkg_license_badge <- sprintf("https://img.shields.io/badge/license-%s-lightgrey.svg", pkg_license)
 ```
 
-[![Build Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![packageVersion](`r pkg_version_badge`)](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION)
-[![codecov](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
-[![bioc-rank](http://bioconductor.org/shields/downloads/release/mixOmics.svg)](http://bioconductor.org/packages/stats/bioc/mixOmics/)
-[![last commit](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
+`r badge_travis("mixOmicsTeam/mixOmics")`
+`r badge_bioc_release('mixOmics', 'green')`
+`r badge_devel('mixOmicsTeam/mixOmics', 'orange')`
+`r badge_codecov("mixOmicsTeam/mixOmics")`
+`r badge_bioc_download("mixOmics", "month", "green")`
+`r badge_bioc_download_rank('mixOmics')`
+`r badge_last_commit("mixOmicsTeam/mixOmics")`
 [![license](`r pkg_license_badge`)](https://choosealicense.com/)
 [![dependencies](http://bioconductor.org/shields/dependencies/release/mixOmics.svg)](http://bioconductor.org/packages/release/bioc/html/mixOmics.html#since)
-
 
 ```{r setup, include=FALSE}
 library(knitr)
@@ -64,7 +63,7 @@ if (!requireNamespace("devtools", quietly = TRUE))
 devtools::install_github("mixOmicsTeam/mixOmics")
 ```
 
-Check after installation that the following code does not throw any error (especially Mac users - refer to [installation instructions](#installation)) and that the welcome message confirms you have installed ![](`r pkg_version_badge`) :
+Check after installation that the following code does not throw any error (especially Mac users - refer to [installation instructions](#installation)) and that the welcome message confirms you have installed `r badge_bioc_release('mixOmics', 'green')`:
 
 ```{r}
 library(mixOmics) 
@@ -73,7 +72,7 @@ library(mixOmics)
 
 ##### development version
 
-You can also install the development version for new features yet to be tested:
+You can also install the development version (`r badge_devel('mixOmicsTeam/mixOmics', 'orange')`) for new features yet to be widely tested:
 ```{r}
 devtools::install_github("mixOmicsTeam/mixOmics", ref = "devel")
 ```
