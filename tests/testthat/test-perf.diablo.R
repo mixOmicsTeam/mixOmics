@@ -6,7 +6,7 @@ test_that("perf.diablo works ", {
     data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
     design = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
     nutrimouse.sgccda <- block.splsda(X=data, Y = Y,design = design, keepX = list(gene=c(10,10), lipid=c(15,15)), ncomp = 2, scheme = "horst")
-    perf = perf(nutrimouse.sgccda)
+    perf = perf(nutrimouse.sgccda, folds = 3)
     expect_is(perf, "perf.sgccda.mthd")
 })
 
