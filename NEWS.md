@@ -3,17 +3,20 @@
 
 ### new features / enhancements
 
+* (weighted) consensus plot now supported for `plotIndiv` with block analyses
+* `plotLoadings`'s feature name trimming can be customised
 * `block.splsda` bug which could drop some Y factors with `near.zero.variance=TRUE` fixed.
 * `perf.block.splsda` now supports calculation of combined and per-block AUC
-* improvement significance can be custmoised in all `perf` and `tune` functions
+* model improvement significance can be custmoised in all `perf` and `tune` functions
 * `perf.block.splsda` is now much faster and supports FORK clusters
-* added option to suppress `auroc` from printing all the AUCs
 * `tune.(s)pls(da)`, `perf.(s)plsda` now support FORK clusters
 
 ### bug fixes
 
+* `plotIndiv(..., ind.names = FALSE)` warning/bug fixed
 * `tune.block.splsda` bug on Windows parallelisation fixed
 * `perf` and `tune` functions' issue  when choosing the optimum component resolved
+* added option to suppress `auroc` from printing all the AUCs
 -------------------------------------------------------------------------------
 ## version 6.10.2
 
