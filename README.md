@@ -1,7 +1,12 @@
 
 [![](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![](https://img.shields.io/badge/release%20version-6.10.8-green.svg)](https://www.bioconductor.org/packages/mixOmics)
-[![](https://img.shields.io/badge/devel%20version-6.11.11-orange.svg)](https://github.com/mixOmicsTeam/mixOmics)
+[![](https://img.shields.io/badge/bioc%20release-6.10.8-green.svg)](https://www.bioconductor.org/packages/mixOmics)
+[![](https://img.shields.io/badge/latest%20stable-6.11.11-blue.svg)](https://github.com/mixOmicsTeam/mixOmics#latest-github-version)
+[![Build
+Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
+[![](https://img.shields.io/badge/latest%20devel-6.11.12-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version)
+[![Build
+Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=devel)](https://travis-ci.org/mixOmicsTeam/mixOmics)
 [![](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
 [![](https://img.shields.io/badge/download-1622/month-green.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![download](http://www.bioconductor.org/shields/downloads/release/mixOmics.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
@@ -55,7 +60,7 @@ Check after installation that the following code does not throw any
 error (especially Mac users - refer to [installation
 instructions](#installation)) and that the welcome message confirms you
 have installed
-[![](https://img.shields.io/badge/release%20version-6.10.8-green.svg)](https://www.bioconductor.org/packages/mixOmics):
+[![](https://img.shields.io/badge/latest%20stable-6.11.11-blue.svg)](https://github.com/mixOmicsTeam/mixOmics#latest-github-version):
 
 ``` r
 library(mixOmics) 
@@ -65,7 +70,7 @@ library(mixOmics)
 ##### development version
 
 You can also install the development version
-([![](https://img.shields.io/badge/devel%20version-6.11.11-orange.svg)](https://github.com/mixOmicsTeam/mixOmics))
+([![](https://img.shields.io/badge/latest%20devel-6.11.12-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version))
 for new features yet to be widely tested:
 
 ``` r

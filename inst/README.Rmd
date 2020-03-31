@@ -13,11 +13,32 @@ knit: (function(inputFile, encoding) {
 library(badger)
 pkg_license <- read.dcf("../DESCRIPTION")[, "License"]
 pkg_license_badge <- sprintf("https://img.shields.io/badge/license-%s-lightgrey.svg", pkg_license)
+## ------------------------------------------------------------------------ ##
+source('https://raw.githubusercontent.com/ajabadi/Altools/master/R/get_package_version.R')
+## ------------------------------------------------------------------------ ##
+source('https://raw.githubusercontent.com/ajabadi/Altools/master/R/bump_up_version.R')
+
+bioc_release_badge <- badge_bioc_release('mixOmics', 'green')
+bioc_release_badge <- gsub(bioc_release_badge, pattern = "release%20version", replacement = "bioc%20release")
+
+github_master <- get_package_version('../', branch = 'master')$currVersion
+github_devel <- get_package_version('../', branch = 'devel')$currVersion
+
+latest_stable <- sprintf("https://img.shields.io/badge/latest%%20stable-%s-blue.svg", github_master)
+latest_devel <- sprintf("https://img.shields.io/badge/latest%%20devel-%s-orange.svg", github_devel)
+
+latest_stable_badge <- sprintf("[![](%s)](https://github.com/mixOmicsTeam/mixOmics#latest-github-version)", latest_stable)
+latest_stable_build <- "[![Build Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)"
+latest_devel_badge <- sprintf("[![](%s)](https://github.com/mixOmicsTeam/mixOmics#development-version)", latest_devel)
+latest_devel_build <- "[![Build Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=devel)](https://travis-ci.org/mixOmicsTeam/mixOmics)"
 ```
 
 `r badge_travis("mixOmicsTeam/mixOmics")`
-`r badge_bioc_release('mixOmics', 'green')`
-`r badge_devel('mixOmicsTeam/mixOmics', 'orange')`
+`r bioc_release_badge`
+`r latest_stable_badge`
+`r latest_stable_build`
+`r latest_devel_badge`
+`r latest_devel_build`
 `r badge_codecov("mixOmicsTeam/mixOmics")`
 `r badge_bioc_download("mixOmics", "month", "green")`
 `r badge_bioc_download_rank('mixOmics')`
@@ -63,7 +84,7 @@ if (!requireNamespace("devtools", quietly = TRUE))
 devtools::install_github("mixOmicsTeam/mixOmics")
 ```
 
-Check after installation that the following code does not throw any error (especially Mac users - refer to [installation instructions](#installation)) and that the welcome message confirms you have installed `r badge_bioc_release('mixOmics', 'green')`:
+Check after installation that the following code does not throw any error (especially Mac users - refer to [installation instructions](#installation)) and that the welcome message confirms you have installed `r latest_stable_badge`:
 
 ```{r}
 library(mixOmics) 
@@ -72,7 +93,7 @@ library(mixOmics)
 
 ##### development version
 
-You can also install the development version (`r badge_devel('mixOmicsTeam/mixOmics', 'orange')`) for new features yet to be widely tested:
+You can also install the development version (`r latest_devel_badge`) for new features yet to be widely tested:
 ```{r}
 devtools::install_github("mixOmicsTeam/mixOmics", ref = "devel")
 ```
