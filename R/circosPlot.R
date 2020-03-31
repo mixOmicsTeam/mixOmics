@@ -83,7 +83,7 @@ legend = TRUE)
     
     if(missing(color.blocks))
     {
-        color.blocks = brewer.pal(n = 12, name = 'Paired') #why 12??
+        color.blocks = brewer.pal(n = 12, name = 'Paired') #why 12?? ANS: bc max allowed n is 12 for this function
     } else {
         if(length(color.blocks) != length(object$X))
         stop("'color.blocks' must be of length ", length(object$X))
@@ -190,6 +190,14 @@ legend = TRUE)
 
     # 1) Generate karyotype data
     chr = genChr(featExp, color.blocks = color.blocks)
+    ## ------ re-order blocks based on object$X names
+    ## define an ordered factor to re-order blocks so with given X, block orders
+    ## are always the same
+    Xblocks <- unique(paste0('chr',names(object$X)))
+    chr$block <- factor(chr$chrom, levels = Xblocks, ordered = TRUE)
+    chr <- chr[order(chr$block),]
+    chr$block <- NULL
+    
     chr.names = unique(chr$chrom) # paste("chr", 1:seg.num, sep="") 
     # Calculate angles and band positions
     db = segAnglePo(chr, seg=chr.names)
