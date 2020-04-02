@@ -1,10 +1,10 @@
 
 [![](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![](https://img.shields.io/badge/bioc%20release-6.10.8-green.svg)](https://www.bioconductor.org/packages/mixOmics)
+[![](https://img.shields.io/badge/bioc%20release-6.10.9-green.svg)](https://www.bioconductor.org/packages/mixOmics)
 [![](https://img.shields.io/badge/latest%20stable-6.11.11-blue.svg)](https://github.com/mixOmicsTeam/mixOmics#latest-github-version)
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![](https://img.shields.io/badge/latest%20devel-6.11.12-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version)
+[![](https://img.shields.io/badge/latest%20devel-6.11.13-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version)
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=devel)](https://travis-ci.org/mixOmicsTeam/mixOmics)
 [![](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
@@ -70,7 +70,7 @@ library(mixOmics)
 ##### development version
 
 You can also install the development version
-([![](https://img.shields.io/badge/latest%20devel-6.11.12-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version))
+([![](https://img.shields.io/badge/latest%20devel-6.11.13-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version))
 for new features yet to be widely tested:
 
 ``` r

@@ -160,6 +160,7 @@ function(X,
     #--initialization--#
     X=as.matrix(X)
     X.temp=as.matrix(X)
+    X.temp[is.na(X.temp)] <- 0
     n=nrow(X)
     p=ncol(X)
     
