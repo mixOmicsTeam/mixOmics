@@ -4,11 +4,11 @@
 [![](https://img.shields.io/badge/latest%20stable-6.11.11-blue.svg)](https://github.com/mixOmicsTeam/mixOmics#latest-github-version)
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![](https://img.shields.io/badge/latest%20devel-6.11.13-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version)
+[![](https://img.shields.io/badge/latest%20devel-6.11.15-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version)
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=devel)](https://travis-ci.org/mixOmicsTeam/mixOmics)
 [![](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
-[![](https://img.shields.io/badge/download-1622/month-green.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
+[![](https://img.shields.io/badge/download-1747/month-green.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![download](http://www.bioconductor.org/shields/downloads/release/mixOmics.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
 [![license](https://img.shields.io/badge/license-GPL%20\(%3E=%202\)-lightgrey.svg)](https://choosealicense.com/)
@@ -70,7 +70,7 @@ library(mixOmics)
 ##### development version
 
 You can also install the development version
-([![](https://img.shields.io/badge/latest%20devel-6.11.13-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version))
+([![](https://img.shields.io/badge/latest%20devel-6.11.15-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version))
 for new features yet to be widely tested:
 
 ``` r

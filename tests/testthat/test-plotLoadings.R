@@ -59,8 +59,7 @@ test_that("plotLoadings.mint.splsda works", code = {
     
 })
 
-
-test_that("plotLoadings works with super-long feature names", code = {
+test_that("plotLoadings margin errrors is handled properly", code = {
     data(nutrimouse)
     Y = nutrimouse$diet
     gene = nutrimouse$gene
@@ -78,8 +77,5 @@ test_that("plotLoadings works with super-long feature names", code = {
                                      keepX = list(gene = c(10,10), lipid = c(15,15)),
                                      ncomp = 2,
                                      scheme = "centroid")
-    pl_res <- plotLoadings(nutrimouse.sgccda, contrib = "min")
-    
-    expect_is(pl_res, "data.frame")
-    
+    expect_error(plotLoadings(nutrimouse.sgccda, contrib = "min"), regexp = "plotLoadings encountered margin errors")
 })

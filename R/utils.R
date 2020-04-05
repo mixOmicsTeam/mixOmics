@@ -1,3 +1,14 @@
+.plotLoadings_barplot <- function(height, col, names.arg, cex.name, border, xlim) {
+    tryCatch({barplot(height, horiz = TRUE, las = 1, col = col, axisnames = TRUE, names.arg = names.arg, #names.arg = row.names(df),
+                      cex.names = cex.name, cex.axis = 0.7, beside = TRUE, border = border, xlim = xlim)},
+             error = function(e){
+                 if ( grepl(pattern = "figure margins too large", e) ){
+                     stop("\nplotLoadings encountered margin errors. Ensure feature names are not too long (see 'name.var' argument) and the 'Plots' pane is cleared and enlargened.\n", call. = FALSE)
+                 } else {
+                     stop(e$message, call. = FALSE)
+                 }
+             })
+}
 ## ----------- .check_cpus ----------- 
 #' Check cpus argument
 #'
