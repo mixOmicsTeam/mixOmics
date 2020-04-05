@@ -230,8 +230,6 @@ xlim = NULL,
 
             #display barplot with names of variables
             #added condition if all we need is the contribution stats
-            colnames.X <- .trim_long_names(colnames.X, len = list(...)$max.name.length) ## issue 45
-            
             if (!is.null(title) & length(block) > 1)
             {
                 par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 6, 2))

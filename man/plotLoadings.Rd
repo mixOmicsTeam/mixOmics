@@ -82,7 +82,7 @@ legend.title = 'Outcome', layout = NULL, border = NA, xlim = NULL, ... )
 \item{layout}{Vector of two values (rows,cols) that indicates the layout of the plot. If \code{layout} is provided, the remaining empty subplots are still active}
 \item{border}{Argument from \code{\link{barplot}}: indicates whether to draw a border on the barplot.}
 \item{xlim}{Argument from \code{\link{barplot}}: limit of the x-axis. When plotting several \code{block}, a matrix is expected where each row is the \code{xlim} used for each of the blocks.}
-\item{\dots}{Arguments passed to generic. Currently \code{max.name.length} designates a trimming threshold for variable names to avoid margin issues.}
+\item{\dots}{not used.}
 }
 
 \details{

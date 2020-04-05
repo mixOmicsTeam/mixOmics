@@ -83,8 +83,6 @@ xlim = NULL,
         df = data.frame(importance = value.selected.var) # contribution of the loading
         
         # barplot with contributions
-        colnames.X <- .trim_long_names(colnames.X, len = list(...)$max.name.length) ## issue 45
-        
         if (!is.null(title) & length(block) > 1)
         {
             par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/3), 6, 2))
