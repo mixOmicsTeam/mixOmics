@@ -461,7 +461,7 @@ background.lines=FALSE,axis.width=1)
         if (background.lines){
             draw.arc.pg(xc, yc, v1, v2, R, R+W-5, col=colors()[245]) 
         } else {
-            draw.arc.s(xc, yc, R, v1, v2, col=colors()[245], lwd=axis.width) 
+            # draw.arc.s(xc, yc, R, v1, v2, col=colors()[245], lwd=axis.width) 
         }
     }
     
