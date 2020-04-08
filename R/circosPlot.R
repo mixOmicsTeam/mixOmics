@@ -162,13 +162,17 @@ legend = TRUE)
     }
     simMat = do.call(rbind, lapply(simMatList, function(i) do.call(cbind, i)))
     
-    ## Expression levels
+    ## merge all similarity measures in one data.frame where rows are samples
     Xdat = as.data.frame(do.call(cbind, X)[, colnames(simMat)])
-    
+    ## add Y as another feature
     AvgFeatExp0 <- mutate(.data = Xdat, Y = Y)
+    ## create a long data.frame with columns: CELL FEATURE FEATURE_VALUE -Y
     AvgFeatExp0 <- gather(data = AvgFeatExp0, Features, Exp, -Y)
+    ## group by Y and feature for averaging and calcuate the mean and SD to 
+    ## get a data.frame with columns: Y FEATURES MEAN SD
     AvgFeatExp0 <- group_by(.data = AvgFeatExp0, Y, Features)
-    AvgFeatExp0 <- dplyr::summarise(.data = AvgFeatExp0, Mean = mean(Exp), SD = sd(Exp))
+    AvgFeatExp0 <- dplyr::summarise(.data = AvgFeatExp0, Mean = mean(Exp, na.rm = TRUE), SD = sd(Exp,na.rm = TRUE))
+    ## add a column as the dataset from which the feature came from:
     AvgFeatExp0$Dataset <- factor(rep(names(X), unlist(lapply(cord, nrow))),
     levels = names(X))[match(AvgFeatExp0$Features,colnames(Xdat))]
     # to match Xdat that is reordered in AvgFeatExp0
@@ -448,10 +452,10 @@ background.lines=FALSE,axis.width=1)
         chr.s = gsub("chr","",chr.s) 
         dat   = subset(dat.in, dat.in[,1]==chr.s) 
         dat   = dat[order(as.numeric(dat[,2])),] 
-        v1 = as.numeric(chr.po[chr.i,2]) 
-        v2 = as.numeric(chr.po[chr.i,3]) 
-        v3 = as.numeric(chr.po[chr.i,6]) 
-        v4 = as.numeric(chr.po[chr.i,7]) 
+        v1 = as.numeric(chr.po[chr.i,2]) ## angle.start
+        v2 = as.numeric(chr.po[chr.i,3]) ## angle.end
+        v3 = as.numeric(chr.po[chr.i,6]) ## seg.start
+        v4 = as.numeric(chr.po[chr.i,7]) ## seg.end
         
         # background line
         if (background.lines){
