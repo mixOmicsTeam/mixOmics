@@ -329,7 +329,7 @@ get.contrib.df = function(Y, X, method, contrib, value.selected.var, colnames.X,
     {
         method.group[[k]] = tapply(X[, k], Y, method, na.rm=TRUE) #method is either mean or median
         # determine which group has the highest mean/median
-        which.contrib[k, 1:nlevels(Y)] = (method.group[[k]]) == get(contrib)((method.group[[k]])) # contrib is either min or max
+        which.contrib[k, 1:nlevels(Y)] = (method.group[[k]]) == get(contrib)((method.group[[k]]), na.rm=TRUE) # contrib is either min or max
     }
     
     # we also add an output column indicating the group that is max
