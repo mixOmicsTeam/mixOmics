@@ -228,7 +228,7 @@ stratified.subsampling <- function(Y, folds = 10)
                     stop("'weighted.consensus' plots are only available for block.splsda objects ")
                 }
             }
-            weights <- object$weights
+            weights <- rowMeans(object$weights)
         } else {
             weights <- rep(1, length(X_blocks))
         }

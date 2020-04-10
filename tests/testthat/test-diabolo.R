@@ -59,7 +59,7 @@ test_that("block.splsda works", {
 
   expect_equal(nutrimouse.sgccda$indY, 3L)
 
-  expect_equal(nutrimouse.sgccda$weights,
+  expect_equal(rowMeans(nutrimouse.sgccda$weights),
                c(gene = 0.694506104274723, lipid = 0.915845972615744))
 
   expect_length(nutrimouse.sgccda$explained_variance, 3L)

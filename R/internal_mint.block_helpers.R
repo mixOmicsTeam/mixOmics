@@ -51,10 +51,8 @@ get.weights = function(variates, indY)
     block_correlation_with_Y <- lapply(variates[-indY], function(x) {
         diag(cor(x, variates[[indY]]))
         })
-    block_correlation_with_Y <- data.frame(block_correlation_with_Y)
-    ## average across components
-    block_correlation_with_Y_avg <- colMeans(block_correlation_with_Y)
-    return(block_correlation_with_Y_avg)
+    block_correlation_with_Y <- data.frame(t(data.frame(block_correlation_with_Y)))
+    return(block_correlation_with_Y)
     
 }
 

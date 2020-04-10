@@ -526,7 +526,7 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
             
             out$WeightedPredict = array(unlist(lapply(temp.all, function(x){
                 apply(x, c(1,2), function(z){
-                    temp = aggregate(object$weights,list(z),sum)
+                    temp = aggregate(rowMeans(object$weights),list(z),sum)
                     ind = which(temp[,2]== max (temp[,2]))# if two max, then NA
                     if(length(ind) == 1)
                     {
@@ -591,8 +591,12 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
         object.temp = object
         object.temp$X = object.temp$X[which(!is.na(ind.match))]
         object.temp$variates = object.temp$variates[c(which(!is.na(ind.match)),J+1)] #J+1 is Y
+        if (!is.null(object$weights))
+            weights <- rowMeans(object$weights)[which(!is.na(ind.match))]
+        else
+            weights <- NULL
         
-        classif.DA=internal_predict.DA(object=object.temp, q=q, out=out.temp, dist=dist, weights = object$weights[which(!is.na(ind.match))])
+        classif.DA=internal_predict.DA(object=object.temp, q=q, out=out.temp, dist=dist, weights = weights)
         out=c(out,classif.DA)
         
     }
