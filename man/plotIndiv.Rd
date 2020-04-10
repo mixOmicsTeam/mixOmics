@@ -62,7 +62,7 @@ point.lwd = 1, ... )
 and the vertical axis respectively to project the individuals.}
 \item{rep.space}{For objects of class \code{"pca", "plsda", "plsda"} default is \code{"X-variate"}.  For the objects of class \code{"pls", "rcc"} default is a panel plot representing each data subspace. For objects of class \code{"rgcca"} and \code{"sgcca"}, numerical value(s) indicating the block data set to represent needs to be specified.}
 
-\item{blocks}{integer value of name of a block to be plotted using the GCCA module. "consensus" and "weighted.consensus" will create consensus and weighted consensus plots, respectively. See examples.}
+\item{blocks}{integer value or name(s) of block(s) to be plotted using the GCCA module. "consensus" and "weighted.consensus" will create consensus and weighted consensus plots, respectively. See examples.}
 \item{study}{Indicates which study-specific outputs to plot. A character vector containing some levels of \code{object$study}, "all.partial" to plot all studies or "global" is expected. Default to "global".}
 \item{ind.names}{either a character vector of names for the individuals to be plotted,
 or \code{FALSE} for no names. If \code{TRUE}, the row names of the first (or second)
@@ -126,13 +126,14 @@ In the similar case where \code{pch} is a single value, then this value is used 
 In the specific case of a single `omics supervised model (\code{\link{plsda}}, \code{\link{splsda}}), users can overlay prediction results to sample plots in order to visualise the prediction areas of each class, via the \code{background} input parameter.
 Note that this functionality is only available for models with less than 2 components as the surfaces obtained for higher order components cannot be projected onto a 2D representation in a meaningful way. For more details, see \code{\link{background.predict}}
 
+For block analyses, \code{block = 'consensus'} simply averages the components from all blocks into a single one, and \code{block='weighted.consensus'} uses the average of components weighted by correlation of each component in each dataset with the corresponding component from the dummy from of the \code{Y} matrix.
 
 For customized plots (i.e. adding points, text), use the style = 'graphics' (default is ggplot2).
 
 Note: the ellipse options were borrowed from the \pkg{ellipse}.
 }
 
-\author{Ignacio González, Benoit Gautier, Francois Bartolo, Florian Rohart}
+\author{Ignacio González, Benoit Gautier, Francois Bartolo, Florian Rohart, Al J Abadi}
 
 \seealso{\code{\link{text}}, \code{\link{background.predict}}, \code{\link{points}} and http://mixOmics.org/graphics for more details.}
 

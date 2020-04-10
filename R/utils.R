@@ -221,19 +221,31 @@ stratified.subsampling <- function(Y, folds = 10)
         
         arrays <- object$variates
         arrays <- arrays[X_blocks]
-        
         if (isTRUE(weighted)) {
             if (!is(block_object, "sgccda")) {
                 if ('weighted.consensus' %in% consensus_blocks ) {
                     stop("'weighted.consensus' plots are only available for block.splsda objects ")
                 }
             }
-            weights <- rowMeans(object$weights)
+            weights <- object$weights
         } else {
-            weights <- rep(1, length(X_blocks))
+            ## if unweighted, create a weight data.frame of 1 to avoid code complications
+            weights <- matrix(rep(1, length(X_blocks)*object$ncomp[1]), nrow = length(X_blocks))
+            dimnames(weights) <- list(X_blocks, paste0("comp", seq_len(object$ncomp[1])))
+            weights <- as.data.frame(weights)
         }
-        arrays <- mapply(x=arrays, w=weights, FUN = function(x, w) x*w, SIMPLIFY = FALSE)
-        Reduce(f = '+', arrays)/sum(weights)
+        block_names <- .name_list(names(arrays))
+        
+        weighted_arrays <- lapply(block_names, function(x){
+            variates <- arrays[[x]]
+            weights <- diag(weights[x, ])
+            weighted_variates <- variates %*% weights
+            dimnames(weighted_variates) <- dimnames(variates)
+            weighted_variates
+        })
+        wtd_sum <- Reduce(f = '+', weighted_arrays)
+        ## weighted mean = weighted sum / sum(weight)
+        sweep(wtd_sum, MARGIN = 2, colSums(weights), FUN = "/")
     }
     
     for (consensus_block in consensus_blocks) {
