@@ -4,7 +4,7 @@
 [![](https://img.shields.io/badge/latest%20stable-6.11.11-blue.svg)](https://github.com/mixOmicsTeam/mixOmics#latest-github-version)
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![](https://img.shields.io/badge/latest%20devel-6.11.15-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version)
+[![](https://img.shields.io/badge/latest%20devel-6.11.22-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version)
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=devel)](https://travis-ci.org/mixOmicsTeam/mixOmics)
 [![](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
@@ -70,7 +70,7 @@ library(mixOmics)
 ##### development version
 
 You can also install the development version
-([![](https://img.shields.io/badge/latest%20devel-6.11.15-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version))
+([![](https://img.shields.io/badge/latest%20devel-6.11.22-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version))
 for new features yet to be widely tested:
 
 ``` r
