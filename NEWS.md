@@ -3,8 +3,9 @@
 
 ### new features / enhancements
 
+* `circosPlot` and `plotLoadings` bug caused by features with `NA`s fixed
 * `circosPlot`'s inconsistentcy of blocks with identical `X` names fixed
-* (weighted) consensus plot now supported for `plotIndiv` with block analyses
+*  consensus and weighted consensus plots now supported for `plotIndiv` with relevant block analyses
 * `plotLoadings`'s feature name trimming can be customised
 * `block.splsda` bug which could drop some Y factors with `near.zero.variance=TRUE` fixed
 * `perf.block.splsda` now supports calculation of combined and per-block AUC
