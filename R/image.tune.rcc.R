@@ -1,33 +1,37 @@
-################################################################################
-# Authors:
-#   Ignacio Gonzalez,
-#   Kim-Anh Le Cao,
-#   Sebastien Dejean,
-#
-# created: 2009
-# last modified: 2009
-#
-# Copyright (C) 2009
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-################################################################################
-
-
-plot.tune.rcc <- image.tune.rcc <-
-
-function(x, col = heat.colors, ...) 
+#' Plot the cross-validation score.
+#' 
+#' This function provide a image map (checkerboard plot) of the
+#' cross-validation score obtained by the \code{tune.rcc} function.
+#' 
+#' \code{plot.tune.rcc} creates an image map of the matrix \code{object$mat}
+#' containing the cross-validation score obtained by the \code{tune.rcc}
+#' function. Also a color scales strip is plotted.
+#' 
+#' @param x object returned by \code{tune.rcc}.
+#' @param col a character string specifying the colors function to use:
+#' \code{\link{terrain.colors}}, \code{\link{topo.colors}},
+#' \code{\link{rainbow}} or similar functions. Defaults to
+#' \code{\link{heat.colors}}.
+#' @param ... not used currently.
+#' @return none
+#' @author Sébastien Déjean, Ignacio González, Kim-Anh Le Cao, Al J Abadi
+#' @seealso \code{\link{tune.rcc}}, \code{\link{image}}.
+#' @keywords dplot hplot
+#' @examples
+#' 
+#' data(nutrimouse)
+#' X <- nutrimouse$lipid
+#' Y <- nutrimouse$gene
+#' 
+#' ## this can take some seconds
+#' cv.score <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE)
+#' plot(cv.score)
+#' 
+#' # image(cv.score) # same result as plot()
+#' @rdname image.tune.rcc
+#' @method image tune.rcc
+#' @export
+image.tune.rcc <- function(x, col = heat.colors, ...) 
 
 {
 
@@ -100,3 +104,7 @@ function(x, col = heat.colors, ...)
 
 }
 
+#' @rdname image.tune.rcc
+#' @method plot tune.rcc
+#' @export
+plot.tune.rcc <- image.tune.rcc
