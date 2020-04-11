@@ -1,38 +1,43 @@
-#############################################################################################################
-# Author :
-#   Sebastien Dejean, Institut de Mathematiques, Universite de Toulouse et CNRS (UMR 5219), France
-#   Ignacio Gonzalez, Genopole Toulouse Midi-Pyrenees, France
-#   Kim-Anh Le Cao, French National Institute for Agricultural Research and
-#   ARC Centre of Excellence ins Bioinformatics, Institute for Molecular Bioscience, University of Queensland, Australia
-#   Leigh Coonan, Student, University of Queensland, Australia
-#   Fangzhou Yao, Queensland Facility for Advanced Bioinformatics, University of Queensland, Australia and
-#   Shangai University of Finance and Economics, Shanghai, P.R. China
-#   Jeff Coquery, Queensland Facility for Advanced Bioinformatics, University of Queensland, Australia and
-#   Sup Biotech, Paris, France
-#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#
-# created: 2009
-# last modified: 05-10-2017
-#
-# Copyright (C) 2009
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
-
+#' Print Methods for CCA, (s)PLS, PCA and Summary objects
+#' 
+#' Produce \code{print} methods for class \code{"rcc"}, \code{"pls"},
+#' \code{"spls"}, \code{"pca"}, \code{"rgcca"}, \code{"sgcca"} and
+#' \code{"summary"}.
+#' 
+#' \code{print} method for \code{"rcc"}, \code{"pls"}, \code{"spls"}
+#' \code{"pca"}, \code{"rgcca"}, \code{"sgcca"} class, returns a description of
+#' the \code{x} object including: the function used, the regularization
+#' parameters (if \code{x} of class \code{"rcc"}), the (s)PLS algorithm used
+#' (if \code{x} of class \code{"pls"} or \code{"spls"}), the samples size, the
+#' number of variables selected on each of the sPLS components (if \code{x} of
+#' class \code{"spls"}) and the available components of the object.
+#' 
+#' \code{print} method for \code{"summary"} class, gives the (s)PLS algorithm
+#' used (if \code{x} of class \code{"pls"} or \code{"spls"}), the number of
+#' variates considered, the canonical correlations (if \code{x} of class
+#' \code{"rcc"}), the number of variables selected on each of the sPLS
+#' components (if \code{x} of class \code{"spls"}) and the available components
+#' for Communalities Analysis, Redundancy Analysis and Variable Importance in
+#' the Projection (VIP).
+#' 
+#' @aliases print print.rcc print.mixo_pls print.mixo_spls print.summary
+#' print.pca print.spca print.rgcca print.sgcca
+#' 
+#' @param x object of class inherited from \code{"rcc"}, \code{"pls"},
+#' \code{"spls"}, \code{"pca"}, \code{"spca"}, \code{"rgcca"}, \code{"sgcca"} or
+#' \code{"summary"}.
+#' @param ... not used currently.
+#' 
+#' @return none
+#' @author Sébastien Déjean, Ignacio González, Kim-Anh Lê Cao, Fangzhou Yao, Jeff Coquery, Al J Abadi.
+#' @seealso \code{\link{rcc}}, \code{\link{pls}}, \code{\link{spls}},
+#' \code{\link{vip}}.
+#' @keywords regression multivariate
+#' @example ./examples/print-examples.R
 #------------------ print method for pls ------------------#
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.mixo_pls <-
 function(x, ...)
 {
@@ -61,8 +66,10 @@ function(x, ...)
     cat(" plotVar, plotLoadings, network, cim \n")
     
 }
-
 #------------------ print method for mint.pls ------------------#
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.mint.pls <-
 function(x, ...)
 {
@@ -96,6 +103,9 @@ function(x, ...)
 }
 
 #------------------ print method for plsda ------------------#
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.mixo_plsda <-
 function(x, ...)
 {
@@ -128,6 +138,9 @@ function(x, ...)
 }
 
 #------------------ print method for mint.plsda ------------------#
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.mint.plsda <-
 function(x, ...)
 {
@@ -162,6 +175,9 @@ function(x, ...)
 }
 
 #----------------- print method for spls ------------------#
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.mixo_spls <-
 function(x, ...)
 {
@@ -195,6 +211,9 @@ function(x, ...)
 }
 
 #----------------- print method for mint.spls ------------------#
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.mint.spls <-
 function(x, ...)
 {
@@ -235,6 +254,9 @@ function(x, ...)
 
 
 #----------------- print method for splsda ------------------#
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.mixo_splsda <-
 function(x, ...)
 {
@@ -269,6 +291,9 @@ function(x, ...)
 }
 
 #----------------- print method for mint.splsda ------------------#
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.mint.splsda <-
 function(x, ...)
 {
@@ -307,6 +332,9 @@ function(x, ...)
 }
 
 #------------------ print method for rcc ------------------#
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.rcc <-
 function(x, ...)
 {
@@ -327,6 +355,9 @@ function(x, ...)
 }
 
 # ------------------------ print for pca --------------------------------
+# #' @name print
+#' @rdname S3methods-print
+#' @export
 print.pca <- function(x, ...)
 {
     
@@ -356,6 +387,9 @@ print.pca <- function(x, ...)
 }
 
 # ------------------------ print for spca -------------------------
+# #' @name print
+#' @rdname S3methods-print
+#' @export
 print.spca <-
 function(x, ...)
 {
@@ -381,6 +415,9 @@ function(x, ...)
 }
 
 # ------------------------ print for ipca -------------------------
+# #' @name print
+#' @rdname S3methods-print
+#' @export
 print.ipca <-
 function(x, ...)
 {
@@ -402,6 +439,9 @@ function(x, ...)
 }
 
 # ------------------------ print for sipca -------------------------
+# #' @name print
+#' @rdname S3methods-print
+#' @export
 print.sipca <-
 function(x, ...)
 {
@@ -426,6 +466,9 @@ function(x, ...)
 }
 
 # ------------------------ print for rgcca -------------------------
+# #' @name print
+#' @rdname S3methods-print
+#' @export
 print.rgcca <- function(x, ...)
 {
     
@@ -462,6 +505,9 @@ print.rgcca <- function(x, ...)
 
 
 # ------------------------ print for sgcca -------------------------
+# #' @name print
+#' @rdname S3methods-print
+#' @export
 print.sgcca<- function(x, ...)
 {
     
@@ -506,6 +552,9 @@ print.sgcca<- function(x, ...)
 
 
 # ------------------------ print for sgcca -------------------------
+# #' @name print
+#' @rdname S3methods-print
+#' @export
 print.sgccda<- function(x, ...)
 {
     
@@ -553,6 +602,9 @@ print.sgccda<- function(x, ...)
 
 
 #------- print for summary with (s)PLS object or rcc ---------#
+##' @name print
+#' @rdname S3methods-print
+#' @export
 print.summary <-
 function(x, ...)
 {
@@ -651,7 +703,9 @@ function(x, ...)
 # perf.diablo / sgccda.mthd
 # perf.splsda = perf.plsda / splsda.mthd plsda.mthd
 # perf.spls  = perf.pls / spls.mthd pls.mthd
-
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.perf.pls.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
@@ -663,7 +717,9 @@ print.perf.pls.mthd = function(x, ...)
     cat(" plot \n")
 
 }
-
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.perf.spls.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
@@ -678,7 +734,9 @@ print.perf.spls.mthd = function(x, ...)
 
 }
 
-
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.perf.plsda.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
@@ -694,7 +752,9 @@ print.perf.plsda.mthd = function(x, ...)
     cat(" plot \n")
 
 }
-
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.perf.splsda.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
@@ -712,7 +772,9 @@ print.perf.splsda.mthd = function(x, ...)
     cat(" plot \n")
 
 }
-
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.perf.mint.splsda.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
@@ -729,7 +791,9 @@ print.perf.mint.splsda.mthd = function(x, ...)
     cat(" plot \n")
 
 }
-
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.perf.sgccda.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
@@ -749,19 +813,26 @@ print.perf.sgccda.mthd = function(x, ...)
 
 
 # tune: "spls", "splsda", "mint.splsda", "rcc", "pca"
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.tune.pca = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" for all principal components, see object$sdev, object$explained_variance and object$cum.var\n")
 }
-
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.tune.rcc = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat("  lambda1 = ", x$opt.lambda1, ", see object$opt.lambda1\n", " lambda2 = ", x$opt.lambda2, ",  see object$opt.lambda2\n",
     "CV-score = ", x$opt.score, ", see object$opt.score\n")
 }
-
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.tune.splsda = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
@@ -779,7 +850,9 @@ print.tune.splsda = function(x, ...)
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
 }
-
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.tune.mint.splsda = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
@@ -794,7 +867,9 @@ print.tune.mint.splsda = function(x, ...)
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
 }
-
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.tune.block.splsda = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
@@ -808,7 +883,9 @@ print.tune.block.splsda = function(x, ...)
     cat(" Other outputs available, see ?tune.splsda.  \n\n")
     
 }
-
+#' @name print
+#' @rdname S3methods-print
+#' @export
 print.predict = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
