@@ -15,6 +15,7 @@
 #' @param cpus Integer, the number of cpus for parallel processing.
 #'
 #' @return The number of cpus available/applicable, or condition.
+#' @author Al J Abadi
 #'
 #' @noRd
 .check_cpus <- function(cpus) {
@@ -36,6 +37,7 @@
 #' @param alpha numeric, significance threshold for t.test
 #'
 #' @return NULL if acceptable value, otherwise condition
+#' @author Al J Abadi
 #'
 #' @noRd
 .check_alpha <- function(alpha=NULL) {
@@ -54,6 +56,7 @@
 #' @param trying_to character, the context in which unexpected error occurred.
 #'
 #' @return Error message
+#' @author Al J Abadi
 #'
 #' @noRd
 .unexpected_err <- function(trying_to = NULL) {
@@ -66,6 +69,7 @@
 #' Check OS type for parallel processing
 #'
 #' @return Logical, FALSE if windows OS, TRUE if unix OS.
+#' @author Al J Abadi
 #'
 #' @noRd
 .onUnix <- function() {
@@ -77,6 +81,7 @@
 #' previous list format for downstream work
 #'
 #' @return list of outputs needed for downstream work
+#' @author Al J Abadi
 #'
 #' @noRd
 .unlist_repeat_cv_output <- function(list_rep=NULL) {
@@ -104,6 +109,7 @@
 #' \item{SAMPLE} List of samples for each fold
 #' \item{stop} A warning signal for when there is not enough samples in a 
 #' class
+#' @author Florian Rohart, Al J Abadi
 #' @noRd
 stratified.subsampling <- function(Y, folds = 10)
 {
@@ -159,6 +165,7 @@ stratified.subsampling <- function(Y, folds = 10)
 #' @param char Character vector.
 #'
 #' @return A named list.
+#' @author Al J Abadi
 #'
 #' @noRd
 .name_list <- function(char) {
@@ -173,7 +180,8 @@ stratified.subsampling <- function(Y, folds = 10)
 #' Creating a function so that it can easily be changed.
 #' It's mainly used in form of the given example in unit tests.
 #'
-#' @return An R version.
+#' @return An R version
+#' @author Al J Abadi
 #' @example RNGversion(.mixo_rng())
 #' @noRd
 .mixo_rng <- function() {"3.6.0"}
@@ -187,6 +195,7 @@ stratified.subsampling <- function(Y, folds = 10)
 #' @param default The desired default value
 #'
 #' @return The desired default value
+#' @author Al J Abadi
 #'
 #' @examples
 #' .change_if_null(NULL, 10)
@@ -206,12 +215,30 @@ stratified.subsampling <- function(Y, folds = 10)
 ## ----------- .add_consensus_blocks ----------- 
 #' Add consensus blocks to DIABLO object
 #'
-#' For plotIndiv(blocks = "consensus")
+#' For plotIndiv(..., blocks = "consensus")
 #' 
 #' @param block_object A diablo object
 #' @param consensus_blocks One or both of c('consensus', 'weighted.consensus')
 #'
 #' @return A diablo object with consensus blocks added for smooth input into plotIndiv.sgccda
+#' @author Al J Abadi
+#' @examples 
+#' \dontrun{
+#' data(nutrimouse)
+#' Y = nutrimouse$diet
+#' data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+#' design1 = matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
+#' 
+#' nutrimouse.sgccda1 <- wrapper.sgccda(X = data,
+#'                                      Y = Y,
+#'                                      design = design1,
+#'                                      ncomp = 2,
+#'                                      keepX = list(gene = c(10,10), lipid = c(15,15)),
+#'                                      scheme = "centroid")
+#' nutrimouse.sgccda.consensus <- mixOmics:::.add_consensus_blocks(nutrimouse.sgccda1, consensus_blocks = "consensus")
+#' names(nutrimouse.sgccda.consensus$X)
+#> "gene"      "lipid"     "consensus"
+#' }
 #' @noRd
 .add_consensus_blocks <- function(block_object, consensus_blocks = c('consensus', 'weighted.consensus')) {
     X_blocks <- with(block_object, names$blocks[-which(names$block == 'Y')])
