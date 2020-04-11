@@ -1,30 +1,3 @@
-###############################################################################
-# Authors:
-#   Ignacio Gonzalez,
-#   Kim-Anh Le Cao,
-#   Florian Rohart,
-#
-# created: 2009
-# last modified: 2015
-#
-# Copyright (C) 2009
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-###############################################################################
-
-
 # -----------------------------------------
 # --- small example but see help file
 # ----------------------------------------
@@ -34,7 +7,81 @@
 #Y <- liver.toxicity$clinic
 #imgCor(X=X[,1:10],Y=Y[,1:4])
 
-
+#' Image Maps of Correlation Matrices between two Data Sets
+#' 
+#' Display two-dimensional visualizations (image maps) of the correlation
+#' matrices within and between two data sets.
+#' 
+#' If \code{type="combine"}, the correlation matrix is computed of the combined
+#' matrices \code{cbind(X, Y)} and then plotted. If \code{type="separate"},
+#' three correlation matrices are computed, \code{cor(X)}, \code{cor(Y)} and
+#' \code{cor(X,Y)} and plotted separately on a device. In both cases, a color
+#' correlation scales strip is plotted.
+#' 
+#' The correlation matrices are pre-processed before calling the \code{image}
+#' function in order to get, as in the numerical representation, the diagonal
+#' from upper-left corner to bottom-right one.
+#' 
+#' Missing values are handled by casewise deletion in the \code{imgCor}
+#' function.
+#' 
+#' If \code{X.names = FALSE}, the name of each X-variable is hidden. Default
+#' value is \code{TRUE}.
+#' 
+#' If \code{Y.names = FALSE}, the name of each Y-variable is hidden. Default
+#' value is \code{TRUE}.
+#' 
+#' @param X numeric matrix or data frame \eqn{(n} x \eqn{p)}, the observations
+#' on the \eqn{X} variables. \code{NA}s are allowed.
+#' @param Y numeric matrix or data frame \eqn{(n} x \eqn{q)}, the observations
+#' on the \eqn{Y} variables. \code{NA}s are allowed.
+#' @param type character string, (partially) maching one of \code{"combine"} or
+#' \code{"separated"}, determining the kind of plots to be produced. See
+#' Details.
+#' @param X.var.names,Y.var.names logical, should the name of \eqn{X}- and/or
+#' \eqn{Y}-variables be shown? If \code{TRUE} (defaults) \code{object$names$X}
+#' and/or \code{object$names$Y} are used. Possible character vector with
+#' \eqn{X}- and/or \eqn{Y}-variable labels to use.
+#' @param sideColors character vector of length two. The color name for
+#' horizontal and vertical side bars that may be used to annotate the \eqn{X}
+#' and \eqn{Y} correlation matrices.
+#' @param interactive.dev boolean. The current graphics device that will be
+#' opened is interactive?
+#' @param title logical, should the main titles be shown?
+#' @param color,xlab,ylab arguments passed to \code{cim}.
+#' @param row.cex,col.cex positive numbers, used as \code{cex.axis} in for the
+#' row or column axis labeling. The defaults currently only use number of rows
+#' or columns, respectively.
+#' @param symkey boolean indicating whether the color key should be made
+#' symmetric about 0. Defaults to \code{TRUE}.
+#' @param keysize positive numeric value indicating the size of the color key.
+#' @param margins numeric vector of length two containing the margins (see
+#' \code{\link{par}(mar)}) for column and row names respectively.
+#' @param lhei,lwid arguments passed to \code{layout} to divide the device up
+#' into two rows and two columns, with the row-heights \code{lhei} and the
+#' column-widths \code{lwid}.
+#' @return none
+#' @author Ignacio González, Kim-Anh Lê Cao, Florian Rohart, Al J Abadi
+#' @seealso \code{\link{cor}}, \code{\link{image}}, \code{\link{color.jet}}.
+#' @keywords multivariate dplot
+#' @examples
+#' 
+#' data(nutrimouse)
+#' X <- nutrimouse$lipid
+#' Y <- nutrimouse$gene
+#' 
+#' ## 'combine' type plot (default)
+#' imgCor(X, Y)
+#' 
+#' \dontrun{
+#' ## 'separate' type plot
+#' 
+#' imgCor(X, Y, type = "separate")
+#' 
+#' ## 'separate' type plot without the name of datas
+#' imgCor(X, Y, X.var.names = FALSE, Y.var.names = FALSE, type = "separate")
+#' }
+#' @export
 imgCor <-
 function(X,
          Y,  
@@ -202,8 +249,7 @@ function(X,
           cim(XYcor, cluster = "none",
               title = if(title) "XY correlation matrix" else NULL,			
               row.names = X.var.names, col.names = Y.var.names)
-        }
-		else {
+        } else {
 		  GD = getOption("device")
 		  if (is.character(GD)) {
 		    if (GD == "RStudioGD") GD = FALSE
