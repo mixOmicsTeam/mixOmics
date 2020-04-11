@@ -1,46 +1,71 @@
-################################################################################
-# Authors:
-#   Amrit Singh,
-#   Michael Vacher,
-#   Florian Rohart,
-#   Kim-Anh Le Cao,
-#
-# created: 2015
-# last modified: 24-08-2016
-#
-# Copyright (C) 2015
-#
-# This program is free software  you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation  either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY  without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program  if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-################################################################################
-
-
-circosPlot = function(object,
-comp = 1 : min(object$ncomp),
-cutoff,
-color.Y,
-color.blocks,
-color.cor,
-var.names = NULL,
-showIntraLinks = FALSE,
-line=FALSE,
-size.legend=0.8,
-ncol.legend=1,
-size.variables = 0.25,
-size.labels=1,
-legend = TRUE)
+#' circosPlot for DIABLO
+#' 
+#' Displays variable correlation among different blocks
+#' 
+#' \code{circosPlot} function depicts correlations of variables selected with
+#' \code{block.splsda} among different blocks, using a generalisation of the
+#' method presented in González et al 2012. If \code{ncomp} is specified, then
+#' only the variables selected on that component are displayed.
+#' @param object An object of class inheriting from \code{"block.splsda"}.
+#' @param comp Numeric vector indicating which component to plot. Default to
+#' all
+#' @param cutoff Only shows links with a correlation higher than \code{cutoff}
+#' @param color.Y a character vector of colors to be used for the levels of the
+#' outcome
+#' @param color.blocks a character vector of colors to be used for the blocks
+#' @param color.cor a character vector of two colors. First one is for the
+#' negative correlation, second one is for the positive correlation
+#' @param var.names Optional parameter. A list of length the number of blocks
+#' in \code{object$X}, containing the names of the variables of each block. If
+#' \code{NULL}, the colnames of the data matrix are used.
+#' @param showIntraLinks if TRUE, shows the correlation higher than the
+#' threshold inside each block.
+#' @param line if TRUE, shows the overall expression of the selected variables.
+#' see examples.
+#' @param size.legend size of the legend
+#' @param ncol.legend number of columns for the legend
+#' @param size.variables size of the variable labels
+#' @param size.labels size of the block labels
+#' @param legend boolean. Whether the legend should be added. Default is TRUE.
+#' @return If saved in an object, the circos plot will output the similarity
+#' matrix and the names of the variables displayed on the plot (see
+#' \code{attributes(object)}).
+#' @author Michael Vacher, Amrit Singh, Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
+#' @seealso \code{\link{block.splsda}}, references and
+#' http://www.mixOmics.org/mixDIABLO for more details.
+#' @references Singh A., Gautier B., Shannon C., Vacher M., Rohart F., Tebbutt
+#' S. and Lê Cao K.A. (2016). DIABLO: multi omics integration for biomarker
+#' discovery. BioRxiv available here:
+#' \url{http://biorxiv.org/content/early/2016/08/03/067611}
+#' 
+#' mixOmics article:
+#' 
+#' Rohart F, Gautier B, Singh A, Lê Cao K-A. mixOmics: an R package for 'omics
+#' feature selection and multiple data integration. PLoS Comput Biol 13(11):
+#' e1005752
+#' 
+#' González I., Lê Cao K.A., Davis M.J., Déjean S. (2012). Visualising
+#' associations between paired 'omics' data sets. \emph{BioData Mining};
+#' \bold{5}(1).
+#' @keywords regression multivariate
+#' @example ./examples/circosPlot-examples.R
+#' @export
+circosPlot <- function(object,
+                      comp = 1:min(object$ncomp),
+                      cutoff,
+                      color.Y,
+                      color.blocks,
+                      color.cor,
+                      var.names = NULL,
+                      showIntraLinks = FALSE,
+                      line = FALSE,
+                      size.legend = 0.8,
+                      ncol.legend = 1,
+                      size.variables = 0.25,
+                      size.labels = 1,
+                      legend = TRUE)
 {
+    
     # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
     Features = Exp = Dataset = Mean = linkColors = chrom = po = NULL
 
