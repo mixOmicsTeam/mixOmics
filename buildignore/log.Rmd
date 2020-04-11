@@ -41,5 +41,8 @@ STEPS
 * remeber estim.regul will be there cause there's no source making it now
 * transfer `plot.tune.rcc` to plot methods
 * document `imageMap`
+* rename imageCor
+* document intenal_ s
+
 
 
