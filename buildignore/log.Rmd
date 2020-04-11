@@ -15,6 +15,7 @@ STEPS
 
 * Open the mixOmics project
 * sort R files by names and open the top one that hasn't been converted - look at the last commit
+    look at NAMESPACE for those which are not a file name
 * open its counterpart in buildignore/RD2Roxygen
 * Put its documention in source
 * Drop the headers, edit authors
@@ -26,7 +27,7 @@ STEPS
 * create the new one using Roxygen2
 * Watch out for the ones in ./man that are not an R file name
 * commit message
-    roxygenated: foo
+roxygenated: foo
 ```{r}
 #' @example ./examples/foo-examples.R
 #' Kim-Anh Lê Cao, Al J Abadi
