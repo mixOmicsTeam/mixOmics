@@ -1,37 +1,86 @@
-###############################################################################
-#Authors:
-#    Francois Bartolo,
-#    Benoit Gautier,
-#    Florian Rohart,
-#    Kim-Anh Le Cao
-#
-# created: 23-08-2016
-# last modified: 23-08-2016
-#
-# Copyright (C) 2016
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-###############################################################################
-
+#' Area Under the Curve (AUC) and Receiver Operating Characteristic (ROC)
+#' curves for supervised classification
+#' 
+#' Calculates the AUC and plots ROC for supervised objects from s/plsda,
+#' mint.s/plsda and block.plsda, block.splsda or wrapper.sgccda.
+#' 
+#' For more than two classes in the categorical outcome Y, the AUC is
+#' calculated as one class vs. the other and the ROC curves one class vs. the
+#' others are output.
+#' 
+#' The ROC and AUC are calculated based on the predicted scores obtained from
+#' the \code{predict} function applied to the multivariate methods
+#' (\code{predict(object)$predict}). Our multivariate supervised methods
+#' already use a prediction threshold based on distances (see \code{predict})
+#' that optimally determine class membership of the samples tested. As such AUC
+#' and ROC are not needed to estimate the performance of the model (see
+#' \code{perf}, \code{tune} that report classification error rates). We provide
+#' those outputs as complementary performance measures.
+#' 
+#' The pvalue is from a Wilcoxon test between the predicted scores between one
+#' class vs the others.
+#' 
+#' External independent data set (\code{newdata}) and outcome
+#' (\code{outcome.test}) can be input to calculate AUROC. The external data set
+#' must have the same variables as the training data set (\code{object$X}).
+#' 
+#' If \code{newdata} is not provided, AUROC is calculated from the training
+#' data set, and may result in overfitting (too optimistic results).
+#' 
+#' Note that for mint.plsda and mint.splsda objects, if \code{roc.study} is
+#' different from "global", then \code{newdata}), \code{outcome.test} and
+#' \code{sstudy.test} are not used.
+#' 
+#' @aliases auroc auroc.mixo_plsda auroc.mixo_splsda auroc.mint.plsda
+#' auroc.mint.splsda auroc.sgccda
+#' 
+#' @param object Object of class inherited from one of the following supervised
+#' analysis function: "plsda", "splsda", "mint.plsda", "mint.splsda",
+#' "block.splsda" or "wrapper.sgccda"
+#' @param newdata numeric matrix of predictors, by default set to the training
+#' data set (see details).
+#' @param outcome.test Either a factor or a class vector for the discrete
+#' outcome, by default set to the outcome vector from the training set (see
+#' details).
+#' @param study.test For MINT objects, grouping factor indicating which samples
+#' of \code{newdata} are from the same study. Overlap with \code{object$study}
+#' are allowed.
+#' @param multilevel Sample information when a newdata matrix is input and when
+#' multilevel decomposition for repeated measurements is required. A numeric
+#' matrix or data frame indicating the repeated measures on each individual,
+#' i.e. the individuals ID. See examples in \code{splsda}.
+#' @param plot Whether the ROC curves should be plotted, by default set to TRUE
+#' (see details).
+#' @param roc.comp Specify the component (integer) for which the ROC will be
+#' plotted from the multivariate model, default to 1.
+#' @param roc.block Specify the block number (integer) or the name of the block
+#' (set of characters) for which the ROC will be plotted for a block.plsda or
+#' block.splsda object, default to 1.
+#' @param roc.study Specify the study for which the ROC will be plotted for a
+#' mint.plsda or mint.splsda object, default to "global".
+#' @param title Character, specifies the title of the plot.
+#' @param print Logical, specifies whether the output should be printed.
+#' @param ... external optional arguments for plotting - \code{line.col} for
+#' custom colors and \code{legend.title} for custom legend title
+#' @return Depending on the type of object used, a list that contains: The AUC
+#' and Wilcoxon test pvalue for each 'one vs other' classes comparison
+#' performed, either per component (splsda, plsda, mint.plsda, mint.splsda), or
+#' per block and per component (wrapper.sgccda, block.plsda, blocksplsda).
+#' @author Benoit Gautier, Francois Bartolo, Florian Rohart, Al J Abadi
+#' @seealso \code{\link{tune}}, \code{\link{perf}}, and http://www.mixOmics.org
+#' for more details.
+#' @keywords regression multivariate
+#' @example ./examples/auroc-examples.R
+#' @export
 auroc = function(object, ...)
 UseMethod("auroc")
 
 
 # PLSDA object
 # ----------------------
-auroc.mixo_plsda = auroc.mixo_splsda = function(
+#' @rdname auroc
+#' @export
+auroc.mixo_plsda <- function(
 object,
 newdata = object$input.X,
 outcome.test = as.factor(object$Y),
@@ -67,10 +116,15 @@ print=TRUE,
     return(invisible(c(statauc.res,graph=graph)))
 }
 
+#' @rdname auroc
+#' @export
+auroc.mixo_splsda <- auroc.mixo_plsda
 
 # MINT object
 # ----------------------
-auroc.mint.plsda = auroc.mint.splsda = function(
+#' @rdname auroc
+#' @export
+auroc.mint.plsda <- function(
 object,
 newdata = object$X,
 outcome.test = as.factor(object$Y),
@@ -139,9 +193,14 @@ print=TRUE,
     
 }
 
+#' @rdname auroc
+#' @export
+auroc.mint.splsda <- auroc.mint.plsda
 
 # block.splsda object
 # ----------------------
+#' @rdname auroc
+#' @export
 auroc.sgccda = function(
 object,
 newdata = object$X,
@@ -205,7 +264,9 @@ print=TRUE,
 
 # mint.block.splsda object
 # ----------------------
-auroc.mint.block.splsda=auroc.mint.block.plsda = function(
+#' @rdname auroc
+#' @export
+auroc.mint.block.plsda <- function(
 object,
 newdata = object$X,
 study.test = object$study,
@@ -257,3 +318,6 @@ print=TRUE,
     return(invisible(out))
 }
 
+#' @rdname auroc
+#' @export
+auroc.mint.block.splsda <- auroc.mint.block.plsda

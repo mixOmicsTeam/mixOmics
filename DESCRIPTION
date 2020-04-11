@@ -6,7 +6,7 @@ Depends:  R (>= 3.5.0),
           MASS, 
           lattice, 
           ggplot2
-Imports:  igraph,
+Imports: igraph,
           ellipse,
           corpcor,
           RColorBrewer,
@@ -53,4 +53,5 @@ Packaged: 2017-02-06 06:49:17 UTC; klecao
 NeedsCompilation: no
 biocViews: ImmunoOncology, Microarray, Sequencing, Metabolomics, Metagenomics, Proteomics,  
            GenePrediction, MultipleComparison, Classification, Regression
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
+Encoding: UTF-8

@@ -26,7 +26,7 @@
 #' #> 2
 #' t.test.process(data.frame(comp1=10:14, comp2=20:24, comp3=50:54))
 #' #> 1
-
+#' @noRd
 t.test.process <- function(mat.error.rate, alpha = 0.01)
 {
     ## ----- helper function to calculate pvalues for two columns of a data.frame:

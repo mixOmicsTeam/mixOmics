@@ -28,6 +28,12 @@
 #           mixOmics colors
 # ======================================
 
+#' mixOmics colors
+#' 
+#' @param num.vector Numeric vector of color indices
+#'
+#' @noRd
+#' @name NULL
 color.mixo = function(num.vector)
 {
   

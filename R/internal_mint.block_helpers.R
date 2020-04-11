@@ -43,7 +43,7 @@
 #' @param indY Integer, the Y matrix index from internal_wrapper.mint.block
 #'
 #' @return named vector of average correlations b/w block components and Y components
-#' @keywords internal
+#' @noRd
 get.weights = function(variates, indY)
 {
     ## for all X blocks, calculate correlation matrix of block components and Y components
