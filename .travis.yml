@@ -34,6 +34,7 @@ branches:
      - devel
      - master
      - feature
+     - roxygenated
 
 ## build notification setup - emails need to be a from a contributor to the package
 notifications:
