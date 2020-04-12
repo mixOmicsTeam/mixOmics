@@ -1,63 +1,134 @@
-#############################################################################################################
-# Authors:
-#   Ignacio Gonzalez, Genopole Toulouse Midi-Pyrenees, France
-#   Benoit Gautier, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Francois Bartolo, Institut National des Sciences Appliquees et Institut de Mathematiques, Universite de Toulouse et CNRS (UMR 5219), France
-#   Florian Rohart, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Kim-Anh Le Cao, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#
-# created: 2009
-# last modified: 24-08-2016
-#
-# Copyright (C) 2009
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
-# last modified: 01-03-2016
-
-
 #----------------------------------------------------------------------------------------------------------#
 #-- Includes plotVar for PLS, sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA --#
 #----------------------------------------------------------------------------------------------------------#
-
+#' Plot of Variables
+#' 
+#' This function provides variables representation for (regularized) CCA,
+#' (sparse) PLS regression, PCA and (sparse) Regularized generalised CCA.
+#' 
+#' \code{plotVar} produce a "correlation circle", i.e. the correlations between
+#' each variable and the selected components are plotted as scatter plot, with
+#' concentric circles of radius one et radius given by \code{rad.in}. Each
+#' point corresponds to a variable. For (regularized) CCA the components
+#' correspond to the equiangular vector between \eqn{X}- and \eqn{Y}-variates.
+#' For (sparse) PLS regression mode the components correspond to the
+#' \eqn{X}-variates. If mode is canonical, the components for \eqn{X} and
+#' \eqn{Y} variables correspond to the \eqn{X}- and \eqn{Y}-variates
+#' respectively.
+#' 
+#' For \code{plsda} and \code{splsda} objects, only the \eqn{X} variables are
+#' represented.
+#' 
+#' For \code{spls} and \code{splsda} objects, only the \eqn{X} and \eqn{Y}
+#' variables selected on dimensions \code{comp} are represented.
+#' 
+#' The arguments \code{col}, \code{pch}, \code{cex} and \code{font} can be
+#' either vectors of length two or a list with two vector components of length
+#' \eqn{p} and \eqn{q} respectively, where \eqn{p} is the number of
+#' \eqn{X}-variables and \eqn{q} is the number of \eqn{Y}-variables. In the
+#' first case, the first and second component of the vector determine the
+#' graphics attributes for the \eqn{X}- and \eqn{Y}-variables respectively.
+#' Otherwise, multiple arguments values can be specified so that each point
+#' (variable) can be given its own graphic attributes. In this case, the first
+#' component of the list correspond to the \eqn{X} attributs and the second
+#' component correspond to the \eqn{Y} attributs. Default values exist for this
+#' arguments.
+#' 
+#' @aliases plotVar plotVar.rcc plotVar.pls plotVar.spls plotVar.plsda
+#' plotVar.splsda plotVar.pca plotVar.spca plotVar.sgcca plotVar.rgcca
+#' @param object object of class inheriting from \code{"rcc"}, \code{"pls"},
+#' \code{"plsda"}, \code{"spls"}, \code{"splsda"}, \code{"pca"} or
+#' \code{"spca"}.
+#' @param comp integer vector of length two. The components that will be used
+#' on the horizontal and the vertical axis respectively to project the
+#' variables. By default, comp=c(1,2) except when style='3d', comp=c(1:3)
+#' @param comp.select for the sparse versions, an input vector indicating the
+#' components on which the variables were selected. Only those selected
+#' variables are displayed. By default, comp.select=comp
+#' @param plot if TRUE (the default) then a plot is produced. If not, the
+#' summaries which the plots are based on are returned.
+#' @param var.names either a character vector of names for the variables to be
+#' plotted, or \code{FALSE} for no names. If \code{TRUE}, the col names of the
+#' first (or second) data matrix is used as names.
+#' @param blocks for an object of class \code{"rgcca"} or \code{"sgcca"}, a
+#' numerical vector indicating the block variables to display.
+#' @param X.label x axis titles.
+#' @param Y.label y axis titles.
+#' @param Z.label z axis titles (when style = '3d').
+#' @param abline should the vertical and horizontal line through the center be
+#' plotted? Default set to \code{FALSE}
+#' @param col character or integer vector of colors for plotted character and
+#' symbols, can be of length 2 (one for each data set) or of length (p+q) (i.e.
+#' the total number of variables). See Details.
+#' @param cex numeric vector of character expansion sizes for the plotted
+#' character and symbols, can be of length 2 (one for each data set) or of
+#' length (p+q) (i.e. the total number of variables).
+#' @param pch plot character. A vector of single characters or integers, can be
+#' of length 2 (one for each data set) or of length (p+q) (i.e. the total
+#' number of variables). See \code{\link{points}} for all alternatives.
+#' @param font numeric vector of font to be used, can be of length 2 (one for
+#' each data set) or of length (p+q) (i.e. the total number of variables). See
+#' \code{\link{par}} for details.
+#' @param cutoff numeric between 0 and 1. Variables with correlations below
+#' this cutoff in absolute value are not plotted (see Details).
+#' @param rad.in numeric between 0 and 1, the radius of the inner circle.
+#' Defaults to \code{0.5}.
+#' @param title character indicating the title plot.
+#' @param legend boolean when more than 3 blocks. Can be a character vector
+#' when one or 2 blocks to customize the legend. See examples. Default is
+#' FALSE.
+#' @param legend.title title of the legend
+#' @param style argument to be set to either \code{'graphics'},
+#' \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
+#' @param overlap boolean. Whether the variables should be plotted in one
+#' single figure. Default is TRUE.
+#' @param axes.box for style '3d', argument to be set to either \code{'axes'},
+#' \code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.
+#' @param label.axes.box for style '3d', argument to be set to either
+#' \code{'axes'}, \code{'box'}, \code{'both'}, indicating which labels to
+#' print.
+#' @return A list containing the following components: \item{x}{a vector of
+#' coordinates of the variables on the x-axis.} \item{y}{a vector of
+#' coordinates of the variables on the y-axis.} \item{Block}{the data block
+#' name each variable belongs to.} \item{names}{the name of each variable,
+#' matching their coordinates values.}
+#' @author Ignacio González, Benoit Gautier, Francois Bartolo, Florian Rohart,
+#' Kim-Anh Lê Cao, Al J Abadi
+#' @seealso \code{\link{cim}}, \code{\link{network}}, \code{\link{par}} and
+#' http://www.mixOmics.org for more details.
+#' @references González I., Lê Cao K-A., Davis, M.J. and Déjean, S. (2012).
+#' Visualising associations between paired 'omics data sets. J. Data Mining
+#' 5:19. \url{http://www.biodatamining.org/content/5/1/19/abstract}
+#' @keywords multivariate hplot dplot
+#' @export
+#' @example ./examples/plotVar-examples.R
 plotVar <-
-function(object,
-comp = NULL,
-comp.select = comp,
-plot = TRUE,
-var.names = NULL,
-blocks = NULL, # to choose which block data to plot, when using GCCA module
-X.label = NULL,
-Y.label = NULL,
-Z.label = NULL,
-abline = TRUE,
-col,
-cex,
-pch,
-font,
-cutoff = 0,
-rad.in = 0.5,
-title = "Correlation Circle Plots",
-legend = FALSE,
-legend.title = "Block",
-style="ggplot2", # can choose between graphics,3d, lattice or ggplot2,
-overlap = TRUE,
-axes.box = "all",
-label.axes.box = "both"  )
-{
-    
+    function(object,
+             comp = NULL,
+             comp.select = comp,
+             plot = TRUE,
+             var.names = NULL,
+             blocks = NULL,
+             # to choose which block data to plot, when using GCCA module
+             X.label = NULL,
+             Y.label = NULL,
+             Z.label = NULL,
+             abline = TRUE,
+             col,
+             cex,
+             pch,
+             font,
+             cutoff = 0,
+             rad.in = 0.5,
+             title = "Correlation Circle Plots",
+             legend = FALSE,
+             legend.title = "Block",
+             style = "ggplot2",
+             # can choose between graphics,3d, lattice or ggplot2,
+             overlap = TRUE,
+             axes.box = "all",
+             label.axes.box = "both")
+    {
     class.object = class(object)
     object.pls=c("mixo_pls","mixo_spls","mixo_mlspls","mixo_mlsplsda","rcc")
     object.pca=c("ipca","sipca","pca","spca")
