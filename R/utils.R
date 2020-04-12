@@ -1,3 +1,7 @@
+## ------------------------ .plotLoadings_barplot ------------------------- ##
+#' plotLoadings helper
+#'
+#' @noRd
 .plotLoadings_barplot <- function(height, col, names.arg, cex.name, border, xlim) {
     tryCatch({barplot(height, horiz = TRUE, las = 1, col = col, axisnames = TRUE, names.arg = names.arg, #names.arg = row.names(df),
                       cex.names = cex.name, cex.axis = 0.7, beside = TRUE, border = border, xlim = xlim)},
@@ -9,7 +13,8 @@
                  }
              })
 }
-## ----------- .check_cpus ----------- 
+
+## ----------------------------- .check_cpus ------------------------------ ##
 #' Check cpus argument
 #'
 #' @param cpus Integer, the number of cpus for parallel processing.
@@ -31,7 +36,7 @@
         
 }
 
-## ----------- .check_alpha ----------- 
+## ----------------------------- .check_alpha ----------------------------- ##
 #' Check significance threshold sanity
 #'
 #' @param alpha numeric, significance threshold for t.test
@@ -49,7 +54,7 @@
     alpha
 }
 
-## ----------- .unexpected_err ----------- 
+## --------------------------- .unexpected_err ---------------------------- ##
 #' Unexpected error handler for the package
 #'
 #' To be used in unexperimented situations where handlers fail
@@ -65,7 +70,7 @@
     stop(msg, call. = FALSE)
 }
 
-## ----------- .on_unix ----------- 
+## ------------------------------- .on_unix ------------------------------- ##
 #' Check OS type for parallel processing
 #'
 #' @return Logical, FALSE if windows OS, TRUE if unix OS.
@@ -76,7 +81,7 @@
     return(ifelse(.Platform$OS.type == "unix", TRUE, FALSE))
 }
 
-## ----------- .unlist_repeat_cv_output ----------- 
+## ----------------------- .unlist_repeat_cv_output ----------------------- ##
 #' repeat_cv_perf.diablo helper to unlist internal outputs to
 #' previous list format for downstream work
 #'
@@ -98,7 +103,7 @@
     return(list_nrep)
 }
 
-## ----------- stratified_subsampling ----------- 
+## ------------------------ stratified_subsampling ------------------------ ##
 #' Perform stratified subsampling for cross-validation
 #'
 #' @param Y A factor or a class vector for the discrete outcome
@@ -157,7 +162,7 @@ stratified.subsampling <- function(Y, folds = 10)
     return(list(SAMPLE = SAMPLE, stop = stop))
 }
 
-## ----------- .name_list ----------- 
+## ------------------------------ .name_list ------------------------------ ##
 #' Create a named list
 #'
 #' Creates a named list of a character vector where names and values
@@ -174,7 +179,7 @@ stratified.subsampling <- function(Y, folds = 10)
     return(out)
 }
 
-## ----------- .mixo_rng ----------- 
+## ------------------------------ .mixo_rng ------------------------------- ##
 #' RNG used for package tests
 #'
 #' Creating a function so that it can easily be changed.
@@ -186,7 +191,7 @@ stratified.subsampling <- function(Y, folds = 10)
 #' @noRd
 .mixo_rng <- function() {"3.6.0"}
 
-## ----------- .change_if_null ----------- 
+## --------------------------- .change_if_null ---------------------------- ##
 #' Set default value if NULL
 #'
 #' For arguments with default NULL value, sets the desired default value
@@ -212,7 +217,7 @@ stratified.subsampling <- function(Y, folds = 10)
     )
 }
 
-## ----------- .add_consensus_blocks ----------- 
+## ------------------------ .add_consensus_blocks ------------------------- ##
 #' Add consensus blocks to DIABLO object
 #'
 #' For plotIndiv(..., blocks = "consensus")
@@ -292,7 +297,7 @@ stratified.subsampling <- function(Y, folds = 10)
     block_object
 }
 
-## ----------- mat.rank ----------- 
+## ------------------------------- mat.rank ------------------------------- ##
 #' Get matrix rank
 #' 
 #' @param mat A numeric matrix
@@ -321,4 +326,90 @@ mat.rank = function (mat, tol)
     r = sum(d > tol)
     
     return(list(rank = r, tol = tol))
+}
+
+## ----------------------------- nearZeroVar ------------------------------ ##
+#' Identification of zero- or near-zero variance predictors
+#' 
+#' Borrowed from the \pkg{caret} package. It is used as an internal function in
+#' the PLS methods, but can also be used as an external function, in
+#' particular when the data contain a lot of zeroes values and need to be
+#' pre-filtered beforehand.
+#' 
+#' This function diagnoses predictors that have one unique value (i.e. are zero
+#' variance predictors) or predictors that are have both of the following
+#' characteristics: they have very few unique values relative to the number of
+#' samples and the ratio of the frequency of the most common value to the
+#' frequency of the second most common value is large.
+#' 
+#' For example, an example of near zero variance predictor is one that, for
+#' 1000 samples, has two distinct values and 999 of them are a single value.
+#' 
+#' To be flagged, first the frequency of the most prevalent value over the
+#' second most frequent value (called the ``frequency ratio'') must be above
+#' \code{freqCut}. Secondly, the ``percent of unique values,'' the number of
+#' unique values divided by the total number of samples (times 100), must also
+#' be below \code{uniqueCut}.
+#' 
+#' In the above example, the frequency ratio is 999 and the unique value
+#' percentage is 0.0001.
+#' 
+#' @param x a numeric vector or matrix, or a data frame with all numeric data.
+#' @param freqCut the cutoff for the ratio of the most common value to the
+#' second most common value.
+#' @param uniqueCut the cutoff for the percentage of distinct values out of the
+#' number of total samples.
+#' @return \code{nearZeroVar} returns a list that contains the following
+#' components:
+#' 
+#' \item{Position}{a vector of integers corresponding to the column positions
+#' of the problematic predictors that will need to be removed.}
+#' \item{Metrics}{a data frame containing the zero- or near-zero predictors
+#' information with columns: \code{freqRatio}, the ratio of frequencies for the
+#' most common value over the second most common value and,
+#' \code{percentUnique}, the percentage of unique data points out of the total
+#' number of data points.}
+#' @author Max Kuhn, Allan Engelhardt, Florian Rohart, Benoit Gautier, AL J Abadi
+#' for mixOmics
+#' @seealso \code{\link{pls}}, \code{\link{spls}}, \code{\link{plsda}},
+#' \code{\link{splsda}}
+#' @keywords utilities
+#' @export
+#' @examples
+#' 
+#' data(diverse.16S)
+#' nzv = nearZeroVar(diverse.16S$data.raw)
+#' length(nzv$Position) # those would be removed for the default frequency cut
+nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
+{
+    
+    if (is.vector(x))
+        x = matrix(x, ncol = 1)
+    
+    freqRatio = apply(x, 2, function(data)
+    {
+        data = na.omit(data)
+        
+        if (length(unique(data)) == length(data))
+        { # No duplicate
+            return(1)
+        } else if (length(unique(data)) == 1) { # Same value
+            return(0)
+        } else {
+            t = table(data)
+            return(max(t, na.rm = TRUE)/max(t[-which.max(t)], na.rm = TRUE))
+        }
+    })
+    
+    lunique = apply(x, 2, function(data) length(unique(data[!is.na(data)])))
+    
+    percentUnique = 100 * lunique/nrow(x)
+    zeroVar = (lunique == 1) | apply(x, 2, function(data) all(is.na(data)))
+    
+    out = list()
+    out$Position = which((freqRatio > freqCut & percentUnique <= uniqueCut) | zeroVar)
+    names(out$Position) = NULL
+    out$Metrics = data.frame(freqRatio = freqRatio, percentUnique = percentUnique)
+    out$Metrics = out$Metrics[out$Position, ]
+    return(out)
 }
