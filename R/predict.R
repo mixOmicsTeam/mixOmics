@@ -1,27 +1,3 @@
-#############################################################################################################
-# Author :
-#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#
-# created: 27-05-2015
-# last modified: 05-10-2017
-#
-# Copyright (C) 2015
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
 # ========================================================================================================
 # This function makes a prediction of a 'newdata' by using the results of 'object'.
 # Depending on the class of the object (mint).(block).(s)pls(da) (16 classes so far), the input data is different
@@ -29,31 +5,178 @@
 # However, the prediction formula is the same for all classes, thus only one code
 # ========================================================================================================
 
-#predict.mixOmics <-
-#predict.pls <-  predict.spls<- predict.plsda <- predict.splsda <-
-#predict.mint.pls <- predict.mint.spls <- predict.mint.plsda <- predict.mint.splsda <-
-#predict.block.pls <- predict.block.spls <- predict.block.plsda <- predict.block.splsda <-
-#predict.mint.block.pls <- predict.mint.block.spls <- predict.mint.block.plsda <- predict.mint.block.splsda <- #predict.sgcca <-
-
-# note FR: 27/05/16: the way I dealt with missing block to predict will probably not work for mint.block analysis
-
-
-# object: any object (mint).(block).(s)pls(da)
-# newdata: data to predict, same form as what's in object$X
-# study.test: optional, used if a mint object.  grouping factor indicating which samples of `newdata' are from the same study
-# dist: prediction distance to use
-# multilevel: if there was a multilevel in object, one should be used for `newdata'
-# newdata.scale: hidden parameter. used in tune/perf functions. pass `newdata' that has been scale already (gain in computational time)
-# misdata.all: hidden parameter. used in tune/perf functions. any missing values in object$X
-# is.na.X: hidden parameter. used in tune/perf functions. where are the missing values in object$X
-# is.na.newdata: hidden parameter. used in tune/perf functions. where are the missing values in `newdata'
-# noAveragePredict: hidden parameter. used in tune/perf functions. no calculation of Average Prediction (gain in computational time)
-
-
-predict.block.pls <-predict.block.spls <- predict.mint.splsda <-
-predict.mixo_pls <-predict.mixo_spls <-
-function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"), multilevel = NULL, ...)
-{
+#' Predict Method for (mint).(block).(s)pls(da) methods
+#' 
+#' Predicted values based on PLS models. New responses and variates are
+#' predicted using a fitted model and a new matrix of observations.
+#' 
+#' \code{predict} produces predicted values, obtained by evaluating the
+#' PLS-derived methods, returned by \code{(mint).(block).(s)pls(da)} in the
+#' frame \code{newdata}. Variates for \code{newdata} are also returned. Please
+#' note that this method performs multilevel decomposition and/or log ratio
+#' transformations if needed (\code{multilevel} is an input parameter while
+#' \code{logratio} is extracted from \code{object}).
+#' 
+#' Different prediction distances are proposed for discriminant analysis. The
+#' reason is that our supervised models work with a dummy indicator matrix of
+#' \code{Y} to indicate the class membership of each sample. The prediction of
+#' a new observation results in either a predicted dummy variable (output
+#' \code{object$predict}), or a predicted variate (output
+#' \code{object$variates}). Therefore, an appropriate distance needs to be
+#' applied to those predicted values to assign the predicted class. We propose
+#' distances such as `maximum distance' for the predicted dummy variables,
+#' `Mahalanobis distance' and `Centroids distance' for the predicted variates.
+#' 
+#' \code{"max.dist"} is the simplest method to predict the class of a test
+#' sample. For each new individual, the class with the largest predicted dummy
+#' variable is the predicted class. This distance performs well in single data
+#' set analysis with multiclass problems (PLS-DA).
+#' 
+#' \code{"centroids.dist"} allocates to the new observation the class that
+#' mimimises the distance between the predicted score and the centroids of the
+#' classes calculated on the latent components or variates of the trained
+#' model.
+#' 
+#' \code{"mahalanobis.dist"} allocates the new sample the class defined as the
+#' centroid distance, but using the Mahalanobis metric in the calculation of
+#' the distance.
+#' 
+#' In practice we found that the centroid-based distances
+#' (\code{"centroids.dist"} and \code{"mahalanobis.dist"}), and specifically
+#' the Mahalanobis distance led to more accurate predictions than the maximum
+#' distance for complex classification problems and N-integration problems
+#' (block.splsda). The centroid distances consider the prediction in
+#' dimensional space spanned by the predicted variates, while the maximum
+#' distance considers a single point estimate using the predicted scores on the
+#' last dimension of the model. The user can assess the different distances,
+#' and choose the prediction distance that leads to the best performance of the
+#' model, as highlighted from the tune and perf outputs
+#' 
+#' More (mathematical) details about the prediction distances are available in
+#' the supplemental of the mixOmics article (Rohart et al 2017).
+#' 
+#' For a visualisation of those prediction distances, see
+#' \code{background.predict} that overlays the prediction area in
+#' \code{plotIndiv} for a sPLS-DA object.
+#' 
+#' Allocates the individual \eqn{x} to the class of \eqn{Y} minimizing
+#' \eqn{dist(\code{x-variate}, G_l)}, where \eqn{G_l}, \eqn{l = 1,...,L} are
+#' the centroids of the classes calculated on the \eqn{X}-variates of the
+#' model. \code{"mahalanobis.dist"} allocates the individual \eqn{x} to the
+#' class of \eqn{Y} as in \code{"centroids.dist"} but by using the Mahalanobis
+#' metric in the calculation of the distance.
+#' 
+#' For MINT objects, the \code{study.test} argument is required and provides
+#' the grouping factor of \code{newdata}.
+#' 
+#' For multi block analysis (thus block objects), \code{newdata} is a list of
+#' matrices whose names are a subset of \code{names(object$X)} and missing
+#' blocks are allowed. Several predictions are returned, either for each block
+#' or for all blocks. For non discriminant analysis, the predicted values
+#' (\code{predict}) are returned for each block and these values are combined
+#' by average (\code{AveragedPredict}) or weighted average
+#' (\code{WeightedPredict}), using the weights of the blocks that are
+#' calculated as the correlation between a block's components and the outcome's
+#' components.
+#' 
+#' For discriminant analysis, the predicted class is returned for each block
+#' (\code{class}) and each distance (\code{dist}) and these predictions are
+#' combined by majority vote (\code{MajorityVote}) or weighted majority vote
+#' (\code{WeightedVote}), using the weights of the blocks that are calculated
+#' as the correlation between a block's components and the outcome's
+#' components. NA means that there is no consensus among the block. For PLS-DA
+#' and sPLS-DA objects, the prediction area can be visualised in plotIndiv via
+#' the \code{background.predict} function.
+#' 
+#' @aliases predict predict.pls predict.spls predict.plsda predict.splsda
+#' predict.mint.pls predict.mint.spls predict.mint.plsda predict.mint.splsda
+#' predict.mint.block.pls predict.mint.block.spls predict.mint.block.plsda
+#' predict.mint.block.splsda
+#' @param object object of class inheriting from
+#' \code{"(mint).(block).(s)pls(da)"}.
+#' @param newdata data matrix in which to look for for explanatory variables to
+#' be used for prediction. Please note that this method does not perform
+#' multilevel decomposition or log ratio transformations, which need to be
+#' processed beforehand.
+#' @param study.test For MINT objects, grouping factor indicating which samples
+#' of \code{newdata} are from the same study. Overlap with \code{object$study}
+#' are allowed.
+#' @param dist distance to be applied for discriminant methods to predict the
+#' class of new data, should be a subset of \code{"centroids.dist"},
+#' \code{"mahalanobis.dist"} or \code{"max.dist"} (see Details). Defaults to
+#' \code{"all"}.
+#' @param multilevel Design matrix for multilevel analysis (for repeated
+#' measurements). A numeric matrix or data frame. For a one level factor
+#' decomposition, the input is a vector indicating the repeated measures on
+#' each individual, i.e. the individuals ID. For a two level decomposition with
+#' splsda models, the two factors are included in Y. Finally for a two level
+#' decomposition with spls models, 2nd AND 3rd columns in design indicate those
+#' factors (see example in \code{?splsda} and \code{?spls}).
+#' @param ... not used currently.
+#' @return \code{predict} produces a list with the following components:
+#' \item{predict}{predicted response values. The dimensions correspond to the
+#' observations, the response variables and the model dimension, respectively.
+#' For a supervised model, it corresponds to the predicted dummy variables.}
+#' \item{variates}{matrix of predicted variates.} \item{B.hat}{matrix of
+#' regression coefficients (without the intercept).}
+#' 
+#' \item{AveragedPredict}{if more than one block, returns the average predicted
+#' values over the blocks (using the \code{predict} output)}
+#' \item{WeightedPredict}{if more than one block, returns the weighted average
+#' of the predicted values over the blocks (using the \code{predict} and
+#' \code{weights} outputs)}
+#' 
+#' \item{class}{predicted class of \code{newdata} for each
+#' \eqn{1,...,}\code{ncomp} components.}
+#' 
+#' \item{MajorityVote}{if more than one block, returns the majority class over
+#' the blocks. NA for a sample means that there is no consensus on the
+#' predicted class for this particular sample over the blocks.}
+#' \item{WeightedVote}{if more than one block, returns the weighted majority
+#' class over the blocks. NA for a sample means that there is no consensus on
+#' the predicted class for this particular sample over the blocks.}
+#' \item{weights}{Returns the weights of each block used for the weighted
+#' predictions, for each nrepeat and each fold}
+#' 
+#' \item{centroids}{matrix of coordinates for centroids.} \item{dist}{type of
+#' distance requested.} \item{vote}{majority vote result for multi block
+#' analysis (see details above).}
+#' @author Florian Rohart, Sébastien Déjean, Ignacio González, Kim-Anh Lê Cao,
+#' Al J Abadi
+#' @seealso \code{\link{pls}}, \code{\link{spls}}, \code{\link{plsda}},
+#' \code{\link{splsda}}, \code{\link{mint.pls}}, \code{\link{mint.spls}},
+#' \code{\link{mint.plsda}}, \code{\link{mint.splsda}},
+#' \code{\link{block.pls}}, \code{\link{block.spls}},
+#' \code{\link{block.plsda}}, \code{\link{block.splsda}},
+#' \code{\link{mint.block.pls}}, \code{\link{mint.block.spls}},
+#' \code{\link{mint.block.plsda}}, \code{\link{mint.block.splsda}} and
+#' visualisation with \code{\link{background.predict}} and
+#' http://www.mixOmics.org for more details.
+#' @references
+#' 
+#' Rohart F, Gautier B, Singh A, Lê Cao K-A. mixOmics: an R package for 'omics
+#' feature selection and multiple data integration. PLoS Comput Biol 13(11):
+#' e1005752
+#' 
+#' Tenenhaus, M. (1998). \emph{La regression PLS: theorie et pratique}. Paris:
+#' Editions Technic.
+#' @keywords regression multivariate
+#' @name predict
+#' @example ./examples/predict-examples.R
+NULL
+#' @rdname predict
+#' @method predict mixo_pls
+#' @export
+predict.mixo_pls <-
+    function(object,
+             newdata,
+             study.test,
+             dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
+             multilevel = NULL,
+             ...
+    )
+    {
+        
     time=FALSE
     
     # pass R check
@@ -612,7 +735,29 @@ function(object, newdata,study.test,dist = c("all", "max.dist", "centroids.dist"
     
 }
 
+# Note that DA classes are a special case (subclass) of pls classes
+# Note that mint.spls is also a mixo_spls
+# Note that mint.pls is also a mixo_pls
 
+#' @rdname predict
+#' @method predict mixo_spls
+#' @export
+predict.mixo_spls <- predict.mixo_pls
+
+#' @rdname predict
+#' @method predict mint.splsda
+#' @export
+predict.mint.splsda <- predict.mixo_pls
+
+#' @rdname predict
+#' @method predict block.pls
+#' @export
+predict.block.pls <- predict.mixo_pls
+
+#' @rdname predict
+#' @method predict block.spls
+#' @export
+predict.block.spls <- predict.mixo_pls
 
 
 
