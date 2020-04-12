@@ -1,39 +1,70 @@
-# Authors:
-#
-# The function ica.par and ica.def are borrowed from the fastICA package (see references).
-#
-#   Fangzhou Yao, Queensland Facility for Advanced Bioinformatics, University of Queensland, Australia and Shangai University of Finance and Economics, Shanghai, P.R. China
-#   Jeff Coquery, Queensland Facility for Advanced Bioinformatics, University of Queensland, Australia and Sup Biotech, Paris, France
-#   Francois Bartolo, Institut National des Sciences Appliquees et Institut de Mathematiques, Universite de Toulouse et CNRS (UMR 5219), France
-#   Kim-Anh Le Cao, French National Institute for Agricultural Research and Queensland Facility for Bioinformatics, University of Queensland, Australia
-#
-# created: 2011
-# last modified: 17-03-2016
-#
-# Copyright (C) 2011
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
-
+#' Independent Principal Component Analysis
+#' 
+#' Performs sparse independent principal component analysis on the given data
+#' matrix to enable variable selection.
+#' 
+#' See Details of ipca.
+#' 
+#' Soft thresholding is implemented on the independent loading vectors to
+#' obtain sparse loading vectors and enable variable selection.
+#' 
+#' @inheritParams ipca
+#' @param keepX the number of variable to keep on each dimensions.
+#' @return \code{pca} returns a list with class \code{"ipca"} containing the
+#' following components: \item{ncomp}{the number of principal components used.}
+#' \item{unmixing}{the unmixing matrix of size (ncomp x ncomp)}
+#' \item{mixing}{the mixing matrix of size (ncomp x ncomp} \item{X}{the
+#' centered data matrix} \item{x}{the principal components (with sparse
+#' independent loadings)} \item{loadings}{the sparse independent loading
+#' vectors} \item{kurtosis}{the kurtosis measure of the independent loading
+#' vectors}
+#' @author Fangzhou Yao, Jeff Coquery, Francois Bartolo, Kim-Anh Lê Cao, Al J Abadi
+#' @seealso \code{\link{ipca}}, \code{\link{pca}}, \code{\link{plotIndiv}},
+#' \code{\link{plotVar}} and http://www.mixOmics.org for more details.
+#' @references Yao, F., Coquery, J. and Lê Cao, K.-A. (2011) Principal
+#' component analysis with independent loadings: a combination of PCA and ICA.
+#' (in preparation)
+#' 
+#' A. Hyvarinen and E. Oja (2000) Independent Component Analysis: Algorithms
+#' and Applications, \emph{Neural Networks}, \bold{13(4-5)}:411-430
+#' 
+#' J L Marchini, C Heaton and B D Ripley (2010). fastICA: FastICA Algorithms to
+#' perform ICA and Projection Pursuit. R package version 1.1-13.
+#' @keywords algebra
+#' @export
+#' @examples
+#' 
+#' data(liver.toxicity)
+#' 
+#' # implement IPCA on a microarray dataset
+#' sipca.res <- sipca(liver.toxicity$gene, ncomp = 3, mode="deflation", keepX=c(50,50,50))
+#' sipca.res
+#' 
+#' # samples representation
+#' plotIndiv(sipca.res, ind.names = liver.toxicity$treatment[, 4],
+#' group = as.numeric(as.factor(liver.toxicity$treatment[, 4])))
+#' 
+#' \dontrun{
+#' plotIndiv(sipca.res, cex = 0.01,
+#' col = as.numeric(as.factor(liver.toxicity$treatment[, 4])),style="3d")
+#' 
+#' # variables representation
+#' plotVar(sipca.res, cex = 2.5)
+#' 
+#' plotVar(sipca.res, rad.in = 0.5, cex = 2.5,style="3d")
+#' }
 sipca <-
-function (X, ncomp  = 3, mode = c("deflation","parallel"),
-          fun = c("logcosh", "exp"),
-          scale = FALSE, max.iter = 200, 
-          tol = 1e-04, keepX = rep(50,ncomp),
-          w.init = NULL)
-{
+    function (X,
+              ncomp  = 3,
+              mode = c("deflation", "parallel"),
+              fun = c("logcosh", "exp"),
+              scale = FALSE,
+              max.iter = 200,
+              tol = 1e-04,
+              keepX = rep(50, ncomp),
+              w.init = NULL)
+    {
+        
     dim_x <- dim(X)
     d <- dim_x[dim_x != 1]
     if (length(d) != 2)

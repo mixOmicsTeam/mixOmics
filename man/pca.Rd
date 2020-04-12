@@ -52,7 +52,7 @@ specific normalisation in sequencing data. Default to 'none'}
 \item{ilr.offset}{When logratio is set to 'ILR', an offset must be input to
 avoid infinite value after the logratio transform, default to 0.001.}
 
-\item{V}{Matrix used in the logratio transformation id provided.}
+\item{V}{Matrix used in the logratio transformation if provided.}
 
 \item{multilevel}{sample information for multilevel decomposition for
 repeated measurements.}

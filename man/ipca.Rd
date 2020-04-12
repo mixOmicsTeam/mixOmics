@@ -16,8 +16,7 @@ ipca(
 )
 }
 \arguments{
-\item{X}{a numeric matrix (or data frame) which provides the data for the
-principal component analysis.}
+\item{X}{a numeric matrix (or data frame).}
 
 \item{ncomp}{integer, number of independent component to choose. Set by
 default to 3.}
@@ -29,14 +28,17 @@ Default set to \code{deflation}.}
 \item{fun}{the function used in approximation to neg-entropy in the FastICA
 algorithm. Default set to \code{logcosh}, see details of FastICA.}
 
-\item{scale}{a logical value indicating whether the variables (columns) of
-the data matrix X should be standardized beforehand. By default, X is
-centered.}
+\item{scale}{a logical value indicating whether the variables should be
+scaled to have unit variance before the analysis takes place. The default is
+\code{FALSE} for consistency with \code{prcomp} function, but in general
+scaling is advisable. Alternatively, a vector of length equal the number of
+columns of \code{X} can be supplied. The value is passed to
+\code{\link{scale}}.}
 
-\item{w.init}{initial un-mixing matrix (unlike FastICA, this matrix is fixed
+\item{w.init}{initial un-mixing matrix (unlike fastICA, this matrix is fixed
 here).}
 
-\item{max.iter}{integer, maximum number of iterations to perform.}
+\item{max.iter}{integer, the maximum number of iterations.}
 
 \item{tol}{a positive scalar giving the tolerance at which the un-mixing
 matrix is considered to have converged, see fastICA package.}

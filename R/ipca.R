@@ -33,8 +33,8 @@
 #' 
 #' 4. The centered data matrix is projected on the independent loading vectors
 #' to obtain the independent principal components.
-#' @param X a numeric matrix (or data frame) which provides the data for the
-#' principal component analysis.
+#' @inheritParams pca
+#' @param X a numeric matrix (or data frame).
 #' @param ncomp integer, number of independent component to choose. Set by
 #' default to 3.
 #' @param mode character string. What type of algorithm to use when estimating
@@ -42,13 +42,10 @@
 #' Default set to \code{deflation}.
 #' @param fun the function used in approximation to neg-entropy in the FastICA
 #' algorithm. Default set to \code{logcosh}, see details of FastICA.
-#' @param scale a logical value indicating whether the variables (columns) of
-#' the data matrix X should be standardized beforehand. By default, X is
-#' centered.
-#' @param max.iter integer, maximum number of iterations to perform.
+#' @param max.iter integer, the maximum number of iterations.
 #' @param tol a positive scalar giving the tolerance at which the un-mixing
 #' matrix is considered to have converged, see fastICA package.
-#' @param w.init initial un-mixing matrix (unlike FastICA, this matrix is fixed
+#' @param w.init initial un-mixing matrix (unlike fastICA, this matrix is fixed
 #' here).
 #' @return \code{ipca} returns a list with class \code{"ipca"} containing the
 #' following components: \item{ncomp}{the number of independent principal

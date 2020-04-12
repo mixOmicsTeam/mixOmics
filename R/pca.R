@@ -56,7 +56,7 @@
 #' specific normalisation in sequencing data. Default to 'none'
 #' @param ilr.offset When logratio is set to 'ILR', an offset must be input to
 #' avoid infinite value after the logratio transform, default to 0.001.
-#' @param V Matrix used in the logratio transformation id provided.
+#' @param V Matrix used in the logratio transformation if provided.
 #' @param multilevel sample information for multilevel decomposition for
 #' repeated measurements.
 #' @return \code{pca} returns a list with class \code{"pca"} and
@@ -90,7 +90,7 @@
 #' @keywords algebra
 #' @export
 #' @example ./examples/pca-examples.R
-pca = function(X,
+pca <- function(X,
                ncomp = 2,
                center = TRUE,
                scale = FALSE,
