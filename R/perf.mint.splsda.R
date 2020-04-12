@@ -1,49 +1,32 @@
-#############################################################################################################
-# Authors:
-#   Florian Rohart, Australian Institute for Bioengineering and Nanotechnology, University of Queensland, Brisbane, QLD.
-#   Kim-Anh Le Cao, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#
-# created: 25-05-2016
-# last modified: 24-08-2016
-#
-# Copyright (C) 2016
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
+## ------------------------------------------------------------------------ ##
+####                              perf.mint                               ####
+## ------------------------------------------------------------------------ ##
 
-#---------------------------------------------------
-# perf for mint.spls and mint.pls object
-#---------------------------------------------------
-perf.mint.spls  = perf.mint.pls = function(object,
-validation = c("Mfold", "loo"),
-folds = 10,
-progressBar = FALSE,
-...)
+## --------------------------- perf.mint(s)pls ---------------------------- ##
+#' @rdname perf
+#' @export
+perf.mint.pls <-  function(object,
+                            validation = c("Mfold", "loo"),
+                            folds = 10,
+                            progressBar = FALSE,
+                            ...)
 {
     stop("Yet to be implemented")
 }
 
-# ---------------------------------------------------
-# perf for mint.plsda and mint.splsda object
-# ---------------------------------------------------
-perf.mint.splsda = perf.mint.plsda = function (object,
-dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
-auc = FALSE,
-progressBar = FALSE,
-signif.threshold=0.01,
-...
+#' @rdname perf
+#' @export
+perf.mint.spls <- perf.mint.pls
+
+## -------------------------- perf.mint(s)plsda --------------------------- ##
+#' @rdname perf
+#' @export
+perf.mint.plsda <- function (object,
+                             dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
+                             auc = FALSE,
+                             progressBar = FALSE,
+                             signif.threshold = 0.01,
+                             ...
 )
 {    #-- checking general input parameters --------------------------------------#
     #---------------------------------------------------------------------------#
@@ -328,3 +311,7 @@ signif.threshold=0.01,
 
     return(invisible(result))
 }
+
+#' @rdname perf
+#' @export
+perf.mint.splsda <- perf.mint.plsda

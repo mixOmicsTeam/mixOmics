@@ -32,17 +32,18 @@
 #           validation - type of validation
 #           folds - number of folds if validation = "Mfold"
 # ----------------------------------------------------------------------------------------------------------
-
+#' @rdname perf
+#' @export
 perf.sgccda = function (object,
-dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
-validation = c("Mfold", "loo"),
-folds = 10,
-nrepeat = 1,
-auc=FALSE,
-progressBar=FALSE,
-signif.threshold=0.01,
-cpus=1,
-...)
+                        dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
+                        validation = c("Mfold", "loo"),
+                        folds = 10,
+                        nrepeat = 1,
+                        auc = FALSE,
+                        progressBar = FALSE,
+                        signif.threshold = 0.01,
+                        cpus = 1,
+                        ...)
 {
     
     ### Start: Initialization parameters
