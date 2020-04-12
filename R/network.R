@@ -1,55 +1,197 @@
-#############################################################################################################
-# Authors:
-#   Ignacio Gonzalez, Genopole Toulouse Midi-Pyrenees, France
-#   Francois Bartolo, Institut National des Sciences Appliquees et Institut de Mathematiques, Universite de Toulouse et CNRS (UMR 5219), France
-#   Kim-Anh Le Cao, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#
-# created: 2009
-# last modified: 13-04-2016
-#
-# Copyright (C) 2009
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
-network =
-function(mat,
-comp = NULL,
-blocks = c(1,2),
-cutoff = NULL,
-row.names = TRUE,
-col.names = TRUE,
-block.var.names = TRUE,
-color.node = NULL,
-shape.node = NULL,
-cex.node.name = 1,
-color.edge = color.GreenRed(100),
-lty.edge = "solid",
-lwd.edge = 1,
-show.edge.labels = FALSE,
-cex.edge.label = 1,
-show.color.key = TRUE,
-symkey = TRUE,
-keysize = c(1, 1),
-keysize.label = 1,
-breaks,
-interactive = FALSE,
-layout.fun = NULL,
-save = NULL,
-name.save = NULL)
+#' Relevance Network for (r)CCA and (s)PLS regression
+#' 
+#' Display relevance associations network for (regularized) canonical
+#' correlation analysis and (sparse) PLS regression. The function avoids the
+#' intensive computation of Pearson correlation matrices on large data set by
+#' calculating instead a pair-wise similarity matrix directly obtained from the
+#' latent components of our integrative approaches (CCA, PLS, block.pls
+#' methods). The similarity value between a pair of variables is obtained by
+#' calculating the sum of the correlations between the original variables and
+#' each of the latent components of the model. The values in the similarity
+#' matrix can be seen as a robust approximation of the Pearson correlation (see
+#' González et al. 2012 for a mathematical demonstration and exact formula).
+#' The advantage of relevance networks is their ability to simultaneously
+#' represent positive and negative correlations, which are missed by methods
+#' based on Euclidean distances or mutual information. Those networks are
+#' bipartite and thus only a link between two variables of different types can
+#' be represented. The network can be saved in a .glm format using the
+#' \code{igraph} package, the function \code{write.graph} and extracting the
+#' output \code{object$gR}, see details.
+#' 
+#' \code{network} allows to infer large-scale association networks between the
+#' \eqn{X} and \eqn{Y} datasets in \code{rcc} or \code{spls}. The output is a
+#' graph where each \eqn{X}- and \eqn{Y}-variable corresponds to a node and the
+#' edges included in the graph portray associations between them.
+#' 
+#' In \code{rcc}, to identify \eqn{X}-\eqn{Y} pairs showing relevant
+#' associations, \code{network} calculate a similarity measure between \eqn{X}
+#' and \eqn{Y} variables in a pair-wise manner: the scalar product value
+#' between every pairs of vectors in dimension \code{length(comp)} representing
+#' the variables \eqn{X} and \eqn{Y} on the axis defined by \eqn{Z_i} with
+#' \eqn{i} in \code{comp}, where \eqn{Z_i} is the equiangular vector between
+#' the \eqn{i}-th \eqn{X} and \eqn{Y} canonical variate.
+#' 
+#' In \code{spls}, if \code{object$mode} is \code{regression}, the similarity
+#' measure between \eqn{X} and \eqn{Y} variables is given by the scalar product
+#' value between every pairs of vectors in dimension \code{length(comp)}
+#' representing the variables \eqn{X} and \eqn{Y} on the axis defined by
+#' \eqn{U_i} with \eqn{i} in \code{comp}, where \eqn{U_i} is the \eqn{i}-th
+#' \eqn{X} variate. If \code{object$mode} is \code{canonical} then \eqn{X} and
+#' \eqn{Y} are represented on the axis defined by \eqn{U_i} and \eqn{V_i}
+#' respectively.
+#' 
+#' Variable pairs with a high similarity measure (in absolute value) are
+#' considered as relevant. By changing the cut-off, one can tune the relevance
+#' of the associations to include or exclude relationships in the network.
+#' 
+#' \code{interactive=TRUE} open two device, one for association network, one
+#' for scrollbar, and define an interactive process: by clicking either at each
+#' end (\eqn{-} or \eqn{+}) of the scrollbar or at middle portion of this.
+#' The position of the slider indicate which is the `cutoff' value associated
+#' to the display network.
+#' 
+#' The network can be saved in a .glm format using the \pkg{igraph} package,
+#' the function \code{write.graph} and extracting the output \code{obkect$gR}.
+#' 
+#' The interactive process is terminated by clicking the second button and
+#' selecting \code{Stop} from the menu, or from the \code{Stop} menu on the graphics
+#' window.
+#' 
+#' The \code{color.node} is a vector of length two, of any of the three kind of
+#' \code{R} colors, i.e., either a color name (an element of \code{colors()}),
+#' a hexadecimal string of the form \code{"#rrggbb"}, or an integer \code{i}
+#' meaning \code{palette()[i]}. \code{color.node[1]} and \code{color.node[2]}
+#' give the color for filled nodes of the \eqn{X}- and \eqn{Y}-variables
+#' respectively. Defaults to \code{c("white", "white")}.
+#' 
+#' \code{color.edge} give the color to edges with colors corresponding to the
+#' values in \code{mat}. Defaults to \code{color.GreenRed(100)} for negative
+#' (green) and positive (red) correlations. We also propose other palettes of
+#' colors, such as \code{color.jet} and \code{color.spectral}, see help on
+#' those functions, and examples below. Other palette of colors from the stats
+#' package can be used too.
+#' 
+#' \code{shape.node[1]} and \code{shape.node[2]} provide the shape of the nodes
+#' associate to \eqn{X}- and \eqn{Y}-variables respectively. Current acceptable
+#' values are \code{"circle"} and \code{"rectangle"}. Defaults to
+#' \code{c("circle", "rectangle")}.
+#' 
+#' \code{lty.edge[1]} and \code{lty.egde[2]} give the line type to edges with
+#' positive and negative weight respectively. Can be one of \code{"solid"},
+#' \code{"dashed"}, \code{"dotted"}, \code{"dotdash"}, \code{"longdash"} and
+#' \code{"twodash"}. Defaults to \code{c("solid", "solid")}.
+#' 
+#' \code{lwd.edge[1]} and \code{lwd.edge[2]} provide the line width to edges
+#' with positive and negative weight respectively. This attribute is of type
+#' double with a default of \code{c(1, 1)}.
+#' 
+#' @aliases network network.default network.rcc network.pls network.spls
+#' @param mat numeric matrix of values to be represented.
+#' @param comp atomic or vector of positive integers. The components to
+#' adequately account for the data association. Defaults to \code{comp = 1}.
+#' @param cutoff numeric value between \code{0} and \code{1}. The tuning
+#' threshold for the relevant associations network (see Details).
+#' @param row.names,col.names character vector containing the names of \eqn{X}-
+#' and \eqn{Y}-variables.
+#' @param color.node vector of length two, the colors of the \eqn{X} and
+#' \eqn{Y} nodes (see Details).
+#' @param shape.node character vector of length two, the shape of the \eqn{X}
+#' and \eqn{Y} nodes (see Details).
+#' @param color.edge vector of colors or character string specifying the colors
+#' function to using to color the edges, set to default to
+#' \code{color.GreenRed(100)} but other palettes can be chosen (see Details and
+#' Examples).
+#' @param lty.edge character vector of length two, the line type for the edges
+#' (see Details).
+#' @param lwd.edge vector of length two, the line width of the edges (see
+#' Details).
+#' @param show.edge.labels logical. If \code{TRUE}, plot association values as
+#' edge labels (defaults to \code{FALSE}).
+#' @param show.color.key boolean. If \code{TRUE} a color key should be plotted.
+#' @param symkey boolean indicating whether the color key should be made
+#' symmetric about 0. Defaults to \code{TRUE}.
+#' @param keysize numeric value indicating the size of the color key.
+#' @param keysize.label vector of length 1, indicating the size of the labels
+#' and title of the color key.
+#' @param breaks (optional) either a numeric vector indicating the splitting
+#' points for binning \code{mat} into colors, or a integer number of break
+#' points to be used, in which case the break points will be spaced equally
+#' between \code{min(mat)} and \code{max(mat)}.
+#' @param interactive logical. If \code{TRUE}, a scrollbar is created to change
+#' the cutoff value interactively (defaults to \code{FALSE}). See Details.
+#' @param save should the plot be saved ? If so, argument to be set either to
+#' \code{'jpeg'}, \code{'tiff'}, \code{'png'} or \code{'pdf'}.
+#' @param name.save character string giving the name of the saved file.
+#' @param cex.edge.label the font size for the edge labels.
+#' @param cex.node.name the font size for the node labels.
+#' @param blocks a vector indicating the block variables to display.
+#' @param block.var.names either a list of vector components for variable names
+#' in each block or FALSE for no names. If TRUE, the columns names of the
+#' blocks are used as names.
+#' @param layout.fun a function. It specifies how the vertices will be placed
+#' on the graph. See help(layout) in the igraph package. Defaults to
+#' layout.fruchterman.reingold.
+#' @return \code{network} return a list containing the following components:
+#' \item{M}{the correlation matrix used by \code{network}.} \item{gR}{a
+#' \code{graph} object to save the graph for cytoscape use (requires to load
+#' the \pkg{igraph} package).}
+#' @section Warning: If the number of variables is high, the generation of the
+#' network generation can take some time.
+#' @author Ignacio González, Kim-Anh Lê Cao, AL J Abadi
+#' @seealso \code{\link{plotVar}}, \code{\link{cim}},
+#' \code{\link{color.GreenRed}}, \code{\link{color.jet}},
+#' \code{\link{color.spectral}} and http: //www.mixOmics.org for more details.
+#' @references Mathematical definition: González I., Lê Cao K-A., Davis, M.J.
+#' and Déjean, S. (2012). Visualising associations between paired omics data
+#' sets. J. Data Mining 5:19.
+#' \url{http://www.biodatamining.org/content/5/1/19/abstract}
+#' 
+#' Examples and illustrations:
+#' 
+#' Rohart F, Gautier B, Singh A, Lê Cao K-A. mixOmics: an R package for 'omics
+#' feature selection and multiple data integration. PLoS Comput Biol 13(11):
+#' e1005752
+#' 
+#' Relevance networks:
+#' 
+#' Butte, A. J., Tamayo, P., Slonim, D., Golub, T. R. and Kohane, I. S. (2000).
+#' Discovering functional relationships between RNA expression and
+#' chemotherapeutic susceptibility using relevance networks. \emph{Proceedings
+#' of the National Academy of Sciences of the USA} \bold{97}, 12182-12186.
+#' 
+#' Moriyama, M., Hoshida, Y., Otsuka, M., Nishimura, S., Kato, N., Goto, T.,
+#' Taniguchi, H., Shiratori, Y., Seki, N. and Omata, M. (2003). Relevance
+#' Network between Chemosensitivity and Transcriptome in Human Hepatoma Cells.
+#' \emph{Molecular Cancer Therapeutics} \bold{2}, 199-205.
+#' @keywords multivariate graphs dplot hplot iplot
+#' @export
+#' @example ./examples/network-examples.R
+network <- function(mat,
+                    comp = NULL,
+                    blocks = c(1, 2),
+                    cutoff = NULL,
+                    row.names = TRUE,
+                    col.names = TRUE,
+                    block.var.names = TRUE,
+                    color.node = NULL,
+                    shape.node = NULL,
+                    cex.node.name = 1,
+                    color.edge = color.GreenRed(100),
+                    lty.edge = "solid",
+                    lwd.edge = 1,
+                    show.edge.labels = FALSE,
+                    cex.edge.label = 1,
+                    show.color.key = TRUE,
+                    symkey = TRUE,
+                    keysize = c(1, 1),
+                    keysize.label = 1,
+                    breaks,
+                    interactive = FALSE,
+                    layout.fun = NULL,
+                    save = NULL,
+                    name.save = NULL
+                    
+)
 {
     #-- checking general input parameters --------------------------------------#
     #---------------------------------------------------------------------------#
@@ -220,10 +362,7 @@ name.save = NULL)
         
         #-- end checking --#
         #------------------#
-        
-        
-        
-        
+
         #-- network ----------------------------------------------------------------#
         #---------------------------------------------------------------------------#
         if(any(class.object %in% object.rcc))
