@@ -1,31 +1,3 @@
-#############################################################################################################
-# Author :
-#   Amrit Singh. University of British Columbia, Vancouver, Canada.
-#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Kim-Anh Le Cao, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#
-# created: 04-2015
-# last modified: 25-08-2016
-#
-# Copyright (C) 2015
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
-
-
 # ========================================================================================================
 # functions
 #     1) plotIndiv_diablo; 2 sub-functions; splotMatPlot() and panel.ellipses
@@ -35,13 +7,60 @@
 #
 # ========================================================================================================
 
-
-plot.sgccda = plotDiablo = function(x,
-ncomp = 1,
-legend = TRUE,
-legend.ncol,
-...)
+#' Graphical output for the DIABLO framework
+#' 
+#' Function to visualise correlation between components from different data
+#' sets
+#' 
+#' The function uses a plot.data.frame to plot the component \code{ncomp}
+#' calculated from each data set to visualise whether DIABLO (block.splsda) is
+#' successful at maximising the correlation between each data sets' component.
+#' The lower triangular panel indicated the Pearson's correlation coefficient,
+#' the upper triangular panel the scatter plot.
+#' 
+#' @param x object of class inheriting from \code{"block.splsda"}.
+#' @param ncomp Which component to plot calculated from each data set. Has to
+#' be lower than the minimum of \code{object$ncomp}
+#' @param legend boolean. Whether the legend should be added. Default is TRUE.
+#' @param legend.ncol Number of columns for the legend. Default to
+#' \code{min(5,nlevels(x$Y))}
+#' @param \dots not used
+#' @return none
+#' @author Amrit Singh, Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
+#' @seealso \code{\link{block.splsda}} and http://www.mixOmics.org/mixDIABLO
+#' for more details.
+#' @references Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt
+#' S. and Lê Cao K.A. (2019). DIABLO: an integrative approach for identifying 
+#' key molecular drivers from multi-omics assays.
+#' @keywords regression multivariate
+#' @export
+#' @examples
+#' data('breast.TCGA')
+#' Y = breast.TCGA$data.train$subtype
+#' 
+#' data = list(mrna =  breast.TCGA$data.train$mrna,
+#' mirna =  breast.TCGA$data.train$mirna, prot =  breast.TCGA$data.train$protein)
+#' 
+#' # set number of component per data set
+#' ncomp = 3
+#' # set number of variables to select, per component and per data set (arbitrarily set)
+#' list.keepX = list(mrna = rep(20, 3), mirna = rep(10,3), prot = rep(10,3))
+#' 
+#' # set up a full design where every block is connected
+#' design = matrix(1, ncol = length(data), nrow = length(data),
+#' dimnames = list(names(data), names(data)))
+#' diag(design) =  0
+#' design
+#' 
+#' BC.diablo = block.splsda(X = data, Y = Y, ncomp = ncomp, keepX = list.keepX, design = design)
+#' plotDiablo(BC.diablo, ncomp = 1)
+plotDiablo <- function(x,
+                       ncomp = 1,
+                       legend = TRUE,
+                       legend.ncol,
+                       ...)
 {
+    
     
     object=x
     #need to reorder variates and loadings to put 'Y' in last
@@ -109,6 +128,10 @@ legend.ncol,
     par(opar)
 }
 
+#' @rdname plotDiablo
+#' @method plot sgccda
+#' @export
+plot.sgccda <- plotDiablo
 
 splotMatPlot = function(x, y, datNames, Y, ptype)
 {
