@@ -1,59 +1,42 @@
-#############################################################################################################
-# Author :
-#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Kim-Anh Le Cao, Queensland Facility for Advanced Bioinformatics, University of Queensland, Australia
-#
-# created: 2015
-# last modified: 17-03-2016
-#
-# Copyright (C) 2015
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
-
 # ========================================================================================================
 # selectVar: output the variables that were selected on 'comp', for 'block'
 # ========================================================================================================
 
-# object: a pls, spls, block, mint, rcc, sgcca  object
-# comp: to display the variables selected on dimension 'comp'
-# block: display the selected variables on the data 'block', from object$names$blocks
-
+#' Output of selected variables
+#' 
+#' This function outputs the selected variables on each component for the
+#' sparse versions of the approaches (was also generalised to the non sparse
+#' versions for our internal functions).
+#' 
+#' \code{selectVar} provides the variables selected on a given component. \
+#' \describe{ \item{list("name")}{outputs the name of the selected variables
+#' (provided that the input data have colnames) ranked in decreasing order of
+#' importance.} \item{list("value")}{outputs the loading value for each
+#' selected variable, the loadings are ranked according to their absolute
+#' value.} } These functions are only implemented for the sparse versions.
+#' 
+#' @aliases selectVar selectVar.mixo_pls selectVar.mixo_spls selectVar.pca
+#' selectVar.sgcca selectVar.rgcca select.var
+#' @param object object of class inherited from \code{"pls"}, \code{"spls"},
+#' \code{"plsda"},\code{"splsda"}, \code{"pca"}, \code{"spca"}, \code{"sipca"}.
+#' @param comp integer value indicating the component of interest.
+#' @param block for an object of class \code{"sgcca"}, the block data sets can
+#' be specified as an input vector, for example \code{c(1,2)} for the first two
+#' blocks. Default to NULL (all block data sets)
+#' @param ... other arguments.
+#' @return none
+#' @author Kim-Anh Lê Cao, Florian Rohart, Al J Abadis
+#' @example ./examples/selectVar-examples.R
 selectVar <-
-function(...) UseMethod("selectVar")
+    function(...)
+        UseMethod("selectVar")
 
+## ------------------------------- Methods -------------------------------- ##
 
-get.name.and.value=function(x,comp)
-{
-    if(length(x[,comp,drop=FALSE]) > 1)
-    {
-        name.var = names(sort(abs(x[,comp]), decreasing = TRUE)[1:sum(x[,comp]!=0)])
-    } else {
-        name.var = rownames(x) # when only one number, sort loses the name of the variable
-    }
-    value.var=x[name.var,comp]
-    return(list(name = name.var, value = data.frame(value.var)))
-}
-
-
-# ------------------ for all object  --------------------
-selectVar.mixo_spls  = selectVar.mixo_pls  =
-selectVar.sgcca = selectVar.rgcca = 
-selectVar.pca =
-function(object, comp =1, block=NULL, ...)
+#' @rdname selectVar
+#' @method selectVar mixo_pls
+#' @export
+selectVar.mixo_pls  <- function(object, comp =1, block=NULL, ...)
 {
 
     # check arguments
@@ -126,5 +109,38 @@ function(object, comp =1, block=NULL, ...)
     out$comp=comp
     
     return(out)
+}
+
+#' @rdname selectVar
+#' @method selectVar mixo_spls
+#' @export
+selectVar.mixo_spls <- selectVar.mixo_pls
+
+#' @rdname selectVar
+#' @method selectVar pca
+#' @export
+selectVar.pca <- selectVar.mixo_pls
+
+#' @rdname selectVar
+#' @method selectVar sgcca
+#' @export
+selectVar.sgcca <- selectVar.mixo_pls
+
+#' @rdname selectVar
+#' @method selectVar rgcca
+#' @export
+selectVar.rgcca <- selectVar.mixo_pls
+
+## -------------------------------- helper -------------------------------- ##
+get.name.and.value=function(x,comp)
+{
+    if(length(x[,comp,drop=FALSE]) > 1)
+    {
+        name.var = names(sort(abs(x[,comp]), decreasing = TRUE)[1:sum(x[,comp]!=0)])
+    } else {
+        name.var = rownames(x) # when only one number, sort loses the name of the variable
+    }
+    value.var=x[name.var,comp]
+    return(list(name = name.var, value = data.frame(value.var)))
 }
 
