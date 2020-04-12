@@ -1,55 +1,86 @@
-############################################################################################################
-# Authors:
-#   Francois Bartolo, Institut National des Sciences Appliquees et Institut de Mathematiques, Universite de Toulouse et CNRS (UMR 5219), France
-#   Ignacio Gonzalez, Genopole Toulouse Midi-Pyrenees, France
-#   Kim-Anh Le Cao, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#
-# created: 2015
-# last modified: 24-05-2016
-#
-# Copyright (C) 2015
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
-
 #----------------------------------------------------------------------------------------------------------#
 #-- Includes plotArrow for PLS, sPLS, rCC,  rGCCA, sGCCA, sGCCDA --#
 #----------------------------------------------------------------------------------------------------------#
-
+#' Arrow sample plot
+#' 
+#' Represents samples from multiple coordinates.
+#' 
+#' Graphical of the samples (individuals) is displayed in a superimposed manner
+#' where each sample will be indicated using an arrow. The start of the arrow
+#' indicates the location of the sample in \eqn{X} in one plot, and the tip the
+#' location of the sample in \eqn{Y} in the other plot.
+#' 
+#' For objects of class \code{"GCCA"} and if there are more than 3 blocks, the
+#' start of the arrow indicates the centroid between all data sets for a given
+#' individual and the tips of the arrows the location of that individual in
+#' each block.
+#' 
+#' Short arrows indicate a strong agreement between the matching data sets,
+#' long arrows a disagreement between the matching data sets.
+#' 
+#' @param object object of class inheriting from \pkg{mixOmics}: \code{PLS,
+#' sPLS, rCC, rGCCA, sGCCA, sGCCDA}
+#' @param comp integer vector of length two indicating the components
+#' represented on the horizontal and the vertical axis to project the
+#' individuals.
+#' @param abline should the vertical and horizontal line through the center be
+#' plotted? Default set to \code{FALSE}
+#' @param xlim the ranges to be encompassed by the \eqn{x} axis, if \code{NULL}
+#' they are computed.
+#' @param ylim the ranges to be encompassed by the \eqn{y} axis, if \code{NULL}
+#' they are computed.
+#' @param group factor indicating the group membership for each sample. Coded
+#' as default for the supervised method \code{sGCCDA, sPLSDA}, but needs to be
+#' input for the unsupervised methods \code{PLS, sPLS, rCC, rGCCA, sGCCA}
+#' @param col character (or symbol) color to be used, color vector also
+#' possible.
+#' @param cex numeric character (or symbol) expansion, , color vector also
+#' possible.
+#' @param pch plot character. A character string or a vector of single
+#' characters or integers. See \code{\link{points}} for all alternatives.
+#' @param title set of characters for the title plot.
+#' @param plot.arrows boolean. Whether arrows should be added or not. Default
+#' is \code{TRUE}.
+#' @param legend boolean. Whether the legend should be added. Only for the
+#' supervised methods and if group!=NULL. Default is \code{FALSE}.
+#' @param X.label x axis titles.
+#' @param Y.label y axis titles.
+#' @param ind.names If \code{TRUE}, the row names of the first (or second) data
+#' matrix are used as sample names (see Details). Can be a vector of length the
+#' sample size to display sample names.
+#' @param position.names One of \code{"centroid", "start", "end"}. Define where
+#' sample names are plotted when \code{ind.names=TRUE}. In a multiblock
+#' analysis, centroid and start will display similarly.
+#' @return none
+#' @author Francois Bartolo, Ignacio Gonzalez, Kim-Anh Le Cao, Florian Rohart, Al J Abadi
+#' @seealso \code{\link{arrows}}, \code{\link{text}}, \code{\link{points}} and
+#' http://mixOmics.org/graphics for more details.
+#' @references Lê Cao, K.-A., Martin, P.G.P., Robert-Granie, C. and Besse, P.
+#' (2009). Sparse canonical methods for biological data integration:
+#' application to a cross-platform study. \emph{BMC Bioinformatics}
+#' \bold{10}:34.
+#' @keywords multivariate hplot dplot
+#' @export
+#' @example ./examples/plotArrow-examples.R
 plotArrow <-
-function(object,
-comp = NULL,
-abline = FALSE,
-xlim = NULL,
-ylim = NULL,
-group = NULL,
-col,
-cex,
-pch,
-title = NULL,
-plot.arrows = TRUE,
-legend = FALSE,
-X.label = NULL,
-Y.label = NULL,
-ind.names = FALSE,
-position.names = 'centroid'
-)
-{
-    
+    function(object,
+             comp = NULL,
+             abline = FALSE,
+             xlim = NULL,
+             ylim = NULL,
+             group = NULL,
+             col,
+             cex,
+             pch,
+             title = NULL,
+             plot.arrows = TRUE,
+             legend = FALSE,
+             X.label = NULL,
+             Y.label = NULL,
+             ind.names = FALSE,
+             position.names = 'centroid')
+    {
+        
     class.object = class(object)
     object.pls=c("mixo_pls", "mixo_plsda", "mixo_spls", "smixo_plsda", "rcc")
     object.blocks=c("sgcca", "sgccda", "rgcca")
