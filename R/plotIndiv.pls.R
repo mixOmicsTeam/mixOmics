@@ -1,87 +1,52 @@
-#############################################################################################################
-# Authors:
-#   Ignacio Gonzalez, Genopole Toulouse Midi-Pyrenees, France
-#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Benoit Gautier, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Francois Bartolo, Institut National des Sciences Appliquees et Institut de Mathematiques, Universite de Toulouse et CNRS (UMR 5219), France
-#   Kim-Anh Le Cao, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#
-# created: 16-03-2016
-# last modified: 24-08-2016
-#
-# Copyright (C) 2016
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
-
 #----------------------------------------------------------------------------------------------------------#
 #-- Includes plotIndiv for PLS, sPLS, PLS-DA, SPLS-DA,  --#
 #----------------------------------------------------------------------------------------------------------#
-
-plotIndiv.mixo_pls =
-plotIndiv.mixo_spls = 
-#plotIndiv.plsda =      # because pls too
-#plotIndiv.mlpls =      # because pls too
-#plotIndiv.mlplsda =    # because pls too
-#plotIndiv.splsda =     # because spls too
-#plotIndiv.mlspls =     # because spls too
-#plotIndiv.mlsplsda =   # because spls too
-plotIndiv.rcc = 
-
-function(object, 
-comp  = NULL, 
-rep.space  = NULL, 
-ind.names  = TRUE, 
-group, # factor indicating the group membership for each sample, useful for ellipse plots. Coded as default for the -da methods, but needs to be input for the unsupervised methods (PCA, IPCA...)
-col.per.group, 
-style = "ggplot2", # can choose between graphics, 3d, lattice or ggplot2
-ellipse  = FALSE, #ellipse
-ellipse.level  = 0.95,
-centroid = FALSE,  # centroid
-star = FALSE, # star
-title = NULL, #title
-subtitle, 
-legend = FALSE, 
-X.label  = NULL, 
-Y.label  = NULL, 
-Z.label  = NULL, 
-abline  = FALSE, #abline
-xlim  = NULL, 
-ylim  = NULL, 
-col, 
-cex, 
-pch,
-pch.levels,
-alpha = 0.2, # used in shade3d
-axes.box  = "box", 
-layout = NULL, 
-size.title = rel(2), 
-size.subtitle = rel(1.5), 
-size.xlabel = rel(1), 
-size.ylabel = rel(1), 
-size.axis = rel(0.8), 
-size.legend = rel(1), #size.legend
-size.legend.title = rel(1.1), #size.legend.title
-legend.title = "Legend",
-legend.title.pch = "Legend",
-legend.position = "right",
-point.lwd = 1,
-background = NULL,
-...
-)
+#' @rdname plotIndiv
+#' @method plotIndiv mixo_pls
+#' @export
+plotIndiv.mixo_pls <- 
+    function(object,
+             comp  = NULL,
+             rep.space  = NULL,
+             ind.names  = TRUE,
+             group,
+             col.per.group,
+             style = "ggplot2",
+             ellipse  = FALSE,
+             ellipse.level  = 0.95,
+             centroid = FALSE,
+             star = FALSE,
+             title = NULL,
+             subtitle,
+             legend = FALSE,
+             X.label  = NULL,
+             Y.label  = NULL,
+             Z.label  = NULL,
+             abline  = FALSE,
+             xlim  = NULL,
+             ylim  = NULL,
+             col,
+             cex,
+             pch,
+             pch.levels,
+             alpha = 0.2,
+             axes.box  = "box",
+             layout = NULL,
+             size.title = rel(2),
+             size.subtitle = rel(1.5),
+             size.xlabel = rel(1),
+             size.ylabel = rel(1),
+             size.axis = rel(0.8),
+             size.legend = rel(1),
+             size.legend.title = rel(1.1),
+             legend.title = "Legend",
+             legend.title.pch = "Legend",
+             legend.position = "right",
+             point.lwd = 1,
+             background = NULL,
+             ...
+             
+    )
 {
     plot_parameters = list(size.title = size.title, size.subtitle = size.subtitle, size.xlabel = size.xlabel, size.ylabel = size.ylabel,
     size.axis = size.axis, size.legend = size.legend, size.legend.title = size.legend.title, legend.title = legend.title,
@@ -210,3 +175,11 @@ background = NULL,
     return(invisible(list(df = df, df.ellipse = df.ellipse, graph = res)))
 
 }
+
+#' @method plotIndiv mixo_spls
+#' @export
+plotIndiv.mixo_spls <- plotIndiv.mixo_pls
+
+#' @method plotIndiv rcc
+#' @export
+plotIndiv.rcc <- plotIndiv.mixo_pls

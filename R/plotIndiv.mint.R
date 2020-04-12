@@ -1,88 +1,69 @@
-#############################################################################################################
-# Authors:
-#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Kim-Anh Le Cao, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#
-# created: 16-03-2016
-# last modified: 25-08-2016
-#
-# Copyright (C) 2016
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
-
 #----------------------------------------------------------------------------------------------------------#
 #-- Includes plotIndiv for the MINT module --#
 #----------------------------------------------------------------------------------------------------------#
-
-plotIndiv.mint.pls      =
-plotIndiv.mint.spls     =
-plotIndiv.mint.plsda    =
-plotIndiv.mint.splsda   =
-
-function(object, 
-comp = NULL, 
-study = "global",
-rep.space = NULL,
-group, # factor indicating the group membership for each sample, useful for ellipse plots. Coded as default for the -da methods, but needs to be input for the unsupervised methods (PCA, IPCA...)
-col.per.group, 
-style = "ggplot2", # can choose between graphics, lattice or ggplot2
-ellipse = FALSE,
-ellipse.level = 0.95, 
-centroid = FALSE,
-star = FALSE,
-title = NULL,
-subtitle, 
-legend = FALSE,
-X.label = NULL, 
-Y.label = NULL, 
-abline = FALSE, 
-xlim = NULL, 
-ylim = NULL, 
-col, 
-cex, 
-pch, 
-layout = NULL, 
-size.title = rel(2), 
-size.subtitle = rel(1.5), 
-size.xlabel = rel(1), 
-size.ylabel = rel(1), 
-size.axis = rel(0.8), 
-size.legend = rel(1), 
-size.legend.title = rel(1.1), 
-legend.title = "Legend",
-legend.position = "right",
-point.lwd = 1, 
-...
-)
+#' @rdname plotIndiv
+#' @method plotIndiv mint.pls
+#' @export
+plotIndiv.mint.pls <- 
+    function(object,
+             comp = NULL,
+             study = "global",
+             rep.space = c("X-variate","XY-variate", "Y-variate", "multi"),
+             group,
+             # factor indicating the group membership for each sample, useful for ellipse plots. Coded as default for the -da methods, but needs to be input for the unsupervised methods (PCA, IPCA...)
+             col.per.group,
+             style = "ggplot2",
+             # can choose between graphics, lattice or ggplot2
+             ellipse = FALSE,
+             ellipse.level = 0.95,
+             centroid = FALSE,
+             star = FALSE,
+             title = NULL,
+             subtitle,
+             legend = FALSE,
+             X.label = NULL,
+             Y.label = NULL,
+             abline = FALSE,
+             xlim = NULL,
+             ylim = NULL,
+             col,
+             cex,
+             pch,
+             layout = NULL,
+             size.title = rel(2),
+             size.subtitle = rel(1.5),
+             size.xlabel = rel(1),
+             size.ylabel = rel(1),
+             size.axis = rel(0.8),
+             size.legend = rel(1),
+             size.legend.title = rel(1.1),
+             legend.title = "Legend",
+             legend.position = "right",
+             point.lwd = 1,
+             ...
+             
+    )
 {
-    plot_parameters = list(size.title = size.title, size.subtitle = size.subtitle, size.xlabel = size.xlabel, size.ylabel = size.ylabel, size.axis = size.axis, 
-    size.legend = size.legend, size.legend.title = size.legend.title, legend.title = legend.title,
-    legend.position = legend.position, point.lwd = point.lwd)
+        plot_parameters = list(
+            size.title = size.title,
+            size.subtitle = size.subtitle,
+            size.xlabel = size.xlabel,
+            size.ylabel = size.ylabel,
+            size.axis = size.axis,
+            size.legend = size.legend,
+            size.legend.title = size.legend.title,
+            legend.title = legend.title,
+            legend.position = legend.position,
+            point.lwd = point.lwd
+        )
 
 
     if (any(class(object)%in%c("mint.block.pls", "mint.block.spls", "mint.block.plsda", "mint.block.splsda")))
-    stop("No plotIndiv for the following functions at this stage: mint.block.pls, mint.block.spls, mint.block.plsda, mint.block.splsda.")
+        stop("No plotIndiv for the following functions at this stage: mint.block.pls, mint.block.spls, mint.block.plsda, mint.block.splsda.")
     
 
     #-- rep.space
-    if (is.null(rep.space))#"splsda", "plsda", "mlsplsda")))
-    rep.space = "X-variate"
-
-    rep.space  =  match.arg(rep.space, c("XY-variate", "X-variate", "Y-variate", "multi"))
+    rep.space <- match.arg(rep.space)
 
     ind.names = FALSE
     # --------------------------------------------------------------------------------------
@@ -92,18 +73,18 @@ point.lwd = 1,
     # check study
     #study needs to be either: from levels(object$study), numbers from 1:nlevels(study) or "global"
     if (any(!study%in%c(levels(object$study), "global" , "all.partial")))
-    stop("'study' must be one of 'object$study', 'global' or 'all.partial', see help file.")
+        stop("'study' must be one of 'object$study', 'global' or 'all.partial', see help file.")
     
     if (length(study)!=length(unique(study)))
-    stop("Duplicate in 'study' not allowed")
+        stop("Duplicate in 'study' not allowed")
     
     if (any(study != "global"))
     {
         if (ellipse == TRUE)
-        stop("'ellipse' must be FALSE when study is different from 'global'")
+            stop("'ellipse' must be FALSE when study is different from 'global'")
 
         if (star == TRUE)
-        stop("'star' must be FALSE when study is different from 'global'")
+            stop("'star' must be FALSE when study is different from 'global'")
     }
 
 
@@ -137,7 +118,7 @@ point.lwd = 1,
     if (!missing(subtitle))
     {
         if (length(subtitle)!=length(study.init)| length(subtitle)!=length(unique(subtitle)))
-        stop("'subtitle' indicates the subtitle of the plot for each study and it needs to be the same length as 'study' (", length(study.init),") and duplicate are not allowed. 'study' includes: ", paste(study.init, collapse = ", "))
+            stop("'subtitle' indicates the subtitle of the plot for each study and it needs to be the same length as 'study' (", length(study.init),") and duplicate are not allowed. 'study' includes: ", paste(study.init, collapse = ", "))
     }
     
     df.final = data.frame()
@@ -206,10 +187,10 @@ point.lwd = 1,
             blocks = c("X", "Y")
             
             if (rep.space == "X-variate")
-            blocks = "X"
+                blocks = "X"
             
             if (rep.space == "Y-variate")
-            blocks = "Y"
+                blocks = "Y"
             
             #extract variates for each "blocks" for "study"
             object$variates = lapply(object$variates.partial, function(x){x[[study]]})[names(object$variates) %in% blocks]
@@ -236,10 +217,10 @@ point.lwd = 1,
             }
             
             if (rep.space == "X-variate")
-            blocks = "X"
+                blocks = "X"
             
             if (rep.space == "Y-variate")
-            blocks = "Y"
+                blocks = "Y"
             
 
             #extract variates for each "blocks" for "study"
@@ -273,12 +254,27 @@ point.lwd = 1,
         #-- check inputs
         # check style as we do not do 3d at the moment:
         if (!style %in% c("ggplot2", "lattice", "graphics"))
-        stop("'style' must be one of 'ggplot2', 'lattice' or 'graphics'.", call. = FALSE)
+            stop("'style' must be one of 'ggplot2', 'lattice' or 'graphics'.",
+                 call. = FALSE)
         
-        check = check.input.plotIndiv(object = object, comp = comp, blocks = blocks, ind.names = ind.names, 
-        style = style, ellipse = ellipse, ellipse.level = ellipse.level, centroid = centroid, 
-        star = star, legend = legend, X.label = X.label, Y.label = Y.label, abline = abline, 
-        xlim = xlim, ylim = ylim, plot_parameters = plot_parameters)
+        check = check.input.plotIndiv(
+            object = object,
+            comp = comp,
+            blocks = blocks,
+            ind.names = ind.names,
+            style = style,
+            ellipse = ellipse,
+            ellipse.level = ellipse.level,
+            centroid = centroid,
+            star = star,
+            legend = legend,
+            X.label = X.label,
+            Y.label = Y.label,
+            abline = abline,
+            xlim = xlim,
+            ylim = ylim,
+            plot_parameters = plot_parameters
+        )
         #-- retrieve some outputs from the checks
         comp = check$comp
         xlim = check$xlim
@@ -288,8 +284,17 @@ point.lwd = 1,
         
 
         #-- get the variates
-        variate = internal_getVariatesAndLabels(object, comp, blocks.init = blocks.init, blocks = blocks, rep.space = rep.space,
-        style = style, X.label = X.label, Y.label = Y.label, Z.label = NULL)
+        variate = internal_getVariatesAndLabels(
+            object,
+            comp,
+            blocks.init = blocks.init,
+            blocks = blocks,
+            rep.space = rep.space,
+            style = style,
+            X.label = X.label,
+            Y.label = Y.label,
+            Z.label = NULL
+        )
         #-- retrieve outputs
         x = variate$x
         y = variate$y
@@ -300,10 +305,31 @@ point.lwd = 1,
         n = nrow(object$X)
 
         # create data frame df that contains (almost) all the ploting information
-        out = shape.input.plotIndiv(object = object, n = n, blocks = blocks, x = x, y = y, z = z, ind.names = ind.names, group = group,
-        col.per.group = col.per.group, style = style, study = study, ellipse = ellipse, ellipse.level = ellipse.level,
-        centroid = centroid, star = star, title = title, xlim = xlim, ylim = ylim, 
-        col = col, cex = cex, pch = pch, display.names = display.names, plot_parameters = plot_parameters)
+        out = shape.input.plotIndiv(
+            object = object,
+            n = n,
+            blocks = blocks,
+            x = x,
+            y = y,
+            z = z,
+            ind.names = ind.names,
+            group = group,
+            col.per.group = col.per.group,
+            style = style,
+            study = study,
+            ellipse = ellipse,
+            ellipse.level = ellipse.level,
+            centroid = centroid,
+            star = star,
+            title = title,
+            xlim = xlim,
+            ylim = ylim,
+            col = col,
+            cex = cex,
+            pch = pch,
+            display.names = display.names,
+            plot_parameters = plot_parameters
+        )
         #-- retrieve outputs
         df = out$df
         df.ellipse = out$df.ellipse
@@ -322,7 +348,7 @@ point.lwd = 1,
     # add study information on df.final, for pch legend
     study.levels = study.init[which(!study.init == "global")]
     if (any(study.init == "global"))
-    study.levels = levels(object$study)
+        study.levels = levels(object$study)
     
     
     # change the levels of df.final$Block to "subtitle"
@@ -330,8 +356,8 @@ point.lwd = 1,
     {
         df.final$Block = factor(df.final$Block, labels = subtitle)
 
-        if(ellipse)
-        df.ellipse$Block = factor(df.ellipse$Block, labels = subtitle)
+        if (ellipse)
+            df.ellipse$Block = factor(df.ellipse$Block, labels = subtitle)
     }
     df = df.final
         
@@ -339,14 +365,44 @@ point.lwd = 1,
     style = "ggplot2-MINT"
         
     #call plot module (ggplot2, lattice, graphics, 3d)
-    res = internal_graphicModule(df = df, centroid = centroid, col.per.group = col.per.group, title = title,
-    X.label = X.label, Y.label = Y.label, xlim = xlim, ylim = ylim, class.object = class(object),
-    display.names = display.names, legend = legend, abline = abline,
-    star = star, ellipse = ellipse, df.ellipse = df.ellipse, style = style, layout = layout,
-    #missing.col = missing.col,
-    #for ggplot2-MINT
-    study.levels = study.levels, plot_parameters = plot_parameters
+    res = internal_graphicModule(
+        df = df,
+        centroid = centroid,
+        col.per.group = col.per.group,
+        title = title,
+        X.label = X.label,
+        Y.label = Y.label,
+        xlim = xlim,
+        ylim = ylim,
+        class.object = class(object),
+        display.names = display.names,
+        legend = legend,
+        abline = abline,
+        star = star,
+        ellipse = ellipse,
+        df.ellipse = df.ellipse,
+        style = style,
+        layout = layout,
+        #missing.col = missing.col,
+        #for ggplot2-MINT
+        study.levels = study.levels,
+        plot_parameters = plot_parameters
     )
-
+    
     return(invisible(list(df = df, graph = res)))
 }
+
+#' @rdname plotIndiv
+#' @method plotIndiv mint.spls
+#' @export
+plotIndiv.mint.spls <- plotIndiv.mint.pls
+
+#' @rdname plotIndiv
+#' @method plotIndiv mint.plsda
+#' @export
+plotIndiv.mint.plsda <- plotIndiv.mint.pls
+
+#' @rdname plotIndiv
+#' @method plotIndiv mint.splsda
+#' @export
+plotIndiv.mint.splsda <- plotIndiv.mint.pls

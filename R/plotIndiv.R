@@ -1,62 +1,184 @@
-#############################################################################################################
-# Authors:
-#   Ignacio Gonzalez, Genopole Toulouse Midi-Pyrenees, France
-#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Benoit Gautier, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Francois Bartolo, Institut National des Sciences Appliquees et Institut de Mathematiques, Universite de Toulouse et CNRS (UMR 5219), France
-#   Kim-Anh Le Cao, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-
-#
-# created: 2009
-# last modified: 24-08-2016
-#
-# Copyright (C) 2009
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
-
-plotIndiv  =
-function(object, ...) UseMethod("plotIndiv")
+#' Plot of Individuals (Experimental Units)
+#' 
+#' This function provides scatter plots for individuals (experimental units)
+#' representation in (sparse)(I)PCA, (regularized)CCA, (sparse)PLS(DA) and
+#' (sparse)(R)GCCA(DA).
+#' 
+#' \code{plotIndiv} method makes scatter plot for individuals representation
+#' depending on the subspace of projection. Each point corresponds to an
+#' individual.
+#' 
+#' If \code{ind.names=TRUE} and row names is \code{NULL}, then
+#' \code{ind.names=1:n}, where \code{n} is the number of individuals. Also, if
+#' \code{pch} is an input, then \code{ind.names} is set to FALSE as we do not
+#' show both names and shapes.
+#' 
+#' \code{plotIndiv} can have a two layers legend. This is especially convenient
+#' when you have two grouping factors, such as a gender effect and a study
+#' effect, and you want to highlight both simulatenously on the graphical
+#' output. A first layer is coded by the \code{group} factor, the second by the
+#' \code{pch} argument. When \code{pch} is missing, a single layer legend is
+#' shown. If the \code{group} factor is missing, the \code{col} argument is
+#' used to create the grouping factor \code{group}. When a second grouping
+#' factor is needed and added via \code{pch}, \code{pch} needs to be a vector
+#' of length the number of samples. In the case where \code{pch} is a vector or
+#' length the number of groups, then we consider that the user wants a
+#' different \code{pch} for each level of \code{group}. This leads to a single
+#' layer legend and we merge \code{col} and \code{pch}. In the similar case
+#' where \code{pch} is a single value, then this value is used to represent all
+#' samples. See examples below for object of class plsda and splsda.
+#' 
+#' In the specific case of a single `omics supervised model
+#' (\code{\link{plsda}}, \code{\link{splsda}}), users can overlay prediction
+#' results to sample plots in order to visualise the prediction areas of each
+#' class, via the \code{background} input parameter. Note that this
+#' functionality is only available for models with less than 2 components as
+#' the surfaces obtained for higher order components cannot be projected onto a
+#' 2D representation in a meaningful way. For more details, see
+#' \code{\link{background.predict}}
+#' 
+#' For block analyses, \code{block = 'consensus'} simply averages the
+#' components from all blocks into a single one, and
+#' \code{block='weighted.consensus'} uses the average of components weighted by
+#' correlation of each component in each dataset with the corresponding
+#' component from the dummy from of the \code{Y} matrix.
+#' 
+#' For customized plots (i.e. adding points, text), use the style = 'graphics'
+#' (default is ggplot2).
+#' 
+#' Note: the ellipse options were borrowed from the \pkg{ellipse}.
+#' 
+#' @param object object of class inherited from any \pkg{mixOmics}: \code{PLS,
+#' sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA}
+#' @param comp integer vector of length two (or three to 3d). The components
+#' that will be used on the horizontal and the vertical axis respectively to
+#' project the individuals.
+#' @param rep.space For objects of class \code{"pca", "plsda", "plsda"} default
+#' is \code{"X-variate"}.  For the objects of class \code{"pls", "rcc"} default
+#' is a panel plot representing each data subspace. For objects of class
+#' \code{"rgcca"} and \code{"sgcca"}, numerical value(s) indicating the block
+#' data set to represent needs to be specified.
+#' @param blocks integer value or name(s) of block(s) to be plotted using the
+#' GCCA module. "consensus" and "weighted.consensus" will create consensus and
+#' weighted consensus plots, respectively. See examples.
+#' @param study Indicates which study-specific outputs to plot. A character
+#' vector containing some levels of \code{object$study}, "all.partial" to plot
+#' all studies or "global" is expected. Default to "global".
+#' @param ind.names either a character vector of names for the individuals to
+#' be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
+#' the first (or second) data matrix is used as names (see Details).
+#' @param group factor indicating the group membership for each sample, useful
+#' for ellipse plots. Coded as default for the supervised methods \code{PLS-DA,
+#' SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
+#' \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}
+#' @param col.per.group character (or symbol) color to be used when 'group' is
+#' defined. Vector of the same length than the number of groups.
+#' @param style argument to be set to either \code{'graphics'},
+#' \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
+#' Default set to 'ggplot2'. See details. \code{3d} is not available for MINT
+#' objects.
+#' @param ellipse boolean indicating if ellipse plots should be plotted. In the
+#' non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
+#' sGCCA} ellipse plot is only be plotted if the argument \code{group} is
+#' provided. In the \code{PLS-DA, SPLS-DA,sGCCDA} supervised object, by default
+#' the ellipse will be plotted accoding to the outcome \code{Y}.
+#' @param ellipse.level Numerical value indicating the confidence level of
+#' ellipse being plotted when \code{ellipse =TRUE} (i.e. the size of the
+#' ellipse). The default is set to 0.95, for a 95\% region.
+#' @param centroid boolean indicating whether centroid points should be
+#' plotted. In the non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS,
+#' sPLS, rCC, rGCCA, sGCCA} the centroid will only be plotted if the argument
+#' \code{group} is provided. The centroid will be calculated based on the group
+#' categories. In the supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the
+#' centroid will be calculated according to the outcome \code{Y}.
+#' @param star boolean indicating whether a star plot should be plotted, with
+#' arrows starting from the centroid (see argument \code{centroid}, and ending
+#' for each sample belonging to each group or outcome. In the non supervised
+#' objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA} star
+#' plot is only be plotted if the argument \code{group} is provided. In the
+#' supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the star plot is plotted
+#' according to the outcome \code{Y}.
+#' @param title set of characters indicating the title plot.
+#' @param subtitle subtitle for each plot, only used when several \code{block}
+#' or \code{study} are plotted.
+#' @param legend boolean. Whether the legend should be added. Default is FALSE.
+#' @param X.label x axis titles.
+#' @param Y.label y axis titles.
+#' @param Z.label z axis titles (when style = '3d').
+#' @param abline should the vertical and horizontal line through the center be
+#' plotted? Default set to \code{FALSE}
+#' @param xlim,ylim numeric list of vectors of length 2 and length
+#' =length(blocks), giving the x and y coordinates ranges.
+#' @param col character (or symbol) color to be used, possibly vector.
+#' @param cex numeric character (or symbol) expansion, possibly vector.
+#' @param pch plot character. A character string or a vector of single
+#' characters or integers. See \code{\link{points}} for all alternatives.
+#' @param pch.levels Only used when \code{pch} is different from \code{col} or
+#' \code{col.per.group}, ie when \code{pch} creates a second factor. Only used
+#' for the legend.
+#' @param alpha Semi-transparent colors (0 < \code{'alpha'} < 1)
+#' @param axes.box for style '3d', argument to be set to either \code{'axes'},
+#' \code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.
+#' @param layout layout parameter passed to mfrow. Only used when \code{study}
+#' is not "global"
+#' @param size.title size of the title
+#' @param size.subtitle size of the subtitle
+#' @param size.xlabel size of xlabel
+#' @param size.ylabel size of ylabel
+#' @param size.axis size of the axis
+#' @param size.legend size of the legend
+#' @param size.legend.title size of the legend title
+#' @param legend.title title of the legend
+#' @param legend.title.pch title of the second legend created by \code{pch}, if
+#' any.
+#' @param legend.position position of the legend, one of "bottom", "left",
+#' "top" and "right".
+#' @param point.lwd \code{lwd} of the points, used when \code{ind.names =
+#' FALSE}
+#' @param background color the background by the predicted class, see
+#' \code{\link{background.predict}}
+#' @param ... external arguments or type par can be added with \code{style =
+#' 'graphics'}
+#' @return none
+#' @author Ignacio González, Benoit Gautier, Francois Bartolo, Florian Rohart,
+#' Kim-Anh Lê Cao, Al J Abadi
+#' @seealso \code{\link{text}}, \code{\link{background.predict}},
+#' \code{\link{points}} and http://mixOmics.org/graphics for more details.
+#' @keywords multivariate hplot dplot
+#' @example ./examples/plotIndiv-examples.R 
+plotIndiv  <- function(object, ...) {
+  UseMethod("plotIndiv")
+}
 
 
 # --------------------------------------------------------------------------------------
 # Internal helpers functions to run "plotIndiv" functions
 # --------------------------------------------------------------------------------------
 
-
-check.input.plotIndiv = function(object,
-comp = NULL,
-blocks = NULL, # to choose which block data to plot, when using GCCA module
-ind.names = TRUE,
-style = "ggplot2", # can choose between graphics, 3d, lattice or ggplot2
-#study = "global",
-ellipse = FALSE,
-ellipse.level = 0.95,
-centroid = FALSE,
-star = FALSE,
-legend = FALSE,
-X.label = NULL,
-Y.label = NULL,
-Z.label = NULL,
-abline = FALSE,
-xlim = NULL,
-ylim = NULL,
-alpha = 0.2,
-axes.box = "box",
-plot_parameters)
+check.input.plotIndiv <-
+  function(object,
+           comp = NULL,
+           blocks = NULL,
+           # to choose which block data to plot, when using GCCA module
+           ind.names = TRUE,
+           style = "ggplot2",
+           # can choose between graphics, 3d, lattice or ggplot2
+           #study = "global",
+           ellipse = FALSE,
+           ellipse.level = 0.95,
+           centroid = FALSE,
+           star = FALSE,
+           legend = FALSE,
+           X.label = NULL,
+           Y.label = NULL,
+           Z.label = NULL,
+           abline = FALSE,
+           xlim = NULL,
+           ylim = NULL,
+           alpha = 0.2,
+           axes.box = "box",
+           plot_parameters
+)
 {
     
     
@@ -282,7 +404,17 @@ plot_parameters)
 }
 
 
-internal_getVariatesAndLabels = function(object, comp, blocks.init, blocks, rep.space, style, X.label, Y.label, Z.label)
+internal_getVariatesAndLabels <- 
+  function(object,
+           comp,
+           blocks.init,
+           blocks,
+           rep.space,
+           style,
+           X.label,
+           Y.label,
+           Z.label
+)
 {
     
     class.object = class(object)
@@ -424,28 +556,36 @@ internal_getVariatesAndLabels = function(object, comp, blocks.init, blocks, rep.
 
 
 
-shape.input.plotIndiv = function(object,
-n, #number of total samples
-blocks = NULL, # to choose which block data to plot, when using GCCA module
-x, y, z,
-ind.names = TRUE,
-group, # factor indicating the group membership for each sample, useful for ellipse plots. Coded as default for the -da methods, but needs to be input for the unsupervised methods (PCA, IPCA...)
-col.per.group,
-style = "ggplot2", # can choose between graphics, 3d, lattice or ggplot2
-study = "global",
-ellipse = FALSE,
-ellipse.level = 0.95,
-centroid = FALSE,
-star = FALSE,
-title = NULL,
-xlim = NULL,
-ylim = NULL,
-col,
-cex,
-pch,
-pch.levels,
-display.names,
-plot_parameters)
+shape.input.plotIndiv <- 
+  function(object,
+           n,
+           #number of total samples
+           blocks = NULL,
+           # to choose which block data to plot, when using GCCA module
+           x,
+           y,
+           z,
+           ind.names = TRUE,
+           group,
+           # factor indicating the group membership for each sample, useful for ellipse plots. Coded as default for the -da methods, but needs to be input for the unsupervised methods (PCA, IPCA...)
+           col.per.group,
+           style = "ggplot2",
+           # can choose between graphics, 3d, lattice or ggplot2
+           study = "global",
+           ellipse = FALSE,
+           ellipse.level = 0.95,
+           centroid = FALSE,
+           star = FALSE,
+           title = NULL,
+           xlim = NULL,
+           ylim = NULL,
+           col,
+           cex,
+           pch,
+           pch.levels,
+           display.names,
+           plot_parameters
+)
 {
     
     class.object = class(object)
@@ -916,7 +1056,7 @@ plot_parameters)
 # --------------------------------------------------------------------------------------
 
 #-- Function to display an error message (used for the parameters var.names, cex, col, pch and font)
-stop.message = function(argument, data){
+stop.message <- function(argument, data){
     if (length(data) == 1) {
         count.data = sapply(data, length)
     } else {
