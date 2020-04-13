@@ -1,12 +1,8 @@
 
 [![](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
 [![](https://img.shields.io/badge/bioc%20release-6.10.9-green.svg)](https://www.bioconductor.org/packages/mixOmics)
-[![](https://img.shields.io/badge/latest%20stable-6.11.11-blue.svg)](https://github.com/mixOmicsTeam/mixOmics#latest-github-version)
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![](https://img.shields.io/badge/latest%20devel-6.11.22-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version)
-[![Build
-Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=devel)](https://travis-ci.org/mixOmicsTeam/mixOmics)
 [![](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
 [![](https://img.shields.io/badge/download-1747/month-green.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![download](http://www.bioconductor.org/shields/downloads/release/mixOmics.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
@@ -59,8 +55,8 @@ devtools::install_github("mixOmicsTeam/mixOmics")
 Check after installation that the following code does not throw any
 error (especially Mac users - refer to [installation
 instructions](#installation)) and that the welcome message confirms you
-have installed
-[![](https://img.shields.io/badge/latest%20stable-6.11.11-blue.svg)](https://github.com/mixOmicsTeam/mixOmics#latest-github-version):
+have installed [the latest
+version](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION#L4):
 
 ``` r
 library(mixOmics) 
@@ -69,8 +65,8 @@ library(mixOmics)
 
 ##### development version
 
-You can also install the development version
-([![](https://img.shields.io/badge/latest%20devel-6.11.22-orange.svg)](https://github.com/mixOmicsTeam/mixOmics#development-version))
+You can also install the [development
+version](https://github.com/mixOmicsTeam/mixOmics/blob/devel/DESCRIPTION#L4)
 for new features yet to be widely tested:
 
 ``` r
