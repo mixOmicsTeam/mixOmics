@@ -27,40 +27,16 @@
 #' \code{("invariant")} and the classical PLS algorithm \code{("classic")} (see
 #' References and more details in \code{?pls}).
 #' 
-#' @param X A list of data sets (called 'blocks') measured on the same samples.
+#' @inheritParams block.pls
+#' @inheritParams mint.pls
+#' @param X A named list of data sets (called 'blocks') measured on the same samples.
 #' Data in the list should be arranged in samples x variables, with samples
 #' order matching in all data sets.
 #' @param Y Matrix or vector response for a multivariate regression framework.
-#' Data should be continuous variables (see \code{mint.block.plsda} for
-#' supervised classification and factor reponse)
+#' Data should be continuous variables (see \code{?mint.block.plsda} for
+#' supervised classification and factor response).
 #' @param indY To be supplied if Y is missing, indicates the position of the
 #' matrix / vector response in the list \code{X}
-#' @param study factor indicating the membership of each sample to each of the
-#' studies being combined
-#' @param ncomp the number of components to include in the model. Default to 2.
-#' @param design numeric matrix of size (number of blocks) x (number of blocks)
-#' with only 0 or 1 values. A value of 1 (0) indicates a relationship (no
-#' relationship) between the blocks to be modelled. If \code{Y} is provided
-#' instead of \code{indY}, the \code{design} matrix is changed to include
-#' relationships to \code{Y}.
-#' @param scheme Either "horst", "factorial" or "centroid". Default =
-#' \code{horst}, see reference.
-#' @param mode character string. What type of algorithm to use, (partially)
-#' matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
-#' or \code{"classic"}. See Details.
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
-#' means and unit variances (default: TRUE)
-#' @param init Mode of initialization use in the algorithm, either by Singular
-#' Value Decompostion of the product of each block of X with Y ("svd") or each
-#' block independently ("svd.single"). Default = \code{svd.single}.
-#' @param tol Convergence stopping value.
-#' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
-#' function (should be set to TRUE in particular for data with many zero
-#' values). Setting this argument to FALSE (when appropriate) will speed up the
-#' computations. Default value is FALSE
-#' @param all.outputs boolean. Computation can be faster when some specific
-#' (and non-essential) outputs are not calculated. Default = \code{TRUE}.
 #' @return \code{mint.block.pls} returns an object of class \code{"mint.pls",
 #' "block.pls"}, a list that contains the following components:
 #' 

@@ -36,28 +36,9 @@
 #' 
 #' Useful graphical outputs are available, e.g. \code{\link{plotIndiv}},
 #' \code{\link{plotLoadings}}, \code{\link{plotVar}}.
-#' 
-#' @param X numeric matrix of predictors combining multiple independent studies
-#' on the same set of predictors. \code{NA}s are allowed.
-#' @param Y A factor or a class vector indicating the discrete outcome of each
-#' sample.
-#' @param ncomp Number of components to include in the model (see Details).
-#' Default to 2
-#' @param mode character string. What type of algorithm to use, (partially)
-#' matching one of \code{"regression"} or \code{"canonical"}. See Details.
-#' @param study factor indicating the membership of each sample to each of the
-#' studies being combined
-#' @param keepX numeric vector indicating the number of variables to select in
-#' \code{X} on each component. By default all variables are kept in the model.
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
-#' means and unit variances. Default = \code{TRUE}.
-#' @param tol Convergence stopping value.
-#' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
-#' function (should be set to TRUE in particular for data with many zero
-#' values). Default = \code{FALSE}.
-#' @param all.outputs boolean. Computation can be faster when some specific
-#' (and non-essential) outputs are not calculated. Default = \code{TRUE}.
+#'
+#' @inheritParams mint.plsda 
+#' @inheritParams mint.spls
 #' @return \code{mint.splsda} returns an object of class \code{"mint.splsda",
 #' "splsda"}, a list that contains the following components:
 #' 

@@ -41,44 +41,15 @@
 #' selection on \code{Y} is performed by specifying the input parameter
 #' directly in \code{keepX} (no \code{keepY} is needed).
 #' 
-#' @param X A list of data sets (called 'blocks') measured on the same samples.
-#' Data in the list should be arranged in matrices, samples x variables, with
-#' samples order matching in all data sets.
+#' @inheritParams block.pls
 #' @param Y Matrix response for a multivariate regression framework. Data
-#' should be continuous variables (see block.splsda for supervised
-#' classification and factor reponse)
-#' @param indY To supply if Y is missing, indicates the position of the matrix
-#' response in the list \code{X}
-#' @param ncomp the number of components to include in the model. Default to 2.
-#' Applies to all blocks.
-#' @param keepX A list of same length as X.  Each entry is the number of
+#' should be continuous variables (see \code{?block.splsda} for supervised
+#' classification and factor response).
+#' @param keepX A named list of same length as X. Each entry is the number of
 #' variables to select in each of the blocks of X for each component. By
 #' default all variables are kept in the model.
-#' @param keepY Only if Y is provided. Each entry is the number of variables to
+#' @param keepY Only if Y is provided (and not \code{indY}). Each entry is the number of variables to
 #' select in each of the blocks of Y for each component.
-#' @param design numeric matrix of size (number of blocks in X) x (number of
-#' blocks in X) with values between 0 and 1. Each value indicates the strenght
-#' of the relationship to be modelled between two blocks; a value of 0
-#' indicates no relationship, 1 is the maximum value. If \code{Y} is provided
-#' instead of \code{indY}, the \code{design} matrix is changed to include
-#' relationships to \code{Y}.
-#' @param scheme Either "horst", "factorial" or "centroid". Default =
-#' \code{horst}, see reference.
-#' @param mode character string. What type of algorithm to use, (partially)
-#' matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
-#' or \code{"classic"}. See Details. Default = \code{regression}.
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
-#' means and unit variances. Default = \code{TRUE}.
-#' @param init Mode of initialization use in the algorithm, either by Singular
-#' Value Decompostion of the product of each block of X with Y ("svd") or each
-#' block independently ("svd.single"). Default = \code{svd.single}.
-#' @param tol Convergence stopping value.
-#' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
-#' function (should be set to TRUE in particular for data with many zero
-#' values). Default = \code{FALSE}.
-#' @param all.outputs boolean. Computation can be faster when some specific
-#' (and non-essential) outputs are not calculated. Default = \code{TRUE}.
 #' @return \code{block.spls} returns an object of class \code{"block.spls"}, a
 #' list that contains the following components:
 #' 

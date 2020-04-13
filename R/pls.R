@@ -49,30 +49,30 @@
 #' internal pre-processing step, through \code{\link{logratio.transfo}} and
 #' \code{\link{withinVariation}} respectively.
 #' 
-#' @param X numeric matrix of predictors. \code{NA}s are allowed.
-#' @param Y numeric vector or matrix of responses (for multi-response models).
+#' @param X Numeric matrix of predictors. \code{NA}s are allowed.
+#' @param Y Numeric vector or matrix of responses (for multi-response models).
 #' \code{NA}s are allowed.
-#' @param ncomp the number of components to include in the model. Default to 2.
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
+#' @param ncomp Integer, the number of components to include in the model. Default to 2.
+#' @param scale Logical. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
-#' @param mode character string. What type of algorithm to use, (partially)
+#' @param mode Character string. What type of algorithm to use, (partially)
 #' matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 #' or \code{"classic"}. See Details.
-#' @param tol Convergence stopping value.
-#' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
+#' @param tol Numeric, convergence stopping value.
+#' @param max.iter Integer, the maximum number of iterations.
+#' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
 #' function (should be set to TRUE in particular for data with many zero
 #' values). Setting this argument to FALSE (when appropriate) will speed up the
 #' computations. Default value is FALSE.
-#' @param logratio one of ('none','CLR') specifies the log ratio transformation
+#' @param logratio Character, one of ('none','CLR') specifies the log ratio transformation
 #' to deal with compositional values that may arise from specific normalisation
 #' in sequencing data. Default to 'none'.
-#' @param multilevel Design matrix for repeated measurement analysis, where
-#' multlevel decomposition is required. For a one factor decomposition, the
+#' @param multilevel Numeric, design matrix for repeated measurement analysis, where
+#' multilevel decomposition is required. For a one factor decomposition, the
 #' repeated measures on each individual, i.e. the individuals ID is input as
 #' the first column. For a 2 level factor decomposition then 2nd AND 3rd
 #' columns indicate those factors. See examples in \code{?spls}).
-#' @param all.outputs Boolean. Computation can be faster when some specific
+#' @param all.outputs Logical. Computation can be faster when some specific
 #' (and non-essential) outputs are not calculated. Default = \code{TRUE}.
 #' @return \code{pls} returns an object of class \code{"pls"}, a list that
 #' contains the following components:

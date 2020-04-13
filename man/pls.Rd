@@ -19,40 +19,40 @@ pls(
 )
 }
 \arguments{
-\item{X}{numeric matrix of predictors. \code{NA}s are allowed.}
+\item{X}{Numeric matrix of predictors. \code{NA}s are allowed.}
 
-\item{Y}{numeric vector or matrix of responses (for multi-response models).
+\item{Y}{Numeric vector or matrix of responses (for multi-response models).
 \code{NA}s are allowed.}
 
-\item{ncomp}{the number of components to include in the model. Default to 2.}
+\item{ncomp}{Integer, the number of components to include in the model. Default to 2.}
 
-\item{scale}{boleean. If scale = TRUE, each block is standardized to zero
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
-\item{mode}{character string. What type of algorithm to use, (partially)
+\item{mode}{Character string. What type of algorithm to use, (partially)
 matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 or \code{"classic"}. See Details.}
 
-\item{tol}{Convergence stopping value.}
+\item{tol}{Numeric, convergence stopping value.}
 
-\item{max.iter}{integer, the maximum number of iterations.}
+\item{max.iter}{Integer, the maximum number of iterations.}
 
-\item{near.zero.var}{boolean, see the internal \code{\link{nearZeroVar}}
+\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Setting this argument to FALSE (when appropriate) will speed up the
 computations. Default value is FALSE.}
 
-\item{logratio}{one of ('none','CLR') specifies the log ratio transformation
+\item{logratio}{Character, one of ('none','CLR') specifies the log ratio transformation
 to deal with compositional values that may arise from specific normalisation
 in sequencing data. Default to 'none'.}
 
-\item{multilevel}{Design matrix for repeated measurement analysis, where
-multlevel decomposition is required. For a one factor decomposition, the
+\item{multilevel}{Numeric, design matrix for repeated measurement analysis, where
+multilevel decomposition is required. For a one factor decomposition, the
 repeated measures on each individual, i.e. the individuals ID is input as
 the first column. For a 2 level factor decomposition then 2nd AND 3rd
 columns indicate those factors. See examples in \code{?spls}).}
 
-\item{all.outputs}{Boolean. Computation can be faster when some specific
+\item{all.outputs}{Logical. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
 }
 \value{

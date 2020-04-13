@@ -37,30 +37,14 @@
 #' Useful graphical outputs are available, e.g. \code{\link{plotIndiv}},
 #' \code{\link{plotLoadings}}, \code{\link{plotVar}}.
 #' 
-#' @param X numeric matrix of predictors combining multiple independent studies
-#' on the same set of predictors. \code{NA}s are allowed.
+#' @inheritParams mint.pls
 #' @param Y Matrix or vector response for a multivariate regression framework.
 #' Data should be continuous variables (see \code{mint.splsda} for supervised
-#' classification and factor reponse)
-#' @param ncomp Number of components to include in the model. Default to 2
-#' @param mode character string. What type of algorithm to use, (partially)
-#' matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
-#' or \code{"classic"}. See Details.
-#' @param study grouping factor indicating which samples are from the same
-#' study
+#' classification and factor response)
 #' @param keepX numeric vector indicating the number of variables to select in
 #' \code{X} on each component. By default all variables are kept in the model.
 #' @param keepY numeric vector indicating the number of variables to select in
 #' \code{Y} on each component. By default all variables are kept in the model.
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
-#' means and unit variances. Default = \code{TRUE}.
-#' @param tol Convergence stopping value.
-#' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
-#' function (should be set to TRUE in particular for data with many zero
-#' values). Default = \code{FALSE}.
-#' @param all.outputs boolean. Computation can be faster when some specific
-#' (and non-essential) outputs are not calculated. Default = \code{TRUE}.
 #' @return \code{mint.spls} returns an object of class
 #' \code{"mint.spls","spls"}, a list that contains the following components:
 #' 
