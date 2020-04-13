@@ -1,43 +1,97 @@
-#############################################################################################################
-# Author :
-#   Ignacio Gonzalez, Genopole Toulouse Midi-Pyrenees, France
-#   Kim-Anh Le Cao, French National Institute for Agricultural Research and ARC Centre of Excellence ins Bioinformatics, Institute for Molecular Bioscience, University of Queensland, Australia
-# Sebastien Dejean, Institut de Mathematiques, Universite de Toulouse et CNRS (UMR 5219), France
-#
-# created: 2009
-# last modified:
-#
-# Copyright (C) 2009
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
-
 #--------------------------------------------------------#
 #-- Includes summary.pls, summary.spls and summary.rcc --#
 #--------------------------------------------------------#
 
 #--------------------- PLS and sPLS ---------------------#
-summary.mixo_pls <- summary.mixo_spls <-
-function(object, 
-         what = c("all", "communalities", "redundancy", "VIP"), 
-         digits = 4, 
-         keep.var = FALSE,
-	 ...) 
-{
-
+#' Summary Methods for CCA and PLS objects
+#' 
+#' Produce \code{summary} methods for class \code{"rcc"}, \code{"pls"} and
+#' \code{"spls"}.
+#' 
+#' The information in the \code{rcc}, \code{pls} or \code{spls} object is
+#' summarised, it includes: the dimensions of \code{X} and \code{Y} data, the
+#' number of variates considered, the canonical correlations (if \code{object}
+#' of class \code{"rcc"}) and the (s)PLS algorithm used (if \code{object} of
+#' class \code{"pls"} or \code{"spls"}) and the number of variables selected on
+#' each of the sPLS components (if \code{x} of class \code{"spls"}).
+#' 
+#' \code{"communalities"} in \code{what} gives Communalities Analysis.
+#' \code{"redundancy"} display Redundancy Analysis. \code{"VIP"} gives the
+#' Variable Importance in the Projection (VIP) coefficients fit by \code{pls}
+#' or \code{spls}. If \code{what} is \code{"all"}, all are given.
+#' 
+#' For class \code{"rcc"}, when a value to \code{cutoff} is specified, the
+#' correlations between each variable and the equiangular vector between
+#' \eqn{X}- and \eqn{Y}-variates are computed. Variables with at least one
+#' correlation componente bigger than \code{cutoff} are showed. The defaults is
+#' \code{cutoff=NULL} all the variables are given.
+#' 
+#' @param object object of class inherited from \code{"rcc"}, \code{"pls"} or
+#' \code{"spls"}.
+#' @param cutoff real between 0 and 1. Variables with all correlations
+#' components below this cut-off in absolute value are not showed (see Details).
+#' @param digits integer, the number of significant digits to use when
+#' printing. Defaults to \code{4}.
+#' @param what character string or vector. Should be a subset of
+#' \code{c("all"}, \code{"summarised"}, \code{"communalities"},
+#' \code{"redundancy"}, \code{"VIP"}). \code{"VIP"} is only available for
+#' (s)PLS. See Details.
+#' @param keep.var boolean. If \code{TRUE} only the variables with loadings not
+#' zero (as selected by \code{spls}) are showed. Defaults to \code{FALSE}.
+#' @param ... not used currently.
+#' @return The function \code{summary} returns a list with components:
+#' \item{ncomp}{the number of components in the model.} \item{cor}{the
+#' canonical correlations.} \item{cutoff}{the cutoff used.}
+#' \item{keep.var}{list containing the name of the variables selected.}
+#' \item{mode}{the algoritm used in \code{pls} or \code{spls}.} \item{Cm}{list
+#' containing the communalities.} \item{Rd}{list containing the redundancy.}
+#' \item{VIP}{matrix of VIP coefficients.} \item{what}{subset of
+#' \code{c("all"}, \code{"communalities"}, \code{"redundancy"}, \code{"VIP"}).}
+#' \item{digits}{the number of significant digits to use when printing.}
+#' \item{method}{method used: \code{rcc}, \code{pls} or \code{spls}.}
+#' @author Sébastien Déjean, Ignacio González, Kim-Anh Lê Cao, Al J Abadi
+#' @seealso \code{\link{rcc}}, \code{\link{pls}}, \code{\link{spls}},
+#' \code{\link{vip}}.
+#' @keywords regression multivariate
+#' @examples
+#' ## summary for objects of class 'rcc'
+#' data(nutrimouse)
+#' X <- nutrimouse$lipid
+#' Y <- nutrimouse$gene
+#' nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
+#' more <- summary(nutri.res, cutoff = 0.65)
+#' 
+#' \dontrun{
+#' ## summary for objects of class 'pls'
+#' data(linnerud)
+#' X <- linnerud$exercise
+#' Y <- linnerud$physiological
+#' linn.pls <- pls(X, Y)
+#' more <- summary(linn.pls)
+#' 
+#' ## summary for objects of class 'spls'
+#' data(liver.toxicity)
+#' X <- liver.toxicity$gene
+#' Y <- liver.toxicity$clinic
+#' toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
+#' keepY = c(10, 10, 10))
+#' more <- summary(toxicity.spls, what = "redundancy", keep.var = TRUE)
+#' }
+#' 
+#' @name summary
+NULL
+## -------------------------------- (s)PLS -------------------------------- ##
+#' @rdname summary
+#' @method summary mixo_pls
+#' @export
+summary.mixo_pls <-
+    function(object,
+             what = c("all", "communalities", "redundancy", "VIP"),
+             digits = 4,
+             keep.var = FALSE,
+             ...)
+    {
+        
     #-- initialisation des matrices --#
     ncomp = object$ncomp
     n = nrow(object$X)
@@ -135,14 +189,22 @@ function(object,
     return(invisible(result))
 }
 
+#' @rdname summary
+#' @method summary mixo_spls
+#' @export
+summary.mixo_spls <- summary.mixo_pls
 
-#-------------------------- rcc -------------------------#
+## --------------------------------- RCC ---------------------------------- ##
+#' @rdname summary
+#' @method summary rcc
+#' @export
 summary.rcc <-
-function(object, 
-         what = c("all", "communalities", "redundancy"), 
-         cutoff = NULL, 
-         digits = 4,
-	 ...) 
+    function(object,
+             what = c("all", "communalities", "redundancy"),
+             cutoff = NULL,
+             digits = 4,
+             ...)
+        
 {
 
     #-- initialisation des matrices --#
@@ -262,10 +324,12 @@ function(object,
     return(invisible(result))
 }
 
+## --------------------------------- PCA ---------------------------------- ##
+
 # from summary.prcomp, adapted for mixOmics
 summary.pca <-
-function (object, ...)
-{
+    function (object, ...)
+    {
     chkDots(...)
     vars <- object$explained_variance
     importance <- rbind(`Standard deviation` = object$sdev, `Proportion of Variance` = round(vars,
