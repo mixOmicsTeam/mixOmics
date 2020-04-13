@@ -40,9 +40,11 @@ or \code{"classic"}. See Details.}
 \item{near.zero.var}{boolean, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Setting this argument to FALSE (when appropriate) will speed up the
-computations. Default value is FALSE}
+computations. Default value is FALSE.}
 
-\item{logratio}{one of ('none','CLR'). Default to 'none'}
+\item{logratio}{one of ('none','CLR') specifies the log ratio transformation
+to deal with compositional values that may arise from specific normalisation
+in sequencing data. Default to 'none'.}
 
 \item{multilevel}{Design matrix for repeated measurement analysis, where
 multlevel decomposition is required. For a one factor decomposition, the
@@ -50,7 +52,7 @@ repeated measures on each individual, i.e. the individuals ID is input as
 the first column. For a 2 level factor decomposition then 2nd AND 3rd
 columns indicate those factors. See examples in \code{?spls}).}
 
-\item{all.outputs}{boolean. Computation can be faster when some specific
+\item{all.outputs}{Boolean. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
 }
 \value{

@@ -13,7 +13,7 @@ plsda(
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
-  logratio = "none",
+  logratio = c("none", "CLR"),
   multilevel = NULL,
   all.outputs = TRUE
 )
@@ -39,18 +39,18 @@ or \code{"classic"}. See Details.}
 \item{near.zero.var}{boolean, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Setting this argument to FALSE (when appropriate) will speed up the
-computations. Default value is FALSE}
+computations. Default value is FALSE.}
 
 \item{logratio}{one of ('none','CLR') specifies the log ratio transformation
 to deal with compositional values that may arise from specific normalisation
-in sequencing dadta. Default to 'none'}
+in sequencing data. Default to 'none'.}
 
 \item{multilevel}{sample information for multilevel decomposition for
 repeated measurements. A numeric matrix or data frame indicating the
 repeated measures on each individual, i.e. the individuals ID. See examples
 in \code{?splsda}.}
 
-\item{all.outputs}{boolean. Computation can be faster when some specific
+\item{all.outputs}{Boolean. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
 }
 \value{
@@ -111,7 +111,6 @@ Y <- liver.toxicity$treatment[, 4]
 
 plsda.liver <- plsda(X, Y, ncomp = 2)
 plotIndiv(plsda.liver, ind.names = Y, ellipse = TRUE, legend =TRUE)
-
 }
 }
 \references{

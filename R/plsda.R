@@ -21,29 +21,12 @@
 #' 
 #' More details about the PLS modes in \code{?pls}.
 #' 
-#' @param X numeric matrix of predictors. \code{NA}s are allowed.
+#' @inheritParams pls
 #' @param Y a factor or a class vector for the discrete outcome.
-#' @param ncomp the number of components to include in the model. Default to 2.
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
-#' means and unit variances (default: TRUE)
-#' @param mode character string. What type of algorithm to use, (partially)
-#' matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
-#' or \code{"classic"}. See Details.
-#' @param tol Convergence stopping value.
-#' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
-#' function (should be set to TRUE in particular for data with many zero
-#' values). Setting this argument to FALSE (when appropriate) will speed up the
-#' computations. Default value is FALSE
-#' @param logratio one of ('none','CLR') specifies the log ratio transformation
-#' to deal with compositional values that may arise from specific normalisation
-#' in sequencing dadta. Default to 'none'
 #' @param multilevel sample information for multilevel decomposition for
 #' repeated measurements. A numeric matrix or data frame indicating the
 #' repeated measures on each individual, i.e. the individuals ID. See examples
 #' in \code{?splsda}.
-#' @param all.outputs boolean. Computation can be faster when some specific
-#' (and non-essential) outputs are not calculated. Default = \code{TRUE}.
 #' @return \code{plsda} returns an object of class \code{"plsda"}, a list that
 #' contains the following components:
 #' 
@@ -89,26 +72,7 @@
 #' 325 (2012)
 #' @keywords regression multivariate
 #' @export
-#' @examples
-#' ## First example
-#' data(breast.tumors)
-#' X <- breast.tumors$gene.exp
-#' Y <- breast.tumors$sample$treatment
-#' 
-#' plsda.breast <- plsda(X, Y, ncomp = 2)
-#' plotIndiv(plsda.breast, ind.names = TRUE, ellipse = TRUE, legend = TRUE)
-#' 
-#' 
-#' \dontrun{
-#' ## Second example
-#' data(liver.toxicity)
-#' X <- liver.toxicity$gene
-#' Y <- liver.toxicity$treatment[, 4]
-#' 
-#' plsda.liver <- plsda(X, Y, ncomp = 2)
-#' plotIndiv(plsda.liver, ind.names = Y, ellipse = TRUE, legend =TRUE)
-#' 
-#' }
+#' @example ./examples/plsda-examples.R
 plsda <- function(X,
                  Y,
                  ncomp = 2,
@@ -117,8 +81,7 @@ plsda <- function(X,
                  tol = 1e-06,
                  max.iter = 100,
                  near.zero.var = FALSE,
-                 logratio = "none",
-                 # one of "none", "CLR"
+                 logratio = c("none", "CLR"),
                  multilevel = NULL,
                  all.outputs = TRUE)
 {
@@ -148,34 +111,47 @@ plsda <- function(X,
         multilevel = data.frame(multilevel)
         
         if ((nrow(X) != nrow(multilevel)))
-        stop("unequal number of rows in 'X' and 'multilevel'.")
+            stop("unequal number of rows in 'X' and 'multilevel'.")
         
         if (ncol(multilevel) != 1)
-        stop("'multilevel' should have a single column for the repeated measurements, other factors should be included in 'Y'.")
+            stop("'multilevel' should have a single column for the repeated measurements, other factors should be included in 'Y'.")
         
         if (!is.null(ncol(Y)) && !ncol(Y) %in% c(0,1,2))# multilevel 1 or 2 factors
-        stop("'Y' should either be a factor, a single column data.frame containing a factor, or a 2-columns data.frame containing 2 factors.")
+            stop("'Y' should either be a factor, a single column data.frame containing a factor, or a 2-columns data.frame containing 2 factors.")
         multilevel = data.frame(multilevel, Y)
         multilevel[, 1] = as.numeric(factor(multilevel[, 1])) # we want numbers for the repeated measurements
         
         Y.mat = NULL
     }
-
+    
+    logratio <- match.arg(logratio)
     
     # call to 'internal_wrapper.mint'
-    result = internal_wrapper.mint(X = X, Y = Y.mat, ncomp = ncomp, scale = scale, near.zero.var = near.zero.var, mode = mode,
-    max.iter = max.iter, tol = tol, logratio = logratio, multilevel = multilevel, DA = TRUE, all.outputs=all.outputs)
-
+    result = internal_wrapper.mint(
+        X = X,
+        Y = Y.mat,
+        ncomp = ncomp,
+        scale = scale,
+        near.zero.var = near.zero.var,
+        mode = mode,
+        max.iter = max.iter,
+        tol = tol,
+        logratio = logratio,
+        multilevel = multilevel,
+        DA = TRUE,
+        all.outputs = all.outputs
+    )
+    
     # choose the desired output from 'result'
     out = list(
         call = match.call(),
         X = result$A[-result$indY][[1]],
         Y = if (is.null(multilevel))
-            {
-                Y
-            } else {
-                result$Y.factor
-            },
+        {
+            Y
+        } else {
+            result$Y.factor
+        }, 
         ind.mat = result$A[result$indY][[1]],
         ncomp = result$ncomp,
         mode = result$mode,
@@ -189,9 +165,9 @@ plsda <- function(X,
         nzv = result$nzv,
         scale = scale,
         logratio = logratio,
-        explained_variance = result$explained_variance,#[-result$indY],
+        explained_variance = result$explained_variance,
         input.X = result$input.X,
-        mat.c = result$mat.c#,
+        mat.c = result$mat.c
         )
     
     class(out) = c("mixo_plsda","mixo_pls","DA")

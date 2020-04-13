@@ -1,61 +1,88 @@
-#############################################################################################################
-# Authors:
-#   Florian Rohart, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-#   Kim-Anh Le Cao, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
-
-# created: 2011
-# last modified: 05-10-2017
-#
-# Copyright (C) 2011
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#############################################################################################################
-
-
 # ========================================================================================================
 # splsda: perform a sPLS-DA
 # this function is a particular setting of internal_mint.block, the formatting of the input is checked in internal_wrapper.mint
 # ========================================================================================================
 
-# X: numeric matrix of predictors
-# Y: a factor or a class vector for the discrete outcome
-# ncomp: the number of components to include in the model. Default to 2.
-# keepX: number of \eqn{X} variables kept in the model on the last components.
-# scale: boleean. If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
-# tol: Convergence stopping value.
-# max.iter: integer, the maximum number of iterations.
-# near.zero.var: boolean, see the internal \code{\link{nearZeroVar}} function (should be set to TRUE in particular for data with many zero values). Setting this argument to FALSE (when appropriate) will speed up the computations
-# logratio: one of "none", "CLR"
-# multilevel: repeated measurement. `multilevel' is passed to multilevel(design = ) in withinVariation. Y is ommited and shouldbe included in `multilevel'
-# all.outputs: calculation of non-essential outputs (e.g. explained variance, loadings.Astar, etc)
-
-
-
-splsda = function(X,
-Y,
-ncomp = 2,
-mode = c("regression", "canonical", "invariant", "classic"),
-keepX,
-scale = TRUE,
-tol = 1e-06,
-max.iter = 100,
-near.zero.var = FALSE,
-logratio = "none",   # one of "none", "CLR"
-multilevel = NULL,
-all.outputs = TRUE)    
+#' Sparse Partial Least Squares Discriminant Analysis (sPLS-DA)
+#' 
+#' Function to perform sparse Partial Least Squares to classify samples
+#' (supervised analysis) and select variables.
+#' 
+#' \code{splsda} function fits an sPLS model with \eqn{1, \ldots ,}\code{ncomp}
+#' components to the factor or class vector \code{Y}. The appropriate indicator
+#' (dummy) matrix is created. Logratio transform and multilevel analysis are
+#' performed sequentially as internal pre-processing step, through
+#' \code{\link{logratio.transfo}} and \code{\link{withinVariation}}
+#' respectively.
+#' 
+#' Logratio can only be applied if the data do not contain any 0 value (for
+#' count data, we thus advise the normalise raw data with a 1 offset).
+#' 
+#' More details about the PLS modes in \code{?pls}.
+#' 
+#' @inheritParams plsda
+#' @inheritParams spls
+#' 
+#' @return \code{splsda} returns an object of class \code{"splsda"}, a list
+#' that contains the following components:
+#' 
+#' \item{X}{the centered and standardized original predictor matrix.}
+#' \item{Y}{the centered and standardized indicator response vector or matrix.}
+#' \item{ind.mat}{the indicator matrix.} \item{ncomp}{the number of components
+#' included in the model.} \item{keepX}{number of \eqn{X} variables kept in the
+#' model on each component.} \item{variates}{list containing the variates.}
+#' \item{loadings}{list containing the estimated loadings for the \code{X} and
+#' \code{Y} variates.} \item{names}{list containing the names to be used for
+#' individuals and variables.} \item{nzv}{list containing the zero- or
+#' near-zero predictors information.} \item{tol}{the tolerance used in the
+#' iterative algorithm, used for subsequent S3 methods} \item{iter}{Number of
+#' iterations of the algorthm for each component} \item{max.iter}{the maximum
+#' number of iterations, used for subsequent S3 methods} \item{scale}{boolean
+#' indicating whether the data were scaled in MINT S3 methods}
+#' \item{logratio}{whether logratio transformations were used for compositional
+#' data} \item{explained_variance}{amount of variance explained per component
+#' (note that contrary to PCA, this amount may not decrease as the aim of the
+#' method is not to maximise the variance, but the covariance between X and the
+#' dummy matrix Y).} \item{mat.c}{matrix of coefficients from the regression of
+#' X / residual matrices X on the X-variates, to be used internally by
+#' \code{predict}.} \item{defl.matrix}{residual matrices X for each dimension.}
+#' @author Florian Rohart, Ignacio González, Kim-Anh Lê Cao, Al J abadi
+#' @seealso \code{\link{spls}}, \code{\link{summary}}, \code{\link{plotIndiv}},
+#' \code{\link{plotVar}}, \code{\link{cim}}, \code{\link{network}},
+#' \code{\link{predict}}, \code{\link{perf}}, \code{\link{mint.block.splsda}},
+#' \code{\link{block.splsda}} and http://www.mixOmics.org for more details.
+#' @references On sPLS-DA: Lê Cao, K.-A., Boitard, S. and Besse, P. (2011).
+#' Sparse PLS Discriminant Analysis: biologically relevant feature selection
+#' and graphical displays for multiclass problems. \emph{BMC Bioinformatics}
+#' \bold{12}:253. On log ratio transformations: Filzmoser, P., Hron, K.,
+#' Reimann, C.: Principal component analysis for compositional data with
+#' outliers. Environmetrics 20(6), 621-632 (2009) Lê Cao K.-A., Costello ME,
+#' Lakis VA, Bartolo, F,Chua XY, Brazeilles R, Rondeau P. MixMC: Multivariate
+#' insights into Microbial Communities. PLoS ONE, 11(8): e0160169 (2016). On
+#' multilevel decomposition: Westerhuis, J.A., van Velzen, E.J., Hoefsloot,
+#' H.C., Smilde, A.K.: Multivariate paired data analysis: multilevel plsda
+#' versus oplsda. Metabolomics 6(1), 119-128 (2010) Liquet, B., Lê Cao K.-A.,
+#' Hocini, H., Thiebaut, R.: A novel approach for biomarker selection and the
+#' integration of repeated measures experiments from two assays. BMC
+#' bioinformatics 13(1), 325 (2012)
+#' @keywords regression multivariate
+#' @export
+#' @example ./examples/splsda-examples.R
+splsda <- function(X,
+                  Y,
+                  ncomp = 2,
+                  mode = c("regression", "canonical", "invariant", "classic"),
+                  keepX,
+                  scale = TRUE,
+                  tol = 1e-06,
+                  max.iter = 100,
+                  near.zero.var = FALSE,
+                  logratio = "none",
+                  # one of "none", "CLR"
+                  multilevel = NULL,
+                  all.outputs = TRUE)
 {
+    
     
     
     #-- validation des arguments --#
@@ -97,9 +124,22 @@ all.outputs = TRUE)
     }
     
     # call to 'internal_wrapper.mint'
-    result = internal_wrapper.mint(X = X, Y = Y.mat, ncomp = ncomp, scale = scale, near.zero.var = near.zero.var, mode = mode,
-    keepX = keepX, max.iter = max.iter, tol = tol, logratio = logratio,
-    multilevel = multilevel, DA = TRUE, all.outputs = all.outputs, remove.object=c("X"))
+    result = internal_wrapper.mint(
+        X = X,
+        Y = Y.mat,
+        ncomp = ncomp,
+        scale = scale,
+        near.zero.var = near.zero.var,
+        mode = mode,
+        keepX = keepX,
+        max.iter = max.iter,
+        tol = tol,
+        logratio = logratio,
+        multilevel = multilevel,
+        DA = TRUE,
+        all.outputs = all.outputs,
+        remove.object = c("X")
+    )
     
 
     # choose the desired output from 'result'
@@ -107,15 +147,15 @@ all.outputs = TRUE)
         call = match.call(),
         X = result$A[-result$indY][[1]],
         Y = if (is.null(multilevel))
-            {
-                Y
-            } else {
-                result$Y.factor
-            },
+        {
+            Y
+        } else {
+            result$Y.factor
+        },
         ind.mat = result$A[result$indY][[1]],
         ncomp = result$ncomp,
         mode = result$mode,
-        keepA=result$keepA,
+        keepA = result$keepA,
         keepX = result$keepX,
         keepY = result$keepY,
         variates = result$variates,
@@ -128,10 +168,10 @@ all.outputs = TRUE)
         nzv = result$nzv,
         scale = scale,
         logratio = logratio,
-        explained_variance = result$explained_variance,#[-result$indY],
+        explained_variance = result$explained_variance,
         input.X = result$input.X,
-        mat.c = result$mat.c#,
-        )
+        mat.c = result$mat.c
+    )
     
     class(out) = c("mixo_splsda","mixo_spls","DA")
     # output if multilevel analysis

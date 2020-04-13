@@ -60,25 +60,40 @@ get.weights = function(variates, indY)
 # --------------------------------------
 # study_split: used in 'internal_mint.block.R' and 'predict.mint.block.pls.R'
 # --------------------------------------
+#' divides a data matrix in a list of matrices defined by a factor
+#' 
+#' \code{study_split} divides a data matrix in a list of matrices defined by a
+#' \code{study} input.
+#' 
+#' 
+#' @usage study_split(data, study)
+#' @param data numeric matrix of predictors
+#' @param study grouping factor indicating which samples are from the same
+#' study
+#' @return \code{study_split} simply returns a list of the same length as the
+#' number of levels of \code{study} that contains sub-matrices of \code{data}.
+#' @author Florian Rohart, Al J Abadi
+#' @seealso \code{\link{mint.pls}}, \code{\link{mint.spls}},
+#' \code{\link{mint.plsda}}, \code{\link{mint.splsda}}.
+#' @keywords regression multivariate
+#' @export
+#' @examples
+#' data(stemcells)
+#' data = stemcells$gene
+#' exp = stemcells$study
+#' 
+#' data.list = study_split(data, exp)
+#' 
+#' names(data.list)
+#' lapply(data.list, dim)
+#' table(exp)
 study_split = function(data, study)
 {
-    #data should be a matrix
-    if(!is(data, "matrix"))
-    data = as.matrix(data)
-    
-    M = length(levels(study))
-    
-    #---------------------- split data
-    if(M>1)
-    {
-        data.list.study = split.data.frame(data,study)
-    } else {
-        data.list.study = list(data)
-        names(data.list.study) = levels(study)
-    }
-
-    result = data.list.study
-    return(invisible(result))
+    return(
+        invisible(
+        split.data.frame(as.matrix(data), study)
+        )
+        )
 }
 
 
