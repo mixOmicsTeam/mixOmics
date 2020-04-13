@@ -25,7 +25,8 @@
 #' blocks. Default to NULL (all block data sets)
 #' @param ... other arguments.
 #' @return none
-#' @author Kim-Anh Lê Cao, Florian Rohart, Al J Abadis
+#' @author Kim-Anh Lê Cao, Florian Rohart, Al J Abadi
+#' @export
 #' @example ./examples/selectVar-examples.R
 selectVar <-
     function(...)

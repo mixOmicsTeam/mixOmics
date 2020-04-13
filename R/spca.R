@@ -48,6 +48,7 @@
 #' analysis via regularized low rank matrix approximation. \emph{Journal of
 #' Multivariate Analysis} \bold{99}, 1015-1034.
 #' @keywords algebra
+#' @export
 #' @examples
 #' 
 #' data(liver.toxicity)

@@ -120,5 +120,5 @@ selectVar(wrap.result.sgcca, comp = 1, block = 1)$'gene'$value
 }
 }
 \author{
-Kim-Anh Lê Cao, Florian Rohart, Al J Abadis
+Kim-Anh Lê Cao, Florian Rohart, Al J Abadi
 }

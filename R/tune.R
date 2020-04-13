@@ -158,6 +158,7 @@
 #' (2016). A Molecular Classification of Human Mesenchymal Stromal Cells. PeerJ
 #' 4:e1845.
 #' @keywords regression multivariate
+#' @export
 #' @example ./examples/tune-examples.R
 tune <-
     function (method,

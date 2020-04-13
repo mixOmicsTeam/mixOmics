@@ -33,6 +33,7 @@
 #' (2010). Multivariate paired data analysis: multilevel PLSDA versus OPLSDA.
 #' \emph{Metabolomics}, \bold{6}(1), 119-128.
 #' @keywords regression multivariate
+#' @export
 #' @examples
 #' ## Example: one-factor analysis matrix decomposition
 #' #--------------------------------------------------------------

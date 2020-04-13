@@ -43,8 +43,6 @@ balanced error rate from x$error.rate, for each component of the model. The
 error rate is ordered by increasing value, the yaxis shows the optimal
 combination of keepX at the top (e.g. `keepX on block 1'_`keepX on block
 2'_`keepX on block 3')
-
-\method{plottune.block.splsda}(x, sd = TRUE, col, \dots{})
 }
 \examples{
 

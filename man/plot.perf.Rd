@@ -35,7 +35,7 @@
   ...
 )
 
-\method{plot}{perf.spls.mthd}(
+\method{plot}{perf.plsda.mthd}(
   x,
   dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   measure = c("all", "overall", "BER"),
@@ -48,7 +48,7 @@
   ...
 )
 
-\method{plot}{perf.spls.mthd}(
+\method{plot}{perf.splsda.mthd}(
   x,
   dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   measure = c("all", "overall", "BER"),

@@ -5,6 +5,7 @@
 \alias{summary.mixo_pls}
 \alias{summary.mixo_spls}
 \alias{summary.rcc}
+\alias{summary.pca}
 \title{Summary Methods for CCA and PLS objects}
 \usage{
 \method{summary}{mixo_pls}(
@@ -30,6 +31,8 @@
   digits = 4,
   ...
 )
+
+\method{summary}{pca}(object, ...)
 }
 \arguments{
 \item{object}{object of class inherited from \code{"rcc"}, \code{"pls"} or

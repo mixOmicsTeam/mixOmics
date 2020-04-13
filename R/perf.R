@@ -224,6 +224,7 @@
 #' (2016). A Molecular Classification of Human Mesenchymal Stromal Cells. PeerJ
 #' 4:e1845.
 #' @keywords regression multivariate
+#' @export
 #' @example ./examples/perf-examples.R
 ## ------------------------------- Generic -------------------------------- ##
 perf = function(object, ...) UseMethod("perf")

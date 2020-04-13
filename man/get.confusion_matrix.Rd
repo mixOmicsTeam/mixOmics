@@ -2,9 +2,12 @@
 % Please edit documentation in R/get.confusion_matrix.R
 \name{get.confusion_matrix}
 \alias{get.confusion_matrix}
+\alias{get.BER}
 \title{Create confusion table and calculate the Balanced Error Rate}
 \usage{
 get.confusion_matrix(truth, all.levels, predicted)
+
+get.BER(confusion)
 }
 \arguments{
 \item{truth}{A factor vector indicating the true classes of the samples
@@ -22,7 +25,6 @@ Balanced Error Rate}
 }
 \value{
 \code{get.confusion_matrix} returns a confusion matrix.
-
 \code{get.BER} returns the BER from a confusion matrix
 }
 \description{
@@ -34,15 +36,8 @@ BER is appropriate in case of an unbalanced number of samples per class as
 it calculates the average proportion of wrongly classified samples in each
 class, weighted by the number of samples in each class. BER is less biased
 towards majority classes during the performance assessment.
-
-get.BER(confusion)
 }
 \examples{
-
-
-# Example
-# -----------------------------------
-
 data(liver.toxicity)
 X <- liver.toxicity$gene
 Y <- as.factor(liver.toxicity$treatment[, 4])

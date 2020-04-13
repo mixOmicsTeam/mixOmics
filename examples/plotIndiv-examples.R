@@ -49,7 +49,7 @@ plotIndiv(toxicity.spls)
 plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
 group = liver.toxicity$treatment[, 'Time.Group'], # first factor
 pch = as.numeric(factor(liver.toxicity$treatment$Dose.Group)), #second factor
-pch.levels =liver.toxicity$treatment$Dose.Group, #levels of the second factor, for the legend
+pch.levels =liver.toxicity$treatment$Dose.Group, 
 legend = TRUE)
 
 
@@ -96,7 +96,8 @@ plotIndiv(splsda.breast)
 # default option with no ind name: pch and color are set automatically
 plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2))
 
-# default option with no ind name: pch and color are set automatically, with legend
+# default option with no ind name: pch and color are set automatically, 
+# with legend
 plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2), legend = TRUE)
 
 # trying the different styles
@@ -127,8 +128,8 @@ pch = 15:17, pch.levels = c("a","b","c"),legend = TRUE)
 ## plot of individuals for objects of class 'mint.plsda' or 'mint.splsda'
 # ----------------------------------------------------
 data(stemcells)
-res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2, keepX = c(10, 5),
-study = stemcells$study)
+res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2, 
+                  keepX = c(10, 5), study = stemcells$study)
 
 plotIndiv(res)
 
@@ -197,8 +198,13 @@ plotIndiv(nutrimouse.sgccda1, blocks = c(1,2), group = nutrimouse$diet)
 # include the consensus plot (average the components across datasets)
 plotIndiv(nutrimouse.sgccda1, blocks = "consensus", group = nutrimouse$diet)
 
-# include the weighted consensus plot (average of components weighted by correlation of each dataset with Y)
-plotIndiv(nutrimouse.sgccda1, blocks = c("consensus", "weighted.consensus"), group = nutrimouse$diet)
+# include the weighted consensus plot (average of components weighted by 
+# correlation of each dataset with Y)
+plotIndiv(
+    nutrimouse.sgccda1,
+    blocks = c("consensus", "weighted.consensus"),
+    group = nutrimouse$diet
+)
 
 # with some ellipse, legend and title
 plotIndiv(nutrimouse.sgccda1, blocks = c(1,2), group = nutrimouse$diet,

@@ -325,8 +325,10 @@ summary.rcc <-
 }
 
 ## --------------------------------- PCA ---------------------------------- ##
-
 # from summary.prcomp, adapted for mixOmics
+#' @rdname summary
+#' @method summary pca
+#' @export
 summary.pca <-
     function (object, ...)
     {

@@ -3,11 +3,6 @@
 #   and a vector of predicted classes
 # =============================================================================
 
-# truth: factor of true classes
-# levels: levels of the 'truth' factor. Optional parameters that can be used
-#   when there are some missing levels in `truth' compared to the fitted model
-# predicted: vector of predicted classes. Can contain NA.
-
 #' Create confusion table and calculate the Balanced Error Rate
 #' 
 #' Create confusion table between a vector of true classes and a vector of
@@ -18,7 +13,6 @@
 #' class, weighted by the number of samples in each class. BER is less biased
 #' towards majority classes during the performance assessment.
 #' 
-#' get.BER(confusion)
 #' @param truth A factor vector indicating the true classes of the samples
 #' (typically \code{Y} from the training set).
 #' @param all.levels Levels of the 'truth' factor. Optional parameter if there
@@ -26,10 +20,7 @@
 #' model
 #' @param predicted Vector of predicted classes (typically the prediction from
 #' the test set). Can contain NA.
-#' @param confusion result from a \code{get.confusion_matrix} to calculate the
-#' Balanced Error Rate
 #' @return \code{get.confusion_matrix} returns a confusion matrix.
-#' 
 #' \code{get.BER} returns the BER from a confusion matrix
 #' @author Florian Rohart, Al J Abadi
 #' @seealso \code{\link{predict}}.
@@ -40,12 +31,8 @@
 #' Rohart F, Gautier B, Singh A, Lê Cao K-A. mixOmics: an R package for 'omics
 #' feature selection and multiple data integration. PLoS Comput Biol 13(11):
 #' e1005752
+#' @export
 #' @examples
-#' 
-#' 
-#' # Example
-#' # -----------------------------------
-#' 
 #' data(liver.toxicity)
 #' X <- liver.toxicity$gene
 #' Y <- as.factor(liver.toxicity$treatment[, 4])
@@ -65,7 +52,6 @@
 #' 
 #' get.BER(confusion.mat)
 #' 
-#' @export
 get.confusion_matrix = function(truth, all.levels, predicted)
 {
     
@@ -109,14 +95,15 @@ get.confusion_matrix = function(truth, all.levels, predicted)
     ClassifResult
 }
 
-#' @noRd
+## ------------------------------- get.BER -------------------------------- ##
+
+
+#' @param confusion result from a \code{get.confusion_matrix} to calculate the
+#' Balanced Error Rate
+#' @rdname get.confusion_matrix
 #' @export
-# calculate BER from a confusion matrix
 get.BER = function(confusion)
 {
-    
-    #if(!is.numeric(X)| !is.matrix(X) | length(dim(X)) != 2 | nrow(X)!=ncol(X))
-    #stop("'X' must be a square numeric matrix")
     
     nlev = nrow(confusion)
     #calculation of the BER

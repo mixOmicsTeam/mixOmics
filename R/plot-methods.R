@@ -294,7 +294,7 @@ plot.perf.spls.mthd <- plot.perf.pls.mthd
 ## -------------------------- plot.perf.(s)plsda -------------------------- ##
 
 #' @rdname plot.perf
-#' @method plot perf.spls.mthd
+#' @method plot perf.plsda.mthd
 #' @export
 plot.perf.plsda.mthd <- 
     function (x,
@@ -375,7 +375,7 @@ plot.perf.plsda.mthd <-
 
 
 #' @rdname plot.perf
-#' @method plot perf.spls.mthd
+#' @method plot perf.splsda.mthd
 #' @export
 plot.perf.splsda.mthd <- plot.perf.plsda.mthd
 
@@ -665,7 +665,6 @@ plot.perf.sgccda.mthd <-
 #' combination of keepX at the top (e.g. `keepX on block 1'_`keepX on block
 #' 2'_`keepX on block 3')
 #' 
-#' \method{plottune.block.splsda}(x, sd = TRUE, col, \dots{})
 #' @param x an \code{tune.splsda} object.
 #' @param optimal If TRUE, highlights the optimal keepX per component
 #' @param sd If 'nrepeat' was used in the call to 'tune.splsda', error bar

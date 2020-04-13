@@ -145,11 +145,11 @@
 #' @seealso \code{\link{text}}, \code{\link{background.predict}},
 #' \code{\link{points}} and http://mixOmics.org/graphics for more details.
 #' @keywords multivariate hplot dplot
+#' @export
 #' @example ./examples/plotIndiv-examples.R 
 plotIndiv  <- function(object, ...) {
   UseMethod("plotIndiv")
 }
-
 
 # --------------------------------------------------------------------------------------
 # Internal helpers functions to run "plotIndiv" functions
