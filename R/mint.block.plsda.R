@@ -163,19 +163,19 @@
 #' res
 #' @export
 mint.block.plsda <- function(X,
-                            Y,
-                            indY,
-                            study,
-                            ncomp = 2,
-                            design,
-                            scheme,
-                            mode,
-                            scale = TRUE,
-                            init ,
-                            tol = 1e-06,
-                            max.iter = 100,
-                            near.zero.var = FALSE,
-                            all.outputs = TRUE)
+                             Y,
+                             indY,
+                             study,
+                             ncomp = 2,
+                             design,
+                             scheme,
+                             mode,
+                             scale = TRUE,
+                             init ,
+                             tol = 1e-06,
+                             max.iter = 100,
+                             near.zero.var = FALSE,
+                             all.outputs = TRUE)
 {
     # checking that the outcome, either in Y or X[indY] is a factor with more than 1 level
     if(!missing(Y))
@@ -188,13 +188,13 @@ mint.block.plsda <- function(X,
         }
         
         if (nlevels(Y) == 1)
-        stop("'Y' should be a factor with more than one level")
-
+            stop("'Y' should be a factor with more than one level")
+        
         Y.input=Y
         Y=unmap(Y)
         colnames(Y) = paste0("Y", 1:ncol(Y))
         rownames(Y) = rownames(X[[1]])
-
+        
     }else if(!missing(indY)) {
         temp=X[[indY]] #not called Y to not be an input of the wrapper.sparse.mint.block
         if (is.null(dim(temp)))
@@ -204,15 +204,15 @@ mint.block.plsda <- function(X,
             stop("'Y' should be a factor or a class vector.")
         }
         if (nlevels(temp) == 1)
-        stop("'X[[indY]]' should be a factor with more than one level")
-
+            stop("'X[[indY]]' should be a factor with more than one level")
+        
         Y.input=temp
         X[[indY]]=unmap(temp)
         rownames(X[[indY]]) = rownames(X[[ifelse(indY==1,2,1)]])
     } else if(missing(indY)) {
         stop("Either 'Y' or 'indY' is needed")
     }
-
+    
     # call to 'internal_wrapper.mint.block'
     result = internal_wrapper.mint.block(
         X = X,
@@ -251,7 +251,7 @@ mint.block.plsda <- function(X,
         max.iter = result$max.iter,
         nzv = result$nzv,
         scale = result$scale)
-
+    
     class(out) = c("mint.block.plsda","mint.block.pls","block.pls","sgccda","sgcca","DA")
     return(invisible(out))
     

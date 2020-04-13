@@ -117,19 +117,19 @@
 #' @keywords regression multivariate
 #' @example ./examples/block.plsda-examples.R
 #' @export
-block.plsda = function(X,
-                       Y,
-                       indY,
-                       ncomp = 2,
-                       design,
-                       scheme,
-                       mode,
-                       scale = TRUE,
-                       init = "svd",
-                       tol = 1e-06,
-                       max.iter = 100,
-                       near.zero.var = FALSE,
-                       all.outputs = TRUE)
+block.plsda <- function(X,
+                        Y,
+                        indY,
+                        ncomp = 2,
+                        design,
+                        scheme,
+                        mode,
+                        scale = TRUE,
+                        init = "svd",
+                        tol = 1e-06,
+                        max.iter = 100,
+                        near.zero.var = FALSE,
+                        all.outputs = TRUE)
 
 {
     # check inpuy 'Y' and transformation in a dummy matrix

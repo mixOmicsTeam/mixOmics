@@ -227,7 +227,8 @@
 #' @export
 #' @example ./examples/perf-examples.R
 ## ------------------------------- Generic -------------------------------- ##
-perf = function(object, ...) UseMethod("perf")
+perf <- function(object, ...)
+    UseMethod("perf")
 
 ## ------------------------------------------------------------------------ ##
 ####                              (s)PLS(DA)                              ####
@@ -247,18 +248,18 @@ perf.mixo_pls <- function(object,
     
     #-- check spls mode
     if (object$mode == 'canonical')
-    stop("'perf' is only available for (s)pls with modes: 'regression', 'invariant' or 'classic'.  Object has mode 'canonical'", call. = FALSE)
+        stop("'perf' is only available for (s)pls with modes: 'regression', 'invariant' or 'classic'.  Object has mode 'canonical'", call. = FALSE)
     
     #-- validation
     choices = c("Mfold", "loo")
     validation = choices[pmatch(validation, choices)]
     
     if (any(is.na(validation)) || length(validation) > 1)
-    stop("'validation' should be one of 'Mfold' or 'loo'.", call. = FALSE)
+        stop("'validation' should be one of 'Mfold' or 'loo'.", call. = FALSE)
     
     #-- progressBar
     if (!is.logical(progressBar))
-    stop("'progressBar' must be a logical constant (TRUE or FALSE).", call. = FALSE)
+        stop("'progressBar' must be a logical constant (TRUE or FALSE).", call. = FALSE)
     
     #-- end checking --#
     #------------------#
@@ -288,7 +289,7 @@ perf.mixo_pls <- function(object,
     res = list()
     
     if (any(is.na(X)) || any(is.na(Y)))
-    stop("missing data in 'X' and/or 'Y'. Use 'nipals' for dealing with NAs.", call. = FALSE)
+        stop("missing data in 'X' and/or 'Y'. Use 'nipals' for dealing with NAs.", call. = FALSE)
     
     
     #-- tells which variables are selected in X and in Y --#
@@ -308,14 +309,14 @@ perf.mixo_pls <- function(object,
         {
             
             if (length(folds) < 2 || length(folds) > n)
-            stop("Invalid number of folds.", call. = FALSE)
+                stop("Invalid number of folds.", call. = FALSE)
             
             if (length(unlist(folds)) != n)
-            stop("Invalid folds. The total number of samples in folds must be equal to ",
-            n, ".", call. = FALSE)
+                stop("Invalid folds. The total number of samples in folds must be equal to ",
+                     n, ".", call. = FALSE)
             
             if (length(unique(unlist(folds))) != n)
-            stop("Invalid folds. Repeated samples in folds.", call. = FALSE)
+                stop("Invalid folds. Repeated samples in folds.", call. = FALSE)
             
             M = length(folds)
         } else {
@@ -352,7 +353,7 @@ perf.mixo_pls <- function(object,
     # initialize new objects:= to record feature stability
     featuresX  = featuresY =  list()
     for(k in 1:ncomp)
-    featuresX[[k]] = featuresY[[k]] = NA
+        featuresX[[k]] = featuresY[[k]] = NA
     
     
     #-- loop on h = ncomp --#
@@ -401,7 +402,7 @@ perf.mixo_pls <- function(object,
                 # creating a keepX.temp that can change for each fold, depending on nzv
                 keepX.temp = keepX
                 if(any(keepX.temp > sum(nzv)))
-                keepX.temp[which(keepX.temp>sum(nzv))] = sum(nzv)
+                    keepX.temp[which(keepX.temp>sum(nzv))] = sum(nzv)
                 
                 spls.res = mixOmics::spls(X.train[,nzv], Y.train, ncomp = ncomp, mode = mode, max.iter = max.iter, tol = tol, keepX = keepX.temp, keepY = keepY, near.zero.var = FALSE, scale = scale)
                 Y.hat = predict.mixo_spls(spls.res, X.test[,nzv, drop = FALSE])$predict
@@ -430,7 +431,7 @@ perf.mixo_pls <- function(object,
                 if (nx != 0)
                 {
                     a.cv = ifelse(abs(a.cv) > abs(a.cv[order(abs(a.cv))][nx]),
-                    (abs(a.cv) - abs(a.cv[order(abs(a.cv))][nx])) * sign(a.cv), 0)
+                                  (abs(a.cv) - abs(a.cv[order(abs(a.cv))][nx])) * sign(a.cv), 0)
                 }
                 a.cv = a.cv / drop(sqrt(crossprod(a.cv)))
                 t.cv = X.train %*% a.cv
@@ -439,13 +440,13 @@ perf.mixo_pls <- function(object,
                 if (ny != 0)
                 {
                     b.cv = ifelse(abs(b.cv) > abs(b.cv[order(abs(b.cv))][ny]),
-                    (abs(b.cv) - abs(b.cv[order(abs(b.cv))][ny])) * sign(b.cv), 0)
+                                  (abs(b.cv) - abs(b.cv[order(abs(b.cv))][ny])) * sign(b.cv), 0)
                 }
                 b.cv = b.cv / drop(sqrt(crossprod(b.cv)))
                 u.cv = Y.train %*% b.cv
                 
                 if ((crossprod(a.cv - a.old.cv) < tol) || (iter.cv == max.iter))
-                break
+                    break
                 
                 a.old.cv = a.cv
                 iter.cv = iter.cv + 1
@@ -467,11 +468,11 @@ perf.mixo_pls <- function(object,
         
         #-- mode classic
         if (mode == "classic")
-        Y = Y - tt %*% t(b)
+            Y = Y - tt %*% t(b)
         
         #-- mode regression
         if (mode == "regression")
-        Y = Y - tt %*% t(d)
+            Y = Y - tt %*% t(d)
         
         #-- mode invariant: Y is unchanged
         
@@ -489,7 +490,7 @@ perf.mixo_pls <- function(object,
     #-- output -----------------------------------------------------------------#
     #---------------------------------------------------------------------------#
     Q2.total = matrix(1 - rowSums(PRESS.inside) / rowSums(RSS[-(ncomp+1), , drop = FALSE]), nrow = 1, ncol = ncomp,
-    dimnames = list("Q2.total", paste0(1:ncomp, " comp")))
+                      dimnames = list("Q2.total", paste0(1:ncomp, " comp")))
     
     # set up dimnames
     rownames(MSEP) = rownames(R2) = rownames(Q2) = paste0(1:ncomp, " comp")
@@ -499,7 +500,7 @@ perf.mixo_pls <- function(object,
     result$MSEP = t(MSEP)
     result$R2 = t(R2)
     result$Q2 = t(Q2)
-   	result$Q2.total =  t(Q2.total)
+    result$Q2.total =  t(Q2.total)
     result$RSS = RSS
     result$PRESS = PRESS.inside
     result$press.mat = press.mat
@@ -549,6 +550,7 @@ perf.mixo_spls  <- perf.mixo_pls
 
 ## ------------------------------- (s)PLSDA ------------------------------- ##
 #' @rdname perf
+#' @importFrom methods hasArg
 #' @export
 perf.mixo_plsda <- function(object,
                             dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
@@ -572,35 +574,35 @@ perf.mixo_plsda <- function(object,
     
     logratio = object$logratio
     if (is.null(logratio))
-    logratio = "none"
+        logratio = "none"
     
     multilevel = object$multilevel # repeated measurement and Y
     near.zero.var = !is.null(object$nzv) # if near.zero.var was used, we set it to TRUE. if not used, object$nzv is NULL
     
     #-- tells which variables are selected in X and in Y --#
-
+    
     if (is(object, "mixo_splsda"))
     {
         keepX = object$keepX
     } else {
         keepX = rep(ncol(X), ncomp)
     }
-
+    
     tol = object$tol
     max.iter = object$max.iter
     scale = object$scale
-
+    
     # initialize new objects:
     features = list()
     for(k in 1:ncomp)
-    features[[k]] = NA
+        features[[k]] = NA
     
     # check input arguments
     
     if (hasArg(method.predict))
-    stop("'method.predict' argument has been replaced by 'dist' to match the 'tune' function")
+        stop("'method.predict' argument has been replaced by 'dist' to match the 'tune' function")
     method.predict = NULL # to pass R CMD check
-
+    
     dist = match.arg(dist, choices = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"), several.ok = TRUE)
     if (any(dist == "all"))
     {
@@ -611,25 +613,25 @@ perf.mixo_plsda <- function(object,
     }
     
     if (length(validation) > 1 )
-    validation = validation [1]
+        validation = validation [1]
     if (!(validation %in% c("Mfold", "loo")))
-    stop("Choose 'validation' among the two following possibilities: 'Mfold' or 'loo'")
+        stop("Choose 'validation' among the two following possibilities: 'Mfold' or 'loo'")
     
     if (validation == "loo")
     {
         if (nrepeat != 1)
-        warning("Leave-One-Out validation does not need to be repeated: 'nrepeat' is set to '1'.")
+            warning("Leave-One-Out validation does not need to be repeated: 'nrepeat' is set to '1'.")
         nrepeat = 1
     }
     
     if (!is.logical(progressBar))
-    stop("'progressBar' must be either TRUE or FALSE")
+        stop("'progressBar' must be either TRUE or FALSE")
     
     measure = c("overall","BER") # one of c("overall","BER")
     
     
     if (!(logratio %in% c("none", "CLR")))
-    stop("Choose one of the two following logratio transformation: 'none' or 'CLR'")
+        stop("Choose one of the two following logratio transformation: 'none' or 'CLR'")
     #fold is checked in 'MCVfold'
     
     
@@ -668,8 +670,8 @@ perf.mixo_plsda <- function(object,
     }
     #-- logratio + multilevel approach -----------------------------------------#
     #---------------------------------------------------------------------------#
-
-
+    
+    
     # -------------------------------------
     # added: first check for near zero var on the whole data set
     if (near.zero.var == TRUE)
@@ -681,10 +683,10 @@ perf.mixo_plsda <- function(object,
             X = X[, -nzv$Position, drop=TRUE]
             
             if (ncol(X)==0)
-            stop("No more predictors after Near Zero Var has been applied!")
+                stop("No more predictors after Near Zero Var has been applied!")
             
             if (any(keepX > ncol(X)))
-            keepX = ncol(X)
+                keepX = ncol(X)
             
         }
     }
@@ -707,10 +709,10 @@ perf.mixo_plsda <- function(object,
     }
     #-- NA calculation      ----------------------------------------------------#
     #---------------------------------------------------------------------------#
-
-
+    
+    
     list.features = list()
-
+    
     mat.error.rate = mat.sd.error = mat.mean.error = error.per.class.keepX.opt = error.per.class.keepX.opt.mean = list()
     error.per.class = list()
     final=list()
@@ -718,22 +720,22 @@ perf.mixo_plsda <- function(object,
     for (measure_i in measure)
     {
         mat.sd.error[[measure_i]] = matrix(0,nrow = ncomp, ncol = length(dist),
-        dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
+                                           dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
         mat.mean.error[[measure_i]] = matrix(0,nrow = ncomp, ncol = length(dist),
-        dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
+                                             dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
         error.per.class.keepX.opt[[measure_i]] = list()
         error.per.class.keepX.opt.mean[[measure_i]] = list()
         mat.error.rate[[measure_i]]=list()
         for(ijk in dist)
         {
             mat.error.rate[[measure_i]][[ijk]] = matrix(0, nrow = ncomp, ncol = nrepeat,
-            dimnames = list(c(paste0('comp', 1 : ncomp)), c(paste0('nrep', 1 : nrepeat))))
-
+                                                        dimnames = list(c(paste0('comp', 1 : ncomp)), c(paste0('nrep', 1 : nrepeat))))
+            
             error.per.class.keepX.opt[[measure_i]][[ijk]] = array(0, c(nlevels(Y), nrepeat, ncomp),
-            dimnames = list(c(levels(Y)), c(paste0('nrep', 1 : nrepeat)), c(paste0('comp', 1:ncomp, sep=''))))
-
+                                                                  dimnames = list(c(levels(Y)), c(paste0('nrep', 1 : nrepeat)), c(paste0('comp', 1:ncomp, sep=''))))
+            
             error.per.class.keepX.opt.mean[[measure_i]][[ijk]] = matrix(nrow = nlevels(Y), ncol = ncomp,
-            dimnames = list(c(levels(Y)), c(paste0('comp', 1 : ncomp))))
+                                                                        dimnames = list(c(levels(Y)), c(paste0('comp', 1 : ncomp))))
         }
     }
     
@@ -747,41 +749,41 @@ perf.mixo_plsda <- function(object,
     for(ijk in dist)
     {
         class.all[[ijk]] = array(0, c(nrow(X),  nrepeat ,ncomp),
-        dimnames = list(rownames(X),c(paste0('nrep', 1 : nrepeat)),c(paste0('comp', 1 : ncomp))))
+                                 dimnames = list(rownames(X),c(paste0('nrep', 1 : nrepeat)),c(paste0('comp', 1 : ncomp))))
     }
     
     class.object=class(object)
     if (parallel) {
         clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","keepX"),envir=environment())
     }
-
+    
     for (comp in 1 : ncomp)
     {
         if (progressBar == TRUE)
-        cat("\ncomp",comp, "\n")
+            cat("\ncomp",comp, "\n")
         
-
+        
         if(comp > 1)
         {
             choice.keepX = keepX[1 : (comp - 1)]
         } else {
-           choice.keepX = NULL
+            choice.keepX = NULL
         }
         test.keepX = keepX[comp]
         names(test.keepX) = test.keepX
         #test.keepX is a value
-
+        
         # estimate performance of the model for each component
         result = MCVfold.spls (X, Y, multilevel = multilevel, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = comp,
-        choice.keepX = choice.keepX, test.keepX = test.keepX, test.keepY = nlevels(Y),
-        measure = measure, dist = dist, scale=scale,
-        near.zero.var = near.zero.var,
-        auc = auc, progressBar = progressBar, class.object = class.object, cl = cl, parallel = parallel,
-        misdata = misdata, is.na.A = is.na.A)#, ind.NA = ind.NA, ind.NA.col = ind.NA.col)
-
+                               choice.keepX = choice.keepX, test.keepX = test.keepX, test.keepY = nlevels(Y),
+                               measure = measure, dist = dist, scale=scale,
+                               near.zero.var = near.zero.var,
+                               auc = auc, progressBar = progressBar, class.object = class.object, cl = cl, parallel = parallel,
+                               misdata = misdata, is.na.A = is.na.A)#, ind.NA = ind.NA, ind.NA.col = ind.NA.col)
+        
         # ---- extract stability of features ----- # NEW
         if (is(object, "mixo_splsda"))
-        list.features[[comp]] = result$features$stable
+            list.features[[comp]] = result$features$stable
         
         for (ijk in dist)
         {
@@ -797,7 +799,7 @@ perf.mixo_plsda <- function(object,
                 }
                 # confusion matrix for keepX.opt, for each nrep
                 error.per.class.keepX.opt[[measure_i]][[ijk]][ , ,comp] = result[[measure_i]]$confusion[[ijk]]
-
+                
                 # confusion matrix for keepX.opt, averaged over all nrep
                 error.per.class.keepX.opt.mean[[measure_i]][[ijk]][ ,comp] = apply(result[[measure_i]]$confusion[[ijk]],1 , mean)
             }
@@ -806,7 +808,7 @@ perf.mixo_plsda <- function(object,
             class.all[[ijk]][, , comp] = result$class.comp[[ijk]][,,1]
         }
         prediction.all[[comp]] = array(unlist(result$prediction.comp),c(nrow(result$prediction.comp[[1]]), ncol(result$prediction.comp[[1]]), nrepeat),
-        dimnames = c(dimnames(result$prediction.comp[[1]])[1:2], list(paste0("nrep",1:nrepeat))))#[[1]][, , 1] #take only one component [[1]] and one of test.keepX [,,1]
+                                       dimnames = c(dimnames(result$prediction.comp[[1]])[1:2], list(paste0("nrep",1:nrepeat))))#[[1]][, , 1] #take only one component [[1]] and one of test.keepX [,,1]
         
         if(auc == TRUE)
         {
@@ -814,30 +816,30 @@ perf.mixo_plsda <- function(object,
             auc.mean[[comp]] = result$auc[, , 1]
         }
     }
-
+    
     names(prediction.all) = paste0('comp', 1:ncomp)
     
     # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
     ncomp_opt = matrix(NA, nrow = length(measure), ncol = length(dist),
-    dimnames = list(measure, dist))
+                       dimnames = list(measure, dist))
     if(nrepeat > 2 & ncomp >1)
     {
         for (measure_i in measure)
         {
             for (ijk in dist)
-            ncomp_opt[measure, ijk] = t.test.process(t(mat.error.rate[[measure_i]][[ijk]]), alpha = signif.threshold)
+                ncomp_opt[measure, ijk] = t.test.process(t(mat.error.rate[[measure_i]][[ijk]]), alpha = signif.threshold)
         }
     }
-
+    
     result = list(error.rate = mat.mean.error,
-    error.rate.sd = mat.sd.error,
-    error.rate.all = mat.error.rate,
-    error.rate.class = error.per.class.keepX.opt.mean[[1]],
-    error.rate.class.all = error.per.class.keepX.opt[[1]],
-    predict = prediction.all,
-    class = class.all,
-    choice.ncomp = ncomp_opt)
-
+                  error.rate.sd = mat.sd.error,
+                  error.rate.all = mat.error.rate,
+                  error.rate.class = error.per.class.keepX.opt.mean[[1]],
+                  error.rate.class.all = error.per.class.keepX.opt[[1]],
+                  predict = prediction.all,
+                  class = class.all,
+                  choice.ncomp = ncomp_opt)
+    
     if(auc)
     {
         names(auc.mean) = c(paste0('comp', 1:ncomp))
@@ -846,19 +848,19 @@ perf.mixo_plsda <- function(object,
         names(auc.all) = c(paste0('comp', 1:ncomp))
         result$auc.all =auc.all
     }
-
+    
     if (is(object, "mixo_splsda"))
     {
         names(list.features) = paste0('comp', 1:ncomp)
         result$features$stable = list.features
     }
-
+    
     if (progressBar == TRUE)
-    cat('\n')
+        cat('\n')
     
     # added
     if (near.zero.var == TRUE)
-    result$nzvX = nzv$Position
+        result$nzvX = nzv$Position
     
     if (is(object, "mixo_splsda"))
     {
@@ -870,8 +872,8 @@ perf.mixo_plsda <- function(object,
     }
     class(result) = c("perf",paste(c("perf", method), collapse ="."))
     result$call = match.call()
-
-
+    
+    
     #updated outputs
     return(invisible(result))
 }

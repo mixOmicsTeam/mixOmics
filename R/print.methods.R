@@ -39,218 +39,218 @@
 #' @rdname S3methods-print
 #' @export
 print.mixo_pls <-
-function(x, ...)
-{
-    
-    mode = paste("'", x$mode, "'", sep = "")
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    
-    cat(" PLS with a", mode, "mode with", x$ncomp, "PLS components. \n")
-    cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-    cat(" You entered data Y of dimensions:", nrow(x$Y), ncol(x$Y), "\n\n")
-    
-    cat(" No variable selection. \n\n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    cat(" loading vectors: see object$loadings \n")
-    cat(" variates: see object$variates \n")
-    cat(" variable names: see object$names \n")
-    
-    cat("\n")
-    cat(" Functions to visualise samples: \n", "-------------------- \n")
-    cat(" plotIndiv, plotArrow \n")
-    cat("\n")
-    cat(" Functions to visualise variables: \n", "-------------------- \n")
-    cat(" plotVar, plotLoadings, network, cim \n")
-    
-}
+    function(x, ...)
+    {
+        
+        mode = paste("'", x$mode, "'", sep = "")
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        
+        cat(" PLS with a", mode, "mode with", x$ncomp, "PLS components. \n")
+        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        cat(" You entered data Y of dimensions:", nrow(x$Y), ncol(x$Y), "\n\n")
+        
+        cat(" No variable selection. \n\n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        cat(" loading vectors: see object$loadings \n")
+        cat(" variates: see object$variates \n")
+        cat(" variable names: see object$names \n")
+        
+        cat("\n")
+        cat(" Functions to visualise samples: \n", "-------------------- \n")
+        cat(" plotIndiv, plotArrow \n")
+        cat("\n")
+        cat(" Functions to visualise variables: \n", "-------------------- \n")
+        cat(" plotVar, plotLoadings, network, cim \n")
+        
+    }
 #------------------ print method for mint.pls ------------------#
 #' @name print
 #' @rdname S3methods-print
 #' @export
 print.mint.pls <-
-function(x, ...)
-{
-    
-    mode = paste("'", x$mode, "'", sep = "")
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    
-    cat(" MINT PLS with a", mode, "mode with", x$ncomp, "PLS components. \n")
-    cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-    cat(" You entered data Y of dimensions:", nrow(x$Y), ncol(x$Y), "\n\n")
-    cat(" You entered a grouping factor with", nlevels(x$study), "studies. \n")
-    
-    cat(" No variable selection. \n\n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    
-    cat(" loading vectors: see object$loadings \n")
-    cat(" loading vectors per study: see object$loadings.partial \n")
-    cat(" variates: see object$variates \n")
-    cat(" variates per study: see object$variates.partial \n")
-    cat(" variable names: see object$names \n")
-    
-    cat("\n")
-    cat(" Functions to visualise samples: \n", "-------------------- \n")
-    cat(" plotIndiv, plotArrow \n")
-    cat("\n")
-    cat(" Functions to visualise variables: \n", "-------------------- \n")
-    cat(" plotVar, plotLoadings, network, cim \n")
-}
+    function(x, ...)
+    {
+        
+        mode = paste("'", x$mode, "'", sep = "")
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        
+        cat(" MINT PLS with a", mode, "mode with", x$ncomp, "PLS components. \n")
+        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        cat(" You entered data Y of dimensions:", nrow(x$Y), ncol(x$Y), "\n\n")
+        cat(" You entered a grouping factor with", nlevels(x$study), "studies. \n")
+        
+        cat(" No variable selection. \n\n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        
+        cat(" loading vectors: see object$loadings \n")
+        cat(" loading vectors per study: see object$loadings.partial \n")
+        cat(" variates: see object$variates \n")
+        cat(" variates per study: see object$variates.partial \n")
+        cat(" variable names: see object$names \n")
+        
+        cat("\n")
+        cat(" Functions to visualise samples: \n", "-------------------- \n")
+        cat(" plotIndiv, plotArrow \n")
+        cat("\n")
+        cat(" Functions to visualise variables: \n", "-------------------- \n")
+        cat(" plotVar, plotLoadings, network, cim \n")
+    }
 
 #------------------ print method for plsda ------------------#
 #' @name print
 #' @rdname S3methods-print
 #' @export
 print.mixo_plsda <-
-function(x, ...)
-{
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    
-    cat(" PLS-DA (regression mode) with", x$ncomp, "PLS-DA components. \n")
-    cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-    cat(" You entered data Y with", ncol(x$ind.mat) , "classes. \n\n")
-    
-    cat(" No variable selection. \n\n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    
-    cat(" loading vectors: see object$loadings \n")
-    cat(" variates: see object$variates \n")
-    cat(" variable names: see object$names \n")
-    
-    cat("\n")
-    cat(" Functions to visualise samples: \n", "-------------------- \n")
-    cat(" plotIndiv, plotArrow, cim \n")
-    cat("\n")
-    cat(" Functions to visualise variables: \n", "-------------------- \n")
-    cat(" plotVar, plotLoadings, network, cim \n")
-    cat("\n")
-    cat(" Other functions: \n", "-------------------- \n")
-    cat(" auc \n")
-    
-}
+    function(x, ...)
+    {
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        
+        cat(" PLS-DA (regression mode) with", x$ncomp, "PLS-DA components. \n")
+        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        cat(" You entered data Y with", ncol(x$ind.mat) , "classes. \n\n")
+        
+        cat(" No variable selection. \n\n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        
+        cat(" loading vectors: see object$loadings \n")
+        cat(" variates: see object$variates \n")
+        cat(" variable names: see object$names \n")
+        
+        cat("\n")
+        cat(" Functions to visualise samples: \n", "-------------------- \n")
+        cat(" plotIndiv, plotArrow, cim \n")
+        cat("\n")
+        cat(" Functions to visualise variables: \n", "-------------------- \n")
+        cat(" plotVar, plotLoadings, network, cim \n")
+        cat("\n")
+        cat(" Other functions: \n", "-------------------- \n")
+        cat(" auc \n")
+        
+    }
 
 #------------------ print method for mint.plsda ------------------#
 #' @name print
 #' @rdname S3methods-print
 #' @export
 print.mint.plsda <-
-function(x, ...)
-{
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    
-    cat(" MINT PLS-DA (regression mode) with", x$ncomp, "PLS-DA components. \n")
-    cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-    cat(" You entered data Y with", ncol(x$ind.mat) , "classes. \n\n")
-    cat(" You entered a grouping factor with", nlevels(x$study), "studies. \n")
-    
-    cat(" No variable selection. \n\n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    
-    cat(" loading vectors: see object$loadings \n")
-    cat(" loading vectors per study: see object$loadings.partial \n")
-    cat(" variates: see object$variates \n")
-    cat(" variates per study: see object$variates.partial \n")
-    cat(" variable names: see object$names \n")
-    
-    cat("\n")
-    cat(" Functions to visualise samples: \n", "-------------------- \n")
-    cat(" plotIndiv, plotArrow, cim \n")
-    cat("\n")
-    cat(" Functions to visualise variables: \n", "-------------------- \n")
-    cat(" plotVar, plotLoadings, network, cim \n")
-    cat("\n")
-    cat(" Other functions: \n", "-------------------- \n")
-    cat(" perf, auc\n")
-}
+    function(x, ...)
+    {
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        
+        cat(" MINT PLS-DA (regression mode) with", x$ncomp, "PLS-DA components. \n")
+        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        cat(" You entered data Y with", ncol(x$ind.mat) , "classes. \n\n")
+        cat(" You entered a grouping factor with", nlevels(x$study), "studies. \n")
+        
+        cat(" No variable selection. \n\n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        
+        cat(" loading vectors: see object$loadings \n")
+        cat(" loading vectors per study: see object$loadings.partial \n")
+        cat(" variates: see object$variates \n")
+        cat(" variates per study: see object$variates.partial \n")
+        cat(" variable names: see object$names \n")
+        
+        cat("\n")
+        cat(" Functions to visualise samples: \n", "-------------------- \n")
+        cat(" plotIndiv, plotArrow, cim \n")
+        cat("\n")
+        cat(" Functions to visualise variables: \n", "-------------------- \n")
+        cat(" plotVar, plotLoadings, network, cim \n")
+        cat("\n")
+        cat(" Other functions: \n", "-------------------- \n")
+        cat(" perf, auc\n")
+    }
 
 #----------------- print method for spls ------------------#
 #' @name print
 #' @rdname S3methods-print
 #' @export
 print.mixo_spls <-
-function(x, ...)
-{
-    
-    mode = paste("'", x$mode, "'", sep = "")
-    keepX = paste("[", x$keepX, "]", sep = "")
-    keepY = paste("[", x$keepY, "]", sep = "")
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    
-    cat(" sPLS with a", mode, "mode with", x$ncomp, "sPLS components. \n")
-    cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-    cat(" You entered data Y of dimensions:", nrow(x$Y), ncol(x$Y), "\n\n")
-    
-    cat(" Selection of", keepX, "variables on each of the sPLS components on the X data set. \n")
-    cat(" Selection of", keepY, "variables on each of the sPLS components on the Y data set. \n\n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    
-    cat(" loading vectors: see object$loadings \n")
-    cat(" variates: see object$variates \n")
-    cat(" variable names: see object$names \n")
-    
-    cat("\n")
-    cat(" Functions to visualise samples: \n", "-------------------- \n")
-    cat(" plotIndiv, plotArrow \n")
-    cat("\n")
-    cat(" Functions to visualise variables: \n", "-------------------- \n")
-    cat(" plotVar, plotLoadings, network, cim \n")
-}
+    function(x, ...)
+    {
+        
+        mode = paste("'", x$mode, "'", sep = "")
+        keepX = paste("[", x$keepX, "]", sep = "")
+        keepY = paste("[", x$keepY, "]", sep = "")
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        
+        cat(" sPLS with a", mode, "mode with", x$ncomp, "sPLS components. \n")
+        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        cat(" You entered data Y of dimensions:", nrow(x$Y), ncol(x$Y), "\n\n")
+        
+        cat(" Selection of", keepX, "variables on each of the sPLS components on the X data set. \n")
+        cat(" Selection of", keepY, "variables on each of the sPLS components on the Y data set. \n\n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        
+        cat(" loading vectors: see object$loadings \n")
+        cat(" variates: see object$variates \n")
+        cat(" variable names: see object$names \n")
+        
+        cat("\n")
+        cat(" Functions to visualise samples: \n", "-------------------- \n")
+        cat(" plotIndiv, plotArrow \n")
+        cat("\n")
+        cat(" Functions to visualise variables: \n", "-------------------- \n")
+        cat(" plotVar, plotLoadings, network, cim \n")
+    }
 
 #----------------- print method for mint.spls ------------------#
 #' @name print
 #' @rdname S3methods-print
 #' @export
 print.mint.spls <-
-function(x, ...)
-{
-    
-    mode = paste("'", x$mode, "'", sep = "")
-    keepX = paste("[", x$keepX, "]", sep = "")
-    keepY = paste("[", x$keepY, "]", sep = "")
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    
-    cat(" MINT sPLS with a", mode, "mode with", x$ncomp, "sPLS components. \n")
-    cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-    cat(" You entered data Y of dimensions:", nrow(x$Y), ncol(x$Y), "\n\n")
-    cat(" You entered a grouping factor with", nlevels(x$study), "studies. \n")
-    
-    cat(" Selection of", keepX, "variables on each of the sPLS components on the X data set. \n")
-    cat(" Selection of", keepY, "variables on each of the sPLS components on the Y data set. \n\n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    
-    cat(" loading vectors: see object$loadings \n")
-    cat(" loading vectors per study: see object$loadings.partial \n")
-    cat(" variates: see object$variates \n")
-    cat(" variates per study: see object$variates.partial \n")
-    cat(" variable names: see object$names \n")
-    
-    cat("\n")
-    cat(" Functions to visualise samples: \n", "-------------------- \n")
-    cat(" plotIndiv, plotArrow \n")
-    cat("\n")
-    cat(" Functions to visualise variables: \n", "-------------------- \n")
-    cat(" plotVar, plotLoadings, network, cim \n")
-    cat("\n")
-    cat(" Other functions: \n", "-------------------- \n")
-    cat(" selectVar\n")
-}
+    function(x, ...)
+    {
+        
+        mode = paste("'", x$mode, "'", sep = "")
+        keepX = paste("[", x$keepX, "]", sep = "")
+        keepY = paste("[", x$keepY, "]", sep = "")
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        
+        cat(" MINT sPLS with a", mode, "mode with", x$ncomp, "sPLS components. \n")
+        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        cat(" You entered data Y of dimensions:", nrow(x$Y), ncol(x$Y), "\n\n")
+        cat(" You entered a grouping factor with", nlevels(x$study), "studies. \n")
+        
+        cat(" Selection of", keepX, "variables on each of the sPLS components on the X data set. \n")
+        cat(" Selection of", keepY, "variables on each of the sPLS components on the Y data set. \n\n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        
+        cat(" loading vectors: see object$loadings \n")
+        cat(" loading vectors per study: see object$loadings.partial \n")
+        cat(" variates: see object$variates \n")
+        cat(" variates per study: see object$variates.partial \n")
+        cat(" variable names: see object$names \n")
+        
+        cat("\n")
+        cat(" Functions to visualise samples: \n", "-------------------- \n")
+        cat(" plotIndiv, plotArrow \n")
+        cat("\n")
+        cat(" Functions to visualise variables: \n", "-------------------- \n")
+        cat(" plotVar, plotLoadings, network, cim \n")
+        cat("\n")
+        cat(" Other functions: \n", "-------------------- \n")
+        cat(" selectVar\n")
+    }
 
 
 #----------------- print method for splsda ------------------#
@@ -258,101 +258,101 @@ function(x, ...)
 #' @rdname S3methods-print
 #' @export
 print.mixo_splsda <-
-function(x, ...)
-{
-    
-    keepX = paste("[", x$keepX, "]", sep = "")
-    keepY = paste("[", x$keepY, "]", sep = "")
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    cat(" sPLS-DA (regression mode) with", x$ncomp, "sPLS-DA components. \n")
-    cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-    cat(" You entered data Y with", ncol(x$ind.mat) , "classes. \n\n")
-    
-    cat(" Selection of", keepX, "variables on each of the sPLS-DA components on the X data set. \n")
-    cat(" No Y variables can be selected. \n\n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    
-    cat(" loading vectors: see object$loadings \n")
-    cat(" variates: see object$variates \n")
-    cat(" variable names: see object$names \n")
-    
-    cat("\n")
-    cat(" Functions to visualise samples: \n", "-------------------- \n")
-    cat(" plotIndiv, plotArrow, cim \n")
-    cat("\n")
-    cat(" Functions to visualise variables: \n", "-------------------- \n")
-    cat(" plotVar, plotLoadings, network, cim \n")
-    cat("\n")
-    cat(" Other functions: \n", "-------------------- \n")
-    cat(" selectVar, tune, perf, auc \n")
-}
+    function(x, ...)
+    {
+        
+        keepX = paste("[", x$keepX, "]", sep = "")
+        keepY = paste("[", x$keepY, "]", sep = "")
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        cat(" sPLS-DA (regression mode) with", x$ncomp, "sPLS-DA components. \n")
+        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        cat(" You entered data Y with", ncol(x$ind.mat) , "classes. \n\n")
+        
+        cat(" Selection of", keepX, "variables on each of the sPLS-DA components on the X data set. \n")
+        cat(" No Y variables can be selected. \n\n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        
+        cat(" loading vectors: see object$loadings \n")
+        cat(" variates: see object$variates \n")
+        cat(" variable names: see object$names \n")
+        
+        cat("\n")
+        cat(" Functions to visualise samples: \n", "-------------------- \n")
+        cat(" plotIndiv, plotArrow, cim \n")
+        cat("\n")
+        cat(" Functions to visualise variables: \n", "-------------------- \n")
+        cat(" plotVar, plotLoadings, network, cim \n")
+        cat("\n")
+        cat(" Other functions: \n", "-------------------- \n")
+        cat(" selectVar, tune, perf, auc \n")
+    }
 
 #----------------- print method for mint.splsda ------------------#
 #' @name print
 #' @rdname S3methods-print
 #' @export
 print.mint.splsda <-
-function(x, ...)
-{
-    
-    keepX = paste("[", x$keepX, "]", sep = "")
-    keepY = paste("[", x$keepY, "]", sep = "")
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    cat(" MINT sPLS-DA (regression mode) with", x$ncomp, "sPLS-DA components. \n")
-    cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-    cat(" You entered data Y with", ncol(x$ind.mat) , "classes. \n\n")
-    cat(" You entered a grouping factor with", nlevels(x$study), "studies. \n")
-    
-    cat(" Selection of", keepX, "variables on each of the sPLS-DA components on the X data set. \n")
-    cat(" No Y variables can be selected. \n\n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    
-    cat(" loading vectors: see object$loadings \n")
-    cat(" loading vectors per study: see object$loadings.partial \n")
-    cat(" variates: see object$variates \n")
-    cat(" variates per study: see object$variates.partial \n")
-    cat(" variable names: see object$names \n")
-    
-    cat("\n")
-    cat(" Functions to visualise samples: \n", "-------------------- \n")
-    cat(" plotIndiv, plotArrow, cim \n")
-    cat("\n")
-    cat(" Functions to visualise variables: \n", "-------------------- \n")
-    cat(" plotVar, plotLoadings, network, cim \n")
-    cat("\n")
-    cat(" Other functions: \n", "-------------------- \n")
-    cat(" selectVar, tune, perf, auc \n")
-    
-}
+    function(x, ...)
+    {
+        
+        keepX = paste("[", x$keepX, "]", sep = "")
+        keepY = paste("[", x$keepY, "]", sep = "")
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        cat(" MINT sPLS-DA (regression mode) with", x$ncomp, "sPLS-DA components. \n")
+        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        cat(" You entered data Y with", ncol(x$ind.mat) , "classes. \n\n")
+        cat(" You entered a grouping factor with", nlevels(x$study), "studies. \n")
+        
+        cat(" Selection of", keepX, "variables on each of the sPLS-DA components on the X data set. \n")
+        cat(" No Y variables can be selected. \n\n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        
+        cat(" loading vectors: see object$loadings \n")
+        cat(" loading vectors per study: see object$loadings.partial \n")
+        cat(" variates: see object$variates \n")
+        cat(" variates per study: see object$variates.partial \n")
+        cat(" variable names: see object$names \n")
+        
+        cat("\n")
+        cat(" Functions to visualise samples: \n", "-------------------- \n")
+        cat(" plotIndiv, plotArrow, cim \n")
+        cat("\n")
+        cat(" Functions to visualise variables: \n", "-------------------- \n")
+        cat(" plotVar, plotLoadings, network, cim \n")
+        cat("\n")
+        cat(" Other functions: \n", "-------------------- \n")
+        cat(" selectVar, tune, perf, auc \n")
+        
+    }
 
 #------------------ print method for rcc ------------------#
 #' @name print
 #' @rdname S3methods-print
 #' @export
 print.rcc <-
-function(x, ...)
-{
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    
-    cat(" rCCA with", x$ncomp, "components and regularization parameters", x$lambda[1], "and", x$lambda[2], "for the X and Y data. \n")
-    cat(" You entered data X of dimensions :", nrow(x$X), ncol(x$X), "\n")
-    cat(" You entered data Y of dimensions :", nrow(x$Y), ncol(x$Y), "\n\n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    
-    cat(" canonical correlations: see object$cor \n")
-    cat(" loading vectors: see object$loadings \n")
-    cat(" variates: see object$variates \n")
-    cat(" variable names: see object$names \n")
-}
+    function(x, ...)
+    {
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        
+        cat(" rCCA with", x$ncomp, "components and regularization parameters", x$lambda[1], "and", x$lambda[2], "for the X and Y data. \n")
+        cat(" You entered data X of dimensions :", nrow(x$X), ncol(x$X), "\n")
+        cat(" You entered data Y of dimensions :", nrow(x$Y), ncol(x$Y), "\n\n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        
+        cat(" canonical correlations: see object$cor \n")
+        cat(" loading vectors: see object$loadings \n")
+        cat(" variates: see object$variates \n")
+        cat(" variable names: see object$names \n")
+    }
 
 # ------------------------ print for pca --------------------------------
 # #' @name print
@@ -391,79 +391,79 @@ print.pca <- function(x, ...)
 #' @rdname S3methods-print
 #' @export
 print.spca <-
-function(x, ...)
-{
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    
-    cat(" sparse pCA with", x$ncomp, "principal components. \n")
-    cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-    
-    cat(" Selection of", x$keepX, "variables on each of the principal components on the X data set. \n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    
-    cat(" loading vectors: see object$rotation \n")
-    cat(" principal components: see object$x \n")
-    cat(" cumulative explained variance: see object$varX \n")
-    cat(" variable names: see object$names \n")
-    cat("\n")
-    cat(" Other functions: \n", "-------------------- \n")
-    cat(" selectVar, tune\n")
-    
-}
+    function(x, ...)
+    {
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        
+        cat(" sparse pCA with", x$ncomp, "principal components. \n")
+        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        
+        cat(" Selection of", x$keepX, "variables on each of the principal components on the X data set. \n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        
+        cat(" loading vectors: see object$rotation \n")
+        cat(" principal components: see object$x \n")
+        cat(" cumulative explained variance: see object$varX \n")
+        cat(" variable names: see object$names \n")
+        cat("\n")
+        cat(" Other functions: \n", "-------------------- \n")
+        cat(" selectVar, tune\n")
+        
+    }
 
 # ------------------------ print for ipca -------------------------
 # #' @name print
 #' @rdname S3methods-print
 #' @export
 print.ipca <-
-function(x, ...)
-{
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    
-    cat(" IPCA with", x$ncomp, "independent components. \n")
-    cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    
-    cat(" unmixing matrix: see object$unmixing \n")
-    cat(" independent principal components: see object$x \n")
-    cat(" mxing matrix: see object$mixing \n")
-    cat(" kurtosis: see object$kurtosis \n")
-    cat(" variable names: see object$names \n")
-    cat(" independent loading vectors: see object$loadings \n")
-}
+    function(x, ...)
+    {
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        
+        cat(" IPCA with", x$ncomp, "independent components. \n")
+        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        
+        cat(" unmixing matrix: see object$unmixing \n")
+        cat(" independent principal components: see object$x \n")
+        cat(" mxing matrix: see object$mixing \n")
+        cat(" kurtosis: see object$kurtosis \n")
+        cat(" variable names: see object$names \n")
+        cat(" independent loading vectors: see object$loadings \n")
+    }
 
 # ------------------------ print for sipca -------------------------
 # #' @name print
 #' @rdname S3methods-print
 #' @export
 print.sipca <-
-function(x, ...)
-{
-    
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    
-    cat(" Sparse IPCA with", x$ncomp, "independent components. \n")
-    cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-    
-    cat(" Selection of", x$keepX, "variables on each of the principal components on the X data set. \n")
-    
-    cat(" Main numerical outputs: \n",
-    "-------------------- \n")
-    
-    cat(" unmixing matrix: see object$unmixing \n")
-    cat(" independent principal components: see object$x \n")
-    cat(" mxing matrix: see object$mixing \n")
-    cat(" kurtosis: see object$kurtosis \n")
-    cat(" variable names: see object$names \n")
-    cat(" independent loading vectors: see object$loadings \n")
-    
-}
+    function(x, ...)
+    {
+        
+        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+        
+        cat(" Sparse IPCA with", x$ncomp, "independent components. \n")
+        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        
+        cat(" Selection of", x$keepX, "variables on each of the principal components on the X data set. \n")
+        
+        cat(" Main numerical outputs: \n",
+            "-------------------- \n")
+        
+        cat(" unmixing matrix: see object$unmixing \n")
+        cat(" independent principal components: see object$x \n")
+        cat(" mxing matrix: see object$mixing \n")
+        cat(" kurtosis: see object$kurtosis \n")
+        cat(" variable names: see object$names \n")
+        cat(" independent loading vectors: see object$loadings \n")
+        
+    }
 
 # ------------------------ print for rgcca -------------------------
 # #' @name print
@@ -606,98 +606,98 @@ print.sgccda<- function(x, ...)
 #' @rdname S3methods-print
 #' @export
 print.summary <-
-function(x, ...)
-{
-    
-    print.gap = 4
-    what = x$what
-    digits = x$digits
-    
-    #--------------------- output pls/spls ---------------------#
-    if(is(x, c("pls", "spls"))){
-        
-        if (is(x, "pls"))
-        {
-            cat(" PLS mode:", x$mode)
-            cat("\n Number of variates considered:", x$ncomp, "\n")
-        } else {
-            cat(" sPLS mode:", x$mode)
-            cat("\n Number of variates considered:", x$ncomp)
-            cat("\n Number of X-variables selected on each of the sPLS components:", x$keepX)
-            cat("\n Number of Y-variables selected on each of the sPLS components:", x$keepY, "\n")
-        }
-        
-        #---------- affichage communaute ----------#
-        if (any(what == "all") || any(what == "communalities"))
-        {
-            cat("\n\n Communalities Analysis:\n",
-            "----------------------")
-            
-            cat("\n X-Variables vs their own Variates: see object$CM.X$own \n")
-            cat("\n X-Variables vs the opposite Variates: see object$CM.X$opp \n")
-            cat("\n Y-Variables vs their own Variates: see object$CM.Y$opp \n")
-            cat("\n Y-Variables vs the opposite Variates: see object$CM.Y$opp \n")
-        }
-        
-        #--------- affichage redondance -----------#
-        if (any(what == "all") || any(what == "redundancy"))
-        {
-            cat("\n\n Redundancy Analysis:\n",
-            "-------------------\n")
-            
-            cat("\n X-Variables vs their own Variates: see object$Rd.X$own \n")
-            cat("\n X-Variables vs the opposite Variates: see object$Rd.X$opp \n")
-            cat("\n Y-Variables vs their own Variates: see object$Rd.Y$opp \n")
-            cat("\n Y-Variables vs the opposite Variates: see object$Rd.Y$opp \n")
-        }
-        
-        #---------- tableau VIP ---------#
-        if (any(what == "all") || any(what == "VIP"))
-        {
-            cat("\n\n", "Variable Importance in the Projection (VIP): see object$VIP \n",
-            "------------------------------------------- \n\n")
-        }
-        
-    }  #end if pls
-    
-    # ---------------------- output rcc ------------------------#
-    if(is(x, "rcc"))
+    function(x, ...)
     {
+        
         print.gap = 4
-        if (any(what == "all"))
-        {
-            cat(" Number of canonical variates considered:", x$ncomp, "\n")
-            cat("\n Canonical correlations:",
-            "\n ----------------------\n")
-            print(round(x$can.cor, digits = digits), print.gap = print.gap)
-        }
+        what = x$what
+        digits = x$digits
         
-        #-- affichage communaute --#
-        if (any(what == "all") || any(what == "communalities"))
-        {
-            cat("\n\n Canonical Communalities Analysis:\n",
-            "--------------------------------")
+        #--------------------- output pls/spls ---------------------#
+        if(is(x, c("pls", "spls"))){
             
-            cat("\n X-Variables vs their own Canonical Variates: see object$Cm.X$own \n")
-            cat("\n X-Variables vs the opposite Canonical Variates: see object$Cm.X$opp \n")
-            cat("\n Y-Variables vs their own Canonical Variates: see object$Cm.Y$own \n")
-            cat("\n Y-Variables vs the opposite Canonical Variates: see object$Cm.Y$opp \n")
-        }
-        
-        #--------- affichage redondance -----------#
-        if (any(what == "all") || any(what == "redundancy"))
-        {
-            cat("\n\n Redundancy Analysis:\n",
-            "-------------------\n")
+            if (is(x, "pls"))
+            {
+                cat(" PLS mode:", x$mode)
+                cat("\n Number of variates considered:", x$ncomp, "\n")
+            } else {
+                cat(" sPLS mode:", x$mode)
+                cat("\n Number of variates considered:", x$ncomp)
+                cat("\n Number of X-variables selected on each of the sPLS components:", x$keepX)
+                cat("\n Number of Y-variables selected on each of the sPLS components:", x$keepY, "\n")
+            }
             
-            cat("\n X-Variables vs their own Variates: see object$Rd.X$own \n")
-            cat("\n X-Variables vs the opposite Variates: see object$Rd.X$opp \n")
-            cat("\n Y-Variables vs their own Variates: see object$Rd.Y$opp \n")
-            cat("\n Y-Variables vs the opposite Variates: see object$Rd.Y$opp \n")
-        }
+            #---------- affichage communaute ----------#
+            if (any(what == "all") || any(what == "communalities"))
+            {
+                cat("\n\n Communalities Analysis:\n",
+                    "----------------------")
+                
+                cat("\n X-Variables vs their own Variates: see object$CM.X$own \n")
+                cat("\n X-Variables vs the opposite Variates: see object$CM.X$opp \n")
+                cat("\n Y-Variables vs their own Variates: see object$CM.Y$opp \n")
+                cat("\n Y-Variables vs the opposite Variates: see object$CM.Y$opp \n")
+            }
+            
+            #--------- affichage redondance -----------#
+            if (any(what == "all") || any(what == "redundancy"))
+            {
+                cat("\n\n Redundancy Analysis:\n",
+                    "-------------------\n")
+                
+                cat("\n X-Variables vs their own Variates: see object$Rd.X$own \n")
+                cat("\n X-Variables vs the opposite Variates: see object$Rd.X$opp \n")
+                cat("\n Y-Variables vs their own Variates: see object$Rd.Y$opp \n")
+                cat("\n Y-Variables vs the opposite Variates: see object$Rd.Y$opp \n")
+            }
+            
+            #---------- tableau VIP ---------#
+            if (any(what == "all") || any(what == "VIP"))
+            {
+                cat("\n\n", "Variable Importance in the Projection (VIP): see object$VIP \n",
+                    "------------------------------------------- \n\n")
+            }
+            
+        }  #end if pls
         
-    }  #end rcc
-}
+        # ---------------------- output rcc ------------------------#
+        if(is(x, "rcc"))
+        {
+            print.gap = 4
+            if (any(what == "all"))
+            {
+                cat(" Number of canonical variates considered:", x$ncomp, "\n")
+                cat("\n Canonical correlations:",
+                    "\n ----------------------\n")
+                print(round(x$can.cor, digits = digits), print.gap = print.gap)
+            }
+            
+            #-- affichage communaute --#
+            if (any(what == "all") || any(what == "communalities"))
+            {
+                cat("\n\n Canonical Communalities Analysis:\n",
+                    "--------------------------------")
+                
+                cat("\n X-Variables vs their own Canonical Variates: see object$Cm.X$own \n")
+                cat("\n X-Variables vs the opposite Canonical Variates: see object$Cm.X$opp \n")
+                cat("\n Y-Variables vs their own Canonical Variates: see object$Cm.Y$own \n")
+                cat("\n Y-Variables vs the opposite Canonical Variates: see object$Cm.Y$opp \n")
+            }
+            
+            #--------- affichage redondance -----------#
+            if (any(what == "all") || any(what == "redundancy"))
+            {
+                cat("\n\n Redundancy Analysis:\n",
+                    "-------------------\n")
+                
+                cat("\n X-Variables vs their own Variates: see object$Rd.X$own \n")
+                cat("\n X-Variables vs the opposite Variates: see object$Rd.X$opp \n")
+                cat("\n Y-Variables vs their own Variates: see object$Rd.Y$opp \n")
+                cat("\n Y-Variables vs the opposite Variates: see object$Rd.Y$opp \n")
+            }
+            
+        }  #end rcc
+    }
 
 
 # perf.diablo / sgccda.mthd
@@ -710,12 +710,12 @@ print.perf.pls.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" Main numerical outputs: \n",
-    "-------------------- \n")
+        "-------------------- \n")
     cat(" MSEP, R2, Q2, Q2.total, RSS, PRESS. See the help file ?perf \n\n")
     
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
-
+    
 }
 #' @name print
 #' @rdname S3methods-print
@@ -724,14 +724,14 @@ print.perf.spls.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" Main numerical outputs: \n",
-    "-------------------- \n")
+        "-------------------- \n")
     cat(" MSEP, R2, Q2, Q2.total, RSS, PRESS. See the help file ?perf \n")
     cat(" Stable features of X on each component: see object$features$stable.X \n")
     cat(" Stable features of Y on each component: see object$features$stable.Y \n\n")
     
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
-
+    
 }
 
 #' @name print
@@ -741,7 +741,7 @@ print.perf.plsda.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" Main numerical outputs: \n",
-    "-------------------- \n")
+        "-------------------- \n")
     cat(" Error rate (overall or BER) for each component and for each distance: see object$error.rate \n")
     cat(" Error rate per class, for each component and for each distance: see object$error.rate.class \n")
     cat(" Prediction values for each component: see object$predict \n")
@@ -750,7 +750,7 @@ print.perf.plsda.mthd = function(x, ...)
     
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
-
+    
 }
 #' @name print
 #' @rdname S3methods-print
@@ -759,7 +759,7 @@ print.perf.splsda.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" Main numerical outputs: \n",
-    "-------------------- \n")
+        "-------------------- \n")
     cat(" Error rate (overall or BER) for each component and for each distance (averaged over the nrepeat): see object$error.rate \n")
     cat(" Error rate (overall or BER) for each component, for each distance and for each repeat: see object$error.rate.all \n")
     cat(" Error rate per class, for each component and for each distance: see object$error.rate.class \n")
@@ -770,7 +770,7 @@ print.perf.splsda.mthd = function(x, ...)
     
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
-
+    
 }
 #' @name print
 #' @rdname S3methods-print
@@ -779,7 +779,7 @@ print.perf.mint.splsda.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" Main numerical outputs: \n",
-    "-------------------- \n")
+        "-------------------- \n")
     cat(" Study-specific error rate (overall, BER and error rate per class) for each component and for each distance: see object$study.specific.error \n")
     cat(" Global error rate (overall, BER and error rate per class) for each component and for each distance: see object$global.error \n")
     cat(" Prediction values for each component: see object$predict \n")
@@ -789,7 +789,7 @@ print.perf.mint.splsda.mthd = function(x, ...)
     
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
-
+    
 }
 #' @name print
 #' @rdname S3methods-print
@@ -798,7 +798,7 @@ print.perf.sgccda.mthd = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" Main numerical outputs: \n",
-    "-------------------- \n")
+        "-------------------- \n")
     cat(" Error rate (overall or BER) for each component and for each distance: see object$error.rate \n")
     cat(" Error rate per class, for each component and for each distance: see object$error.rate.class \n")
     cat(" Prediction values for each component: see object$predict \n")
@@ -808,7 +808,7 @@ print.perf.sgccda.mthd = function(x, ...)
     
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
-
+    
 }
 
 
@@ -828,7 +828,7 @@ print.tune.rcc = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat("  lambda1 = ", x$opt.lambda1, ", see object$opt.lambda1\n", " lambda2 = ", x$opt.lambda2, ",  see object$opt.lambda2\n",
-    "CV-score = ", x$opt.score, ", see object$opt.score\n")
+        "CV-score = ", x$opt.score, ", see object$opt.score\n")
 }
 #' @name print
 #' @rdname S3methods-print
@@ -837,7 +837,7 @@ print.tune.splsda = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" Main numerical outputs: \n",
-    "-------------------- \n")
+        "-------------------- \n")
     cat(" Optimal keepX for each component, see object$choice.keepX \n")
     cat(" Optimal number of components: see object$choice.ncomp \n")
     cat(" Error rate for each tested keepX and for each component (averaged over the nrepeat, mean and standard deviation): see object$error.rate and object$error.rate.sd  \n")
@@ -846,7 +846,7 @@ print.tune.splsda = function(x, ...)
     cat(" AUC when applicable, (note that those results may differ with sPLS-DA prediction, see details): see object$AUC \n\n")
     
     cat(" Other outputs are available, and details on those outputs in ?tune.splsda.  \n\n")
-
+    
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
 }
@@ -857,13 +857,13 @@ print.tune.mint.splsda = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" Main numerical outputs: \n",
-    "-------------------- \n")
+        "-------------------- \n")
     cat(" Optimal keepX for each component, see object$choice.keepX \n")
     cat(" Error rate for each tested keepX and for each component: see object$error.rate \n")
     cat(" Error rate per class obtained with the optimal keepX, for each component: see object$error.rate.class \n\n")
     
     cat(" Other outputs available, see ?tune.mint.splsda \n\n")
-
+    
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
 }
@@ -874,7 +874,7 @@ print.tune.block.splsda = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" Main numerical outputs: \n",
-    "-------------------- \n")
+        "-------------------- \n")
     cat(" Optimal keepX for each component, see object$choice.keepX \n")
     cat(" Error rate for each tested keepX and for each component (averaged over the nrepeat): see object$error.rate \n")
     cat(" Error rate for each tested keepX, for each component and for each repeat: see object$error.rate.all \n")
@@ -890,7 +890,7 @@ print.predict = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" Main numerical outputs: \n",
-    "-------------------- \n")
+        "-------------------- \n")
     if(is.list(x$predict)) #block analysis
     {
         cat(" Prediction values of the test samples for each block and each component: see object$predict \n")
@@ -907,7 +907,7 @@ print.predict = function(x, ...)
         cat(" variates of the test samples: see object$variates \n")
         
         if(!is.null(x$dist)) #DA object, more outputs
-        cat(" Classification of the test samples for each distance and for each component: see object$class \n")
+            cat(" Classification of the test samples for each distance and for each component: see object$class \n")
     }
     
 }

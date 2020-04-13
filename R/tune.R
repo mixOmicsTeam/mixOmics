@@ -213,107 +213,107 @@ tune <-
               cpus = 1
               
     )
-{
-    choice.method = c("spls", "splsda", "mint.splsda", "rcc", "pca")
-    method = match.arg(method, choice.method)
-    
-    if (method == "mint.splsda") {
-        message("Calling 'tune.mint.splsda' with Leave-One-Group-Out Cross Validation (nrepeat = 1)")
-
-        if (missing(ncomp))
-        ncomp = 1
+    {
+        choice.method = c("spls", "splsda", "mint.splsda", "rcc", "pca")
+        method = match.arg(method, choice.method)
         
-        result = tune.mint.splsda(X = X, Y = Y,
-        ncomp = ncomp,
-        study = study,
-        test.keepX = test.keepX,
-        already.tested.X = already.tested.X,
-        dist = dist,
-        measure = measure,
-        auc = auc,
-        progressBar = progressBar,
-        scale = scale,
-        tol = tol,
-        max.iter = max.iter,
-        near.zero.var = near.zero.var,
-        light.output = light.output)
-        
-    } else if (method == "rcc") {
-        message("Calling 'tune.rcc'")
-        
-        result = tune.rcc(X = X,
-        Y = Y,
-        grid1 = grid1,
-        grid2 = grid2,
-        validation = validation,
-        folds = folds,
-        plot = plot)
-        
-    } else if (method == "pca") {
-        message("Calling 'tune.pca'")
-
-        if (missing(ncomp))
-        ncomp = NULL
-
-        result = tune.pca(X = X,
-        ncomp = ncomp,
-        center = center,
-        scale = scale,
-        max.iter = max.iter,
-        tol = tol)
-        
-        
-    } else if (method == "splsda") {
-
-        message("Calling 'tune.splsda'")
-
-        if (missing(ncomp))
-        ncomp = 1
-        
-        result = tune.splsda (X = X, Y = Y,
-        ncomp = ncomp,
-        test.keepX = test.keepX,
-        already.tested.X = already.tested.X,
-        validation = validation,
-        folds = folds,
-        dist = dist ,
-        measure = measure,
-        auc = auc,
-        progressBar = progressBar,
-        max.iter = max.iter,
-        near.zero.var = near.zero.var,
-        nrepeat = nrepeat,
-        logratio = logratio,
-        multilevel = multilevel,
-        light.output = light.output,
-        cpus = cpus)
-    } else if (method == "spls") {
-        if(missing(multilevel))
-        {
-            message("Calling 'tune.spls'")
+        if (method == "mint.splsda") {
+            message("Calling 'tune.mint.splsda' with Leave-One-Group-Out Cross Validation (nrepeat = 1)")
             
-            result = tune.spls(X = X, Y = Y, ncomp = ncomp, test.keepX = test.keepX, 
-                               already.tested.X = already.tested.X, validation = validation, 
-                               folds = folds, measure = measure,scale = scale, 
-                               progressBar = progressBar, tol = tol, max.iter = max.iter, 
-                               near.zero.var = near.zero.var, nrepeat = nrepeat, 
-                               light.output = light.output, cpus = cpus)
-        } else {
-            message("Calling 'tune.splslevel' with method = 'spls'")
-
             if (missing(ncomp))
-            ncomp = 1
-            if (missing(already.tested.Y))
-            already.tested.Y = NULL
+                ncomp = 1
             
-            result = tune.splslevel(X = X, Y = Y,
-            multilevel = multilevel,
-            mode = mode,
-            ncomp = ncomp, test.keepX = test.keepX, test.keepY = test.keepY,
-            already.tested.X = already.tested.X, already.tested.Y = already.tested.Y)
+            result = tune.mint.splsda(X = X, Y = Y,
+                                      ncomp = ncomp,
+                                      study = study,
+                                      test.keepX = test.keepX,
+                                      already.tested.X = already.tested.X,
+                                      dist = dist,
+                                      measure = measure,
+                                      auc = auc,
+                                      progressBar = progressBar,
+                                      scale = scale,
+                                      tol = tol,
+                                      max.iter = max.iter,
+                                      near.zero.var = near.zero.var,
+                                      light.output = light.output)
+            
+        } else if (method == "rcc") {
+            message("Calling 'tune.rcc'")
+            
+            result = tune.rcc(X = X,
+                              Y = Y,
+                              grid1 = grid1,
+                              grid2 = grid2,
+                              validation = validation,
+                              folds = folds,
+                              plot = plot)
+            
+        } else if (method == "pca") {
+            message("Calling 'tune.pca'")
+            
+            if (missing(ncomp))
+                ncomp = NULL
+            
+            result = tune.pca(X = X,
+                              ncomp = ncomp,
+                              center = center,
+                              scale = scale,
+                              max.iter = max.iter,
+                              tol = tol)
+            
+            
+        } else if (method == "splsda") {
+            
+            message("Calling 'tune.splsda'")
+            
+            if (missing(ncomp))
+                ncomp = 1
+            
+            result = tune.splsda (X = X, Y = Y,
+                                  ncomp = ncomp,
+                                  test.keepX = test.keepX,
+                                  already.tested.X = already.tested.X,
+                                  validation = validation,
+                                  folds = folds,
+                                  dist = dist ,
+                                  measure = measure,
+                                  auc = auc,
+                                  progressBar = progressBar,
+                                  max.iter = max.iter,
+                                  near.zero.var = near.zero.var,
+                                  nrepeat = nrepeat,
+                                  logratio = logratio,
+                                  multilevel = multilevel,
+                                  light.output = light.output,
+                                  cpus = cpus)
+        } else if (method == "spls") {
+            if(missing(multilevel))
+            {
+                message("Calling 'tune.spls'")
+                
+                result = tune.spls(X = X, Y = Y, ncomp = ncomp, test.keepX = test.keepX, 
+                                   already.tested.X = already.tested.X, validation = validation, 
+                                   folds = folds, measure = measure,scale = scale, 
+                                   progressBar = progressBar, tol = tol, max.iter = max.iter, 
+                                   near.zero.var = near.zero.var, nrepeat = nrepeat, 
+                                   light.output = light.output, cpus = cpus)
+            } else {
+                message("Calling 'tune.splslevel' with method = 'spls'")
+                
+                if (missing(ncomp))
+                    ncomp = 1
+                if (missing(already.tested.Y))
+                    already.tested.Y = NULL
+                
+                result = tune.splslevel(X = X, Y = Y,
+                                        multilevel = multilevel,
+                                        mode = mode,
+                                        ncomp = ncomp, test.keepX = test.keepX, test.keepY = test.keepY,
+                                        already.tested.X = already.tested.X, already.tested.Y = already.tested.Y)
+            }
         }
+        
+        result$call = match.call()
+        return(result)
     }
-    
-    result$call = match.call()
-    return(result)
-}

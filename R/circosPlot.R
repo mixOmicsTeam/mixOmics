@@ -49,27 +49,30 @@
 #' \bold{5}(1).
 #' @keywords regression multivariate
 #' @example ./examples/circosPlot-examples.R
+#' @importFrom reshape2 dcast
+#' @importFrom tidyr gather
+#' @importFrom dplyr group_by mutate summarise arrange 
 #' @export
 circosPlot <- function(object,
-                      comp = 1:min(object$ncomp),
-                      cutoff,
-                      color.Y,
-                      color.blocks,
-                      color.cor,
-                      var.names = NULL,
-                      showIntraLinks = FALSE,
-                      line = FALSE,
-                      size.legend = 0.8,
-                      ncol.legend = 1,
-                      size.variables = 0.25,
-                      size.labels = 1,
-                      legend = TRUE)
+                       comp = 1:min(object$ncomp),
+                       cutoff,
+                       color.Y,
+                       color.blocks,
+                       color.cor,
+                       var.names = NULL,
+                       showIntraLinks = FALSE,
+                       line = FALSE,
+                       size.legend = 0.8,
+                       ncol.legend = 1,
+                       size.variables = 0.25,
+                       size.labels = 1,
+                       legend = TRUE)
 {
     
     # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
     Features = Exp = Dataset = Mean = linkColors = chrom = po = NULL
-
-
+    
+    
     options(stringsAsFactors = FALSE)
     figSize = 800
     segmentWidth = 25
@@ -88,22 +91,22 @@ circosPlot <- function(object,
     
     # check input object
     if (!is(object, "block.splsda"))
-    stop("circosPlot is only available for 'block.splsda' objects")
+        stop("circosPlot is only available for 'block.splsda' objects")
     
     if (length(object$X) < 2)
-    stop("This function is only available when there are more than 3 blocks
+        stop("This function is only available when there are more than 3 blocks
     (2 in object$X + an outcome object$Y)") # so 2 blocks in X + the outcome Y
     
     if (missing(cutoff))
-    stop("'cutoff' is missing", call.=FALSE) # so 2 blocks in X + the outcome Y
+        stop("'cutoff' is missing", call.=FALSE) # so 2 blocks in X + the outcome Y
     
     if(missing(color.Y))
     {
         color.Y = color.mixo(1:nlevels(object$Y))
     } else {
         if(length(color.Y) != nlevels(object$Y))
-        stop("'color.Y' must be of length ", nlevels(object$Y))
-
+            stop("'color.Y' must be of length ", nlevels(object$Y))
+        
     }
     
     if(missing(color.blocks))
@@ -111,7 +114,7 @@ circosPlot <- function(object,
         color.blocks = brewer.pal(n = 12, name = 'Paired') #why 12?? ANS: bc max allowed n is 12 for this function
     } else {
         if(length(color.blocks) != length(object$X))
-        stop("'color.blocks' must be of length ", length(object$X))
+            stop("'color.blocks' must be of length ", length(object$X))
         
         color.blocks.adj = adjustcolor(color.blocks, alpha.f = 0.5)
         #to get two shades of the same color per block
@@ -119,16 +122,16 @@ circosPlot <- function(object,
         color.blocks = c(rbind(color.blocks, color.blocks.adj))
         # to put the color next to its shaded color
     }
-
+    
     if(missing(color.cor))
     {
         color.cor = c(colors()[134],  # blue, negative correlation
-                colors()[128])  # pale red, positive correlation
+                      colors()[128])  # pale red, positive correlation
     } else {
         if(length(color.cor) != 2)
-        stop("'color.cor' must be of length 2")
+            stop("'color.cor' must be of length 2")
     }
-
+    
     X = object$X
     Y = object$Y
     
@@ -140,38 +143,38 @@ circosPlot <- function(object,
     
     #check var.names
     sample.X = lapply(object$loadings[-length(object$loadings)],
-    function(x){1 : nrow(x)})
+                      function(x){1 : nrow(x)})
     if (is.null(var.names))
     {
         var.names.list = unlist(sapply(object$loadings[
-        -length(object$loadings)], rownames))
+            -length(object$loadings)], rownames))
     } else if (is.list(var.names)) {
         if (length(var.names) != length(object$loadings[
-        -length(object$loadings)]))
-        stop.message('var.names', sample.X)
+            -length(object$loadings)]))
+            stop.message('var.names', sample.X)
         
         if(sum(sapply(1 : length(var.names), function(x){
             length(var.names[[x]]) == length(sample.X[[x]])})) !=
-        length(var.names))
-        stop.message('var.names', sample.X)
+           length(var.names))
+            stop.message('var.names', sample.X)
         
         var.names.list = var.names
     } else {
         stop.message('var.names', sample.X)
     }
-
-
+    
+    
     if(any(comp > min(object$ncomp)))
     {
         warning("Limitation to ",min(object$ncomp),
-        " components, as determined by min(object$ncomp)")
+                " components, as determined by min(object$ncomp)")
         comp[which(comp > min(object$ncomp))] = min(object$ncomp)
     }
     comp = unique(sort(comp))
-
+    
     
     keepA = lapply(object$loadings, function(i)
-    apply(abs(i)[, comp, drop = FALSE], 1, sum) > 0)
+        apply(abs(i)[, comp, drop = FALSE], 1, sum) > 0)
     cord = mapply(function(x, y, keep){
         cor(x[, keep], y[, comp], use = "pairwise")
     }, x=object$X, y=object$variates[-length(object$variates)],
@@ -196,10 +199,10 @@ circosPlot <- function(object,
     ## group by Y and feature for averaging and calcuate the mean and SD to 
     ## get a data.frame with columns: Y FEATURES MEAN SD
     AvgFeatExp0 <- group_by(.data = AvgFeatExp0, Y, Features)
-    AvgFeatExp0 <- dplyr::summarise(.data = AvgFeatExp0, Mean = mean(Exp, na.rm = TRUE), SD = sd(Exp,na.rm = TRUE))
+    AvgFeatExp0 <- summarise(.data = AvgFeatExp0, Mean = mean(Exp, na.rm = TRUE), SD = sd(Exp,na.rm = TRUE))
     ## add a column as the dataset from which the feature came from:
     AvgFeatExp0$Dataset <- factor(rep(names(X), unlist(lapply(cord, nrow))),
-    levels = names(X))[match(AvgFeatExp0$Features,colnames(Xdat))]
+                                  levels = names(X))[match(AvgFeatExp0$Features,colnames(Xdat))]
     # to match Xdat that is reordered in AvgFeatExp0
     featExp <- group_by(.data = AvgFeatExp0 , Dataset, Y)
     featExp <- arrange(.data = featExp , Mean)
@@ -216,7 +219,7 @@ circosPlot <- function(object,
     #   showIntraLinks = display links intra segments
     
     
-
+    
     # 1) Generate karyotype data
     chr = genChr(featExp, color.blocks = color.blocks)
     ## ------ re-order blocks based on object$X names
@@ -235,7 +238,7 @@ circosPlot <- function(object,
     # 2) Generate Links
     links = genLinks(chr, simMat, threshold=cutoff)
     if (nrow(links) < 1)
-    warning("Choose a lower correlation threshold to highlight
+        warning("Choose a lower correlation threshold to highlight
     links between datasets")
     
     # 3) Plot
@@ -248,25 +251,25 @@ circosPlot <- function(object,
     # replace chr$name by the ones in var.names (matching)
     # matching var.names.list with object$loadings
     ind.match = match(chr$name, unlist(sapply(object$loadings[
-    -length(object$loadings)],rownames)))
+        -length(object$loadings)],rownames)))
     chr$name.user = unlist(var.names.list)[ind.match]
     
     opar1=par("mar")
     par(mar=c(2, 2, 2, 2))
     
     plot(c(1,figSize), c(1,figSize), type="n", axes=FALSE, xlab="",
-    ylab="", main="")
+         ylab="", main="")
     
     #save(list=ls(),file="temp.Rdata")
     # Plot ideogram
     drawIdeogram(R=circleR, cir=db, W=segmentWidth,  show.band.labels=TRUE,
-    show.chr.labels=TRUE, chr.labels.R= chrLabelsR, chrData=chr,
-    size.variables = size.variables, size.labels=size.labels,
-    color.blocks = color.blocks, line = line)
+                 show.chr.labels=TRUE, chr.labels.R= chrLabelsR, chrData=chr,
+                 size.variables = size.variables, size.labels=size.labels,
+                 color.blocks = color.blocks, line = line)
     # Plot links
     if(nrow(links)>0)
-    drawLinks(R=linksR, cir=db,   mapping=links,   col=linkColors,
-    drawIntraChr=showIntraLinks, color.cor = color.cor)
+        drawLinks(R=linksR, cir=db,   mapping=links,   col=linkColors,
+                  drawIntraChr=showIntraLinks, color.cor = color.cor)
     
     # Plot expression values
     cTypes = levels(Y)
@@ -287,18 +290,18 @@ circosPlot <- function(object,
             ## changed PAM50 to Y
             expr = merge(expr, chr, by.x="Features", by.y="name")
             expr$po = (as.numeric(expr$chromStart) +
-            as.numeric(expr$chromEnd)) / 2.0
+                           as.numeric(expr$chromEnd)) / 2.0
             expr = dplyr::rename(expr, seg.name = chrom, seg.po = po)
             
             # Reorder columns
             cOrder = c(c(grep("seg.name", colnames(expr)),
-            grep("seg.po", colnames(expr))),c(1:length(cTypes)+1))
+                         grep("seg.po", colnames(expr))),c(1:length(cTypes)+1))
             expr = expr[, cOrder]
             
             # Plot data on each sub segment
             subChr = subset(db, db$seg.name == chr.names[i] )
             drawLinePlot(R=linePlotR, cir=subChr,   W=linePlotWidth,
-            lineWidth=1, mapping=expr, col=lineCols, scale=FALSE)
+                         lineWidth=1, mapping=expr, col=lineCols, scale=FALSE)
         }
     }
     opar=par("xpd")
@@ -309,34 +312,34 @@ circosPlot <- function(object,
     {
         # First legeng bottom left corner
         legend(x=5, y = (circleR/4), title="Correlations",
-        c("Positive Correlation", "Negative Correlation"),
-        col = color.cor, pch = 19, cex=size.legend, bty = "n")
+               c("Positive Correlation", "Negative Correlation"),
+               col = color.cor, pch = 19, cex=size.legend, bty = "n")
         # Second legend bottom righ corner
         if(line==TRUE)
-        legend(x=figSize-(circleR/3), y = (circleR/3), title="Expression",
-        legend=levels(Y),  ## changed PAM50 to Y
-        col = lineCols, pch = 19, cex=size.legend, bty = "n",ncol=ncol.legend)
+            legend(x=figSize-(circleR/3), y = (circleR/3), title="Expression",
+                   legend=levels(Y),  ## changed PAM50 to Y
+                   col = lineCols, pch = 19, cex=size.legend, bty = "n",ncol=ncol.legend)
         # third legend top left corner
         legend(x=figSize-(circleR/2), y = figSize, title="Correlation cut-off",
-        legend=paste("r", cutoff, sep = "="),
-        col = "black", cex=size.legend, bty = "n")
-
+               legend=paste("r", cutoff, sep = "="),
+               col = "black", cex=size.legend, bty = "n")
+        
         legend(x=-circleR/4, y = figSize, legend=paste("Comp",
-        paste(comp,collapse="-")),
-        col = "black", cex=size.legend, bty = "n")
+                                                       paste(comp,collapse="-")),
+               col = "black", cex=size.legend, bty = "n")
     }
     par(xpd=opar,mar=opar1)# put the previous defaut parameter for xpd
     return(invisible(simMat))
 }
 
 drawIdeogram = function(R, xc=400, yc=400, cir, W,
-show.band.labels = FALSE,
-show.chr.labels = FALSE, chr.labels.R = 0,
-chrData,
-size.variables,
-size.labels,
-color.blocks,
-line)
+                        show.band.labels = FALSE,
+                        show.chr.labels = FALSE, chr.labels.R = 0,
+                        chrData,
+                        size.variables,
+                        size.labels,
+                        color.blocks,
+                        line)
 {
     # Draw the main circular plot: segments, bands and labels
     chr.po    = cir 
@@ -376,7 +379,7 @@ line)
                 # print(c(band.po, w1, w2, (w2-w1)/3))
                 band.po.in = R-(W/3.0) #position on the band (middle)
                 draw.text.rt(xc, yc,band.po.in  , band.po , band.text ,
-                cex = size.variables, segmentWidth = W, side="in" )
+                             cex = size.variables, segmentWidth = W, side="in" )
             }
         } #End for row
         if (show.chr.labels){
@@ -385,20 +388,20 @@ line)
             if(line == TRUE)
             {
                 draw.text.rt(xc, yc, chr.labels.R, w.m, chr.t, cex=size.labels,
-                segmentWidth = W, parallel=TRUE)
+                             segmentWidth = W, parallel=TRUE)
             } else {
                 #put the labels closer to the circle
                 draw.text.rt(xc, xc, chr.labels.R, w.m, chr.t, cex=size.labels,
-                segmentWidth = 75, parallel=TRUE)
+                             segmentWidth = 75, parallel=TRUE)
             }
         }
     } #End for
 }
 
 drawLinks = function(R, xc=400, yc=400, cir, W,
-mapping=mapping,
-lineWidth=1, col=rainbow(10, alpha=0.8)[7],  drawIntraChr=FALSE,
-color.cor = color.cor)
+                     mapping=mapping,
+                     lineWidth=1, col=rainbow(10, alpha=0.8)[7],  drawIntraChr=FALSE,
+                     color.cor = color.cor)
 {
     # Draw the links (computed correlation) between features
     chr.po    = cir 
@@ -456,8 +459,8 @@ color.cor = color.cor)
 }
 
 drawLinePlot = function(mapping=mapping, xc=400, yc=400, col.v=3,
-R, cir,   W, col='black', scale=FALSE, lineWidth=1,
-background.lines=FALSE,axis.width=1)
+                        R, cir,   W, col='black', scale=FALSE, lineWidth=1,
+                        background.lines=FALSE,axis.width=1)
 {
     # Generate a linear plot around the main ideogram.
     #
@@ -548,7 +551,7 @@ background.lines=FALSE,axis.width=1)
                 
                 if (w.from > 0){
                     draw.line3(xc, yc, w.from, w.to, v.old, v, col=col,
-                    lwd=lineWidth)
+                               lwd=lineWidth)
                 }
                 
                 dat.i.old = dat.i 
@@ -624,13 +627,14 @@ genChr =function (expr, bandWidth = 1.0, color.blocks)
     return(seg.out) 
 }
 
+#' @importFrom reshape2 melt 
 genLinks = function(chr, simMat, threshold)
 {
     
     # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
     Var1=Var2=chrom=NULL
-
-
+    
+    
     # Generates the links corresponding to pairwise correlations
     #
     # Args:
@@ -653,7 +657,7 @@ genLinks = function(chr, simMat, threshold)
     linkList = merge(linkList, chr, by.x="feat1", by.y="name") 
     # Set the position in the middle of the band
     linkList$po1 = (as.numeric(linkList$chromStart)
-    + as.numeric(linkList$chromEnd)) / 2.0
+                    + as.numeric(linkList$chromEnd)) / 2.0
     linkList = dplyr::rename(linkList, chr1=chrom)   # CHANGED BY AMRIT
     keeps = c("feat1","feat2","value","chr1","po1") 
     linkList = linkList[keeps] 
@@ -661,7 +665,7 @@ genLinks = function(chr, simMat, threshold)
     #Second merge
     linkList = merge(linkList, chr, by.x="feat2", by.y="name") 
     linkList$po2 = (as.numeric(linkList$chromStart)
-    + as.numeric(linkList$chromEnd)) / 2.0
+                    + as.numeric(linkList$chromEnd)) / 2.0
     linkList = dplyr::rename(linkList, chr2=chrom)   # CHANGED BY AMRIT
     keeps = c("chr1","po1","feat1","chr2","po2","feat2","value") 
     linkList = linkList[keeps] 
@@ -794,8 +798,8 @@ draw.link.pg = function(xc, yc, r, w1.1, w1.2, w2.1, w2.2, col=col, lwd=lwd) {
     fan.2.y = yc - sin(ang.seq) * r 
     
     polygon(c(bc1$x, fan.2.x, rev(bc2$x), rev(fan.1.x)),
-    c(bc1$y, fan.2.y, rev(bc2$y), rev(fan.1.y)),
-    fillOddEven=TRUE, border=col, col=col, lwd=lwd) 
+            c(bc1$y, fan.2.y, rev(bc2$y), rev(fan.1.y)),
+            fillOddEven=TRUE, border=col, col=col, lwd=lwd) 
 }
 
 ###
@@ -817,7 +821,7 @@ draw.text.w = function(xc, yc, r, w, n, col="black", cex=1){
 
 ###
 draw.text.rt = function(xc, yc, r, w, n, col="black", cex=1, side="out",
-segmentWidth=20, parallel=FALSE){
+                        segmentWidth=20, parallel=FALSE){
     w     = w%%360 
     the.o = w 
     
@@ -887,7 +891,7 @@ segmentWidth=20, parallel=FALSE){
     
     
     text(x, y, adj=0, offset=1, labels=n, srt=the.w,
-    pos=the.pos, col=col, cex=cex) 
+         pos=the.pos, col=col, cex=cex) 
 }
 
 ###strokeLine2
@@ -936,7 +940,7 @@ draw.line3 = function (xc, yc, w1, w2, r1, r2, col=col, lwd=lwd){
 
 ### plot fan or sector that likes a piece of doughnut (plotFan)
 draw.arc.pg = function (xc, yc,
-w1, w2, r1, r2, col="lightblue", border="lightblue", lwd=0.01
+                        w1, w2, r1, r2, col="lightblue", border="lightblue", lwd=0.01
 ){
     
     ang.d = abs(w1-w2) 
@@ -956,7 +960,7 @@ w1, w2, r1, r2, col="lightblue", border="lightblue", lwd=0.01
     fan.o.y = yc - sin(ang.seq) * r2 
     
     polygon(c(rev(fan.i.x), fan.o.x ), c(rev(fan.i.y), fan.o.y),
-    fillOddEven=TRUE, border=border, col=col, lwd=lwd, lend=1)
+            fillOddEven=TRUE, border=border, col=col, lwd=lwd, lend=1)
     
 }
 
@@ -988,7 +992,7 @@ draw.arc.s = function (xc, yc, r, w1, w2, col="lightblue", lwd=1, lend=1){
 # get angle if given seg and position
 # seg should be ordered by user
 segAnglePo = function (seg.dat=seg.dat, seg=seg, angle.start=angle.start,
-angle.end=angle.end){
+                       angle.end=angle.end){
     
     if (missing(angle.start)){
         angle.start = 0 
@@ -1039,20 +1043,20 @@ angle.end=angle.end){
         w1    = cir.angle.r*l.old + gap.angle 
         w2    = cir.angle.r*len   + gap.angle 
         out.s     = rbind(out.s, c(seg.n, w1+seg.angle.from, w2+seg.angle.from,
-        l.old, len, seg.min[i], seg.l[i]))
+                                   l.old, len, seg.min[i], seg.l[i]))
         gap.angle = gap.angle + gap.angle.size 
         l.old     = len 
     }
     
     colnames(out.s) = c("seg.name","angle.start", "angle.end", "seg.sum.start",
-    "seg.sum.end","seg.start", "seg.end")
+                        "seg.sum.end","seg.start", "seg.end")
     return(out.s) 
 }
 
 
 ### start do.scale
 do.scale = function(xc=xc, yc=yc, dat.min=dat.min, dat.max=dat.max,
-R=R, W=W, s.n=1, col="blue"){
+                    R=R, W=W, s.n=1, col="blue"){
     dat.m   = round((dat.min+dat.max)/2, s.n) 
     dat.min = round(dat.min, s.n) 
     dat.max = round(dat.max, s.n) 
@@ -1075,10 +1079,10 @@ R=R, W=W, s.n=1, col="blue"){
 ## Add an alpha value to a colour
 add.alpha = function(col, alpha=1){
     if(missing(col))
-    stop("Please provide a vector of colours.")
+        stop("Please provide a vector of colours.")
     apply(sapply(col, col2rgb)/255, 2, 
-    function(x) 
-    rgb(x[1], x[2], x[3], alpha=alpha))  
+          function(x) 
+              rgb(x[1], x[2], x[3], alpha=alpha))  
 }
 ###-------------------------------------------------------------------------
 

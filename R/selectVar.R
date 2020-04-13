@@ -39,27 +39,27 @@ selectVar <-
 #' @export
 selectVar.mixo_pls  <- function(object, comp =1, block=NULL, ...)
 {
-
+    
     # check arguments
     # -----------------
     if (length(comp) > 1)
         stop("Expecting one single value for 'comp'")
-        
+    
     if (is.null(block))
     {
         if (any(comp > object$ncomp))
-        stop("'comp' is greater than the number of components in the fitted model")
+            stop("'comp' is greater than the number of components in the fitted model")
         null.block=TRUE
         block=1:length(object$loadings)
-
+        
     }else{
         if (any(class(object)%in%c("pca")))
-        object$names$blocks="X"
+            object$names$blocks="X"
         
         if (is.numeric(block))
         {
             if (any(block>length(object$names$blocks)))
-            stop("'block' needs to be lower than the number of blocks in the fitted model, which is length(object$names$blocks)")
+                stop("'block' needs to be lower than the number of blocks in the fitted model, which is length(object$names$blocks)")
             
         }else if (is.character(block) & sum(!is.na(match(block,object$names$blocks)))==0) {
             stop("No entry of 'block'  match object$names$blocks")
@@ -67,15 +67,15 @@ selectVar.mixo_pls  <- function(object, comp =1, block=NULL, ...)
         }else if (is.character(block) & sum(is.na(match(block,object$names$blocks)))>0) {
             warning("At least one entry of 'block' does not match object$names$blocks")
         }
-
+        
         if (length(object$ncomp)>1)
         {
             if (any(comp > object$ncomp[block]))
-            stop("'comp' is greater than the number of components in the fitted model for the block you specified. See object$ncomp")
-
+                stop("'comp' is greater than the number of components in the fitted model for the block you specified. See object$ncomp")
+            
         }else{
             if (any(comp > object$ncomp))
-            stop("'comp' is greater than the number of components in the fitted model")
+                stop("'comp' is greater than the number of components in the fitted model")
         }
         
         null.block=FALSE
@@ -100,10 +100,10 @@ selectVar.mixo_pls  <- function(object, comp =1, block=NULL, ...)
         }else if (any(class(object)%in%c("pca"))) { #keep the result as a list
             out=out[[1]]
         }
-
+        
     } else {
         if (length(grep("pca",class(object)))>0)
-        out=out
+            out=out
     }
     
     #we add comp as an output

@@ -105,17 +105,17 @@
 #' plotIndiv(res, study = "2", col = 1:3, legend = TRUE)
 #' }
 mint.pls <- function(X,
-                    Y,
-                    ncomp = 2,
-                    mode = c("regression", "canonical", "invariant", "classic"),
-                    study,
-                    scale = TRUE,
-                    tol = 1e-06,
-                    max.iter = 100,
-                    near.zero.var = FALSE,
-                    all.outputs = TRUE)
+                     Y,
+                     ncomp = 2,
+                     mode = c("regression", "canonical", "invariant", "classic"),
+                     study,
+                     scale = TRUE,
+                     tol = 1e-06,
+                     max.iter = 100,
+                     near.zero.var = FALSE,
+                     all.outputs = TRUE)
 {
-
+    
     # call to 'internal_wrapper.mint'
     result = internal_wrapper.mint(
         X = X,
@@ -153,6 +153,6 @@ mint.pls <- function(X,
     
     class(out) = c("mint.pls","mixo_pls")
     return(invisible(out))
-
-
+    
+    
 }

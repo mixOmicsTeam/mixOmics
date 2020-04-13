@@ -201,10 +201,10 @@ network <- function(mat,
     user.arg = names(arg.call)[-1]
     
     err = tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
-    error = function(e) e)
+                   error = function(e) e)
     
     if ("simpleError" %in% class(err))
-    stop(err[[1]], ".", call. = FALSE)
+        stop(err[[1]], ".", call. = FALSE)
     
     function.arg = names(mget(names(formals()), sys.frame(sys.nframe())))
     not.arg = !(user.arg %in% function.arg)
@@ -226,40 +226,40 @@ network <- function(mat,
         stop(msg, output, call. = FALSE)
     }
     
-#    #-- check blocks
-#    if(length(blocks) != 2)
-#    stop("We can only display 2 blocks",call.=FALSE)
+    #    #-- check blocks
+    #    if(length(blocks) != 2)
+    #    stop("We can only display 2 blocks",call.=FALSE)
     
     #-- save
     if (!is.null(save))
     {
         if (! save %in% c("jpeg","tiff","png","pdf"))
-        stop("'save' must be one of 'jpeg', 'png', 'tiff' or 'pdf'.", call. = FALSE)
+            stop("'save' must be one of 'jpeg', 'png', 'tiff' or 'pdf'.", call. = FALSE)
     }
     
     #-- name.save
     if (!is.null(name.save))
     {
         if (! is.character(name.save) || length(name.save) > 1)
-        stop("'name.save' must be a character.", call. = FALSE)
+            stop("'name.save' must be a character.", call. = FALSE)
     } else {
         if (!is.null(save))
-        name.save = paste0("network_",gsub(".", "_", deparse(substitute(mat)) ,fixed = TRUE))
+            name.save = paste0("network_",gsub(".", "_", deparse(substitute(mat)) ,fixed = TRUE))
     }
     
     if (!is.null(save)){
         
         while (dev.cur()>1)
-        dev.off()
+            dev.off()
         
         if (save == "jpeg")
-        jpeg(filename = paste0(name.save,".jpeg"), res = 600, width = 4000, height = 4000)
+            jpeg(filename = paste0(name.save,".jpeg"), res = 600, width = 4000, height = 4000)
         if (save == "png")
-        jpeg(filename = paste0(name.save,".png"), res = 600, width = 4000, height = 4000)
+            jpeg(filename = paste0(name.save,".png"), res = 600, width = 4000, height = 4000)
         if (save == "tiff")
-        tiff(filename = paste0(name.save,".tiff"), res = 600, width = 4000, height = 4000)
+            tiff(filename = paste0(name.save,".tiff"), res = 600, width = 4000, height = 4000)
         if (save == "pdf")
-        pdf(file = paste0(name.save,".pdf"))
+            pdf(file = paste0(name.save,".pdf"))
         
     }
     
@@ -269,15 +269,15 @@ network <- function(mat,
     object.blocks=c("sgcca","rgcca")
     
     if (! any(class.object %in% c(object.pls,object.rcc,object.blocks, "matrix")))
-    stop( " 'network' is only implemented for the following objects: matrix, pls, plsda, spls, splsda, rcc, sgcca, rgcca, sgccda", call.=FALSE)
+        stop( " 'network' is only implemented for the following objects: matrix, pls, plsda, spls, splsda, rcc, sgcca, rgcca, sgccda", call.=FALSE)
     
     
     if(any(class.object %in% c(object.rcc,object.pls)))
     {
         p = ncol(mat$X)
         if(any(class.object == "DA")) # object is DA
-        mat$Y = mat$ind.mat
-
+            mat$Y = mat$ind.mat
+        
         q = ncol(mat$Y)
         n = nrow(mat$X)
         ncomp = mat$ncomp
@@ -285,13 +285,13 @@ network <- function(mat,
         
         #-- comp
         if(is.null(comp))
-        comp=1:mat$ncomp
+            comp=1:mat$ncomp
         if (length(comp) == 1)
         {
             if(comp>ncomp)
             {
                 stop("the elements of 'comp' must be smaller than or equal to ", ncomp, ".",
-                call. = FALSE)
+                     call. = FALSE)
             } else if ( !is.numeric(comp) || comp <= 0) {
                 stop("invalid value for 'comp'.", call. = FALSE)
             }
@@ -300,15 +300,15 @@ network <- function(mat,
         if (length(comp) > 1)
         {
             if(length(comp) > ncomp)
-            stop("the length of 'comp' must be smaller than or equal to ", ncomp, ".",
-            call. = FALSE)
+                stop("the length of 'comp' must be smaller than or equal to ", ncomp, ".",
+                     call. = FALSE)
             
             if (!is.numeric(comp) || any(comp < 1))
-            stop("invalid vector for 'comp'.", call. = FALSE)
+                stop("invalid vector for 'comp'.", call. = FALSE)
             
             if (any(comp > ncomp))
-            stop("the elements of 'comp' must be smaller or equal than ", ncomp, ".",
-            call. = FALSE)
+                stop("the elements of 'comp' must be smaller or equal than ", ncomp, ".",
+                     call. = FALSE)
         }
         
         comp = round(comp)
@@ -326,8 +326,8 @@ network <- function(mat,
         } else {
             row.names = as.vector(row.names)
             if (length(unique(row.names)) != p)
-            stop("'row.names' must be a character vector of ", p, " unique entries.",
-            call. = FALSE)
+                stop("'row.names' must be a character vector of ", p, " unique entries.",
+                     call. = FALSE)
         }
         
         if(row.names.plot == TRUE)
@@ -349,8 +349,8 @@ network <- function(mat,
         } else {
             col.names = as.vector(col.names)
             if (length(col.names) != q)
-            stop("'col.names' must be a character vector of ", q, " unique entries.",
-            call. = FALSE)
+                stop("'col.names' must be a character vector of ", q, " unique entries.",
+                     call. = FALSE)
         }
         
         if(col.names.plot == TRUE)
@@ -362,7 +362,7 @@ network <- function(mat,
         
         #-- end checking --#
         #------------------#
-
+        
         #-- network ----------------------------------------------------------------#
         #---------------------------------------------------------------------------#
         if(any(class.object %in% object.rcc))
@@ -421,7 +421,7 @@ network <- function(mat,
             blocks = mat$names$blocks[blocks]
         } else if (is.character(blocks)) {
             if (!all(blocks %in% mat$names$blocks))
-            stop("One element of 'blocks' does not match with the names of the blocks")
+                stop("One element of 'blocks' does not match with the names of the blocks")
         } else {
             stop("Incorrect value for 'blocks", call. = FALSE)
         }
@@ -433,36 +433,36 @@ network <- function(mat,
             names(comp) = blocks
             
             for (i in blocks)
-            comp[[i]] = 1:mat$ncomp[i]
+                comp[[i]] = 1:mat$ncomp[i]
         }
         
         if (is.list(comp))
         {
             if (length(comp) != length(blocks))
-            stop("'comp' must be either NULL a list of length ", length(blocks), ".",
-            call. = FALSE)
+                stop("'comp' must be either NULL a list of length ", length(blocks), ".",
+                     call. = FALSE)
             
             if (!all(blocks %in% names(comp)))
-            stop("names of 'comp' must be from {",
-            paste(blocks, collapse = ", "), "}.", call. = FALSE)
+                stop("names of 'comp' must be from {",
+                     paste(blocks, collapse = ", "), "}.", call. = FALSE)
             
             for (i in blocks)
             {
                 if (any(!is.finite(comp[[i]])))
-                stop("invalid value for 'comp' of the block '", i, "'.", call. = FALSE)
+                    stop("invalid value for 'comp' of the block '", i, "'.", call. = FALSE)
                 
                 if (any(comp[[i]] > mat$ncomp[i]))
-                stop("the elements of 'comp' for block '", i, "' must be smaller or equal than ",
-                mat$ncomp[i], ".", call. = FALSE)
+                    stop("the elements of 'comp' for block '", i, "' must be smaller or equal than ",
+                         mat$ncomp[i], ".", call. = FALSE)
                 
                 if (any(comp[[i]] < 1))
-                stop("invalid value for 'comp' of the block '", i, "'.", call. = FALSE)
+                    stop("invalid value for 'comp' of the block '", i, "'.", call. = FALSE)
                 
             }
             
         } else {
             stop("'comp' must be either NULL or a list of length ", length(blocks), ".",
-            call. = FALSE)
+                 call. = FALSE)
         }
         
         
@@ -473,10 +473,10 @@ network <- function(mat,
         if (is.logical(block.var.names))
         {
             if (length(block.var.names)==1)
-            block.var.names=rep(block.var.names,length(blocks))
+                block.var.names=rep(block.var.names,length(blocks))
             if (length(block.var.names) != length(blocks))
-            stop("'block.var.names' must be a logical vector of length 1 or ",  length(blocks),", or a list of length ",  length(blocks), ".",
-            call. = FALSE)
+                stop("'block.var.names' must be a logical vector of length 1 or ",  length(blocks),", or a list of length ",  length(blocks), ".",
+                     call. = FALSE)
             
             vec=(which(block.var.names==FALSE))
             
@@ -485,7 +485,7 @@ network <- function(mat,
             for (i in 1:length(blocks))
             {
                 if (i %in% vec)
-                block.var.names[[blocks[i]]] = rep(" ",length(mat$names$colnames[[blocks[i]]]))
+                    block.var.names[[blocks[i]]] = rep(" ",length(mat$names$colnames[[blocks[i]]]))
             }
         } else {
             if (is.list(block.var.names))
@@ -493,21 +493,21 @@ network <- function(mat,
                 if (length(block.var.names) != length(blocks))
                 {
                     stop("'block.var.names' must be a logical vector or a list of length ",  length(blocks), ".",
-                    call. = FALSE)
+                         call. = FALSE)
                 } else {
                     if (!all(unlist(lapply(block.var.names, is.vector))))
-                    stop("each component of 'block.var.names' must be a vector.", call. = FALSE)
+                        stop("each component of 'block.var.names' must be a vector.", call. = FALSE)
                     
                     block.var.names.length = unlist(lapply(block.var.names, length))
                     
                     if (any(block.var.names.length != num.var))
-                    stop("components of 'block.var.names' must be vectors of length ",
-                    paste(num.var, collapse = ", "), ".", call. = FALSE)
+                        stop("components of 'block.var.names' must be vectors of length ",
+                             paste(num.var, collapse = ", "), ".", call. = FALSE)
                     
                 }
             } else {
                 stop("'block.var.names' must be either a logical value or a list of length ",
-                length(blocks), ".", call. = FALSE)
+                     length(blocks), ".", call. = FALSE)
             }
         }
         #-- network approach -------------------------------------------------------#
@@ -547,8 +547,8 @@ network <- function(mat,
             for (k in (j + 1):length(blocks))
             {
                 if(!any(comp[[blocks[j]]] %in% comp[[blocks[k]]]))
-                stop("comp of block ",blocks[j], " is ",  comp[[blocks[j]]], " but comp of block ", blocks[k]," is ",comp[[blocks[k]]],
-                call. = FALSE)
+                    stop("comp of block ",blocks[j], " is ",  comp[[blocks[j]]], " but comp of block ", blocks[k]," is ",comp[[blocks[k]]],
+                         call. = FALSE)
                 int.comp = intersect(comp[[blocks[j]]], comp[[blocks[k]]])
                 
                 object = coord[[j]][, comp[[blocks[j]]] %in% int.comp] %*% t(coord[[k]][, comp[[blocks[k]]] %in% int.comp])
@@ -571,13 +571,13 @@ network <- function(mat,
     } else {
         #-- mat
         if (!is.matrix(mat))
-        stop("'mat' must be a numeric matrix.", call. = FALSE)
+            stop("'mat' must be a numeric matrix.", call. = FALSE)
         
         if (length(dim(mat)) != 2)
-        stop("'mat' must be a numeric matrix.")
+            stop("'mat' must be a numeric matrix.")
         
         if (!is.numeric(mat))
-        stop("'mat' must be a numeric matrix.")
+            stop("'mat' must be a numeric matrix.")
         
         p = nrow(mat)
         q = ncol(mat)
@@ -594,8 +594,8 @@ network <- function(mat,
         } else {
             row.names = as.vector(row.names)
             if (length(row.names) != p)
-            stop("'row.names' must be a character vector of ", p, " unique entries.",
-            call. = FALSE)
+                stop("'row.names' must be a character vector of ", p, " unique entries.",
+                     call. = FALSE)
         }
         
         if(row.names.plot == TRUE)
@@ -617,8 +617,8 @@ network <- function(mat,
         } else {
             col.names = as.vector(col.names)
             if (length(col.names) != q)
-            stop("'col.names' must be a character vector of ", q, " unique entries.",
-            call. = FALSE)
+                stop("'col.names' must be a character vector of ", q, " unique entries.",
+                     call. = FALSE)
         }
         
         if(col.names.plot == TRUE)
@@ -635,20 +635,20 @@ network <- function(mat,
         if (is.null(color.node))
         {
             color.node = c("#FBB4AE", "#B3CDE3", "#CCEBC5", "#DECBE4", "#FED9A6",
-            "#FFFFCC", "#E5D8BD", "#FDDAEC", "#F2F2F2")[1:length(blocks)]
+                           "#FFFFCC", "#E5D8BD", "#FDDAEC", "#F2F2F2")[1:length(blocks)]
             names(color.node) = blocks
         } else {
             if (!is.vector(color.node) || length(color.node) != length(blocks))
-            stop("'color.node' must be a vector of length ", length(blocks), ".", call. = FALSE)
+                stop("'color.node' must be a vector of length ", length(blocks), ".", call. = FALSE)
         }
     } else {
         if(is.null(color.node))
-        color.node=c("white", "white")
+            color.node=c("white", "white")
         
         if (!is.list(color.node))
         {
             if (!is.vector(color.node) || length(color.node) != 2)
-            stop("'color.node' must be a vector of length 2.", call. = FALSE)
+                stop("'color.node' must be a vector of length 2.", call. = FALSE)
             
         } else {
             stop("'color.node' must be a vector of length 2.", call. = FALSE)
@@ -656,41 +656,41 @@ network <- function(mat,
     }
     
     if (any(!sapply(color.node, function(x){tryCatch(is.matrix(col2rgb(x)), error = function(e) FALSE) })))
-    stop("'color.node' must be a character vector of recognized colors.",
-    call. = FALSE)
+        stop("'color.node' must be a character vector of recognized colors.",
+             call. = FALSE)
     
     #-- shape.node
     if(any(class.object%in% object.blocks))
     {
         if (is.null(shape.node))
-        shape.node = "circle"
+            shape.node = "circle"
         
         if (is.vector(shape.node))
         {
             if (length(shape.node) == 1)
-            shape.node = rep(shape.node, length(blocks))
+                shape.node = rep(shape.node, length(blocks))
         }
         
         if (!is.list(shape.node))
         {
             if (!is.vector(shape.node) || length(shape.node) != length(blocks))
                 stop("'shape.node' must be a character vector of length ", length(blocks), ".",
-                call. = FALSE)
+                     call. = FALSE)
         } else {
             stop("'shape.node' must be a numeric vector of length ", length(blocks), ".",
-            call. = FALSE)
+                 call. = FALSE)
         }
         
         if (!all(shape.node %in% c("none", "circle", "rectangle")))
-        stop("elements of 'shape.node' must be from {'none', 'circle', 'rectangle'}.",
-        call. = FALSE)
+            stop("elements of 'shape.node' must be from {'none', 'circle', 'rectangle'}.",
+                 call. = FALSE)
         
         if (is.null(names(shape.node)))
-        names(shape.node) = blocks
+            names(shape.node) = blocks
         
     } else {
         if(is.null(shape.node))
-        shape.node=c("circle", "rectangle")
+            shape.node=c("circle", "rectangle")
         
         if (!is.list(shape.node))
         {
@@ -701,88 +701,88 @@ network <- function(mat,
         }
         
         if (!all(shape.node %in% c("none", "circle", "rectangle")))
-        stop("elements of 'shape.node' must be from {'none', 'circle', 'rectangle'}.",
-        call. = FALSE)
+            stop("elements of 'shape.node' must be from {'none', 'circle', 'rectangle'}.",
+                 call. = FALSE)
         
     }
     
     #-- cex.node.name
     if (!is.finite(cex.node.name) || cex.node.name < 0 || length(cex.node.name)>1)
-    stop("'cex.node.name' must be a non-negative numerical value.", call. = FALSE)
+        stop("'cex.node.name' must be a non-negative numerical value.", call. = FALSE)
     
     #-- color.edge
     if (length(color.edge) < 2 && (!is(color.edge, "function")))
-    stop("'color.edge' must be a vector of length larger than or equal to 2.", call. = FALSE)
+        stop("'color.edge' must be a vector of length larger than or equal to 2.", call. = FALSE)
     
     if ((length(color.edge) %% 2) != 0 && (!is(color.edge, "function")) && isTRUE(symkey))
-    stop("'color.edge' must be a vector of length an even number if 'symkey = TRUE'.", call. = FALSE)
+        stop("'color.edge' must be a vector of length an even number if 'symkey = TRUE'.", call. = FALSE)
     
     if (any(!sapply(color.edge, function(x) {tryCatch(is.matrix(col2rgb(x)), error = function(e) FALSE) })))
-    stop("'color.edge' must be a character vector of recognized colors.", call. = FALSE)
+        stop("'color.edge' must be a character vector of recognized colors.", call. = FALSE)
     
-        #-- lty.edge
-        if(length(lty.edge) >2)
+    #-- lty.edge
+    if(length(lty.edge) >2)
         stop("\"lty.edge\" must a character vector of up to 2 entries from
         'solid', 'dashed', 'dotted', 'dotdash', 'longdash', twodash' or 'blank'.
         see ?network",
-        call.=FALSE)
-        
-        if (length(lty.edge)==1) lty.edge = c(lty.edge, lty.edge)
-        
-        choices = c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash", "blank")
-        lty.edge = choices[pmatch(lty.edge, choices,duplicates.ok=TRUE)]
-        
-        if (any(is.na(lty.edge)))
+             call.=FALSE)
+    
+    if (length(lty.edge)==1) lty.edge = c(lty.edge, lty.edge)
+    
+    choices = c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash", "blank")
+    lty.edge = choices[pmatch(lty.edge, choices,duplicates.ok=TRUE)]
+    
+    if (any(is.na(lty.edge)))
         stop("'lty.edge' should be from 'solid', 'dashed', 'dotted', 'dotdash', 'longdash', twodash' or 'blank'.",
-        call. = FALSE)
-        
-        
-        #-- lwd.edge
-        if(length(lwd.edge) >2)
+             call. = FALSE)
+    
+    
+    #-- lwd.edge
+    if(length(lwd.edge) >2)
         stop("'lwd.edge' must be a vector of up to 2 positive numbers.
         See ?network")
-        if (length(lwd.edge)==1) lwd.edge = c(lwd.edge, lwd.edge)
-        
-        if (length(lwd.edge) != 2 || !is.finite(lwd.edge) || any(lwd.edge <= 0))
+    if (length(lwd.edge)==1) lwd.edge = c(lwd.edge, lwd.edge)
+    
+    if (length(lwd.edge) != 2 || !is.finite(lwd.edge) || any(lwd.edge <= 0))
         stop("'lwd.edge' must be positive.")
     
     #-- show.edge.labels
     if (!is.logical(show.edge.labels))
-    stop("'show.edge.labels' must be a logical constant (TRUE or FALSE).",
-    call. = FALSE)
+        stop("'show.edge.labels' must be a logical constant (TRUE or FALSE).",
+             call. = FALSE)
     
     #-- cex.edge.label
     if (!is.finite(cex.edge.label) || cex.edge.label < 0 || length(cex.edge.label)>1)
-    stop("'cex.edge.label' must be a non-negative numerical value.", call. = FALSE)
+        stop("'cex.edge.label' must be a non-negative numerical value.", call. = FALSE)
     
     #-- show.color.key
     if (!is.logical(show.color.key))
-    stop("'show.color.key' must be a logical constant (TRUE or FALSE).",
-    call. = FALSE)
+        stop("'show.color.key' must be a logical constant (TRUE or FALSE).",
+             call. = FALSE)
     
     #-- symkey
     if (!is.logical(symkey))
-    stop("'symkey' must be a logical constant (TRUE or FALSE).",
-    call. = FALSE)
+        stop("'symkey' must be a logical constant (TRUE or FALSE).",
+             call. = FALSE)
     
     #-- keysize
     if (length(keysize) != 2 || any(!is.finite(keysize)))
-    stop("'keysize' must be a numeric vector of length 2.",
-    call. = FALSE)
+        stop("'keysize' must be a numeric vector of length 2.",
+             call. = FALSE)
     
     #-- keysize.label
     if (length(keysize.label) != 1 || any(!is.finite(keysize)))
-    stop("'keysize' must be a numeric vector of length 1.",
-    call. = FALSE)
+        stop("'keysize' must be a numeric vector of length 1.",
+             call. = FALSE)
     
     #-- interactive
     if (!is.logical(interactive))
-    stop("'interactive' must be a logical constant (TRUE or FALSE).",
-    call. = FALSE)
+        stop("'interactive' must be a logical constant (TRUE or FALSE).",
+             call. = FALSE)
     
     #-- layout.fun
     if (!is.null(layout.fun) && !is(layout.fun, "function"))
-    stop("'layout.fun' must be a valid layout function.", call. = FALSE)
+        stop("'layout.fun' must be a valid layout function.", call. = FALSE)
     
     #-- end checking --#
     #------------------#
@@ -791,11 +791,11 @@ network <- function(mat,
     #-- network approach -------------------------------------------------------#
     #---------------------------------------------------------------------------#
     if (!(any(class.object %in% object.blocks)))
-    w = as.vector(t(mat))
+        w = as.vector(t(mat))
     
     #-- check cutoff
     if (round(max(abs(w)), 2) == 0)
-    stop("There is no correlation between these blocks whith these components. Try a different value of 'comp'.", call. = FALSE)
+        stop("There is no correlation between these blocks whith these components. Try a different value of 'comp'.", call. = FALSE)
     if (is.null(cutoff))
     {
         if (interactive)
@@ -813,11 +813,11 @@ network <- function(mat,
         }
     }
     if (!is.finite(cutoff) || cutoff < 0 )
-    stop("invalid value for 'cutoff', it must be a positive numeric value >= ",
-    0, call. = FALSE)
+        stop("invalid value for 'cutoff', it must be a positive numeric value >= ",
+             0, call. = FALSE)
     if(cutoff > max(abs(w)))
-    stop("invalid value for 'cutoff'", cutoff, " > ",
-    round(max(abs(w)), 2), call. = FALSE)
+        stop("invalid value for 'cutoff'", cutoff, " > ",
+             round(max(abs(w)), 2), call. = FALSE)
     
     
     # Definition of nodes #
@@ -844,9 +844,9 @@ network <- function(mat,
         
         row.names.plot = row.names.plot[keep.X]
         col.names.plot = col.names.plot[keep.Y]
-
+        
         nodes = data.frame(name = c(node.X, node.Y),
-        group = c(rep("x", Xn), rep("y", Yn)))
+                           group = c(rep("x", Xn), rep("y", Yn)))
         
         
         node.X = rep(node.X, each = Yn)
@@ -856,7 +856,7 @@ network <- function(mat,
         node.Y = col.names # paste0("Y", 1:q)
         
         nodes = data.frame(name = c(node.X, node.Y),
-        group = c(rep("x", p), rep("y", q)))
+                           group = c(rep("x", p), rep("y", q)))
         
         
         node.X = rep(node.X, each = q)
@@ -870,7 +870,7 @@ network <- function(mat,
     # edges colors #
     #--------------#
     id = bin.color(w, cutoff = cutoff, breaks = breaks,
-    col = color.edge, symkey = symkey)
+                   col = color.edge, symkey = symkey)
     col.id = id$bin
     color.edge = id$col[col.id]
     
@@ -915,7 +915,7 @@ network <- function(mat,
     # edges attributes #
     #------------------#
     if (show.edge.labels)
-    E(gR)$label = round(E(gR)$weight, 2)
+        E(gR)$label = round(E(gR)$weight, 2)
     
     E(gR)$label.color = "black"
     
@@ -930,8 +930,8 @@ network <- function(mat,
     
     E(gR)$width = lwd.edge[1]
     E(gR)$width[E(gR)$weight < 0] = lwd.edge[2]
-
-
+    
+    
     gR = delete.vertices(gR, which(degree(gR) == 0))
     
     # plot attributes #
@@ -1036,10 +1036,10 @@ network <- function(mat,
         cuts = seq(0, 1, length = 21)
         par(mai = c(0.25, 0.15, 0.3, 0.15), bg = gray(0.95))
         layout(matrix(c(0, 1, 0), ncol = 1, nrow = 3),
-        widths = 1, heights = c(0.25, 1, 0.25))
+               widths = 1, heights = c(0.25, 1, 0.25))
         
         plot(cuts, type = "n", rep(0, 21), xlab = "", ylab = "",
-        xlim = c(-0.10, 1.10), axes = FALSE)
+             xlim = c(-0.10, 1.10), axes = FALSE)
         title("cutoff control", cex.main = 1.9, font.main = 1)
         text(0.5, -0.6, "value", cex = 1.5)
         text(0, -0.6, round(min.cut, 2), cex = 1.4)
@@ -1052,7 +1052,7 @@ network <- function(mat,
         lines(c(-0.085, -0.035), c(0, 0))
         
         for (i in seq(0, 1, length = 21))
-        lines(c(i, i), c(-0.22, 0.2))
+            lines(c(i, i), c(-0.22, 0.2))
         
         x = pos = 0
         rect(-0.01, -0.045, x, 0.04, col = "red")
@@ -1254,7 +1254,7 @@ network <- function(mat,
         } # end loop
         
         if (gE.none != FALSE)
-        gR = gE
+            gR = gE
     }
     res=list(gR = gR)
     
@@ -1279,7 +1279,7 @@ network <- function(mat,
     res$cutoff = cutoff
     
     if (!is.null(save))
-    dev.off()
+        dev.off()
     
     return(invisible(res))
 }

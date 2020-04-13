@@ -38,9 +38,9 @@
 NULL
 #' @rdname logratio-transformations
 #' @export
-logratio.transfo = function(X,
-                            logratio = c('none','CLR','ILR'),
-                            offset = 0)
+logratio.transfo <- function(X,
+                             logratio = c('none','CLR','ILR'),
+                             offset = 0)
 {
     X <- as.matrix(X)
     if (!is.numeric(X))

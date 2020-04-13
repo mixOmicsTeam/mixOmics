@@ -91,13 +91,13 @@
 #' }
 #' @export
 ipca <- function (X,
-                 ncomp = 2,
-                 mode = "deflation",
-                 fun = "logcosh",
-                 scale = FALSE,
-                 w.init = NULL,
-                 max.iter = 200,
-                 tol = 1e-04)
+                  ncomp = 2,
+                  mode = "deflation",
+                  fun = "logcosh",
+                  scale = FALSE,
+                  w.init = NULL,
+                  max.iter = 200,
+                  tol = 1e-04)
 {
     #-- checking general input parameters --------------------------------------#
     #---------------------------------------------------------------------------#
@@ -121,11 +121,11 @@ ipca <- function (X,
     #-- put a names on the rows and columns of X --#
     X.names = colnames(X)
     if (is.null(X.names))
-    X.names = paste("V", 1:nc, sep = "")
+        X.names = paste("V", 1:nc, sep = "")
     
     ind.names = rownames(X)
     if (is.null(ind.names))
-    ind.names = 1:nr
+        ind.names = 1:nr
     
     #-- ncomp
     if (is.null(ncomp) ||
@@ -216,10 +216,10 @@ ipca <- function (X,
     if (mode == "deflation")
     {
         W = ica.def(V, ncomp = ncomp, tol = tol, fun = fun, alpha = 1,
-        max.iter = max.iter, verbose = FALSE, w.init = w.init)
+                    max.iter = max.iter, verbose = FALSE, w.init = w.init)
     } else if (mode == "parallel") {
         W = ica.par(V, ncomp = ncomp, tol = tol, fun = fun, alpha = 1,
-        max.iter = max.iter, verbose = FALSE, w.init = w.init)
+                    max.iter = max.iter, verbose = FALSE, w.init = w.init)
     }
     
     #-- independent loadings --#
@@ -227,8 +227,8 @@ ipca <- function (X,
     
     #-- order independent loadings by kurtosis --#
     kurt = apply(S, 1, function(x) { n = length(x)
-        x = x - mean(x)
-        n * sum(x^4) / (sum(x^2)^2) - 3 } )
+    x = x - mean(x)
+    n * sum(x^4) / (sum(x^2)^2) - 3 } )
     ord = order(kurt, decreasing = TRUE)
     kurt = kurt[ord]
     S = S[ord, , drop = FALSE]
@@ -259,9 +259,9 @@ ipca <- function (X,
     cl[[1]] = as.name('ipca')
     
     result = list(call = cl, X = X, ncomp = ncomp, x = ipc,
-    loadings=list(X=S),rotation=S,variates=list(X=ipc), kurtosis = kurt, unmixing = t(W),
-    mixing = t(t(W) %*% solve(W %*% t(W))),
-    names = list(var = X.names, sample = ind.names))
+                  loadings=list(X=S),rotation=S,variates=list(X=ipc), kurtosis = kurt, unmixing = t(W),
+                  mixing = t(t(W) %*% solve(W %*% t(W))),
+                  names = list(var = X.names, sample = ind.names))
     
     class(result) = c("ipca", "pca")
     

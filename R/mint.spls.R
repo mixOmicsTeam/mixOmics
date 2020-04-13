@@ -116,20 +116,20 @@
 #' #plot study-specific outputs for study "2"
 #' plotIndiv(res, study = "2", col = 1:3, legend = TRUE)
 #' }
-mint.spls = function(X,
-                     Y,
-                     ncomp = 2,
-                     mode = c("regression", "canonical", "invariant", "classic"),
-                     study,
-                     keepX = rep(ncol(X), ncomp),
-                     keepY = rep(ncol(Y), ncomp),
-                     scale = TRUE,
-                     tol = 1e-06,
-                     max.iter = 100,
-                     near.zero.var = FALSE,
-                     all.outputs = TRUE)
+mint.spls <- function(X,
+                      Y,
+                      ncomp = 2,
+                      mode = c("regression", "canonical", "invariant", "classic"),
+                      study,
+                      keepX = rep(ncol(X), ncomp),
+                      keepY = rep(ncol(Y), ncomp),
+                      scale = TRUE,
+                      tol = 1e-06,
+                      max.iter = 100,
+                      near.zero.var = FALSE,
+                      all.outputs = TRUE)
 {
-
+    
     # call to 'internal_wrapper.mint'
     result <- internal_wrapper.mint(
         X = X,
@@ -171,5 +171,5 @@ mint.spls = function(X,
     
     class(out) <- c("mint.spls","mixo_spls")
     return(invisible(out))
- 
+    
 }

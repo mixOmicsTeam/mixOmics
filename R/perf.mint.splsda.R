@@ -6,10 +6,10 @@
 #' @rdname perf
 #' @export
 perf.mint.pls <-  function(object,
-                            validation = c("Mfold", "loo"),
-                            folds = 10,
-                            progressBar = FALSE,
-                            ...)
+                           validation = c("Mfold", "loo"),
+                           folds = 10,
+                           progressBar = FALSE,
+                           ...)
 {
     stop("Yet to be implemented")
 }
@@ -54,7 +54,7 @@ perf.mint.plsda <- function (object,
     }
     
     if (!is.logical(progressBar))
-    stop("'progressBar' must be either TRUE or FALSE")
+        stop("'progressBar' must be either TRUE or FALSE")
     
     #-- check significance threshold
     signif.threshold <- .check_alpha(signif.threshold)
@@ -63,8 +63,8 @@ perf.mint.plsda <- function (object,
     #------------------#
     
     near.zero.var = !is.null(object$nzv) # if near.zero.var was used, we set it to TRUE. if not used, object$nzv is NULL
-
-
+    
+    
     # -------------------------------------
     # added: first check for near zero var on the whole data set
     if (near.zero.var == TRUE)
@@ -76,52 +76,52 @@ perf.mint.plsda <- function (object,
             X = X[, -nzv$Position, drop=TRUE]
             
             if (ncol(X)==0)
-            stop("No more predictors after Near Zero Var has been applied!")
+                stop("No more predictors after Near Zero Var has been applied!")
         }
     }
     # and then we start from the X data set with the nzv removed
-
+    
     prediction.all = class.all = list()
     for(ijk in dist)
     {
         class.all[[ijk]] = matrix(nrow = nrow(X), ncol = ncomp,
-        dimnames = list(rownames(X), c(paste0('comp', 1 : ncomp))))
+                                  dimnames = list(rownames(X), c(paste0('comp', 1 : ncomp))))
     }
-
+    
     if(auc)
     {
         auc.mean=list()
         auc.mean.study=list()
     }
-
+    
     study.specific = global = list()
     for (study_i in 1:nlevels(study)) #LOO on the study factor
     {
         study.specific[[study_i]] =list()
         study.specific[[study_i]]$BER = global$BER = matrix(0,nrow = ncomp, ncol = length(dist),
-        dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
+                                                            dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
         
         study.specific[[study_i]]$overall = global$overall = matrix(0,nrow = ncomp, ncol = length(dist),
-        dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
+                                                                    dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
         
         study.specific[[study_i]]$error.rate.class = list()
         for(ijk in dist)
-        study.specific[[study_i]]$error.rate.class[[ijk]] = global$error.rate.class[[ijk]] = matrix(0,nrow = nlevels(Y), ncol = ncomp,
-        dimnames = list(levels(Y),c(paste0('comp', 1 : ncomp))))
-
+            study.specific[[study_i]]$error.rate.class[[ijk]] = global$error.rate.class[[ijk]] = matrix(0,nrow = nlevels(Y), ncol = ncomp,
+                                                                                                        dimnames = list(levels(Y),c(paste0('comp', 1 : ncomp))))
+        
     }
     names(study.specific) =levels(study)
     
     # successively tune the components until ncomp: comp1, then comp2, ...
     for(comp in 1 : ncomp)
     {
-
+        
         already.tested.X = keepX[1:comp]
         
         
         if (progressBar == TRUE)
-        cat("\ncomp",comp, "\n")
-               
+            cat("\ncomp",comp, "\n")
+        
         #-- set up a progress bar --#
         if (progressBar ==  TRUE)
         {
@@ -134,18 +134,18 @@ perf.mint.plsda <- function (object,
         names.study = levels(study)
         features = NULL
         prediction.comp = matrix(0, nrow = nrow(X), ncol = nlevels(Y), dimnames = list(rownames(X), levels(Y)))
-
+        
         class.comp = list()
         for(ijk in dist)
-        class.comp[[ijk]] = matrix(0, nrow = nrow(X), ncol = 1)# prediction of all samples for each test.keepX and  nrep at comp fixed
+            class.comp[[ijk]] = matrix(0, nrow = nrow(X), ncol = 1)# prediction of all samples for each test.keepX and  nrep at comp fixed
         
         if(auc)
-        auc.mean.study[[comp]] = list()
-
+            auc.mean.study[[comp]] = list()
+        
         for (study_i in 1:M) #LOO on the study factor
         {
             if (progressBar ==  TRUE)
-            setTxtProgressBar(pb, (study_i-1)/M)
+                setTxtProgressBar(pb, (study_i-1)/M)
             
             omit = which(study %in% names.study[study_i])
             X.train = X[-omit,]
@@ -172,27 +172,27 @@ perf.mint.plsda <- function (object,
             #---------------------------------------#
             
             if (progressBar ==  TRUE)
-            setTxtProgressBar(pb, (study_i-1)/M)
+                setTxtProgressBar(pb, (study_i-1)/M)
             
             object.res = mint.splsda(X.train, Y.train, study = study.learn.CV, ncomp = comp,
-            keepX = already.tested.X,
-            scale = scale, mode = "regression")
+                                     keepX = already.tested.X,
+                                     scale = scale, mode = "regression")
             
             test.predict.sw <- predict.mixo_spls(object.res, newdata = X.test, dist = dist, study.test = study.test.CV)
             prediction.comp[omit, match(levels(Y.train),levels(Y))] =  test.predict.sw$predict[, , comp]
             
             for(ijk in dist)
-            class.comp[[ijk]][omit,1] =  test.predict.sw$class[[ijk]][, comp] #levels(Y)[test.predict.sw$class[[ijk]][, ncomp]]
+                class.comp[[ijk]][omit,1] =  test.predict.sw$class[[ijk]][, comp] #levels(Y)[test.predict.sw$class[[ijk]][, ncomp]]
             
             
             if (progressBar ==  TRUE)
-            setTxtProgressBar(pb, (study_i)/M)
+                setTxtProgressBar(pb, (study_i)/M)
             
             # result per study
             #BER
             study.specific[[study_i]]$BER[comp,] = sapply(test.predict.sw$class, function(x){
-            conf = get.confusion_matrix(truth = Y[omit], all.levels = levels(Y), predicted = x[,comp])
-            get.BER(conf)
+                conf = get.confusion_matrix(truth = Y[omit], all.levels = levels(Y), predicted = x[,comp])
+                get.BER(conf)
             })
             
             #overall
@@ -207,7 +207,7 @@ perf.mint.plsda <- function (object,
                 out = (apply(conf, 1, sum) - diag(conf)) / summary(Y[omit])
             })
             for (ijk in dist)
-            study.specific[[study_i]]$error.rate.class[[ijk]][,comp] = temp[[ijk]]
+                study.specific[[study_i]]$error.rate.class[[ijk]][,comp] = temp[[ijk]]
             
             #AUC per study
             if(auc)
@@ -219,7 +219,7 @@ perf.mint.plsda <- function (object,
             }
             
         } # end study_i 1:M (M folds)
-
+        
         for (ijk in dist)
         {
             #prediction of each samples for each fold and each repeat, on each comp
@@ -247,27 +247,27 @@ perf.mint.plsda <- function (object,
             out = (apply(conf, 1, sum) - diag(conf)) / summary(Y)
         })
         for (ijk in dist)
-        global$error.rate.class[[ijk]][,comp] = temp[[ijk]]
-
+            global$error.rate.class[[ijk]][,comp] = temp[[ijk]]
+        
         #AUC global
         if(auc)
         {
             names(auc.mean.study[[comp]]) = names.study
-
+            
             data = list()
             data$outcome = Y
             data$data = prediction.comp
             auc.mean[[comp]] = statauc(data)
         }
-
-
+        
+        
     } # end comp
     names(prediction.all) = paste0('comp', 1:ncomp)
     
     result = list(study.specific.error = study.specific,
-    global.error = global,
-    predict = prediction.all,
-    class = class.all)
+                  global.error = global,
+                  predict = prediction.all,
+                  class = class.all)
     
     if(auc)
     {
@@ -277,16 +277,16 @@ perf.mint.plsda <- function (object,
     }
     
     if (progressBar == TRUE)
-    cat('\n')
+        cat('\n')
     
-
+    
     # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
     if(nlevels(study) > 2 & ncomp >1)
     {
         measure = c("overall","BER")
         ncomp_opt = matrix(NA, nrow = length(measure), ncol = length(dist),
-        dimnames = list(measure, dist))
-
+                           dimnames = list(measure, dist))
+        
         for (measure_i in measure)
         {
             for (ijk in dist)
@@ -298,17 +298,17 @@ perf.mint.plsda <- function (object,
     } else {
         ncomp_opt = NULL
     }
-
+    
     result$choice.ncomp = ncomp_opt
-
-
+    
+    
     # added
     if (near.zero.var == TRUE)
-    result$nzvX = nzv$Position
+        result$nzvX = nzv$Position
     
     class(result) = c("perf","perf.mint.splsda.mthd")
     result$call = match.call()
-
+    
     return(invisible(result))
 }
 

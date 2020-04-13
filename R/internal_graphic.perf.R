@@ -28,8 +28,20 @@
 # -----------------------------------------------------------------------------
 
 
-internal_graphic.perf<- function (error.rate, error.rate.sd, overlay, type,
-measure, dist, legend.position, xlab, ylab, color,ylim=NULL, ...)
+internal_graphic.perf <-
+    function (error.rate,
+              error.rate.sd,
+              overlay,
+              type,
+              measure,
+              dist,
+              legend.position,
+              xlab,
+              ylab,
+              color,
+              ylim = NULL,
+              ...
+    )
 {
     # error.rate is a list [[measure]]
     # error.rate[[measure]] is a matrix of dist columns and ncomp rows
@@ -55,7 +67,7 @@ measure, dist, legend.position, xlab, ylab, color,ylim=NULL, ...)
         }
         if(is.null(ylim))
             ylim = range(c(error.rate.concat + error.rate.sd.concat),
-        c(error.rate.concat - error.rate.sd.concat))
+                         c(error.rate.concat - error.rate.sd.concat))
         
     } else {
         error.rate.sd.concat = NULL
@@ -73,35 +85,35 @@ measure, dist, legend.position, xlab, ylab, color,ylim=NULL, ...)
     if(overlay == "all")
     {
         out<-matplot(component, error.rate.concat, type = type, lty =
-        rep(c(1:length(measure)), each = length(dist)),
-        col = rep(color, length(measure)),
-        lwd = 2, xlab = xlab, ylab = ylab, xaxt="n", ylim = ylim)
+                         rep(c(1:length(measure)), each = length(dist)),
+                     col = rep(color, length(measure)),
+                     lwd = 2, xlab = xlab, ylab = ylab, xaxt="n", ylim = ylim)
         
         axis(1, rownames(error.rate.concat))#, rownames(error.rate.concat))
         
         if(legend.position == "vertical")
         {
             legend('topright', legend = c(measure, dist),
-            lty = c(1:length(measure), rep(NA, length(dist))),
-            pch = c(rep(NA, length(measure)), rep(16, length(dist))),
-            col = c(rep('black', length(measure)), color), ncol = 1, lwd = 2)
+                   lty = c(1:length(measure), rep(NA, length(dist))),
+                   pch = c(rep(NA, length(measure)), rep(16, length(dist))),
+                   col = c(rep('black', length(measure)), color), ncol = 1, lwd = 2)
         } else if(legend.position == "horizontal") {
             legend('topright', legend = c(measure, "" , dist),
-            lty = c(1:length(measure), rep(NA, (length(dist)+1))),
-            pch = c(rep(NA, (length(measure)+1)), rep(16, length(dist))),
-            col = c(rep('black', length(measure)), NA, color), ncol = 2,
-            lwd = 2)
+                   lty = c(1:length(measure), rep(NA, (length(dist)+1))),
+                   pch = c(rep(NA, (length(measure)+1)), rep(16, length(dist))),
+                   col = c(rep('black', length(measure)), NA, color), ncol = 2,
+                   lwd = 2)
             
         }
         if(!is.null(error.rate.sd.concat))
         {
             col = matrix(rep(color, length(measure)),
-            nrow = nrow(error.rate.concat), ncol = length(measure)*length(dist),
-            byrow=TRUE)
+                         nrow = nrow(error.rate.concat), ncol = length(measure)*length(dist),
+                         byrow=TRUE)
             
             for(j in 1:ncol(error.rate.concat))
-            plot_error_bar(x = component, y = error.rate.concat[, j],
-            uiw=error.rate.sd.concat[, j], add=TRUE, col = col[, j])
+                plot_error_bar(x = component, y = error.rate.concat[, j],
+                               uiw=error.rate.sd.concat[, j], add=TRUE, col = col[, j])
         }
     } else if(overlay == "measure") {
         
@@ -110,12 +122,12 @@ measure, dist, legend.position, xlab, ylab, color,ylim=NULL, ...)
         for(di in dist)
         {
             new_mat.error =
-            error.rate.concat[, grep(di, colnames(error.rate.concat)),
-            drop = FALSE]
+                error.rate.concat[, grep(di, colnames(error.rate.concat)),
+                                  drop = FALSE]
             
             out<-matplot(new_mat.error, type = type, lty = c(1:length(measure)),
-            col = rep(color[which(di == dist)]),
-            lwd = 2, xlab = xlab, ylab = ylab, xaxt="n", ylim = ylim)
+                         col = rep(color[which(di == dist)]),
+                         lwd = 2, xlab = xlab, ylab = ylab, xaxt="n", ylim = ylim)
             
             axis(1, rownames(error.rate.concat))#, rownames(error.rate.concat))
             #axis(2)
@@ -123,18 +135,18 @@ measure, dist, legend.position, xlab, ylab, color,ylim=NULL, ...)
             if(legend.position == "vertical")
             {
                 legend('topright', legend = measure, lty = 1:length(measure),
-                col = rep(color[which(di == dist)]), ncol = 1, lwd = 2)
+                       col = rep(color[which(di == dist)]), ncol = 1, lwd = 2)
             } else if(legend.position == "horizontal") {
                 legend('topright', legend = c(measure), lty = 1:length(measure),
-                col = rep(color[which(di == dist)]), ncol = 2, lwd = 2)
+                       col = rep(color[which(di == dist)]), ncol = 2, lwd = 2)
             }
             if(!is.null(error.rate.sd.concat))
             {
                 new_sd.error = error.rate.sd.concat[, grep(di,
-                colnames(error.rate.sd.concat)), drop = FALSE]
+                                                           colnames(error.rate.sd.concat)), drop = FALSE]
                 for(j in 1:ncol(new_mat.error))
-                plot_error_bar(x = component, y = new_mat.error[, j],
-                uiw=new_sd.error[, j], add=TRUE, col = color[which(di == dist)])
+                    plot_error_bar(x = component, y = new_mat.error[, j],
+                                   uiw=new_sd.error[, j], add=TRUE, col = color[which(di == dist)])
             }
             #add title for each subgraph
             title(di, line = 1)
@@ -148,11 +160,11 @@ measure, dist, legend.position, xlab, ylab, color,ylim=NULL, ...)
         for(mea in measure)
         {
             new_mat.error=error.rate.concat[, grep(mea,
-            colnames(error.rate.concat)), drop = FALSE]
+                                                   colnames(error.rate.concat)), drop = FALSE]
             
             out<-matplot(new_mat.error, type = type, lty = c(1:length(dist)),
-            col = color,
-            lwd = 2, xlab = xlab, ylab = ylab, xaxt="n", ylim = ylim)
+                         col = color,
+                         lwd = 2, xlab = xlab, ylab = ylab, xaxt="n", ylim = ylim)
             
             axis(1, rownames(error.rate.concat))#, rownames(error.rate.concat))
             #axis(2)
@@ -160,21 +172,21 @@ measure, dist, legend.position, xlab, ylab, color,ylim=NULL, ...)
             if(legend.position == "vertical")
             {
                 legend('topright', legend = dist, lty = 1:length(dist),
-                col = color, ncol = 1, lwd = 2)
+                       col = color, ncol = 1, lwd = 2)
             } else if(legend.position == "horizontal") {
                 legend('topright', dist, lty = 1:length(dist),
-                col = color, ncol = 2, lwd = 2)
+                       col = color, ncol = 2, lwd = 2)
             }
             if(!is.null(error.rate.sd.concat))
             {
                 col = matrix(color, nrow = nrow(error.rate.concat),
-                ncol = length(dist), byrow=TRUE)
-
+                             ncol = length(dist), byrow=TRUE)
+                
                 new_sd.error=error.rate.sd.concat[,
-                grep(mea, colnames(error.rate.sd.concat)), drop = FALSE]
+                                                  grep(mea, colnames(error.rate.sd.concat)), drop = FALSE]
                 for(j in 1:ncol(new_mat.error))
-                plot_error_bar(x = component, y = new_mat.error[, j],
-                uiw=new_sd.error[, j], add=TRUE, col = col[, j])
+                    plot_error_bar(x = component, y = new_mat.error[, j],
+                                   uiw=new_sd.error[, j], add=TRUE, col = col[, j])
             }
             title(mea, line = 1)
         }
@@ -211,17 +223,17 @@ plot_error_bar <- function (x, y = as.numeric(x), uiw, add=FALSE, col = "black")
     scols <- col
     
     arrow.args <- c(list(lty = par("lty"), angle = 90, length = smidge,
-    code = 1, col = scols))
+                         code = 1, col = scols))
     
     do.call("arrows", c(list(x[nz], li[nz], x[nz], pmax(y -
-    gap, li)[nz]), arrow.args))
+                                                            gap, li)[nz]), arrow.args))
     
     nz <- abs(ui - pmin(y + gap, ui)) * y.to.in > 0.001
     #scols <- rep(scol, length.out = length(x))[nz]
     arrow.args$col <- scols
     
     do.call("arrows", c(list(x[nz], ui[nz], x[nz], pmin(y +
-    gap, ui)[nz]), arrow.args))
+                                                            gap, ui)[nz]), arrow.args))
     
     do.call("points", c(list(x, y, bg = par("bg"), col =col)))
     

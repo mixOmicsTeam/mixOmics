@@ -91,16 +91,16 @@
 #' @export
 #' @example ./examples/pca-examples.R
 pca <- function(X,
-               ncomp = 2,
-               center = TRUE,
-               scale = FALSE,
-               max.iter = 500,
-               tol = 1e-09,
-               logratio = 'none',
-               # one of ('none','CLR','ILR')
-               ilr.offset = 0.001,
-               V = NULL,
-               multilevel = NULL)
+                ncomp = 2,
+                center = TRUE,
+                scale = FALSE,
+                max.iter = 500,
+                tol = 1e-09,
+                logratio = 'none',
+                # one of ('none','CLR','ILR')
+                ilr.offset = 0.001,
+                V = NULL,
+                multilevel = NULL)
 {
     
     #-- checking general input parameters --------------------------------------#
@@ -111,7 +111,7 @@ pca <- function(X,
     user.arg = names(arg.call)[-1]
     
     err = tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
-    error = function(e) e)
+                   error = function(e) e)
     
     if ("simpleError" %in% class(err))
         stop(err[[1]], ".", call. = FALSE)
@@ -164,14 +164,14 @@ pca <- function(X,
     {
         if (!is.numeric(center) || (length(center) != ncol(X)))
             stop("'center' should be either a logical value or a numeric vector of length equal to the number of columns of 'X'.",
-        call. = FALSE)
+                 call. = FALSE)
     }
     
     if (!is.logical(scale))
     {
         if (!is.numeric(scale) || (length(scale) != ncol(X)))
             stop("'scale' should be either a logical value or a numeric vector of length equal to the number of columns of 'X'.",
-        call. = FALSE)
+                 call. = FALSE)
     }
     
     #-- max.iter
@@ -232,7 +232,7 @@ pca <- function(X,
     if (any(sc == 0))
         stop("cannot rescale a constant/zero column to unit variance.",
              call. = FALSE)
- 
+    
     is.na.X = is.na(X)
     na.X = FALSE
     if (any(is.na.X)) na.X = TRUE
@@ -241,9 +241,9 @@ pca <- function(X,
     cl = match.call()
     cl[[1]] = as.name('pca')
     result = list(call = cl, X = X, ncomp = ncomp,NA.X = NA.X,
-    center = if (is.null(cen)) {FALSE} else {cen},
-    scale = if (is.null(sc)) {FALSE} else {sc},
-    names = list(X = X.names, sample = ind.names))
+                  center = if (is.null(cen)) {FALSE} else {cen},
+                  scale = if (is.null(sc)) {FALSE} else {sc},
+                  names = list(X = X.names, sample = ind.names))
     
     
     #-- pca approach -----------------------------------------------------------#

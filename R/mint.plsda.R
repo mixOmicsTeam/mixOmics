@@ -136,9 +136,9 @@ mint.plsda <- function(X,
     Y.mat = unmap(Y)
     colnames(Y.mat) = levels(Y
     )
-
+    
     X = as.matrix(X)
-
+    
     if (length(study) != nrow(X))
         stop(paste0("'study' must be a factor of length ", nrow(X), "."))
     
@@ -190,6 +190,6 @@ mint.plsda <- function(X,
     
     class(out) <- c("mint.plsda","mint.pls","mixo_pls","DA")
     return(invisible(out))
-
-
+    
+    
 }

@@ -170,7 +170,7 @@ nipals <- function (X,
         }
         
         if (iter > max.iter)
-        warning(paste("Maximum number of iterations reached for comp.", h))
+            warning(paste("Maximum number of iterations reached for comp.", h))
         
         X = X - th %*% t(ph.new)
         p[, h] = ph.new

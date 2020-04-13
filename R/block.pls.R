@@ -94,51 +94,51 @@
 #' @keywords regression multivariate
 #' @example ./examples/block.pls-examples.R
 #' @export
-block.pls = function(X,
-Y,
-indY,
-ncomp = 2,
-design,
-scheme,
-mode,
-scale = TRUE,
-init ,
-tol = 1e-06,
-max.iter = 100,
-near.zero.var = FALSE,
-all.outputs = TRUE)
+block.pls <- function(X,
+                      Y,
+                      indY,
+                      ncomp = 2,
+                      design,
+                      scheme,
+                      mode,
+                      scale = TRUE,
+                      init ,
+                      tol = 1e-06,
+                      max.iter = 100,
+                      near.zero.var = FALSE,
+                      all.outputs = TRUE)
 {
     
     # call to 'internal_wrapper.mint.block'
     result = internal_wrapper.mint.block(X=X, Y=Y, indY=indY, ncomp=ncomp,
-        design=design, scheme=scheme, mode=mode, scale=scale,
-        init=init, tol=tol, max.iter=max.iter ,near.zero.var=near.zero.var,
-        all.outputs = all.outputs)
+                                         design=design, scheme=scheme, mode=mode, scale=scale,
+                                         init=init, tol=tol, max.iter=max.iter ,near.zero.var=near.zero.var,
+                                         all.outputs = all.outputs)
     
     # calculate weights for each dataset
     weights = get.weights(result$variates, indY = result$indY)
-
+    
     # choose the desired output from 'result'
     out=list(call = match.call(),
-        X = result$A,
-        indY = result$indY,
-        ncomp = result$ncomp,
-        mode = result$mode,
-        variates = result$variates,
-        loadings = result$loadings,
-        crit = result$crit,
-        AVE = result$AVE,
-        names = result$names,
-        init = result$init,
-        tol = result$tol,
-        iter = result$iter,
-        max.iter = result$max.iter,
-        nzv = result$nzv,
-        scale = result$scale,
-        design = result$design,
-        scheme = result$scheme,
-        weights = weights,
-        explained_variance = result$explained_variance)
+             X = result$A,
+             indY = result$indY,
+             ncomp = result$ncomp,
+             mode = result$mode,
+             variates = result$variates,
+             loadings = result$loadings,
+             crit = result$crit,
+             AVE = result$AVE,
+             names = result$names,
+             init = result$init,
+             tol = result$tol,
+             iter = result$iter,
+             max.iter = result$max.iter,
+             nzv = result$nzv,
+             scale = result$scale,
+             design = result$design,
+             scheme = result$scheme,
+             weights = weights,
+             explained_variance = result$explained_variance)
     
     # give a class
     class(out) = c("block.pls","sgcca")

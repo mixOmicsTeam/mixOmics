@@ -46,7 +46,7 @@ plotIndiv.sgcca <-
            ...
            
   )
-{
+  {
     plot_parameters = list(
       size.title = size.title,
       size.subtitle = size.subtitle,
@@ -73,44 +73,44 @@ plotIndiv.sgcca <-
     
     if (is.null(blocks))
     {
-        blocks = names(object$X)#names$blocks
+      blocks = names(object$X)#names$blocks
     } else if (is.numeric(blocks) & min(blocks) > 0 &  max(blocks) <=  length(object$names$blocks)) {
-        blocks = object$names$blocks[blocks]
+      blocks = object$names$blocks[blocks]
     } else if (is.character(blocks)) {
-        if (any(grepl(blocks, pattern = "consensus", ignore.case = TRUE))) {
-            input_consensus_blocks <- match.arg(blocks, choices = valid_consensus_blocks, several.ok = TRUE)
-            supported.classes <- c("sgcca", "rgcca", "sgccda")
-            if (! any(supported.classes %in% class(object)) ){
-                stop(sprintf("Consensus plots are supported for objects of classes: %s", paste(supported.classes, collapse = ", ")), call. = FALSE)
-            }
-            object <- .add_consensus_blocks(block_object = object, consensus_blocks = input_consensus_blocks)
+      if (any(grepl(blocks, pattern = "consensus", ignore.case = TRUE))) {
+        input_consensus_blocks <- match.arg(blocks, choices = valid_consensus_blocks, several.ok = TRUE)
+        supported.classes <- c("sgcca", "rgcca", "sgccda")
+        if (! any(supported.classes %in% class(object)) ){
+          stop(sprintf("Consensus plots are supported for objects of classes: %s", paste(supported.classes, collapse = ", ")), call. = FALSE)
         }
-        invalid_blocks <- setdiff(blocks, object$names$blocks)
-        if (length(invalid_blocks) > 0  ) {
-          valid_blocks <- object$names$blocks
-          stop(sprintf("Block(s) not found: %s. Blocks must be a selection of: %s", paste(invalid_blocks , collapse = ', '), paste(valid_blocks, collapse = ', ')))
-        }
+        object <- .add_consensus_blocks(block_object = object, consensus_blocks = input_consensus_blocks)
+      }
+      invalid_blocks <- setdiff(blocks, object$names$blocks)
+      if (length(invalid_blocks) > 0  ) {
+        valid_blocks <- object$names$blocks
+        stop(sprintf("Block(s) not found: %s. Blocks must be a selection of: %s", paste(invalid_blocks , collapse = ', '), paste(valid_blocks, collapse = ', ')))
+      }
     } else {
-        stop("Incorrect value for 'blocks'", call. = FALSE)
+      stop("Incorrect value for 'blocks'", call. = FALSE)
     }
     #object$variates = object$variates[names(object$variates) %in% blocks] # reduce the variate to the 'blocks' we are looking at
     object$variates = object$variates[match(blocks, names(object$variates))] # reduce the variate to the 'blocks' we are looking at
     if (any(object$ncomp[blocks] ==  1))
       stop(paste("The number of components for one selected block '", paste(blocks, collapse = " - "), "' is 1. The number of components must be superior or equal to 2."), call. = FALSE)
     ncomp = object$ncomp[blocks]
-
+    
     
     if(length(blocks)!= length(unique(blocks)))
       stop("Duplicate in 'blocks' not allowed")
-
+    
     if(!missing(subtitle))
     {
-        if(length(subtitle)!= length(blocks) | length(subtitle)!= length(unique(subtitle)))
-          stop("'subtitle' indicates the subtitle of the plot for each 'blocks'; it needs to be the same length as 'blocks' and duplicate are not allowed.")
+      if(length(subtitle)!= length(blocks) | length(subtitle)!= length(unique(subtitle)))
+        stop("'subtitle' indicates the subtitle of the plot for each 'blocks'; it needs to be the same length as 'blocks' and duplicate are not allowed.")
     }
-
-
-
+    
+    
+    
     #-- check inputs
     check = check.input.plotIndiv(
       object = object,
@@ -140,8 +140,8 @@ plotIndiv.sgcca <-
     ylim = check$ylim
     ind.names = check$ind.names
     display.names = check$display.names
-
-
+    
+    
     #-- get the variates
     variate = internal_getVariatesAndLabels(
       object,
@@ -160,9 +160,9 @@ plotIndiv.sgcca <-
     X.label = variate$X.label
     Y.label = variate$Y.label
     Z.label = variate$Z.label
-
+    
     n = nrow(object$X[[1]])
-
+    
     # create data frame df that contains (almost) all the ploting information
     out = shape.input.plotIndiv(
       object = object,
@@ -203,7 +203,7 @@ plotIndiv.sgcca <-
     centroid = out$centroid
     star = out$star
     plot_parameters = out$plot_parameters
-
+    
     if (!is.null(input_consensus_blocks)) {
       ## ------ drop 'Block: ' from consensus labels
       df$Block <- as.character(df$Block)
@@ -223,12 +223,12 @@ plotIndiv.sgcca <-
         Z.label <- 'variate 3 - consensus'
       }
     }
-
+    
     # change the levels of df.final$Block to "subtitle"
     if(!missing(subtitle))
     {
-        df$Block = factor(df$Block, labels = subtitle)
-        if(ellipse)
+      df$Block = factor(df$Block, labels = subtitle)
+      if(ellipse)
         df.ellipse$Block = factor(df.ellipse$Block, labels = subtitle)
     }
     
@@ -259,9 +259,9 @@ plotIndiv.sgcca <-
     )
     
     return(invisible(list(df = df, df.ellipse = df.ellipse, graph = res)))
-
-
-}
+    
+    
+  }
 
 #' @rdname plotIndiv
 #' @method plotIndiv rgcca

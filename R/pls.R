@@ -130,17 +130,17 @@
 #' }
 #' 
 pls <- function(X,
-               Y,
-               ncomp = 2,
-               scale = TRUE,
-               mode = c("regression", "canonical", "invariant", "classic"),
-               tol = 1e-06,
-               max.iter = 100,
-               near.zero.var = FALSE,
-               logratio = "none",
-               # one of "none", "CLR"
-               multilevel = NULL,
-               all.outputs = TRUE)
+                Y,
+                ncomp = 2,
+                scale = TRUE,
+                mode = c("regression", "canonical", "invariant", "classic"),
+                tol = 1e-06,
+                max.iter = 100,
+                near.zero.var = FALSE,
+                logratio = "none",
+                # one of "none", "CLR"
+                multilevel = NULL,
+                all.outputs = TRUE)
 {
     # call to 'internal_wrapper.mint'
     result = internal_wrapper.mint(
@@ -179,8 +179,8 @@ pls <- function(X,
         input.X = result$input.X,
         mat.c = result$mat.c#,
         #defl.matrix = result$defl.matrix
-        )
-     
+    )
+    
     class(out) = c("mixo_pls")
     # output if multilevel analysis
     if (!is.null(multilevel))
@@ -190,5 +190,5 @@ pls <- function(X,
     }
     
     return(invisible(out))
-
+    
 }

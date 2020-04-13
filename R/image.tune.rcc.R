@@ -32,22 +32,22 @@
 #' @method image tune.rcc
 #' @export
 image.tune.rcc <- function(x, col = heat.colors, ...) 
-
+    
 {
-
+    
     opar = par(no.readonly = TRUE)
-
+    
     grid1 = x$grid1
     grid2 = x$grid2
     mat = x$mat
     nlevel = min(255, length(c(unique(mat))))
     if (nlevel / 2 - trunc(nlevel / 2) == 0 & nlevel > 6) nlevel = nlevel + 1
     col = col(nlevel)
-
+    
     def.par = par(no.readonly = TRUE)
     layout(matrix(c(2, 1), ncol = 2, nrow = 1, byrow = FALSE),
-    widths = c(1, 0.18))
-
+           widths = c(1, 0.18))
+    
     #-- layout 1 --#
     min.mat = min(mat)
     max.mat = max(mat)
@@ -60,7 +60,7 @@ image.tune.rcc <- function(x, col = heat.colors, ...)
           zlim = c(min.mat, max.mat), oldstyle = TRUE,
           xaxt = "n", yaxt = "n", breaks = breaks)
     box()
-
+    
     par(usr = c(0, 1, min.mat, max.mat))
     binwidth = (max.mat - min.mat) / nlevel
     midpoints = seq(min.mat + binwidth/2, max.mat - binwidth/2, by = binwidth)
@@ -73,22 +73,22 @@ image.tune.rcc <- function(x, col = heat.colors, ...)
         if (binwidth[length(binwidth)] != nlevel){
             binwidth[length(binwidth) + 1] = nlevel
         }
-
+        
         axis(4, at = midpoints[binwidth], labels = round(midpoints[binwidth],
-        3))
-
+                                                         3))
+        
     }
-
-     
-
+    
+    
+    
     #-- layout 2 --#
     par(mai = c(0.9, 0.85, 0.75, 0.2))
     image(grid1, grid2, mat, col = col,
-    xlab = expression(lambda[1]), ylab=expression(lambda[2]),
-    main = expression(CV(lambda[1], lambda[2])), axes = FALSE,
-    zlim = c(min.mat, max.mat), oldstyle = TRUE)
-
-
+          xlab = expression(lambda[1]), ylab=expression(lambda[2]),
+          main = expression(CV(lambda[1], lambda[2])), axes = FALSE,
+          zlim = c(min.mat, max.mat), oldstyle = TRUE)
+    
+    
     if (length(grid1) > 10) {
         grid1 = seq(min(grid1), max(grid1), length = 11)
     }
@@ -101,7 +101,7 @@ image.tune.rcc <- function(x, col = heat.colors, ...)
     box()
     
     par(opar) #reset par
-
+    
 }
 
 #' @rdname image.tune.rcc

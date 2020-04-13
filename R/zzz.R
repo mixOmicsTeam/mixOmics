@@ -23,12 +23,12 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #############################################################################################################
 
-
+#' @importFrom utils packageDescription
 .onAttach <- function(libname, pkgname){ packageStartupMessage( "\nLoaded mixOmics ", as.character(packageDescription("mixOmics")[["Version"]]),
-    "\nThank you for using mixOmics!",
-    "\nTutorials: http://mixomics.org",
-    "\nBookdown vignette: https://mixomicsteam.github.io/Bookdown",
-    "\nQuestions, issues: Follow the prompts at http://mixomics.org/contact-us",
-    "\nCite us:  citation('mixOmics')\n"
-    
+                                                                "\nThank you for using mixOmics!",
+                                                                "\nTutorials: http://mixomics.org",
+                                                                "\nBookdown vignette: https://mixomicsteam.github.io/Bookdown",
+                                                                "\nQuestions, issues: Follow the prompts at http://mixomics.org/contact-us",
+                                                                "\nCite us:  citation('mixOmics')\n"
+                                                                
 )}

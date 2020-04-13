@@ -120,19 +120,19 @@
 #' res
 #' @export
 mint.block.pls <- function(X,
-                          Y,
-                          indY,
-                          study,
-                          ncomp = 2,
-                          design,
-                          scheme,
-                          mode,
-                          scale = TRUE,
-                          init ,
-                          tol = 1e-06,
-                          max.iter = 100,
-                          near.zero.var = FALSE,
-                          all.outputs = TRUE)
+                           Y,
+                           indY,
+                           study,
+                           ncomp = 2,
+                           design,
+                           scheme,
+                           mode,
+                           scale = TRUE,
+                           init ,
+                           tol = 1e-06,
+                           max.iter = 100,
+                           near.zero.var = FALSE,
+                           all.outputs = TRUE)
 {
     # call to 'internal_wrapper.mint.block'
     result = internal_wrapper.mint.block(
@@ -171,7 +171,7 @@ mint.block.pls <- function(X,
         max.iter = result$max.iter,
         nzv = result$nzv,
         scale = result$scale)
-
+    
     class(out) = c("mint.block.pls","block.pls","sgcca")
     return(invisible(out))
     

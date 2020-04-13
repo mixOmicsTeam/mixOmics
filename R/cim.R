@@ -165,6 +165,7 @@
 #' e1005752
 #' @keywords multivariate iplot hplot graphs cluster
 #' @example ./examples/cim-examples.R
+#' @importFrom stats as.dendrogram as.dist
 #' @export
 cim <-
     function(mat = NULL,
@@ -201,8 +202,6 @@ cim <-
 
     {
         class.object <- class(mat)
-        
-        
         
         #-- checking general input parameters -------------------------------------
         #--------------------------------------------------------------------------#

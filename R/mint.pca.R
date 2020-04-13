@@ -75,11 +75,11 @@
 #' plotIndiv(res, group = stemcells$celltype, legend=TRUE)
 #' 
 mint.pca <- function(X,
-                    ncomp = 2,
-                    study,
-                    scale = TRUE,
-                    tol = 1e-06,
-                    max.iter = 100)
+                     ncomp = 2,
+                     study,
+                     scale = TRUE,
+                     tol = 1e-06,
+                     max.iter = 100)
 {
     
     #-- checking general input parameters --------------------------------------#
@@ -90,7 +90,7 @@ mint.pca <- function(X,
     user.arg = names(arg.call)[-1]
     
     err = tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
-    error = function(e) e)
+                   error = function(e) e)
     
     if ("simpleError" %in% class(err))
         stop(err[[1]], ".", call. = FALSE)
@@ -165,15 +165,15 @@ mint.pca <- function(X,
         )
     if (any(table(study) < 5))
         warning("At least one study has less than 5 samples, mean centering might not do as expected")
-
+    
     #-- end checking --#
     #------------------#
     
     mean_centered <- mean_centering_per_study(data = X, study = study, scale = scale)
     X_mean_centered <- as.matrix(mean_centered$concat.data)
-
+    
     out = pca(X_mean_centered, ncomp = ncomp, max.iter = max.iter, tol = tol, scale = FALSE)
-
+    
     # choose the desired output from 'result'
     out$study <- study
     

@@ -29,19 +29,19 @@
 # ==============================================================================
 
 
-LOGOCV = function(X,
-Y,
-ncomp,
-study,
-choice.keepX = NULL,
-test.keepX = c(5, 10, 15),
-dist = "max.dist",
-measure = c("BER"), # one of c("overall","BER")
-auc = auc,
-max.iter = 100,
-progressBar = FALSE,
-near.zero.var = FALSE,
-scale)
+LOGOCV <- function(X,
+                  Y,
+                  ncomp,
+                  study,
+                  choice.keepX = NULL,
+                  test.keepX = c(5, 10, 15),
+                  dist = "max.dist",
+                  measure = c("BER"), # one of c("overall","BER")
+                  auc = auc,
+                  max.iter = 100,
+                  progressBar = FALSE,
+                  near.zero.var = FALSE,
+                  scale)
 {
     # X input
     # Y factor input
@@ -54,25 +54,25 @@ scale)
     
     
     if(missing(X))
-    stop("missing X")
+        stop("missing X")
     
     if(missing(Y))
-    stop("missing Y")
+        stop("missing Y")
     
     if(missing(study))
-    stop("missing study")
+        stop("missing study")
     
     if(missing(ncomp))
-    ncomp = 1
+        ncomp = 1
     
     if(missing(scale))
-    scale = FALSE
+        scale = FALSE
     
     if(missing(dist))
-    dist = "max.dist"
+        dist = "max.dist"
     
     if(length(Y) != nrow(X))
-    stop("X and Y have to be of same length")
+        stop("X and Y have to be of same length")
     
     #-- set up a progress bar --#
     if (progressBar ==  TRUE)
@@ -87,11 +87,11 @@ scale)
     names.study = levels(study)
     features = NULL
     prediction.comp = array(0, c(nrow(X), nlevels(Y), length(test.keepX)),
-    dimnames = list(rownames(X), levels(Y), test.keepX))
+                            dimnames = list(rownames(X), levels(Y), test.keepX))
     
     class.comp = list()
     for(ijk in dist)
-    class.comp[[ijk]] = matrix(0, nrow = nrow(X), ncol = length(test.keepX))
+        class.comp[[ijk]] = matrix(0, nrow = nrow(X), ncol = length(test.keepX))
     # prediction of all samples for each test.keepX and  nrep at comp fixed
     
     PRED=INDICE = matrix(0, nrow = length(test.keepX), ncol = M)
@@ -101,7 +101,7 @@ scale)
     for (study_i in 1:M) #LOO on the study factor
     {
         if (progressBar ==  TRUE)
-        setTxtProgressBar(pb, (study_i-1)/M)
+            setTxtProgressBar(pb, (study_i-1)/M)
         
         omit = which(study %in% names.study[study_i])
         X.train = X[-omit,]
@@ -132,21 +132,21 @@ scale)
         for (i in 1:length(test.keepX))
         {
             if (progressBar ==  TRUE)
-            setTxtProgressBar(pb, (study_i-1)/M + (i-1)/length(test.keepX)/M)
+                setTxtProgressBar(pb, (study_i-1)/M + (i-1)/length(test.keepX)/M)
             
             object.res = suppressWarnings(mint.splsda(X.train, Y.train,
-            study = study.learn.CV, ncomp = ncomp, keepX =
-            c(choice.keepX, test.keepX[i]),
-            scale = scale, mode = "regression", max.iter = max.iter))
+                                                      study = study.learn.CV, ncomp = ncomp, keepX =
+                                                          c(choice.keepX, test.keepX[i]),
+                                                      scale = scale, mode = "regression", max.iter = max.iter))
             # suppress NA warnings from explained_variance
-
+            
             # record selected features
             if (length(test.keepX) ==  1)
-            # only done if only one test.keepX as not used if more so far
-            features = c(features, selectVar(object.res, comp = ncomp)$name)
+                # only done if only one test.keepX as not used if more so far
+                features = c(features, selectVar(object.res, comp = ncomp)$name)
             
             test.predict.sw <- predict.mixo_spls(object.res, newdata = X.test,
-            method = dist, study.test = study.test.CV)
+                                                 method = dist, study.test = study.test.CV)
             # Y.train can be missing factors, so the prediction
             # 'test.predict.sw' might be missing factors compared to the
             # full prediction.comp
@@ -154,20 +154,20 @@ scale)
                 test.predict.sw$predict[, , ncomp]
             
             for(ijk in dist)
-            class.comp[[ijk]][omit,i] =  test.predict.sw$class[[ijk]][, ncomp]
+                class.comp[[ijk]][omit,i] =  test.predict.sw$class[[ijk]][, ncomp]
             #levels(Y)[test.predict.sw$class[[ijk]][, ncomp]]
         }#end test.keepX
         
         if (progressBar ==  TRUE)
-        setTxtProgressBar(pb, (study_i)/M)
+            setTxtProgressBar(pb, (study_i)/M)
         
     } # end study_i 1:M (M folds)
     
     result = list()
     
     auc.mean = error.mean = error.sd = error.per.class.keepX.opt.comp =
-    keepX.opt = test.keepX.out = choice.keepX.out =
-    error.per.study.keepX.opt = list()
+        keepX.opt = test.keepX.out = choice.keepX.out =
+        error.per.study.keepX.opt = list()
     
     if(auc)
     {
@@ -204,7 +204,7 @@ scale)
             #   minimum error
             error.mean[[ijk]] = error/length(Y)
             keepX.opt[[ijk]] = which(error.mean[[ijk]] ==
-            min(error.mean[[ijk]]))[1]
+                                         min(error.mean[[ijk]]))[1]
             # chose the lowest keepX if several minimum
             
             # overall error per study
@@ -221,23 +221,23 @@ scale)
             
             # confusion matrix for keepX.opt
             error.per.class.keepX.opt.comp[[ijk]] =
-            apply(class.comp[[ijk]][, keepX.opt[[ijk]], drop = FALSE], 2,
-            function(x)
-            {
-                conf = get.confusion_matrix(truth = factor(Y), predicted = x)
-                out = (apply(conf, 1, sum) - diag(conf)) / summary(Y)
-            })
+                apply(class.comp[[ijk]][, keepX.opt[[ijk]], drop = FALSE], 2,
+                      function(x)
+                      {
+                          conf = get.confusion_matrix(truth = factor(Y), predicted = x)
+                          out = (apply(conf, 1, sum) - diag(conf)) / summary(Y)
+                      })
             
             rownames(error.per.class.keepX.opt.comp[[ijk]]) = levels(Y)
             
             
             test.keepX.out[[ijk]] = test.keepX[keepX.opt[[ijk]]]
-
+            
             choice.keepX.out[[ijk]] = c(choice.keepX, test.keepX.out)
             
             result$"overall"$error.rate.mean = error.mean
             result$"overall"$error.per.study.keepX.opt =
-            error.per.study.keepX.opt
+                error.per.study.keepX.opt
             result$"overall"$confusion = error.per.class.keepX.opt.comp
             result$"overall"$keepX.opt = test.keepX.out
         }
@@ -259,7 +259,7 @@ scale)
                 error[study_i,] = apply(class.comp[[ijk]][omit,], 2, function(x)
                 {
                     conf = get.confusion_matrix(truth = factor(Y[omit]),
-                    all.levels = levels(factor(Y)), predicted = x)
+                                                all.levels = levels(factor(Y)), predicted = x)
                     get.BER(conf)
                 })
             }
@@ -267,26 +267,26 @@ scale)
             # average BER over the study
             error.mean[[ijk]] = apply(error, 2, mean)
             keepX.opt[[ijk]] =
-            which(error.mean[[ijk]] ==  min(error.mean[[ijk]]))[1]
+                which(error.mean[[ijk]] ==  min(error.mean[[ijk]]))[1]
             
             # error per study
             error.per.study.keepX.opt[[ijk]] = error[,keepX.opt[[ijk]]]
             
             # confusion matrix for keepX.opt
             error.per.class.keepX.opt.comp[[ijk]] =
-            apply(class.comp[[ijk]][, keepX.opt[[ijk]], drop = FALSE], 2,
-            function(x)
-            {
-                conf = get.confusion_matrix(truth = factor(Y), predicted = x)
-                out = (apply(conf, 1, sum) - diag(conf)) / summary(Y)
-            })
+                apply(class.comp[[ijk]][, keepX.opt[[ijk]], drop = FALSE], 2,
+                      function(x)
+                      {
+                          conf = get.confusion_matrix(truth = factor(Y), predicted = x)
+                          out = (apply(conf, 1, sum) - diag(conf)) / summary(Y)
+                      })
             
             rownames(error.per.class.keepX.opt.comp[[ijk]]) = levels(Y)
             
             
             test.keepX.out[[ijk]] = test.keepX[keepX.opt[[ijk]]]
             choice.keepX.out[[ijk]] = c(choice.keepX, test.keepX.out)
-
+            
             result$"BER"$error.rate.mean = error.mean
             result$"BER"$error.per.study.keepX.opt = error.per.study.keepX.opt
             result$"BER"$confusion = error.per.class.keepX.opt.comp
@@ -294,7 +294,7 @@ scale)
         }
         
     }
-
+    
     result$prediction.comp = prediction.comp
     result$class.comp = class.comp
     result$auc = auc.mean

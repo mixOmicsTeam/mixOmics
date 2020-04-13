@@ -65,108 +65,108 @@ sipca <-
               w.init = NULL)
     {
         
-    dim_x <- dim(X)
-    d <- dim_x[dim_x != 1]
-    if (length(d) != 2)
-        stop("data must be in a matrix form")
-    X <- if (length(d) != length(dim_x))
+        dim_x <- dim(X)
+        d <- dim_x[dim_x != 1]
+        if (length(d) != 2)
+            stop("data must be in a matrix form")
+        X <- if (length(d) != length(dim_x))
         {matrix(X, d[1], d[2])}
-    else {as.matrix(X)}
-
-    alpha <- 1
-    
-    mode <- match.arg(mode)
-    fun <- match.arg(fun)
-    
-    X.names = dimnames(X)[[2]]
-    if (is.null(X.names)) X.names = paste("X", 1:ncol(X), sep = "")
-
-    ind.names = dimnames(X)[[1]]
-    if (is.null(ind.names)) ind.names = 1:nrow(X)
-    
-    X <- scale(X, scale = FALSE)
-    if (scale) {X=scale(X, scale=scale)}
-    svd_mat <- svd(X)
-    right_sing_vect <- svd_mat$v
-    right_sing_vect <- scale(right_sing_vect, center=TRUE, scale=TRUE)
-    n <- nrow(t(X))
-    p <- ncol(t(X))
-    
-    if (ncomp > min(n, p)) {
-        message("'ncomp' is too large: reset to ", min(n, p))
-        ncomp <- min(n, p)
-    }
-    if(is.null(w.init))
-        w.init <- matrix(1/sqrt(ncomp),ncomp,ncomp)
-    else {
-        if(!is.matrix(w.init) || length(w.init) != (ncomp^2))
-            stop("w.init is not a matrix or is the wrong size")
-    }
-    
-    X1 <- t(right_sing_vect)[1:ncomp,]
-         
+        else {as.matrix(X)}
+        
+        alpha <- 1
+        
+        mode <- match.arg(mode)
+        fun <- match.arg(fun)
+        
+        X.names = dimnames(X)[[2]]
+        if (is.null(X.names)) X.names = paste("X", 1:ncol(X), sep = "")
+        
+        ind.names = dimnames(X)[[1]]
+        if (is.null(ind.names)) ind.names = 1:nrow(X)
+        
+        X <- scale(X, scale = FALSE)
+        if (scale) {X=scale(X, scale=scale)}
+        svd_mat <- svd(X)
+        right_sing_vect <- svd_mat$v
+        right_sing_vect <- scale(right_sing_vect, center=TRUE, scale=TRUE)
+        n <- nrow(t(X))
+        p <- ncol(t(X))
+        
+        if (ncomp > min(n, p)) {
+            message("'ncomp' is too large: reset to ", min(n, p))
+            ncomp <- min(n, p)
+        }
+        if(is.null(w.init))
+            w.init <- matrix(1/sqrt(ncomp),ncomp,ncomp)
+        else {
+            if(!is.matrix(w.init) || length(w.init) != (ncomp^2))
+                stop("w.init is not a matrix or is the wrong size")
+        }
+        
+        X1 <- t(right_sing_vect)[1:ncomp,]
+        
         if (mode == "deflation") {
             unmix_mat <- ica.def(X1, ncomp, tol = tol, fun = fun,
-                           alpha = alpha, max.iter = max.iter, verbose = FALSE, w.init = w.init)
+                                 alpha = alpha, max.iter = max.iter, verbose = FALSE, w.init = w.init)
         }
         else if (mode == "parallel") {
             unmix_mat <- ica.par(X1, ncomp, tol = tol, fun = fun,
-                           alpha = alpha, max.iter = max.iter, verbose = FALSE, w.init = w.init)
+                                 alpha = alpha, max.iter = max.iter, verbose = FALSE, w.init = w.init)
         }
         w <- unmix_mat 
         independent_mat <- w %*% X1
         #==order independent_mat by kurtosis==#
-           kurt <- vector(length=ncomp)
-           independent_mat.new <- matrix(nrow = ncomp, ncol = n)
-           for(h in 1:ncomp){
-               kurt[h] <- (mean(independent_mat[h,]^4)-3*(mean(independent_mat[h,]^2))^2)
-               }
-           for(i in 1:ncomp){
-               independent_mat.new[i,] <- independent_mat[order(kurt,decreasing=TRUE)[i],]
-               independent_mat.new[i,] <- independent_mat.new[i,]/as.vector(crossprod(independent_mat.new[i,]))
-               }
-
+        kurt <- vector(length=ncomp)
+        independent_mat.new <- matrix(nrow = ncomp, ncol = n)
+        for(h in 1:ncomp){
+            kurt[h] <- (mean(independent_mat[h,]^4)-3*(mean(independent_mat[h,]^2))^2)
+        }
+        for(i in 1:ncomp){
+            independent_mat.new[i,] <- independent_mat[order(kurt,decreasing=TRUE)[i],]
+            independent_mat.new[i,] <- independent_mat.new[i,]/as.vector(crossprod(independent_mat.new[i,]))
+        }
+        
         #== variable selection==#  
-		v.sparse=matrix(nrow = ncomp, ncol = n)
-		for(i in 1:ncomp){
-		   nx <- n - keepX[i]
-		   v.sparse[i,] = ifelse(abs(independent_mat.new[i,]) > abs(independent_mat.new[i,][order(abs(independent_mat.new[i,]))][nx]), 
-		   (abs(independent_mat.new[i,]) - abs(independent_mat.new[i,][order(abs(independent_mat.new[i,]))][nx])) * sign(independent_mat.new[i,]), 0)
-		   }
+        v.sparse=matrix(nrow = ncomp, ncol = n)
+        for(i in 1:ncomp){
+            nx <- n - keepX[i]
+            v.sparse[i,] = ifelse(abs(independent_mat.new[i,]) > abs(independent_mat.new[i,][order(abs(independent_mat.new[i,]))][nx]), 
+                                  (abs(independent_mat.new[i,]) - abs(independent_mat.new[i,][order(abs(independent_mat.new[i,]))][nx])) * sign(independent_mat.new[i,]), 0)
+        }
         independent_mat.new = v.sparse
-            
+        
         
         mix_mat <- t(w) %*% solve(w %*% t(w))
-
+        
         ipc_mat = matrix(nrow=p, ncol=ncomp)
         ipc_mat = X %*% t(independent_mat.new)        
         ##== force orthogonality ==##
-          for(h in 1:ncomp){
-              if(h==1){ipc_mat[,h]=X %*% (t(independent_mat.new)[,h])}
-              if(h>1){ipc_mat[,h]=(lsfit(y=X%*%(t(independent_mat.new)[,h]), ipc_mat[,1:(h-1)],intercept=FALSE)$res)}
-              ipc_mat[,h]=ipc_mat[,h]/as.vector(sqrt(crossprod(ipc_mat[,h])))
-              }
+        for(h in 1:ncomp){
+            if(h==1){ipc_mat[,h]=X %*% (t(independent_mat.new)[,h])}
+            if(h>1){ipc_mat[,h]=(lsfit(y=X%*%(t(independent_mat.new)[,h]), ipc_mat[,1:(h-1)],intercept=FALSE)$res)}
+            ipc_mat[,h]=ipc_mat[,h]/as.vector(sqrt(crossprod(ipc_mat[,h])))
+        }
         ##== force over ==##          
-# put rownames of loading vectors
-	colnames(independent_mat.new) = colnames(X)
-             
+        # put rownames of loading vectors
+        colnames(independent_mat.new) = colnames(X)
+        
         cl = match.call()
-		cl[[1]] = as.name('sipca')
-
+        cl[[1]] = as.name('sipca')
+        
         result = (list(call=cl, X = X, ncomp=ncomp, keepX=keepX, unmixing = t(unmix_mat), mixing = t(mix_mat), loadings = list(X=t(independent_mat.new)), rotation = t(independent_mat.new),
-        kurtosis = kurt[order(kurt,decreasing=TRUE)],names = list(X = X.names, sample = ind.names)))
-		
-		result$x = ipc_mat
+                       kurtosis = kurt[order(kurt,decreasing=TRUE)],names = list(X = X.names, sample = ind.names)))
+        
+        result$x = ipc_mat
         result$variates=list(X=ipc_mat)
         dimnames(result$x) = list(ind.names, paste("IPC", 1:ncol(result$rotation), sep = " "))
-		
-		class(result) = c("sipca","ipca","pca")
-               
+        
+        class(result) = c("sipca","ipca","pca")
+        
         #calcul explained variance
         explX=explained_variance(X,result$variates$X,ncomp)
         result$explained_variance=explX
-    
-    
         
-		return(invisible(result))
+        
+        
+        return(invisible(result))
     } 

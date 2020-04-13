@@ -123,7 +123,7 @@ spls <- function(X,
                  all.outputs = TRUE)
 {
     
-
+    
     # call to 'internal_wrapper.mint'
     result <- internal_wrapper.mint(
         X = X,
@@ -166,7 +166,7 @@ spls <- function(X,
         mat.c = result$mat.c
     )
     
-   
+    
     class(out) = c("mixo_spls")
     # output if multilevel analysis
     if (!is.null(multilevel))
@@ -174,7 +174,7 @@ spls <- function(X,
         out$multilevel = multilevel
         class(out) = c("mixo_mlspls",class(out))
     }
-
+    
     return(invisible(out))
 }
 

@@ -69,18 +69,18 @@
 #' @export
 #' @example ./examples/splsda-examples.R
 splsda <- function(X,
-                  Y,
-                  ncomp = 2,
-                  mode = c("regression", "canonical", "invariant", "classic"),
-                  keepX,
-                  scale = TRUE,
-                  tol = 1e-06,
-                  max.iter = 100,
-                  near.zero.var = FALSE,
-                  logratio = "none",
-                  # one of "none", "CLR"
-                  multilevel = NULL,
-                  all.outputs = TRUE)
+                   Y,
+                   ncomp = 2,
+                   mode = c("regression", "canonical", "invariant", "classic"),
+                   keepX,
+                   scale = TRUE,
+                   tol = 1e-06,
+                   max.iter = 100,
+                   near.zero.var = FALSE,
+                   logratio = "none",
+                   # one of "none", "CLR"
+                   multilevel = NULL,
+                   all.outputs = TRUE)
 {
     
     
@@ -90,7 +90,7 @@ splsda <- function(X,
     if(is.null(multilevel))
     {
         if (is.null(Y))
-        stop("'Y' has to be something else than NULL.")
+            stop("'Y' has to be something else than NULL.")
         
         if (is.null(dim(Y)))
         {
@@ -100,8 +100,8 @@ splsda <- function(X,
         }
         
         if (nlevels(Y) == 1)
-        stop("'Y' should be a factor with more than one level")
-
+            stop("'Y' should be a factor with more than one level")
+        
         Y.mat = unmap(Y)
         colnames(Y.mat) = levels(Y)#paste0("Y", 1:ncol(Y.mat))
     }else{
@@ -109,13 +109,13 @@ splsda <- function(X,
         multilevel = data.frame(multilevel)
         
         if ((nrow(X) != nrow(multilevel)))
-        stop("unequal number of rows in 'X' and 'multilevel'.")
+            stop("unequal number of rows in 'X' and 'multilevel'.")
         
         if (ncol(multilevel) != 1)
-        stop("'multilevel' should have a single column for the repeated measurements, other factors should be included in 'Y'.")
+            stop("'multilevel' should have a single column for the repeated measurements, other factors should be included in 'Y'.")
         
         if (!is.null(ncol(Y)) && !ncol(Y) %in% c(0,1,2))# multilevel 1 or 2 factors
-        stop("'Y' should either be a factor, a single column data.frame containing a factor, or a 2-columns data.frame containing 2 factors.")
+            stop("'Y' should either be a factor, a single column data.frame containing a factor, or a 2-columns data.frame containing 2 factors.")
         
         multilevel = data.frame(multilevel, Y)
         multilevel[, 1] = as.numeric(factor(multilevel[, 1])) # we want numbers for the repeated measurements
@@ -141,7 +141,7 @@ splsda <- function(X,
         remove.object = c("X")
     )
     
-
+    
     # choose the desired output from 'result'
     out = list(
         call = match.call(),
@@ -180,7 +180,7 @@ splsda <- function(X,
         out$multilevel = multilevel
         class(out) = c("mixo_mlsplsda",class(out))
     }
-
+    
     return(invisible(out))
 }
 

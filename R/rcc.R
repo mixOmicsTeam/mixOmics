@@ -121,7 +121,7 @@ rcc <-
            lambda1 = 0,
            lambda2 = 0
   )
-{
+  {
     #-- checking general input parameters --------------------------------------#
     #---------------------------------------------------------------------------#
     
@@ -130,10 +130,10 @@ rcc <-
     user.arg = names(arg.call)[-1]
     
     err = tryCatch(mget(names(formals()), sys.frame(sys.nframe())),
-    error = function(e) e)
+                   error = function(e) e)
     
     if ("simpleError" %in% class(err))
-    stop(err[[1]], ".", call. = FALSE)
+      stop(err[[1]], ".", call. = FALSE)
     
     #-- data set names --#
     data.names = c(deparse(substitute(X)), deparse(substitute(Y)))
@@ -145,31 +145,31 @@ rcc <-
     if (is.data.frame(X)) X = as.matrix(X)
     
     if (!is.matrix(X) || is.character(X))
-    stop("'X' must be a numeric matrix.", call. = FALSE)
+      stop("'X' must be a numeric matrix.", call. = FALSE)
     
     if (any(apply(X, 1, is.infinite)))
-    stop("infinite values in 'X'.", call. = FALSE)
+      stop("infinite values in 'X'.", call. = FALSE)
     
     if (method == "shrinkage"){
-        if (any(is.na(X)))
+      if (any(is.na(X)))
         stop("missing values in 'X' matrix. NAs not are allowed if method = 'shrinkage'.", call. = FALSE)
     }
     #-- Y matrix
     if (is.data.frame(Y)) Y = as.matrix(Y)
     
     if (!is.matrix(Y) || is.character(Y))
-    stop("'Y' must be a numeric matrix.", call. = FALSE)
+      stop("'Y' must be a numeric matrix.", call. = FALSE)
     
     if (any(apply(Y, 1, is.infinite)))
-    stop("infinite values in 'Y'.", call. = FALSE)
+      stop("infinite values in 'Y'.", call. = FALSE)
     
     if (method == "shrinkage")
-    if (any(is.na(Y)))
-    stop("missing values in 'Y' matrix. NAs not are allowed if method = 'shrinkage'.", call. = FALSE)
+      if (any(is.na(Y)))
+        stop("missing values in 'Y' matrix. NAs not are allowed if method = 'shrinkage'.", call. = FALSE)
     
     #-- equal number of rows in X and Y
     if ((n = nrow(X)) != nrow(Y))
-    stop("unequal number of rows in 'X' and 'Y'.", call. = FALSE)
+      stop("unequal number of rows in 'X' and 'Y'.", call. = FALSE)
     
     p = ncol(X)
     q = ncol(Y)
@@ -188,27 +188,27 @@ rcc <-
     
     #-- ncomp
     if (is.null(ncomp) || ncomp < 1 || !is.finite(ncomp))
-    stop("invalid value for 'ncomp'.", call. = FALSE)
+      stop("invalid value for 'ncomp'.", call. = FALSE)
     
     ncomp = round(ncomp)
     
     if (ncomp > min(p, q))
-    stop("'comp' must be smaller or equal than ", min(p, q), ".",
-    call. = FALSE)
+      stop("'comp' must be smaller or equal than ", min(p, q), ".",
+           call. = FALSE)
     
     #-- lambda1
     if (!is.finite(lambda1) || is.null(lambda1))
-    stop("invalid value for 'lambda1'.", call. = FALSE)
+      stop("invalid value for 'lambda1'.", call. = FALSE)
     
     if(lambda1 < 0)
-    stop("'lambda1' must be a non-negative value.", call. = FALSE)
+      stop("'lambda1' must be a non-negative value.", call. = FALSE)
     
     #-- lambda2
     if (!is.finite(lambda2) || is.null(lambda2))
-    stop("invalid value for 'lambda2'.", call. = FALSE)
+      stop("invalid value for 'lambda2'.", call. = FALSE)
     
     if(lambda2 < 0)
-    stop("'lambda2' must be a non-negative value.", call. = FALSE)
+      stop("'lambda2' must be a non-negative value.", call. = FALSE)
     
     #-- end checking --#
     #------------------#
@@ -219,30 +219,30 @@ rcc <-
     
     #-- covariance matrices regularization --#
     if (method == "ridge") {
-        Cxx = var(X, na.rm = TRUE, use = "pairwise") + diag(lambda1, ncol(X))
-        Cyy = var(Y, na.rm = TRUE, use = "pairwise") + diag(lambda2, ncol(Y))
-        Cxy = cov(X, Y, use = "pairwise")
+      Cxx = var(X, na.rm = TRUE, use = "pairwise") + diag(lambda1, ncol(X))
+      Cyy = var(Y, na.rm = TRUE, use = "pairwise") + diag(lambda2, ncol(Y))
+      Cxy = cov(X, Y, use = "pairwise")
     }
     else { # if method == 'shrinkage'
-        Cxx = cov.shrink(X, verbose = FALSE)
-        Cyy = cov.shrink(Y, verbose = FALSE)
-        
-        lambda.x = attr(Cxx, "lambda")
-        lambda.y = attr(Cyy, "lambda")
-        
-        sc.x = sqrt(var.shrink(X, verbose = FALSE))
-        sc.y = sqrt(var.shrink(Y, verbose = FALSE))
-        
-        w = rep(1/n, n)
-        xs = wt.scale(X, w, center = TRUE, scale = TRUE)
-        ys = wt.scale(Y, w, center = TRUE, scale = TRUE)
-        
-        #-- bias correction factor
-        h1 = n / (n - 1)
-        
-        #-- unbiased empirical estimator
-        Cxy = h1 * crossprod(sweep(sweep(xs, 1, sqrt((1 - lambda.x) * w), "*"), 2, sc.x, "*"),
-        sweep(sweep(ys, 1, sqrt((1 - lambda.y) * w), "*"), 2, sc.y, "*"))
+      Cxx = cov.shrink(X, verbose = FALSE)
+      Cyy = cov.shrink(Y, verbose = FALSE)
+      
+      lambda.x = attr(Cxx, "lambda")
+      lambda.y = attr(Cyy, "lambda")
+      
+      sc.x = sqrt(var.shrink(X, verbose = FALSE))
+      sc.y = sqrt(var.shrink(Y, verbose = FALSE))
+      
+      w = rep(1/n, n)
+      xs = wt.scale(X, w, center = TRUE, scale = TRUE)
+      ys = wt.scale(Y, w, center = TRUE, scale = TRUE)
+      
+      #-- bias correction factor
+      h1 = n / (n - 1)
+      
+      #-- unbiased empirical estimator
+      Cxy = h1 * crossprod(sweep(sweep(xs, 1, sqrt((1 - lambda.x) * w), "*"), 2, sc.x, "*"),
+                           sweep(sweep(ys, 1, sqrt((1 - lambda.y) * w), "*"), 2, sc.y, "*"))
     }
     
     #-- calculation of the canonical correlations and canonical variables --#
@@ -253,16 +253,16 @@ rcc <-
     mat = t(Cxx.fac.inv) %*% Cxy %*% Cyy.fac.inv
     
     if (p >= q) {
-        result = svd(mat, nu = ncomp, nv = ncomp)
-        cor = result$d
-        xcoef = Cxx.fac.inv %*% result$u
-        ycoef = Cyy.fac.inv %*% result$v
+      result = svd(mat, nu = ncomp, nv = ncomp)
+      cor = result$d
+      xcoef = Cxx.fac.inv %*% result$u
+      ycoef = Cyy.fac.inv %*% result$v
     }
     else {
-        result = svd(t(mat), nu = ncomp, nv = ncomp)
-        cor = result$d
-        xcoef = Cxx.fac.inv %*% result$v
-        ycoef = Cyy.fac.inv %*% result$u
+      result = svd(t(mat), nu = ncomp, nv = ncomp)
+      cor = result$d
+      xcoef = Cxx.fac.inv %*% result$v
+      ycoef = Cyy.fac.inv %*% result$u
     }
     
     #-- output -----------------------------------------------------------------#
@@ -280,22 +280,22 @@ rcc <-
     cl[[1]] = as.name('rcc')
     
     if (method == "ridge"){
-    lambda = c("lambda1" = lambda1, "lambda2" = lambda2)
+      lambda = c("lambda1" = lambda1, "lambda2" = lambda2)
     } else { # if method == 'shrinkage')
       lambda = c("lambda1" = lambda.x, "lambda2" = lambda.y)
     }
     
     result = list(call = cl,
-    X = X,
-    Y = Y,
-    ncomp = ncomp,
-    method = method,
-    cor = cor,
-    loadings = list(X = xcoef, Y = ycoef),
-    variates = list(X = U, Y = V),
-    names = list(sample = ind.names, colnames = list(X=colnames(X),Y=colnames(Y)), blocks = c("X","Y"),#list(X = X.names, Y = Y.names, indiv = ind.names,
-    data = data.names),
-    lambda = lambda)
+                  X = X,
+                  Y = Y,
+                  ncomp = ncomp,
+                  method = method,
+                  cor = cor,
+                  loadings = list(X = xcoef, Y = ycoef),
+                  variates = list(X = U, Y = V),
+                  names = list(sample = ind.names, colnames = list(X=colnames(X),Y=colnames(Y)), blocks = c("X","Y"),#list(X = X.names, Y = Y.names, indiv = ind.names,
+                               data = data.names),
+                  lambda = lambda)
     
     #calcul explained variance
     explX=explained_variance(result$X,result$variates$X,ncomp)
@@ -305,4 +305,4 @@ rcc <-
     
     class(result) = "rcc"
     return(invisible(result))
-}
+  }

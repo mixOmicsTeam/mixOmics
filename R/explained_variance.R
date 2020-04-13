@@ -34,7 +34,7 @@
 #' toxicity.spls$explained_variance$X
 #' 
 #' @export
-explained_variance = function(data, variates, ncomp)
+explained_variance <- function(data, variates, ncomp)
 {
     #check input data
     check = Check.entry.single(data, ncomp)
@@ -50,17 +50,17 @@ explained_variance = function(data, variates, ncomp)
     }
     nor2x <- sum((data)^2) # total variance in the data
     
-	exp.varX = NULL
-	for (h in 1:ncomp)
-	{
+    exp.varX = NULL
+    for (h in 1:ncomp)
+    {
         a <- t(variates[, h, drop=FALSE]) %*% data
         ta = t(a)
         exp_var_new <- a%*%ta /crossprod(variates[, h],variates[, h])/nor2x
-
-
-	    exp.varX = append(exp.varX, exp_var_new)
-	
-	}
+        
+        
+        exp.varX = append(exp.varX, exp_var_new)
+        
+    }
     names(exp.varX) = paste("comp", 1:ncomp)
     
     # result: vector of length ncomp with the explained variance per component

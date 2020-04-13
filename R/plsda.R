@@ -74,16 +74,16 @@
 #' @export
 #' @example ./examples/plsda-examples.R
 plsda <- function(X,
-                 Y,
-                 ncomp = 2,
-                 scale = TRUE,
-                 mode = c("regression", "canonical", "invariant", "classic"),
-                 tol = 1e-06,
-                 max.iter = 100,
-                 near.zero.var = FALSE,
-                 logratio = c("none", "CLR"),
-                 multilevel = NULL,
-                 all.outputs = TRUE)
+                  Y,
+                  ncomp = 2,
+                  scale = TRUE,
+                  mode = c("regression", "canonical", "invariant", "classic"),
+                  tol = 1e-06,
+                  max.iter = 100,
+                  near.zero.var = FALSE,
+                  logratio = c("none", "CLR"),
+                  multilevel = NULL,
+                  all.outputs = TRUE)
 {
     
     #-- validation des arguments --#
@@ -91,7 +91,7 @@ plsda <- function(X,
     if (is.null(multilevel))
     {
         if (is.null(Y))
-        stop("'Y' has to be something else than NULL.")
+            stop("'Y' has to be something else than NULL.")
         
         if (is.null(dim(Y)))
         {
@@ -101,7 +101,7 @@ plsda <- function(X,
         }
         
         if (nlevels(Y) == 1)
-        stop("'Y' should be a factor with more than one level")
+            stop("'Y' should be a factor with more than one level")
         
         Y.mat = unmap(Y)
         colnames(Y.mat) = levels(Y)
@@ -168,7 +168,7 @@ plsda <- function(X,
         explained_variance = result$explained_variance,
         input.X = result$input.X,
         mat.c = result$mat.c
-        )
+    )
     
     class(out) = c("mixo_plsda","mixo_pls","DA")
     # output if multilevel analysis
@@ -177,7 +177,7 @@ plsda <- function(X,
         out$multilevel = multilevel
         class(out) = c("mixo_mlplsda",class(out))
     }
-
+    
     return(invisible(out))
 }
 

@@ -295,6 +295,7 @@ plot.perf.spls.mthd <- plot.perf.pls.mthd
 
 #' @rdname plot.perf
 #' @method plot perf.plsda.mthd
+#' @importFrom methods hasArg
 #' @export
 plot.perf.plsda.mthd <- 
     function (x,
@@ -383,6 +384,7 @@ plot.perf.splsda.mthd <- plot.perf.plsda.mthd
 
 #' @rdname plot.perf
 #' @method plot perf.mint.plsda.mthd
+#' @importFrom methods hasArg
 #' @export
 plot.perf.mint.plsda.mthd <-
     function (x,
@@ -525,6 +527,7 @@ plot.perf.mint.splsda.mthd <- plot.perf.mint.plsda.mthd
 
 #' @rdname plot.perf
 #' @method plot perf.sgccda.mthd 
+#' @importFrom methods hasArg
 #' @export
 plot.perf.sgccda.mthd <-
     function (x,
@@ -680,6 +683,7 @@ plot.perf.sgccda.mthd <-
 #' @keywords regression multivariate hplot
 #' @name plot.tune
 #' @method plot tune.spls
+#' @importFrom reshape2 melt
 #' @export
 #' @example ./examples/plot.tune-examples.R
 plot.tune.spls <-
@@ -796,6 +800,7 @@ plot.tune.spls <-
 #' @export
 plot.tune.splsda <- plot.tune.spls
 ## ------------------------ plot.tune.block.(s)plsda ---------------------- ##
+#' @importFrom gridExtra grid.arrange
 #' @rdname plot.tune
 #' @method plot tune.block.splsda
 #' @export
