@@ -1,15 +1,14 @@
 tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX) {
-
+    cor.pred.per.dim <- list()
     keepX.dim <- NULL
-    result = foreach(ncomp = as.list(1:ncomp),.combine=cbind) %do% {
-        
+    result = foreach(ncomp = as.list(seq_len(ncomp)),.combine=cbind) %do% {
         # 1 - a foreach list for each keepX value tested
         cor.pred.repeat.keepX.dim = foreach(keepX.value = as.list(grid.keepX),.combine=cbind) %do% {
             cat('KeepX = ', keepX.value, '\n')  # to remove in the final function
             
             # 2 - a foreach list for repeated CV
-            cor.pred.repeat = foreach(i = as.list(c(1:nrepeat)),.combine=cbind) %do% {
-                folds = split(sample(1:nrow(X)),1:kfold)
+            cor.pred.repeat = foreach(i = as.list(c(seq_len(nrepeat))),.combine=cbind) %do% {
+                folds = split(sample(seq_len(nrow(X))),seq_len(kfold))
                 
                 # 3 -  a foreach list for k-fold CV
                 #  if small n, then need to define the fold based on boostrapping (with replacement) as we need to center / scale the data for prediction
@@ -33,7 +32,7 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX) {
                     }
                     
                     # ---- deflation on X with only the fold left out------------ #
-                    for(k in 1:ncomp){ # loop to calculate deflated matrix and predicted comp
+                    for(k in seq_len(ncomp)){ # loop to calculate deflated matrix and predicted comp
                         # calculate the predicted comp on the fold left out
                         # calculate reg coeff, then deflate
                         if(k == 1){
