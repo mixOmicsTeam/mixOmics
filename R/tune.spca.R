@@ -1,7 +1,7 @@
-tune.spca <- function(X, comp, nrepeat, kfold, grid.keepX) {
+tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX) {
 
     keepX.dim <- NULL
-    result = foreach(comp = as.list(1:comp),.combine=cbind) %do% {
+    result = foreach(ncomp = as.list(1:ncomp),.combine=cbind) %do% {
         
         # 1 - a foreach list for each keepX value tested
         cor.pred.repeat.keepX.dim = foreach(keepX.value = as.list(grid.keepX),.combine=cbind) %do% {
@@ -20,20 +20,20 @@ tune.spca <- function(X, comp, nrepeat, kfold, grid.keepX) {
                     X.sub.scale = scale(X.sub, center = TRUE, scale = TRUE) # used for deflation
                     
                     # ---- run sPCA ------------ #
-                    if(comp ==1){ # for comp = 1
+                    if(ncomp ==1){ # for comp = 1
                         # spca on the data minus the subsample
-                        spca.res.sub = mixOmics::spca(X.minus.sub, ncomp = comp, keepX = keepX.value, center = TRUE, scale = TRUE)
+                        spca.res.sub = mixOmics::spca(X.minus.sub, ncomp = ncomp, keepX = keepX.value, center = TRUE, scale = TRUE)
                         # spca on all data 
-                        spca.res.full = mixOmics::spca(X, ncomp = comp, keepX = keepX.value, center = TRUE, scale = TRUE)
+                        spca.res.full = mixOmics::spca(X, ncomp = ncomp, keepX = keepX.value, center = TRUE, scale = TRUE)
                     }else{ # comp >1
                         # spca on the data minus the subsample
-                        spca.res.sub = mixOmics::spca(X.minus.sub, ncomp = comp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
+                        spca.res.sub = mixOmics::spca(X.minus.sub, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
                         # spca on all data 
-                        spca.res.full = mixOmics::spca(X, ncomp = comp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
+                        spca.res.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
                     }
                     
                     # ---- deflation on X with only the fold left out------------ #
-                    for(k in 1:comp){ # loop to calculate deflated matrix and predicted comp
+                    for(k in 1:ncomp){ # loop to calculate deflated matrix and predicted comp
                         # calculate the predicted comp on the fold left out
                         # calculate reg coeff, then deflate
                         if(k == 1){
@@ -49,7 +49,7 @@ tune.spca <- function(X, comp, nrepeat, kfold, grid.keepX) {
                     
                     # ---- calculate predicted component and compare with component from sPCA on full data on the left out set------------ #
                     # cor with the component on the full data, abs value
-                    cor.comp = abs(cor(t.comp.sub, spca.res.full$variates$X[,comp][i], use = 'pairwise.complete.obs'))
+                    cor.comp = abs(cor(t.comp.sub, spca.res.full$variates$X[,ncomp][i], use = 'pairwise.complete.obs'))
                     # need to flip the sign in one of the comp to calculate the RSS
                     #RSS.comp = sum((c(sign(cor.comp))*(t.comp.sub) - spca.res.full$variates$X[,comp][i])^2)
                     # also look at correlation between loading vectors
@@ -70,7 +70,7 @@ tune.spca <- function(X, comp, nrepeat, kfold, grid.keepX) {
         } # end foreach 1 (on keepX), get the cor(pred component, comp) averaged across repeats for a given comp and each keepX
         
         # # correlation for each keepX value
-        cor.pred.per.dim[[comp]]  = cor.pred.repeat.keepX.dim
+        cor.pred.per.dim[[ncomp]]  = cor.pred.repeat.keepX.dim
         
         # working out the max based on cor.comp and append to keepX.dim
         keepX.dim = c(keepX.dim, grid.keepX[which.max(cor.pred.repeat.keepX.dim['cor.comp',])])
