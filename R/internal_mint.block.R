@@ -482,7 +482,10 @@ internal_mint.block <-
             for(k in 1:J)
                 colnames(loadings.A[[k]]) = colnames(variates.A[[k]]) = keepA.names
             
-            names(loadings.A) =  names(variates.A) = names(iter) = names(A)
+            if (length(iter) == length(A)) {
+                names(iter) = names(A)
+            }
+            names(loadings.A) =  names(variates.A) = names(A)
             
             expl.A = NULL
             AVE = NULL
