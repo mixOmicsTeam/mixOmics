@@ -28,8 +28,7 @@ tune.block.splsda(
   init = "svd",
   light.output = TRUE,
   signif.threshold = 0.01,
-  cpus = 1,
-  name.save = NULL
+  cpus = 1
 )
 }
 \arguments{
@@ -108,8 +107,6 @@ run in parallel when repeating the cross-validation, which is usually the
 most computationally intensive process. If there is excess CPU, the
 cross-vaidation is also parallelised on *nix-based OS which support
 \code{mclapply}.}
-
-\item{name.save}{character string for the name of the file to be saved.}
 }
 \value{
 A list that contains: \item{error.rate}{returns the prediction error

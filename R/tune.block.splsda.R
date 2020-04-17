@@ -86,7 +86,6 @@
 #' most computationally intensive process. If there is excess CPU, the
 #' cross-vaidation is also parallelised on *nix-based OS which support
 #' \code{mclapply}.
-#' @param name.save character string for the name of the file to be saved.
 #' @return A list that contains: \item{error.rate}{returns the prediction error
 #' for each \code{test.keepX} on each component, averaged across all repeats
 #' and subsampling folds. Standard deviation is also output. All error rates
@@ -190,8 +189,7 @@ tune.block.splsda <-
             light.output = TRUE,
             # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
             signif.threshold=0.01,
-            cpus = 1,
-            name.save = NULL)
+            cpus = 1)
   {
     ## ----------- checks -----------
     
@@ -530,45 +528,6 @@ tune.block.splsda <-
         #prediction of each samples for each fold and each repeat, on each comp
         class.all[[comp]] = result$class.comp[[1]]
       }
-      
-      # prepping the results and save a file, if necessary
-      if (!is.null(name.save))
-      {
-        rownames(mat.mean.error) = rownames(result[[measure]]$mat.error.rate[[1]])
-        colnames(mat.mean.error) = paste0("comp", comp.real)
-        names(mat.error.rate) = c(paste0("comp", comp.real[seq_len(comp)]))
-        names(error.per.class.keepX.opt) = c(paste0("comp", comp.real[seq_len(comp)]))
-        if (nrepeat > 1)
-        {
-          rownames(mat.sd.error) = rownames(result[[measure]]$mat.error.rate[[1]])
-          colnames(mat.sd.error) = paste0("comp", comp.real)
-        }
-        
-        
-        result = list(
-          error.rate = mat.mean.error,
-          error.rate.sd = mat.sd.error,
-          error.rate.all = mat.error.rate,
-          choice.keepX = already.tested.X,
-          error.rate.class = error.per.class.keepX.opt
-        )
-        
-        result$measure = measure.input
-        result$call = match.call()
-        
-        class(result) = "tune.block.splsda"
-        
-        save(result,
-             file = paste0(
-               name.save,
-               ".comp",
-               comp.real[1],
-               "to",
-               comp.real[comp],
-               ".Rdata"
-             ))
-      }
-      
     }
     
     ## ----------- END tune components ----------- #
