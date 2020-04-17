@@ -741,9 +741,10 @@ network <- function(mat,
     if(length(lwd.edge) >2)
         stop("'lwd.edge' must be a vector of up to 2 positive numbers.
         See ?network")
-    if (length(lwd.edge)==1) lwd.edge = c(lwd.edge, lwd.edge)
+    if (length(lwd.edge)==1) 
+        lwd.edge = c(lwd.edge, lwd.edge)
     
-    if (length(lwd.edge) != 2 || !is.finite(lwd.edge) || any(lwd.edge <= 0))
+    if (length(lwd.edge) != 2 || any(!is.finite(lwd.edge)) || any(lwd.edge <= 0))
         stop("'lwd.edge' must be positive.")
     
     #-- show.edge.labels
