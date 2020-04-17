@@ -33,54 +33,23 @@
 #' class, weighted by the number of samples in each class. BER is less biased
 #' towards majority classes during the performance assessment.
 #' 
-#' @param X numeric matrix of predictors. \code{NA}s are allowed.
-#' @param Y \code{if(method = 'spls')} numeric vector or matrix of continuous
-#' responses (for multi-response models) \code{NA}s are allowed.
-#' @param indY To be supplied if Y is missing, indicates the position of the
-#' matrix / vector response in the list \code{X}
-#' @param ncomp the number of components to include in the model.
-#' @param test.keepX A list of length the number of blocks in X (without the
-#' outcome). Each entry of this list is a numeric vector for the different
+#' @inheritParams tune
+#' @inheritParams block.splsda
+#' @param test.keepX A named list with the same length and names as X 
+#' (without the outcome Y, if it is provided in X and designated using 
+#' \code{indY}).  Each entry of this list is a numeric vector for the different 
 #' keepX values to test for that specific block.
-#' @param already.tested.X Optional, if \code{ncomp > 1} A numeric vector
-#' indicating the number of variables to select from the \eqn{X} data set on
-#' the firsts components.
-#' @param validation character.  What kind of (internal) validation to use,
-#' matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
-#' \code{"Mfold"}.
-#' @param folds the folds in the Mfold cross-validation. See Details.
-#' @param dist distance metric to use for \code{splsda} to estimate the
-#' classification error rate, should be a subset of \code{"centroids.dist"},
-#' \code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).
-#' @param measure Two misclassification measure are available: overall
-#' misclassification error \code{overall} or the Balanced Error Rate \code{BER}
+#' @param already.tested.X Optional, if \code{ncomp > 1} A named list of 
+#' numeric vectors each of length \code{n_tested} indicating the number of 
+#' variables to select from the \eqn{X} data set on the first \code{n_tested} 
+#' components.
 #' @param weighted tune using either the performance of the Majority vote or
 #' the Weighted vote.
-#' @param progressBar by default set to \code{TRUE} to output the progress bar
-#' of the computation.
-#' @param tol Convergence stopping value.
-#' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
-#' function (should be set to TRUE in particular for data with many zero
-#' values). Default value is FALSE
-#' @param nrepeat Number of times the Cross-Validation process is repeated.
-#' @param design numeric matrix of size (number of blocks in X) x (number of
-#' blocks in X) with 0 or 1 values. A value of 1 (0) indicates a relationship
-#' (no relationship) between the blocks to be modelled. If \code{Y} is provided
-#' instead of \code{indY}, the \code{design} matrix is changed to include
-#' relationships to \code{Y}.
 #' @param scheme Either "horst", "factorial" or "centroid". Default =
 #' \code{centroid}, see reference.
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
-#' means and unit variances. Default = \code{TRUE}.
-#' @param init Mode of initialization use in the algorithm, either by Singular
-#' Value Decompostion of the product of each block of X with Y ("svd") or each
-#' block independently ("svd.single"). Default = \code{svd}.
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
-#' @param light.output if set to FALSE, the prediction/classification of each
-#' sample for each of \code{test.keepX} and each comp is returned.
 #' @param cpus Integer, number of cpus to use. If greater than 1, the code will
 #' run in parallel when repeating the cross-validation, which is usually the
 #' most computationally intensive process. If there is excess CPU, the

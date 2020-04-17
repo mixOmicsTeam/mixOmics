@@ -86,7 +86,7 @@ matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
 
 \item{folds}{the folds in the Mfold cross-validation. See Details.}
 
-\item{dist}{distance metric to use for \code{splsda} to estimate the
+\item{dist}{distance metric to estimate the
 classification error rate, should be a subset of \code{"centroids.dist"},
 \code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
 
@@ -117,16 +117,15 @@ scaling is advisable. Alternatively, a vector of length equal the number of
 columns of \code{X} can be supplied. The value is passed to
 \code{\link{scale}}.}
 
-\item{max.iter}{integer, the maximum number of iterations for the NIPALS
-algorithm.}
+\item{max.iter}{Integer, the maximum number of iterations.}
 
-\item{tol}{a positive real, the tolerance used for the NIPALS algorithm.}
+\item{tol}{Numeric, convergence tolerance criteria.}
 
 \item{light.output}{if set to FALSE, the prediction/classification of each
 sample for each of \code{test.keepX} and each comp is returned.}
 
-\item{cpus}{Number of cores to use for parallel processing. Currently only
-available for mode = "spls"}
+\item{cpus}{Integer, number of cores to use for parallel processing. 
+Currently only available for mode = "spls"}
 }
 \value{
 Depending on the type of analysis performed and the input arguments,
