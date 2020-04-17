@@ -227,16 +227,16 @@ tune.block.splsda <-
       
     }
     
-    # there's a X and a Y, we force the data to be matrices
-    Xcl = lapply(X, class)
-    ind.no.matrix = which(sapply(Xcl, function(x)
-      ! any(x == "matrix")))
-    if (length(ind.no.matrix) > 0) {
-      X[ind.no.matrix] = lapply(X[ind.no.matrix], function(x)
-        as.matrix(x))
-    }
-    
-    
+    ## ensure all X blocks are matrices, keeping dimnames
+    X <- lapply(X, function(z){
+      zm <- z
+      if (!is.matrix(zm)) {
+        zm <- as.matrix(zm)
+        dimnames(zm) <- dimnames(z)
+      }
+      return(zm)
+    })
+  
     #-- dist
     dist = match.arg(
       dist,
