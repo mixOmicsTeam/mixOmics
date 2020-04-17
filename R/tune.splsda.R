@@ -326,10 +326,12 @@ tune.splsda <-
         
         if (parallel)
         {
-            cluster_type <- ifelse(.onUnix(), "FORK", "SOCK")
-            cl = makeCluster(cpus, type = cluster_type)
-            on.exit(stopCluster(cl))
-            #clusterExport(cl, c("splsda","selectVar"))
+            if (.onUnix()) {
+                cl <- makeForkCluster(cpus)
+            } else {
+                cl <- makePSOCKcluster(cpus)
+            }
+            
             clusterEvalQ(cl, library(mixOmics))
         }
         

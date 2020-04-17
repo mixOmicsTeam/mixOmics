@@ -432,9 +432,12 @@ tune.block.splsda <-
     
     if (parallel)
     {
-      cluster_type <-
-        ifelse(.onUnix(), "FORK", "SOCK")
-      cl <- makeCluster(cpus, type = cluster_type)
+      if (.onUnix()) {
+        cl <- makeForkCluster(cpus)
+      } else {
+        cl <- makePSOCKcluster(cpus)
+      }
+      
       on.exit(stopCluster(cl))
     }
     

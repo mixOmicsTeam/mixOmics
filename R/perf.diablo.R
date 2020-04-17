@@ -623,8 +623,12 @@ perf.sgccda <-
       }
       
       ## for some reason, FORK freezes when auc == TRUE
-      cluster_type <- ifelse(.onUnix() && !auc, "FORK", "SOCK")
-      cl <- makeCluster(cpus, type = cluster_type)
+      if (.onUnix()) {
+        cl <- makeForkCluster(cpus)
+      } else {
+        cl <- makePSOCKcluster(cpus)
+      }
+      
       on.exit(stopCluster(cl))
       clusterEvalQ(cl, library(mixOmics))
       clusterExport(cl, ls(), environment())

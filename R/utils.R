@@ -30,8 +30,8 @@
     if (cpus < 0 || is.null(cpus))
         cpus <- 1
     
-    if (cpus > detectCores())
-        message(sprintf("\nOnly %s CPUs available for parallel processing.\n", detectCores()))
+    if (cpus > parallel::detectCores())
+        message(sprintf("\nOnly %s CPUs available for parallel processing.\n", parallel::detectCores()))
     return(cpus)
     
 }
