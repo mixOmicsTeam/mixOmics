@@ -29,9 +29,11 @@
 #' @author Amrit Singh, Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{block.splsda}} and http://www.mixOmics.org/mixDIABLO
 #' for more details.
-#' @references Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt
-#' S. and Lê Cao K.A. (2019). DIABLO: an integrative approach for identifying 
-#' key molecular drivers from multi-omics assays.
+#' @references 
+#' Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt S.
+#' and Lê Cao K.A. (2019), DIABLO: an integrative approach for identifying key 
+#' molecular drivers from multi-omics assays, Bioinformatics, 
+#' Volume 35, Issue 17, 1 September 2019, Pages 3055–3062.
 #' @keywords regression multivariate
 #' @export
 #' @examples
