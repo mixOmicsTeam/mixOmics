@@ -7,7 +7,7 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX) {
             cat('KeepX = ', keepX.value, '\n')  # to remove in the final function
             
             # 2 - a foreach list for repeated CV
-            cor.pred.repeat = foreach(i = as.list(c(seq_len(nrepeat))),.combine=cbind) %do% {
+            cor.pred.repeat = foreach(j = as.list(c(seq_len(nrepeat))),.combine=cbind) %do% {
                 folds = split(sample(seq_len(nrow(X))),seq_len(kfold))
                 
                 # 3 -  a foreach list for k-fold CV
