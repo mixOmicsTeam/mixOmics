@@ -15,8 +15,8 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX) {
                 cor.pred = foreach(i = folds,.combine=cbind) %do% {
                     # determine matrix without the fold and with the fold
                     X.train = X[-i,]  # could rename as train
-                    X.sub = X[i,]  # used for prediction, could rename as test
-                    X.sub.scale = scale(X.sub, center = TRUE, scale = TRUE) # used for deflation
+                    X.test = X[i,]  # used for prediction, could rename as test
+                    X.test = scale(X.test, center = TRUE, scale = TRUE) # used for deflation
                     
                     # ---- run sPCA ------------ #
                     # spca on the data minus the subsample
@@ -28,13 +28,13 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX) {
                         # calculate the predicted comp on the fold left out
                         # calculate reg coeff, then deflate
                         if(k == 1){
-                            t.comp.sub = X.sub.scale %*% spca.res.sub$loadings$X[,k]
+                            t.comp.sub = X.test %*% spca.res.sub$loadings$X[,k]
                         }else{ # calculate deflation beyond comp 1
                             # recalculate the loading vector (here c.sub) on the test set (perhaps we could do this instead on the training set by extracting from spca.res.sub$loadings$X[,k]?)
-                            c.sub = crossprod(X.sub.scale, t.comp.sub) / drop(crossprod(t.comp.sub)) 
-                            X.sub.scale= X.sub.scale - t.comp.sub %*% t(c.sub) 
+                            c.sub = crossprod(X.test, t.comp.sub) / drop(crossprod(t.comp.sub)) 
+                            X.test = X.test - t.comp.sub %*% t(c.sub) 
                             # update predicted comp based on deflated matrix
-                            t.comp.sub = X.sub.scale %*% spca.res.sub$loadings$X[,k]
+                            t.comp.sub = X.test %*% spca.res.sub$loadings$X[,k]
                         }
                     }
                     
