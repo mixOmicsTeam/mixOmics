@@ -19,18 +19,10 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX) {
                     X.sub.scale = scale(X.sub, center = TRUE, scale = TRUE) # used for deflation
                     
                     # ---- run sPCA ------------ #
-                    if(ncomp ==1){ # for comp = 1
-                        # spca on the data minus the subsample
-                        spca.res.sub = mixOmics::spca(X.minus.sub, ncomp = ncomp, keepX = keepX.value, center = TRUE, scale = TRUE)
-                        # spca on all data 
-                        spca.res.full = mixOmics::spca(X, ncomp = ncomp, keepX = keepX.value, center = TRUE, scale = TRUE)
-                    }else{ # comp >1
-                        # spca on the data minus the subsample
-                        spca.res.sub = mixOmics::spca(X.minus.sub, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
-                        # spca on all data 
-                        spca.res.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
-                    }
-                    
+                    # spca on the data minus the subsample
+                    spca.res.sub = mixOmics::spca(X.minus.sub, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
+                    # spca on all data 
+                    spca.res.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
                     # ---- deflation on X with only the fold left out------------ #
                     for(k in seq_len(ncomp)){ # loop to calculate deflated matrix and predicted comp
                         # calculate the predicted comp on the fold left out
