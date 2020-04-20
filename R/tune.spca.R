@@ -1,4 +1,4 @@
-tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX) {
+tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale = TRUE) {
     cor.pred.per.dim <- list()
     keepX.dim <- NULL
     result = foreach(ncomp = as.list(seq_len(ncomp)),.combine=cbind) %do% {
@@ -16,13 +16,13 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX) {
                     # determine matrix without the fold and with the fold
                     X.train = X[-i,]  # could rename as train
                     X.test = X[i,]  # used for prediction, could rename as test
-                    X.test = scale(X.test, center = TRUE, scale = TRUE) # used for deflation
+                    X.test = scale(X.test, center = center, scale = scale) # used for deflation
                     
                     # ---- run sPCA ------------ #
                     # spca on the data minus the subsample
-                    spca.res.sub = mixOmics::spca(X.train, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
+                    spca.res.sub = mixOmics::spca(X.train, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = center, scale = scale)
                     # spca on all data 
-                    spca.res.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
+                    spca.res.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = center, scale = scale)
                     # ---- deflation on X with only the fold left out------------ #
                     for(k in seq_len(ncomp)){ # loop to calculate deflated matrix and predicted comp
                         # calculate the predicted comp on the fold left out
