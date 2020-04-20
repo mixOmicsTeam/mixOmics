@@ -14,13 +14,13 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX) {
                 #  if small n, then need to define the fold based on boostrapping (with replacement) as we need to center / scale the data for prediction
                 cor.pred = foreach(i = folds,.combine=cbind) %do% {
                     # determine matrix without the fold and with the fold
-                    X.minus.sub = X[-i,]  # could rename as train
+                    X.train = X[-i,]  # could rename as train
                     X.sub = X[i,]  # used for prediction, could rename as test
                     X.sub.scale = scale(X.sub, center = TRUE, scale = TRUE) # used for deflation
                     
                     # ---- run sPCA ------------ #
                     # spca on the data minus the subsample
-                    spca.res.sub = mixOmics::spca(X.minus.sub, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
+                    spca.res.sub = mixOmics::spca(X.train, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
                     # spca on all data 
                     spca.res.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = TRUE, scale = TRUE)
                     # ---- deflation on X with only the fold left out------------ #
