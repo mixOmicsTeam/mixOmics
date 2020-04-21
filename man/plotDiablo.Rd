@@ -58,9 +58,10 @@ BC.diablo = block.splsda(X = data, Y = Y, ncomp = ncomp, keepX = list.keepX, des
 plotDiablo(BC.diablo, ncomp = 1)
 }
 \references{
-Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt
-S. and Lê Cao K.A. (2019). DIABLO: an integrative approach for identifying 
-key molecular drivers from multi-omics assays.
+Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt S.
+and Lê Cao K.A. (2019), DIABLO: an integrative approach for identifying key 
+molecular drivers from multi-omics assays, Bioinformatics, 
+Volume 35, Issue 17, 1 September 2019, Pages 3055–3062.
 }
 \seealso{
 \code{\link{block.splsda}} and http://www.mixOmics.org/mixDIABLO

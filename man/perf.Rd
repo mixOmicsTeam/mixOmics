@@ -457,10 +457,10 @@ perf$choice.ncomp
 }
 }
 \references{
-DIABLO:
-
-Singh A., Gautier B., Shannon C., Vacher M., Rohart F., Tebbutt S. and Lê
-Cao K.A. (2016). DIABLO - multi omics integration for biomarker discovery.
+Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt S.
+and Lê Cao K.A. (2019), DIABLO: an integrative approach for identifying key 
+molecular drivers from multi-omics assays, Bioinformatics, 
+Volume 35, Issue 17, 1 September 2019, Pages 3055–3062.
 
 mixOmics article:
 

@@ -83,10 +83,10 @@ cimDiablo(nutrimouse.sgccda)
 
 }
 \references{
-Singh A., Gautier B., Shannon C., Vacher M., Rohart F., Tebbutt
-S. and Lê Cao K.A. (2016). DIABLO: multi omics integration for biomarker
-discovery. BioRxiv available here:
-\url{http://biorxiv.org/content/early/2016/08/03/067611}
+Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt S.
+and Lê Cao K.A. (2019), DIABLO: an integrative approach for identifying key 
+molecular drivers from multi-omics assays, Bioinformatics, 
+Volume 35, Issue 17, 1 September 2019, Pages 3055–3062.
 
 Eisen, M. B., Spellman, P. T., Brown, P. O. and Botstein, D. (1998). Cluster
 analysis and display of genome-wide expression patterns. \emph{Proceeding of
