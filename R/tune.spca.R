@@ -1,7 +1,8 @@
 tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale = TRUE) {
     cor.pred.per.dim <- list()
     keepX.dim <- NULL
-    result = foreach(ncomp = as.list(seq_len(ncomp)),.combine=cbind) %do% {
+    result <- list()
+    for(ncomp in seq_len(ncomp)) {
         # 1 - a foreach list for each keepX value tested
         cor.pred.repeat.keepX.dim = foreach(keepX.value = as.list(grid.keepX),.combine=cbind) %do% {
             cat('KeepX = ', keepX.value, '\n')  # to remove in the final function
@@ -67,6 +68,7 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale
         
         # working out the max based on cor.comp and append to keepX.dim
         keepX.dim = c(keepX.dim, grid.keepX[which.max(cor.pred.repeat.keepX.dim['cor.comp',])])
-        return(keepX.dim)  # I think this output is irrelevant, as it is combining across comp per column (consider the last column)
+        result[[paste0("comp", ncomp)]] <- keepX.dim  # I think this output is irrelevant, as it is combining across comp per column (consider the last column)
     }
+    result
 }
