@@ -13,9 +13,11 @@
 #'
 #' determines the optimum number of components based on significance of
 #' improvement in error rates
+#'
 #' @param mat.error.rate matrix of error rates, each column corresponding to
 #' a component's classification error rate, in increasing order for components.
 #' @param alpha significance threshold for t test. By default 0.01.
+#' @param alternative Character, passed to stats::t.test
 #'
 #' @return integer, the optimal number of components
 #'
@@ -27,13 +29,13 @@
 #' t.test.process(data.frame(comp1=10:14, comp2=20:24, comp3=50:54))
 #' #> 1
 #' @noRd
-t.test.process <- function(mat.error.rate, alpha = 0.01)
+t.test.process <- function(mat.error.rate, alpha = 0.01, alternative = "greater")
 {
     ## ----- helper function to calculate pvalues for two columns of a data.frame:
     .calc_pval <- function(df, col1, col2) {
         x <- df[, col1]
         y <- df[, col2]
-        pval <- tryCatch({t.test(x, y, alternative = "greater")$p.value},
+        pval <- tryCatch({t.test(x, y, alternative = alternative)$p.value},
                          error = function(e) e)
         
         if (!is.numeric(pval)) {
