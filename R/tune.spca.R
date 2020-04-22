@@ -1,16 +1,21 @@
 tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale = TRUE) {
     cor.pred.per.dim <- list()
-    keepX.dim <- NULL
+    keepX.already <- NULL
     result <- list()
+    cor.df <- data.frame(matrix(ncol = nrepeat, nrow = length(grid.keepX), 
+                                dimnames = list(
+                                    paste0('keepX_', grid.keepX),
+                                    paste0('repeat_', seq_len(nrepeat)))))
+    cor.df.list <- .name_list(char = paste0('comp', seq_len(ncomp)))
+    cor.df.list <- lapply(cor.df.list, function(x) cor.df)
     for(ncomp in seq_len(ncomp)) {
         # 1 - a foreach list for each keepX value tested
-        cor.pred.repeat.keepX.dim <- list()
         for (keepX_i in seq_along(grid.keepX)) {
             keepX.value <- grid.keepX[keepX_i]
             cat('KeepX = ', keepX.value, '\n')  # to remove in the final function
             
             # 2 - a foreach list for repeated CV
-            cor.pred.repeat = foreach(j = as.list(c(seq_len(nrepeat))),.combine=cbind) %do% {
+            for (j in seq_len(nrepeat)) {
                 folds = split(sample(seq_len(nrow(X))),seq_len(kfold))
                 
                 # 3 -  a foreach list for k-fold CV
@@ -24,9 +29,9 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale
                     # ---- run sPCA ------------ #
                     # spca on the data minus the subsample
                     suppressWarnings({
-                        spca.res.sub = mixOmics::spca(X.train, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = center, scale = scale)
+                        spca.res.sub = mixOmics::spca(X.train, ncomp = ncomp, keepX = c(keepX.already, keepX.value), center = center, scale = scale)
                         # spca on all data 
-                        spca.res.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.dim, keepX.value), center = center, scale = scale)
+                        spca.res.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.already, keepX.value), center = center, scale = scale)
                     })
                     # ---- deflation on X with only the fold left out------------ #
                     for(k in seq_len(ncomp)){ # loop to calculate deflated matrix and predicted comp
@@ -58,19 +63,22 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale
                 # output is correlation between reconstructed components cor.comp on the left out samples and if we had those samples in PCA, as well as correlation between loading vectors cor.loading just to check both trends
                 rownames(cor.pred) = c('cor.comp')  #, 'cor.loading', 'RSS.comp')
                 # average correlations across folds
-                return(abs(apply(cor.pred, 1, mean)))
+                cor.df.list[[ncomp]][keepX_i,j] <- abs(apply(cor.pred, 1, function(x) mean(x, na.rm = TRUE)))
             } # end foreach 2 (on repeats), get the cor(pred component, comp) averaged across folds for a given comp
-            
-            # average correlation across repeats 
-            cor.pred.repeat.keepX.dim[[keepX_i]] <- apply(cor.pred.repeat, 1, mean)
         } # end foreach 1 (on keepX), get the cor(pred component, comp) averaged across repeats for a given comp and each keepX
-        cor.pred.repeat.keepX.dim <- Reduce(cbind, cor.pred.repeat.keepX.dim)
-        # # correlation for each keepX value
-        cor.pred.per.dim[[ncomp]]  = cor.pred.repeat.keepX.dim
-        
-        # working out the max based on cor.comp and append to keepX.dim
-        keepX.dim = c(keepX.dim, grid.keepX[which.max(cor.pred.repeat.keepX.dim['cor.comp',])])
-        result[[paste0("comp", ncomp)]] <- keepX.dim  # I think this output is irrelevant, as it is combining across comp per column (consider the last column)
+        keepX.opt.ind <-  t.test.process(t(cor.df.list[[ncomp]]), alpha = 0.05, alternative = 'less')
+        keepX.opt <- grid.keepX[keepX.opt.ind]
+        keepX.already <- c(keepX.already, keepX.opt)
     }
+    choice.keepX <- lapply(cor.df.list, function(x) {
+        keepX.ind <- t.test.process(t(x), alpha = 0.05, alternative = 'less')
+        return(grid.keepX[keepX.ind])
+    })
+    
+    cor.comp = lapply(cor.df.list, function(df){
+        return(data.frame(cor.mean = apply(df, 1, mean), cor.sd = apply(df, 1, sd)))
+    })
+    result <- list(choice.keepX = choice.keepX,
+                   cor.comp = cor.comp)
     result
 }
