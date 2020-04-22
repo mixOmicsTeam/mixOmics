@@ -173,9 +173,10 @@ stratified.subsampling <- function(Y, folds = 10)
 #' @author Al J Abadi
 #'
 #' @noRd
-.name_list <- function(char) {
+.name_list <- function(char, names=NULL) {
     out <- as.list(char)
-    names(out) <- char
+    names <- if (is.null(names)) char else names
+    names(out) <- names
     return(out)
 }
 
