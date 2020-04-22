@@ -4,7 +4,9 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale
     result <- list()
     for(ncomp in seq_len(ncomp)) {
         # 1 - a foreach list for each keepX value tested
-        cor.pred.repeat.keepX.dim = foreach(keepX.value = as.list(grid.keepX),.combine=cbind) %do% {
+        cor.pred.repeat.keepX.dim <- list()
+        for (keepX_i in seq_along(grid.keepX)) {
+            keepX.value <- grid.keepX[keepX_i]
             cat('KeepX = ', keepX.value, '\n')  # to remove in the final function
             
             # 2 - a foreach list for repeated CV
@@ -60,9 +62,9 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale
             } # end foreach 2 (on repeats), get the cor(pred component, comp) averaged across folds for a given comp
             
             # average correlation across repeats 
-            return(abs(apply(cor.pred.repeat, 1, mean)))
+            cor.pred.repeat.keepX.dim[[keepX_i]] <- apply(cor.pred.repeat, 1, mean)
         } # end foreach 1 (on keepX), get the cor(pred component, comp) averaged across repeats for a given comp and each keepX
-        
+        cor.pred.repeat.keepX.dim <- Reduce(cbind, cor.pred.repeat.keepX.dim)
         # # correlation for each keepX value
         cor.pred.per.dim[[ncomp]]  = cor.pred.repeat.keepX.dim
         
