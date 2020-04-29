@@ -70,7 +70,7 @@ withinVariation <-
     factors = design[, -1, drop = FALSE] 
     
     if(any(summary(as.factor(rep.measures)) == 1))
-      stop("A multilevel analysis can not be performed when at least one some sample is not repeated.")
+      stop("Multilevel analysis can only be performed when at least one sample is repeated.", call. = FALSE)
     
     # calculate the variation
     # ---------------------------
