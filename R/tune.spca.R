@@ -18,7 +18,12 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale
             
             ## ------ repeated cv
             for (j in seq_len(nrepeat)) {
-                folds = split(sample(seq_len(nrow(X))),seq_len(kfold))
+                if (nrow(X) > 30) {
+                    folds = split(sample(seq_len(nrow(X))),seq_len(kfold))
+                } else {
+                    message("\n Low sample size. Using bootstrapped CV.")
+                    folds = lapply(seq_len(kfold), function(i) sample(seq_len(nrow(X)), size = ceiling(30/kfold), replace = TRUE))
+                }
                ## ------ mean cor for CV
                 cor.pred = sapply(folds, function(test.fold.inds){
                     ## split data to train/test
