@@ -1,6 +1,6 @@
 
 [![](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![](https://img.shields.io/badge/bioc%20release-6.10.9-green.svg)](https://www.bioconductor.org/packages/mixOmics)
+[![](https://img.shields.io/badge/bioc%20release-6.12.0-green.svg)](https://www.bioconductor.org/packages/mixOmics)
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
 [![](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
@@ -152,6 +152,11 @@ Thank you for using `mixOmics`\!
 ![](http://mixomics.org/wp-content/uploads/2012/04/framework-mixOmics-June2016.jpg)
 
 ## What’s New
+
+#### April 2020
+
+  - weighted consensus plots for DIABLO objects now consider
+    per-component weights
 
 #### March 2020
 

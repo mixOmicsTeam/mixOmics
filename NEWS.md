@@ -1,9 +1,16 @@
+## version 6.14.0
 
+### new features / enhancements / changes
+
+### bug fixes
+
+-------------------------------------------------------------------------------
 ## version 6.12.0
 
 ### new features / enhancements
 
-* `circosPlot` and `plotLoadings` bug caused by features with `NA`s fixed
+* `plotLoadings`'s infamous *figure margins too large* error now handled and informative condition thrown
+* `circosPlot`'s `lines` argument default to `FALSE` now
 * `circosPlot`'s inconsistentcy of blocks with identical `X` names fixed
 *  consensus and weighted consensus plots now supported for `plotIndiv` with relevant block analyses
 * `plotLoadings`'s feature name trimming can be customised
@@ -15,6 +22,9 @@
 
 ### bug fixes
 
+* `circosPlot`'s faded `lines` bug when many `NA`s present fixed
+* `tune.block.splsda()` bug when using fixed `test.keepX` over two or more blocks fixed
+* `circosPlot` and `plotLoadings` bug caused by features with `NA`s fixed
 * `plotIndiv(..., ind.names = FALSE)` warning/bug fixed
 * `tune.block.splsda` bug on Windows parallelisation fixed
 * `perf` and `tune` functions' issue  when choosing the optimum component resolved
