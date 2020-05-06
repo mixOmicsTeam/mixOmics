@@ -27,6 +27,12 @@
 #' @param size.variables size of the variable labels
 #' @param size.labels size of the block labels
 #' @param legend boolean. Whether the legend should be added. Default is TRUE.
+#' @param ... Advanced plot parameters:
+#' \itemize{
+#'  \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
+#'  units of the arc band width. Positive values push feature names radially 
+#'  outward. Default to -0.33.
+#' }
 #' @return If saved in an object, the circos plot will output the similarity
 #' matrix and the names of the variables displayed on the plot (see
 #' \code{attributes(object)}).
@@ -66,7 +72,8 @@ circosPlot <- function(object,
                        ncol.legend = 1,
                        size.variables = 0.25,
                        size.labels = 1,
-                       legend = TRUE)
+                       legend = TRUE,
+                       ...)
 {
     
     # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
@@ -265,7 +272,7 @@ circosPlot <- function(object,
     drawIdeogram(R=circleR, cir=db, W=segmentWidth,  show.band.labels=TRUE,
                  show.chr.labels=TRUE, chr.labels.R= chrLabelsR, chrData=chr,
                  size.variables = size.variables, size.labels=size.labels,
-                 color.blocks = color.blocks, line = line)
+                 color.blocks = color.blocks, line = line, var.adj = list(...)$var.adj)
     # Plot links
     if(nrow(links)>0)
         drawLinks(R=linksR, cir=db,   mapping=links,   col=linkColors,
@@ -339,13 +346,15 @@ drawIdeogram = function(R, xc=400, yc=400, cir, W,
                         size.variables,
                         size.labels,
                         color.blocks,
-                        line)
+                        line,
+                        var.adj = NULL)
 {
     # Draw the main circular plot: segments, bands and labels
     chr.po    = cir 
     chr.po[,1]  = gsub("chr","",chr.po[,1]) 
     chr.num     = nrow(chr.po) 
     
+    var.adj <- .change_if_null(arg = var.adj, default = -0.33)
     dat.c     = chrData 
     dat.c[,1] = gsub("chr", "", dat.c[,1]) 
     
@@ -377,7 +386,7 @@ drawIdeogram = function(R, xc=400, yc=400, cir, W,
                 
                 band.po = ((w1+w2)/2)# - ((w2-w1)/3) #position around the circle
                 # print(c(band.po, w1, w2, (w2-w1)/3))
-                band.po.in = R-(W/3.0) #position on the band (middle)
+                band.po.in = R + W*var.adj #position on the band (middle)
                 draw.text.rt(xc, yc,band.po.in  , band.po , band.text ,
                              cex = size.variables, segmentWidth = W, side="in" )
             }

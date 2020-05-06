@@ -18,7 +18,8 @@ circosPlot(
   ncol.legend = 1,
   size.variables = 0.25,
   size.labels = 1,
-  legend = TRUE
+  legend = TRUE,
+  ...
 )
 }
 \arguments{
@@ -56,6 +57,13 @@ see examples.}
 \item{size.labels}{size of the block labels}
 
 \item{legend}{boolean. Whether the legend should be added. Default is TRUE.}
+
+\item{...}{Advanced plot parameters:
+\itemize{
+ \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
+ units of the arc band width. Positive values push feature names radially 
+ outward. Default to -0.33.
+}}
 }
 \value{
 If saved in an object, the circos plot will output the similarity
