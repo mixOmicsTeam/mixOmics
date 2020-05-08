@@ -12,7 +12,7 @@ network(
   mat,
   comp = NULL,
   blocks = c(1, 2),
-  cutoff = NULL,
+  cutoff = 0,
   row.names = TRUE,
   col.names = TRUE,
   block.var.names = TRUE,
@@ -36,7 +36,10 @@ network(
 )
 }
 \arguments{
-\item{mat}{numeric matrix of values to be represented.}
+\item{mat}{numeric matrix of values to be represented. Alternatively,
+an object from one of the following models: \code{mix_pls}, \code{plsda}, 
+\code{mixo_spls}, \code{splsda}, \code{rcc}, \code{sgcca}, \code{rgcca}, 
+\code{sgccda}.}
 
 \item{comp}{atomic or vector of positive integers. The components to
 adequately account for the data association. Defaults to \code{comp = 1}.}

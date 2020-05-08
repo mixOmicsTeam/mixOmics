@@ -335,7 +335,7 @@ circosPlot <- function(object,
                                                        paste(comp,collapse="-")),
                col = "black", cex=size.legend, bty = "n")
     }
-    par(xpd=opar,mar=opar1)# put the previous defaut parameter for xpd
+    par(xpd=opar,mar=opar1)# put the previous default parameter for xpd
     return(invisible(simMat))
 }
 

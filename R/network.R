@@ -86,7 +86,10 @@
 #' double with a default of \code{c(1, 1)}.
 #' 
 #' @aliases network network.default network.rcc network.pls network.spls
-#' @param mat numeric matrix of values to be represented.
+#' @param mat numeric matrix of values to be represented. Alternatively,
+#' an object from one of the following models: \code{mix_pls}, \code{plsda}, 
+#' \code{mixo_spls}, \code{splsda}, \code{rcc}, \code{sgcca}, \code{rgcca}, 
+#' \code{sgccda}.
 #' @param comp atomic or vector of positive integers. The components to
 #' adequately account for the data association. Defaults to \code{comp = 1}.
 #' @param cutoff numeric value between \code{0} and \code{1}. The tuning
@@ -169,7 +172,7 @@
 network <- function(mat,
                     comp = NULL,
                     blocks = c(1, 2),
-                    cutoff = NULL,
+                    cutoff = 0,
                     row.names = TRUE,
                     col.names = TRUE,
                     block.var.names = TRUE,
@@ -796,32 +799,17 @@ network <- function(mat,
     
     #-- check cutoff
     if (round(max(abs(w)), 2) == 0)
-        stop("There is no correlation between these blocks whith these components. Try a different value of 'comp'.", call. = FALSE)
-    if (is.null(cutoff))
-    {
-        if (interactive)
-        {
-            cutoff = 0
-        } else {
-            if (length(w)<=20)
-            {
-                cutoff = 0
-            } else if (length(w)>20 & length(w)<=40) {
-                cutoff = unname(quantile(abs(w))[3])
-            } else {
-                cutoff = unname(quantile(abs(w))[4])
-            }
-        }
-    }
-    if (!is.finite(cutoff) || cutoff < 0 )
-        stop("invalid value for 'cutoff', it must be a positive numeric value >= ",
-             0, call. = FALSE)
+        stop("There is no correlation between these blocks whith these components.",
+             "Try a different value of 'comp'.", call. = FALSE)
+    
+    if (!is.numeric(cutoff) || cutoff < 0 || cutoff > 1)
+        stop("'cutoff' should be a numeric between 0 and 1", call. = FALSE)
     if(cutoff > max(abs(w)))
-        stop("invalid value for 'cutoff'", cutoff, " > ",
+        stop("You have chosen a high cutoff value of ", cutoff, 
+             " which is greaer than the max value in the similarity matrix which is ",
              round(max(abs(w)), 2), call. = FALSE)
-    
-    
-    # Definition of nodes #
+
+        # Definition of nodes #
     #---------------------#
     #save(list=ls(),file="temp.Rdata")
     if(any(class.object %in% object.blocks))
