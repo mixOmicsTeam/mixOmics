@@ -357,7 +357,7 @@ SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
 \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}}
 
 \item{col.per.group}{character (or symbol) color to be used when 'group' is
-defined. Vector of the same length than the number of groups.}
+defined. Vector of the same length as the number of groups.}
 
 \item{style}{argument to be set to either \code{'graphics'},
 \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.

@@ -218,7 +218,7 @@ internal_graphicModule <-
             #-- Modify scale colour - Change X/Ylabel - split plots into Blocks
             p = p + scale_color_manual(values = unique(col.per.group)[match(
                 levels(factor(as.character(df$group))), levels(df$group))],
-                name = legend.title, labels = levels(df$group))
+                name = legend.title)
             
             
             if(group.pch == "same")
