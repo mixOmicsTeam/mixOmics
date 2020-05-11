@@ -13,7 +13,7 @@ cim(
   col.sideColors = NULL,
   row.cex = NULL,
   col.cex = NULL,
-  threshold = 0,
+  cutoff = 0,
   cluster = "both",
   dist.method = c("euclidean", "euclidean"),
   clust.method = c("complete", "complete"),
@@ -66,7 +66,7 @@ annotate the columns of \code{mat}.}
 row or column axis labeling. The defaults currently only use number of rows
 or columns, respectively.}
 
-\item{threshold}{numeric between 0 and 1. Variables with correlations below
+\item{cutoff}{numeric between 0 and 1. Variables with correlations below
 this threshold in absolute value are not plotted. To use only when mapping
 is "XY".}
 

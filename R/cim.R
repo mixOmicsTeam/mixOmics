@@ -104,7 +104,7 @@
 #' the number of columns of \code{mat}. See \code{\link{scale}} function.
 #' @param scale either a logical value or a numeric vector of length equal to
 #' the number of columns of \code{mat}. See \code{\link{scale}} function.
-#' @param threshold numeric between 0 and 1. Variables with correlations below
+#' @param cutoff numeric between 0 and 1. Variables with correlations below
 #' this threshold in absolute value are not plotted. To use only when mapping
 #' is "XY".
 #' @param symkey boolean indicating whether the color key should be made
@@ -176,7 +176,7 @@ cim <-
              col.sideColors = NULL,
              row.cex = NULL,
              col.cex = NULL,
-             threshold = 0,
+             cutoff = 0,
              cluster = "both",
              dist.method = c("euclidean", "euclidean"),
              clust.method = c("complete", "complete"),
@@ -407,8 +407,8 @@ cim <-
         title = as.graphicsAnnot(title)
         
         #-- threshold correlation
-        if (!is.numeric(threshold) | (threshold > 1) | (threshold < 0))
-            stop("The value taken by 'threshold' must be between 0 and 1",
+        if (!is.numeric(cutoff) | (cutoff > 1) | (cutoff < 0))
+            stop("The value taken by 'cutoff' must be between 0 and 1",
                  call. = FALSE)
         
         #-- save
@@ -909,10 +909,10 @@ cim <-
                     object = XY.mat
                     
                     cut = list()
-                    if (threshold != 0) {
+                    if (cutoff != 0) {
                         cut[[1]] = unlist(lapply(1:nrow(object),
                                                  function(x) {
-                                                     any(abs(object[x, ]) > threshold)
+                                                     any(abs(object[x, ]) > cutoff)
                                                  }))
                         object = object[cut[[1]], ]
                         if (dist.method[1] != "correlation")
@@ -920,13 +920,13 @@ cim <-
                         
                         
                         if (is.null(nrow(object)) || nrow(object) == 0)
-                            stop("threshold value very high. No variable was selected.",
+                            stop("cutoff value very high. No variable was selected.",
                                  call. = FALSE)
                         
                         
                         cut[[2]] = unlist(lapply(1:ncol(object),
                                                  function(x) {
-                                                     any(abs(object[, x]) > threshold)
+                                                     any(abs(object[, x]) > cutoff)
                                                  }))
                         object = object[, cut[[2]]]
                         if (dist.method[2] != "correlation")
@@ -934,7 +934,7 @@ cim <-
                         
                         
                         if (is.null(ncol(object)) || ncol(object) == 0)
-                            stop("threshold value very high. No variable was selected.",
+                            stop("cutoff value very high. No variable was selected.",
                                  call. = FALSE)
                         
                     }
@@ -952,7 +952,7 @@ cim <-
                         else
                             dist.mat = dist(cord.X, method = dist.method[1])
                         
-                        if (threshold > 0) {
+                        if (cutoff > 0) {
                             row.names = row.names[cut[[1]]]
                             if (!is.null(row.sideColors))
                                 row.sideColors = as.matrix(row.sideColors[cut[[1]],])
@@ -978,7 +978,7 @@ cim <-
                         else
                             dist.mat = dist(cord.Y, method = dist.method[2])
                         
-                        if (threshold > 0) {
+                        if (cutoff > 0) {
                             col.names = col.names[cut[[2]]]
                             if (!is.null(col.sideColors))
                                 col.sideColors = as.matrix(col.sideColors[cut[[2]],])
@@ -1198,10 +1198,10 @@ cim <-
                     col.names = col.names[keep.Y]
                     
                     cut = list()
-                    if (threshold != 0) {
+                    if (cutoff != 0) {
                         cut[[1]] = unlist(lapply(1:nrow(object),
                                                  function(x) {
-                                                     any(abs(object[x, ]) > threshold)
+                                                     any(abs(object[x, ]) > cutoff)
                                                  }))
                         object = object[cut[[1]], ]
                         if (dist.method[1] != "correlation")
@@ -1209,13 +1209,13 @@ cim <-
                         
                         
                         if (is.null(nrow(object)) || nrow(object) == 0)
-                            stop("threshold value very high. No variable was selected.",
+                            stop("cutoff value very high. No variable was selected.",
                                  call. = FALSE)
                         
                         
                         cut[[2]] = unlist(lapply(1:ncol(object),
                                                  function(x) {
-                                                     any(abs(object[, x]) > threshold)
+                                                     any(abs(object[, x]) > cutoff)
                                                  }))
                         object = object[, cut[[2]]]
                         if (dist.method[2] != "correlation")
@@ -1223,7 +1223,7 @@ cim <-
                         
                         
                         if (is.null(ncol(object)) || ncol(object) == 0)
-                            stop("threshold value very high. No variable was selected.",
+                            stop("cutoff value very high. No variable was selected.",
                                  call. = FALSE)
                         
                     }
@@ -1247,7 +1247,7 @@ cim <-
                             #dist.mat = dist(mat, method = dist.method[1])
                             dist.mat = dist(cord.X, method = dist.method[1])
                         
-                        if (threshold > 0) {
+                        if (cutoff > 0) {
                             row.names = row.names[cut[[1]]]
                             if (!is.null(row.sideColors))
                                 row.sideColors = as.matrix(row.sideColors[cut[[1]],])
@@ -1275,7 +1275,7 @@ cim <-
                             #dist.mat = dist(t(mat), method = dist.method[2])
                             dist.mat = dist(cord.Y, method = dist.method[2])
                         
-                        if (threshold > 0) {
+                        if (cutoff > 0) {
                             col.names = col.names[cut[[2]]]
                             if (!is.null(col.sideColors))
                                 col.sideColors = as.matrix(col.sideColors[cut[[2]],])
