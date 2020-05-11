@@ -4,7 +4,7 @@ sudo: required
 language: r
 cache: packages 
 ## test against bioc-release:
-r: bioc-devel
+r: bioc-release
 
 ## apparently helps linux systems find rgl:
 before_install: 
@@ -18,7 +18,6 @@ warnings_are_errors: false
 
 ## 'snow' is required by parallel but for some reason not automatically installed
 r_packages: 
-  - snow
   - covr
 
 after_success:
@@ -34,7 +33,7 @@ branches:
      - devel
      - master
      - feature
-     - roxygenated
+     - RELEASE_3_11
 
 ## build notification setup - emails need to be a from a contributor to the package
 notifications:
