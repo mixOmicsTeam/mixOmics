@@ -2,7 +2,11 @@
 
 ### new features / enhancements / changes
 
+* `circosPlot`: The radial location of feature names can now be cutomised using `var.adj`
+
 ### bug fixes
+
+* `plotIndiv`: Legend bug which misspecified the groups resolved
 
 -------------------------------------------------------------------------------
 ## version 6.12.0
