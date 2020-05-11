@@ -4,7 +4,7 @@
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
 [![](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
-[![](https://img.shields.io/badge/download-1747/month-green.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
+[![](https://img.shields.io/badge/download-2394/month-green.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![download](http://www.bioconductor.org/shields/downloads/release/mixOmics.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
 [![license](https://img.shields.io/badge/license-GPL%20\(%3E=%202\)-lightgrey.svg)](https://choosealicense.com/)
@@ -38,18 +38,21 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install('mixOmics')
 ```
 
-#### Latest `GitHub` Version
+#### Stable `GitHub` Version
 
 Install the [devtools](https://github.com/r-lib/devtools) package in R,
 then load it and install the latest stable version of `mixOmics` from
 `GitHub` (as bug-free as it can be):
 
 ``` r
-## install devtools if not installed
-if (!requireNamespace("devtools", quietly = TRUE))
-    install.packages("devtools")
-## install mixOmics
-devtools::install_github("mixOmicsTeam/mixOmics")
+if (BiocManager::version() >= package_version('3.11')) 
+{
+  BiocManager::install("mixOmicsTeam/mixOmics")
+} else
+{
+  message('Please update to the latest Bioconductor (https://www.bioconductor.org/install/) ',
+          'to install the stable GitHub version')
+}
 ```
 
 Check after installation that the following code does not throw any
@@ -70,7 +73,14 @@ version](https://github.com/mixOmicsTeam/mixOmics/blob/devel/DESCRIPTION#L4)
 for new features yet to be widely tested:
 
 ``` r
-devtools::install_github("mixOmicsTeam/mixOmics", ref = "devel")
+if (BiocManager::version() >= package_version('3.11')) 
+{
+  BiocManager::install("mixOmicsTeam/mixOmics@devel")
+} else
+{
+  message('Please update to the latest Bioconductor (https://www.bioconductor.org/install/) ',
+          'to install the development version')
+}
 ```
 
 ## Contribution
