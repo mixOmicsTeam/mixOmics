@@ -4,7 +4,7 @@ sudo: required
 language: r
 cache: packages 
 ## test against bioc-release:
-r: bioc-release
+r: bioc-devel
 
 ## apparently helps linux systems find rgl:
 before_install: 
