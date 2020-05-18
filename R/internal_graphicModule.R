@@ -382,7 +382,7 @@ internal_graphicModule <-
             #-- Modify scale colour - Change X/Ylabel - split plots into Blocks
             p = p + scale_colour_manual(values = unique(col.per.group)[match(
                 levels(factor(as.character(df$group))), levels(df$group))],
-                name = legend.title, labels = levels(df$group)) +
+                name = legend.title) +
                 labs(shape = "Study")#levels(object$study)[study.ind])
             
             p = p + scale_shape_manual(values = as.numeric(levels(factor(df$pch))))
