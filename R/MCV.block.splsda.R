@@ -503,7 +503,7 @@ MCVfold.block.splsda <-
         # class.comp[[ijk]] is a matrix containing all prediction for test.keepX,
         # all nrepeat and all distance, at comp fixed
         test.keepA <- class.comp.reps[[1]][["keepA"]]
-        keepA.names = apply(test.keepA[,1:length(X)],1,function(x)
+        keepA.names = apply(test.keepA[,seq_along(X), drop=FALSE],1,function(x)
             paste(x,collapse="_"))#, sep=":")
         
         result = list()
