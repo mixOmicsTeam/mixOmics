@@ -51,6 +51,11 @@
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
 #' @param cpus Integer, number of cpus to use. If greater than 1, the code will
+#' @param ... Optional arguments:
+#' \itemize{
+#'  \item \bold{seed} Integer. Seed number for reproducible parallel code.
+#'  Default is \code{NULL}.
+#' }
 #' run in parallel when repeating the cross-validation, which is usually the
 #' most computationally intensive process. If there is excess CPU, the
 #' cross-vaidation is also parallelised on *nix-based OS which support
@@ -158,7 +163,8 @@ tune.block.splsda <-
             light.output = TRUE,
             # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
             signif.threshold=0.01,
-            cpus = 1)
+            cpus = 1,
+            ...)
   {
     ## ----------- checks -----------
     
@@ -405,6 +411,7 @@ tune.block.splsda <-
         cl <- makePSOCKcluster(cpus)
       }
       
+      clusterSetRNGStream(cl = cl, iseed = list(...)$seed)
       on.exit(stopCluster(cl))
     }
     

@@ -112,7 +112,7 @@ auroc(object, ...)
 analysis function: "plsda", "splsda", "mint.plsda", "mint.splsda",
 "block.splsda" or "wrapper.sgccda"}
 
-\item{...}{external optional arguments for plotting - \code{line.col} for
+\item{...}{Optional arguments for plotting - \code{line.col} for
 custom colors and \code{legend.title} for custom legend title}
 
 \item{newdata}{numeric matrix of predictors, by default set to the training

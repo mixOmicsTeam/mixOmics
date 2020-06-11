@@ -334,7 +334,7 @@ plotIndiv(object, ...)
 \item{object}{object of class inherited from any \pkg{mixOmics}: \code{PLS,
 sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA}}
 
-\item{...}{external arguments or type par can be added with \code{style =
+\item{...}{Optional arguments or type par can be added with \code{style =
 'graphics'}}
 
 \item{comp}{integer vector of length two (or three to 3d). The components

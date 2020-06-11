@@ -28,7 +28,8 @@ tune.block.splsda(
   init = "svd",
   light.output = TRUE,
   signif.threshold = 0.01,
-  cpus = 1
+  cpus = 1,
+  ...
 )
 }
 \arguments{
@@ -110,7 +111,13 @@ sample for each of \code{test.keepX} and each comp is returned.}
 threshold required for improvement in error rate of the components. Default
 to 0.01.}
 
-\item{cpus}{Integer, number of cpus to use. If greater than 1, the code will
+\item{cpus}{Integer, number of cpus to use. If greater than 1, the code will}
+
+\item{...}{Optional arguments:
+\itemize{
+ \item \bold{seed} Integer. Seed number for reproducible parallel code.
+ Default is \code{NULL}.
+}
 run in parallel when repeating the cross-validation, which is usually the
 most computationally intensive process. If there is excess CPU, the
 cross-vaidation is also parallelised on *nix-based OS which support

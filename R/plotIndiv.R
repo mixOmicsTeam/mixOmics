@@ -137,7 +137,7 @@
 #' FALSE}
 #' @param background color the background by the predicted class, see
 #' \code{\link{background.predict}}
-#' @param ... external arguments or type par can be added with \code{style =
+#' @param ... Optional arguments or type par can be added with \code{style =
 #' 'graphics'}
 #' @return none
 #' @author Ignacio González, Benoit Gautier, Francois Bartolo, Florian Rohart,

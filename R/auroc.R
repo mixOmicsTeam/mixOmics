@@ -60,7 +60,7 @@
 #' mint.plsda or mint.splsda object, default to "global".
 #' @param title Character, specifies the title of the plot.
 #' @param print Logical, specifies whether the output should be printed.
-#' @param ... external optional arguments for plotting - \code{line.col} for
+#' @param ... Optional arguments for plotting - \code{line.col} for
 #' custom colors and \code{legend.title} for custom legend title
 #' @return Depending on the type of object used, a list that contains: The AUC
 #' and Wilcoxon test pvalue for each 'one vs other' classes comparison
