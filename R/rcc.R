@@ -27,11 +27,11 @@
 #' \code{\link{tune.rcc}} to choose the shrinkage parameters - which can be
 #' long and costly to compute with very large data sets. Note that both
 #' functions \code{\link{tune.rcc}} (which uses cross-validation) and the
-#' whrinkage parameters (which uses the formula from Schafer and Strimmer, see the corpcor package \code{\link{estimate.lambda}} ) may
+#' shrinkage parameters (which uses the formula from Schafer and Strimmer, see the corpcor package \code{\link{estimate.lambda}} ) may
 #' output different results.
 #' 
 #' Note: when \code{method = "shrinkage"} the parameters are estimated using \code{\link{estimate.lambda} 
-#' form the corpcor package. Data are then centered and to calculate
+#' from the corpcor package. Data are then centered to calculate
 #' the regularised variance-covariance matrices in \code{\link{rcc}}.
 #' 
 #' Missing values are handled in the function, except when using \code{method = "shrinkage"}.
