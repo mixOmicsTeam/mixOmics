@@ -60,7 +60,7 @@
 #' @param lhei,lwid arguments passed to \code{layout} to divide the device up
 #' into two rows and two columns, with the row-heights \code{lhei} and the
 #' column-widths \code{lwid}.
-#' @return none
+#' @return NULL (invisibly)
 #' @author Ignacio González, Kim-Anh Lê Cao, Florian Rohart, Al J Abadi
 #' @seealso \code{\link{cor}}, \code{\link{image}}, \code{\link{color.jet}}.
 #' @keywords multivariate dplot
@@ -213,7 +213,6 @@ imgCor <-
             if (!is.null(sideColors)) {
                 bg.col = par("bg")
                 row.sideColors = c(rep(sideColors[2], q),rep(sideColors[1], p))
-                print(length(row.sideColors))
                 col.sideColors = rev(row.sideColors)
             }
             
@@ -272,5 +271,6 @@ imgCor <-
                     title = if(title) "XY correlation matrix" else NULL,
                     row.names = X.var.names, col.names = Y.var.names)
             }
-        }	
+        }
+        return(invisible(NULL))
     }

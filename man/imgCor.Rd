@@ -69,7 +69,7 @@ into two rows and two columns, with the row-heights \code{lhei} and the
 column-widths \code{lwid}.}
 }
 \value{
-none
+NULL (invisibly)
 }
 \description{
 Display two-dimensional visualizations (image maps) of the correlation
