@@ -30,7 +30,7 @@
 #' shrinkage parameters (which uses the formula from Schafer and Strimmer, see the corpcor package \code{\link{estimate.lambda}} ) may
 #' output different results.
 #' 
-#' Note: when \code{method = "shrinkage"} the parameters are estimated using \code{\link{estimate.lambda} 
+#' Note: when \code{method = "shrinkage"} the parameters are estimated using \code{\link{estimate.lambda}} 
 #' from the corpcor package. Data are then centered to calculate
 #' the regularised variance-covariance matrices in \code{\link{rcc}}.
 #' 

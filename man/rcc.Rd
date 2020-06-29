@@ -73,16 +73,16 @@ The shrinkage estimates \code{method = "shrinkage"} can be used to bypass
 \code{\link{tune.rcc}} to choose the shrinkage parameters - which can be
 long and costly to compute with very large data sets. Note that both
 functions \code{\link{tune.rcc}} (which uses cross-validation) and the
-whrinkage parameters (which uses the formula from Schafer and Strimmer) may
+shrinkage parameters (which uses the formula from Schafer and Strimmer, see the corpcor package \code{\link{estimate.lambda}} ) may
 output different results.
 
-Note: when \code{method = "shrinkage"} the input data are centered and
-scaled for the estimation of the shrinkage parameters and the calculation of
+Note: when \code{method = "shrinkage"} the parameters are estimated using \code{\link{estimate.lambda}} 
+from the corpcor package. Data are then centered to calculate
 the regularised variance-covariance matrices in \code{\link{rcc}}.
 
-The estimation of the missing values can be performed by the reconstitution
-of the data matrix using the \code{nipals} function. Otherwise, missing
-values are handled by casewise deletion in the \code{rcc} function.
+Missing values are handled in the function, except when using \code{method = "shrinkage"}.
+In that case the estimation of the missing values can be performed by the reconstitution
+of the data matrix using the \code{nipals} function.
 }
 \examples{
 
