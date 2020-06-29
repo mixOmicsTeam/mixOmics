@@ -578,7 +578,7 @@ plotVar <-
                 stop.message('var.names', sample.X)
             
             if (sum(sapply(seq_len(length(var.names)), function(x){if(!lapply(var.names, is.logical)[[x]]){
-                if(is.null(ind.var.sel[[x]])){
+                if (length(ind.var.sel) == 0 || length(ind.var.sel[[x]])){
                     length(var.names[[x]])
                 } else {
                     length(var.names[[x]][ind.var.sel[[x]]])
@@ -595,7 +595,7 @@ plotVar <-
                     pch[(ind.group[x] + 1) : ind.group[x + 1]]
                 }
             } else {
-                if (is.null(ind.var.sel[[x]])){
+                if (length(ind.var.sel) == 0 || length(ind.var.sel[[x]])){
                     as.character(var.names[[x]])
                 } else {
                     as.character(var.names[[x]])[ind.var.sel[[x]]]
