@@ -19,7 +19,7 @@ plotLoadings(toxicity.spls, xlim = xlim)
 # --------------------------
 data(liver.toxicity)
 X = as.matrix(liver.toxicity$gene)
-Y = as.factor(liver.toxicity$treatment[, 4])
+Y = as.factor(paste0('treatment_' ,liver.toxicity$treatment[, 4]))
 
 splsda.liver = splsda(X, Y, ncomp = 2, keepX = c(20, 20))
 
@@ -58,7 +58,7 @@ name.var = name.var, size.name = 0.5,complete.name.var=TRUE, contrib = "max")
 # look at the contribution (median) for each variable
 plot.contrib = plotLoadings(splsda.liver, comp = 2, method = 'median', plot = FALSE,
 contrib = "max")
-head(plot.contrib$contrib)
+head(plot.contrib[,1:4])
 # change the title of the legend and title name
 plotLoadings(splsda.liver, comp = 2, method = 'median', legend.title = 'Time',
 title = 'Contribution plot', contrib = "max")

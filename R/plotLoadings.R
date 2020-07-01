@@ -88,7 +88,9 @@
 #' plotting several \code{block}, a matrix is expected where each row is the
 #' \code{xlim} used for each of the blocks.
 #' @param \dots not used.
-#' @return none
+#' @return Invisibly returns a \code{data.frame} containing the contribution of 
+#' features on each component. For supervised models the contributions for
+#'  each class is also specified. See details.
 #' @author Florian Rohart, Kim-Anh Lê Cao, Benoit Gautier, Al J Abadi
 #' @seealso \code{\link{pls}}, \code{\link{spls}}, \code{\link{plsda}},
 #' \code{\link{splsda}}, \code{\link{mint.pls}}, \code{\link{mint.spls}},
