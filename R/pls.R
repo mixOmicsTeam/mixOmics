@@ -91,11 +91,15 @@
 #' information.} \item{scale}{whether scaling was applied per predictor.}
 #' \item{logratio}{whether log ratio transformation for relative proportion
 #' data was applied, and if so, which type of transformation.}
-#' \item{explained_variance}{amount of variance explained per component (note
-#' that contrary to PCA, this amount may not decrease as the aim of the method
-#' is not to maximise the variance, but the covariance between data sets).}
+#' \item{explained_variance}{The amount of the variance explained by each
+#' variate / component divided by the total variance in \code{data} using the
+#' definition of 'redundancy'. Note that contrary to \code{PCA}, this
+#' amount may not decrease in the following components as the aim of the method
+#' is not to maximise the variance, but the covariance between data sets
+#' (including the dummy matrix representation of the outcome variable in case of
+#' the supervised approaches).}
 #' \item{input.X}{numeric matrix of predictors in X that was input, before any
-#' saling / logratio / multilevel transformation.} \item{mat.c}{matrix of
+#' scaling / logratio / multilevel transformation.} \item{mat.c}{matrix of
 #' coefficients from the regression of X / residual matrices X on the
 #' X-variates, to be used internally by \code{predict}.}
 #' \item{defl.matrix}{residual matrices X for each dimension.}

@@ -24,7 +24,7 @@ This function calculates the variance explained by their own variates (component
 \details{
 \code{explained_variance} calculates the variance explained by each variate / component and 
 divides by the total variance in \code{data} using the definition of 'redundancy'. This applies to 
-any component-based approach
+any component-based approaches.
 
 Variance explained by component \eqn{t_h} in \eqn{X} for dimension \eqn{h}:
 \deqn{Rd(X, t_h) = \frac{1}{p} \sum_{j = 1}^p \mbox{cor}^2(X^j, t_h)}

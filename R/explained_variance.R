@@ -9,7 +9,7 @@
 #' 
 #' \code{explained_variance} calculates the variance explained by each variate / component and 
 #' divides by the total variance in \code{data} using the definition of 'redundancy'. This applies to 
-#' any component-based approach
+#' any component-based approaches.
 #' 
 #' @param data numeric matrix of predictors
 #' @param variates variates as obtained from a \code{pls} object for instance
