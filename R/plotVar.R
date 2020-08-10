@@ -576,15 +576,18 @@ plotVar <-
         } else if (is.list(var.names)) {
             if (length(var.names) != length(cord.X))
                 stop.message('var.names', sample.X)
-            
-            if (sum(sapply(seq_len(length(var.names)), function(x){if(!lapply(var.names, is.logical)[[x]]){
-                if (length(ind.var.sel) == 0 || length(ind.var.sel[[x]])){
+            length.var.names <- sum(sapply(seq_len(length(var.names)), function(x){if (!lapply(var.names, is.logical)[[x]]){
+                if (length(ind.var.sel) == 0){
                     length(var.names[[x]])
                 } else {
                     length(var.names[[x]][ind.var.sel[[x]]])
                 }
-            } else {0}})) !=
-            sum(sapply(seq_len(length(var.names)), function(x){if(!lapply(var.names, is.logical)[[x]]){nrow(cord.X[[x]])}else {0}}))){
+            } else {0}}))
+            
+            length.cord.X.names <- sum(sapply(seq_len(length(var.names)), function(x){
+                if(!lapply(var.names, is.logical)[[x]]){nrow(cord.X[[x]])}else {0}
+            }))
+            if (length.var.names != length.cord.X.names){
                 stop.message('var.names', sample.X)
             }
             
@@ -595,7 +598,7 @@ plotVar <-
                     pch[(ind.group[x] + 1) : ind.group[x + 1]]
                 }
             } else {
-                if (length(ind.var.sel) == 0 || length(ind.var.sel[[x]])){
+                if (length(ind.var.sel) == 0){
                     as.character(var.names[[x]])
                 } else {
                     as.character(var.names[[x]])[ind.var.sel[[x]]]
