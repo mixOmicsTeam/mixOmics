@@ -289,9 +289,19 @@ internal_graphicModule <-
             {
                 p = p + theme(legend.position="none")
             } else if(group.pch == "same") {
-                p = p + guides(color = guide_legend(override.aes = list(shape =
-                                                                            if(display.names | any(class.object%in%object.mint) ) {19} else
-                                                                                unique(df$pch.legend), size = 3,stroke=point.lwd)))    +
+                if (display.names | any(class.object%in%object.mint) ) {
+                    group.shape <- 19
+                } else {
+                    group.shape <- unique(df$pch.legend)
+                }
+                
+                p = p + guides(color =
+                                   guide_legend(override.aes =
+                                                    list(
+                                                        shape = group.shape,
+                                                        size = 3,
+                                                        stroke = point.lwd
+                                                    ))) +
                     theme(legend.title=element_text(size=size.legend.title),
                           legend.text=element_text(size=size.legend)) +
                     theme(legend.position=legend.position)

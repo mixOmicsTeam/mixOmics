@@ -970,12 +970,12 @@ shape.input.plotIndiv <-
       
       
       
-      pch.legend = NULL
-      for (i in 1:nlevels(group))
-      {
-        pch.legend = c(pch.legend, df[df$group == levels(group)[i], ]$pch)
-      }
-      df$pch.legend = pch.legend
+      # pch.legend = NULL
+      # for (i in 1:nlevels(group))
+      # {
+      #   pch.legend = c(pch.legend, df[df$group == levels(group)[i], ]$pch)
+      # }
+      df$pch.legend <- df$pch
       
     } else {
       
