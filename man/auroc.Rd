@@ -112,7 +112,7 @@ auroc(object, ...)
 analysis function: "plsda", "splsda", "mint.plsda", "mint.splsda",
 "block.splsda" or "wrapper.sgccda"}
 
-\item{...}{Optional arguments for plotting - \code{line.col} for
+\item{...}{external optional arguments for plotting - \code{line.col} for
 custom colors and \code{legend.title} for custom legend title}
 
 \item{newdata}{numeric matrix of predictors, by default set to the training
@@ -155,8 +155,8 @@ performed, either per component (splsda, plsda, mint.plsda, mint.splsda), or
 per block and per component (wrapper.sgccda, block.plsda, blocksplsda).
 }
 \description{
-Calculates the AUC and plots ROC for supervised objects from s/plsda,
-mint.s/plsda and block.plsda, block.splsda or wrapper.sgccda.
+Calculates the AUC and plots ROC for supervised models from s/plsda,
+mint.s/plsda and block.plsda, block.splsda or wrapper.sgccda functions.
 }
 \details{
 For more than two classes in the categorical outcome Y, the AUC is

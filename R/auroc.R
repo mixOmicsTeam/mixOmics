@@ -1,8 +1,8 @@
 #' Area Under the Curve (AUC) and Receiver Operating Characteristic (ROC)
 #' curves for supervised classification
 #' 
-#' Calculates the AUC and plots ROC for supervised objects from s/plsda,
-#' mint.s/plsda and block.plsda, block.splsda or wrapper.sgccda.
+#' Calculates the AUC and plots ROC for supervised models from s/plsda,
+#' mint.s/plsda and block.plsda, block.splsda or wrapper.sgccda functions.
 #' 
 #' For more than two classes in the categorical outcome Y, the AUC is
 #' calculated as one class vs. the other and the ROC curves one class vs. the
@@ -60,7 +60,7 @@
 #' mint.plsda or mint.splsda object, default to "global".
 #' @param title Character, specifies the title of the plot.
 #' @param print Logical, specifies whether the output should be printed.
-#' @param ... Optional arguments for plotting - \code{line.col} for
+#' @param ... external optional arguments for plotting - \code{line.col} for
 #' custom colors and \code{legend.title} for custom legend title
 #' @return Depending on the type of object used, a list that contains: The AUC
 #' and Wilcoxon test pvalue for each 'one vs other' classes comparison
