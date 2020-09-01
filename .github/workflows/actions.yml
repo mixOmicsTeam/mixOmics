@@ -13,6 +13,7 @@ name: rcmdcheck
 jobs:
   mixOmics-ubuntu:
     runs-on: ubuntu-latest
+    timeout-minutes: 900
     container: bioconductor/bioconductor_docker:devel
     steps:
       - uses: actions/checkout@v1
