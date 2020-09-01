@@ -1,18 +1,11 @@
-on:
- push:
-    branches:
-      - master
-      - dev
- pull_request:
-    branches:
-      - master
-      - dev
+on: [push, pull_request]
 
 name: rcmdcheck
 
 jobs:
   mixOmics-ubuntu:
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'worksave')"
     timeout-minutes: 900
     container: bioconductor/bioconductor_docker:devel
     steps:
