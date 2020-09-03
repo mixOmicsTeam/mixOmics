@@ -28,7 +28,7 @@ Default set to \code{deflation}.}
 \item{fun}{the function used in approximation to neg-entropy in the FastICA
 algorithm. Default set to \code{logcosh}, see details of FastICA.}
 
-\item{scale}{a logical value indicating whether the variables should be
+\item{scale}{(Default=FALSE) Logical indicating whether the variables should be
 scaled to have unit variance before the analysis takes place. The default is
 \code{FALSE} for consistency with \code{prcomp} function, but in general
 scaling is advisable. Alternatively, a vector of length equal the number of

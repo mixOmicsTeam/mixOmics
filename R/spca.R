@@ -29,6 +29,8 @@
 #' transformation and additional offset might be needed.
 #' 
 #' @inheritParams pca
+#' @param scale (Default=TRUE) Logical indicating whether the variables should be
+#' scaled to have unit variance before the analysis takes place. 
 #' @param keepX numeric vector of length ncomp, the number of variables to keep
 #' in loading vectors. By default all variables are kept in the model. See
 #' details.

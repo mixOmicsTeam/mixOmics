@@ -20,33 +20,29 @@ spca(
 \item{X}{a numeric matrix (or data frame) which provides the data for the
 principal components analysis. It can contain missing values.}
 
-\item{ncomp}{integer, if data is complete \code{ncomp} decides the number of
+\item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
 algorithm and if the data has missing values, \code{ncomp} gives the number
 of components to keep to perform the reconstitution of the data using the
 NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
 ncol(X))}}
 
-\item{center}{a logical value indicating whether the variables should be
-shifted to be zero centered. Alternately, a vector of length equal the
+\item{center}{(Default=TRUE) Logical, whether the variables should be
+shifted to be zero centered. Alternatively, a vector of length equal the
 number of columns of \code{X} can be supplied. The value is passed to
 \code{\link{scale}}.}
 
-\item{scale}{a logical value indicating whether the variables should be
-scaled to have unit variance before the analysis takes place. The default is
-\code{FALSE} for consistency with \code{prcomp} function, but in general
-scaling is advisable. Alternatively, a vector of length equal the number of
-columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}.}
+\item{scale}{(Default=TRUE) Logical indicating whether the variables should be
+scaled to have unit variance before the analysis takes place.}
 
 \item{keepX}{numeric vector of length ncomp, the number of variables to keep
 in loading vectors. By default all variables are kept in the model. See
 details.}
 
-\item{max.iter}{integer, the maximum number of iterations in the NIPALS
+\item{max.iter}{Integer, the maximum number of iterations in the NIPALS
 algorithm.}
 
-\item{tol}{a positive real, the tolerance used in the NIPALS algorithm.}
+\item{tol}{Positive real, the tolerance used in the NIPALS algorithm.}
 
 \item{logratio}{one of ('none','CLR'). Specifies the log ratio
 transformation to deal with compositional values that may arise from
