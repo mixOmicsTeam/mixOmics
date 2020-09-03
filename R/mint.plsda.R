@@ -25,11 +25,8 @@
 #' Alternatively, missing data can be imputed prior using the \code{nipals}
 #' function.
 #' 
-#' The type of algorithm to use is specified with the \code{mode} argument.
-#' Four PLS algorithms are available: PLS regression \code{("regression")}, PLS
-#' canonical analysis \code{("canonical")}, redundancy analysis
-#' \code{("invariant")} and the classical PLS algorithm \code{("classic")} (see
-#' References and more details in \code{?pls}).
+#' The type of deflation used is \code{'regression'} for discriminant algorithms.
+#' i.e. no deflation is performed on Y.
 #' 
 #' Useful graphical outputs are available, e.g. \code{\link{plotIndiv}},
 #' \code{\link{plotLoadings}}, \code{\link{plotVar}}.
@@ -97,7 +94,6 @@
 mint.plsda <- function(X,
                        Y,
                        ncomp = 2,
-                       mode = c("regression", "canonical", "invariant", "classic"),
                        study,
                        scale = TRUE,
                        tol = 1e-06,
@@ -144,7 +140,7 @@ mint.plsda <- function(X,
         ncomp = ncomp,
         scale = scale,
         near.zero.var = near.zero.var,
-        mode = mode,
+        mode = 'regression',
         max.iter = max.iter,
         tol = tol,
         all.outputs = all.outputs

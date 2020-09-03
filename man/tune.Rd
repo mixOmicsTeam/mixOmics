@@ -16,7 +16,7 @@ tune(
   test.keepY = NULL,
   already.tested.X,
   already.tested.Y,
-  mode = "regression",
+  mode = c("regression", "canonical", "invariant", "classic"),
   nrepeat = 1,
   grid1 = seq(0.001, 1, length = 5),
   grid2 = seq(0.001, 1, length = 5),
@@ -125,7 +125,7 @@ columns of \code{X} can be supplied. The value is passed to
 sample for each of \code{test.keepX} and each comp is returned.}
 
 \item{cpus}{Integer, number of cores to use for parallel processing. 
-Currently only available for mode = "spls"}
+Currently only available for \code{method = "spls"}}
 }
 \value{
 Depending on the type of analysis performed and the input arguments,

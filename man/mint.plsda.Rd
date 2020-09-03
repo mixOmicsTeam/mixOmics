@@ -9,7 +9,6 @@ mint.plsda(
   X,
   Y,
   ncomp = 2,
-  mode = c("regression", "canonical", "invariant", "classic"),
   study,
   scale = TRUE,
   tol = 1e-06,
@@ -26,10 +25,6 @@ on the same set of predictors. \code{NA}s are allowed.}
 sample.}
 
 \item{ncomp}{Integer, the number of components to include in the model. Default to 2.}
-
-\item{mode}{Character string. What type of algorithm to use, (partially)
-matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
-or \code{"classic"}. See Details.}
 
 \item{study}{Factor, indicating the membership of each sample to each of the
 studies being combined}
@@ -91,11 +86,8 @@ disregarded during the cross product computations in the algorithm
 Alternatively, missing data can be imputed prior using the \code{nipals}
 function.
 
-The type of algorithm to use is specified with the \code{mode} argument.
-Four PLS algorithms are available: PLS regression \code{("regression")}, PLS
-canonical analysis \code{("canonical")}, redundancy analysis
-\code{("invariant")} and the classical PLS algorithm \code{("classic")} (see
-References and more details in \code{?pls}).
+The type of deflation used is \code{'regression'} for discriminant algorithms.
+i.e. no deflation is performed on Y.
 
 Useful graphical outputs are available, e.g. \code{\link{plotIndiv}},
 \code{\link{plotLoadings}}, \code{\link{plotVar}}.

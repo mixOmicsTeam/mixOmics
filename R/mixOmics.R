@@ -171,7 +171,7 @@ mixOmics <- function(X,
                      design, #block
                      tau = NULL, # rgcca, number between 0,1 or "optimal"
                      scheme, #block
-                     mode,
+                     mode = c("regression", "canonical", "invariant", "classic"), #for DA only regression
                      scale,
                      init,
                      tol =  1e-06,
@@ -179,6 +179,14 @@ mixOmics <- function(X,
                      near.zero.var = FALSE)
 
 {
+    mode <- match.arg(mode)
+    .check_regression_mode <- function(mode) {
+        if (mode != 'regression') {
+            warning("using `mode = 'regression'` for discriminant analysis\n")
+        }
+        return(NULL)
+    }
+    
     if (is.list(X) & !is.data.frame(X))# either rgcca, sgcca,sgcca-DA, mint.block, mint.block-DA
     {
         
@@ -217,7 +225,7 @@ mixOmics <- function(X,
             
             if (isfactorY)# either block.plsda/block.splsda/mint.block.plsda/mint.block.splsda
             {
-                
+                .check_regression_mode(mode)
                 if (missing(keepX))
                 {
                     if (missing(study)) #block.plsda
@@ -227,7 +235,7 @@ mixOmics <- function(X,
                         
                         message("a block Partial Least Squares - Discriminant Analysis is being performed (block.PLS-DA)")
                         res = block.plsda(X = X, Y = Y, indY = indY, ncomp = ncomp,design = design,scheme = scheme,
-                                          mode = mode,scale = scale, init = init,tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
+                                          scale = scale, init = init,tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
                         
                     } else {# mint.block.plsda
                         if (missing(scale))
@@ -235,7 +243,7 @@ mixOmics <- function(X,
                         
                         message("a mint block Partial Least Squares - Discriminant Analysis is being performed (mint.block.PLS-DA)")
                         res = mint.block.plsda(X = X, Y = Y, indY = indY,study = study, ncomp = ncomp,design = design,scheme = scheme,
-                                               mode = mode,scale = scale, init = init,tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
+                                               scale = scale, init = init,tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
                     }
                     
                     
@@ -246,8 +254,9 @@ mixOmics <- function(X,
                             scale = FALSE
                         
                         message("a block sparse Partial Least Squares - Discriminant Analysis is being performed (block.sPLS-DA)")
+                        
                         res = mint.block.splsda(X = X, Y = Y, indY = indY, ncomp = ncomp,keepX = keepX,
-                                                design = design,scheme = scheme,mode =  mode,scale = scale, init = init,tol = tol,
+                                                design = design,scheme = scheme, scale = scale, init = init,tol = tol,
                                                 max.iter = max.iter,near.zero.var = near.zero.var)
                         
                         
@@ -257,7 +266,7 @@ mixOmics <- function(X,
                         
                         message("a mint block sparse Partial Least Squares - Discriminant Analysis is being performed (mint.block.sPLS-DA)")
                         res = mint.block.splsda(X = X, Y = Y, indY = indY, ncomp = ncomp,study = study,keepX = keepX,
-                                                design = design,scheme = scheme,mode =  mode,scale = scale, init = init,tol = tol,
+                                                design = design,scheme = scheme,scale = scale, init = init,tol = tol,
                                                 max.iter = max.iter,near.zero.var = near.zero.var)
                     }
                     
@@ -368,7 +377,7 @@ mixOmics <- function(X,
         
         if (is.factor(Y))#either plsda, splsda
         {
-            
+            .check_regression_mode(mode)
             #Check.entry.pls.single(X, ncomp, keepX) # to have the warnings relative to X and Y, instead of blocks
             if (length(Y)!=nrow(X))
                 stop("unequal number of rows in 'X' and 'Y'.")
@@ -381,7 +390,7 @@ mixOmics <- function(X,
                         scale = TRUE
                     
                     message("a Partial Least Squares - Discriminant Analysis is being performed (PLS-DA)")
-                    res = mixOmics::plsda(X = X, Y = Y, ncomp = ncomp, mode = mode,
+                    res = mixOmics::plsda(X = X, Y = Y, ncomp = ncomp, 
                                           max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
                     
                 } else {# mint
@@ -389,7 +398,7 @@ mixOmics <- function(X,
                         scale = FALSE
                     
                     message("a mint Partial Least Squares - Discriminant Analysis is being performed (mint.PLS-DA)")
-                    res = mint.plsda(X = X, Y = Y, ncomp = ncomp, mode = mode, study = study,
+                    res = mint.plsda(X = X, Y = Y, ncomp = ncomp, study = study,
                                      max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
                 }
                 
@@ -401,14 +410,14 @@ mixOmics <- function(X,
                         scale = TRUE
                     
                     message("a sparse Partial Least Squares - Discriminant Analysis is being performed (sPLS-DA)")
-                    res = mixOmics::splsda(X = X, Y = Y, ncomp = ncomp, mode = mode, keepX = keepX,                     max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
+                    res = mixOmics::splsda(X = X, Y = Y, ncomp = ncomp, keepX = keepX, max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
                     
                 } else {# mint
                     if (missing(scale))
                         scale = FALSE
                     
                     message("a mint sparse Partial Least Squares - Discriminant Analysis is being performed (mint.sPLS-DA)")
-                    res = mint.splsda(X = X, Y = Y, ncomp = ncomp, mode = mode, study = study,keepX = keepX,
+                    res = mint.splsda(X = X, Y = Y, ncomp = ncomp, study = study,keepX = keepX,
                                       max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
                 }
                 

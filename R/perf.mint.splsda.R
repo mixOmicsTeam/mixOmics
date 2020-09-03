@@ -176,7 +176,7 @@ perf.mint.plsda <- function (object,
             
             object.res = mint.splsda(X.train, Y.train, study = study.learn.CV, ncomp = comp,
                                      keepX = already.tested.X,
-                                     scale = scale, mode = "regression")
+                                     scale = scale)
             
             test.predict.sw <- predict.mixo_spls(object.res, newdata = X.test, dist = dist, study.test = study.test.CV)
             prediction.comp[omit, match(levels(Y.train),levels(Y))] =  test.predict.sw$predict[, , comp]

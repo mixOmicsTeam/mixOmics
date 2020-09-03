@@ -8,18 +8,17 @@
 #' Function to perform standard Partial Least Squares regression to classify
 #' samples.
 #' 
-#' \code{plsda} function fit PLS models with \eqn{1,...,}\code{ncomp}
-#' components to the factor or class vector \code{Y}. The appropriate indicator
-#' matrix is created.
+#' \code{plsda} function fit PLS models with \eqn{1,...,}\code{ncomp} components
+#' to the factor or class vector \code{Y}. The appropriate indicator matrix is created.
 #' 
-#' logratio transform and multilevel analysis are performed sequentially as
-#' internal pre-processing step, through \code{\link{logratio.transfo}} and
-#' \code{\link{withinVariation}} respectively.
-#' 
-#' Logratio can only be applied if the data do not contain any 0 value (for
+#' Logratio transformation and multilevel analysis are
+#' performed sequentially as internal pre-processing step, through
+#' \code{\link{logratio.transfo}} and \code{\link{withinVariation}}
+#' respectively. Logratio can only be applied if the data do not contain any 0 value (for
 #' count data, we thus advise the normalise raw data with a 1 offset).
 #' 
-#' More details about the PLS modes in \code{?pls}.
+#' The type of deflation used is \code{'regression'} for discriminant algorithms.
+#' i.e. no deflation is performed on Y.
 #' 
 #' @inheritParams pls
 #' @param Y a factor or a class vector for the discrete outcome.
@@ -77,7 +76,6 @@ plsda <- function(X,
                   Y,
                   ncomp = 2,
                   scale = TRUE,
-                  mode = c("regression", "canonical", "invariant", "classic"),
                   tol = 1e-06,
                   max.iter = 100,
                   near.zero.var = FALSE,
@@ -133,7 +131,7 @@ plsda <- function(X,
         ncomp = ncomp,
         scale = scale,
         near.zero.var = near.zero.var,
-        mode = mode,
+        mode = 'regression',
         max.iter = max.iter,
         tol = tol,
         logratio = logratio,

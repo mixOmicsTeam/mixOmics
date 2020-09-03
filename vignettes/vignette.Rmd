@@ -664,8 +664,8 @@ If you were to run `splsda` with this minimal code, you would be using the follo
 
 - `ncomp = 2`: the first two PLS components are calculated and are used for graphical outputs;
 - `scale = TRUE`: data are scaled (variance = 1, strongly advised here);
-- `mode = "regression"`: by default a PLS regression mode should be used.
 
+It is important to note that all Discriminat Analyses (e.g. `plsda`, `mint.splsda` etc.) use `mode='regression'` for deflation.
 
 PLS-DA without variable selection can be performed as:
 ```{r fig.show='hide'}
@@ -1253,9 +1253,6 @@ If you were to run `block.splsda` with this minimal code, you would be using the
 
 - `ncomp = 2`: the first two PLS components are calculated and are used for graphical outputs;
 - `scale = TRUE`: data are scaled (variance = 1, strongly advised here for data integration);
-- `mode = "regression"`: by default a PLS regression mode should be used (see Section \@ref(PLS:details) for more details) .
-
-
 
 We focused here on the sparse version as would like to identify a minimal multi-omics signature, however, the non sparse version could also be run with `block.plsda`:
 

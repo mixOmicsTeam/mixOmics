@@ -83,7 +83,7 @@
 #' @param light.output if set to FALSE, the prediction/classification of each
 #' sample for each of \code{test.keepX} and each comp is returned.
 #' @param cpus Integer, number of cores to use for parallel processing. 
-#' Currently only available for mode = "spls"
+#' Currently only available for \code{method = "spls"}
 #' @return Depending on the type of analysis performed and the input arguments,
 #' a list that may contain:
 #' 
@@ -177,7 +177,7 @@ tune <-
               # all but pca, rcc
               already.tested.Y,
               #multilevel
-              mode = "regression",
+              mode = c("regression", "canonical", "invariant", "classic"),
               # multilevel
               nrepeat = 1,
               #multilevel, splsda
@@ -216,6 +216,7 @@ tune <-
     {
         choice.method = c("spls", "splsda", "mint.splsda", "rcc", "pca")
         method = match.arg(method, choice.method)
+        mode <- match.arg(mode)
         
         if (method == "mint.splsda") {
             message("Calling 'tune.mint.splsda' with Leave-One-Group-Out Cross Validation (nrepeat = 1)")

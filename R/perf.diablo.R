@@ -139,7 +139,7 @@ perf.sgccda <-
         return(list(X = X.training[[ind]], Y = Y.training[[ind]], ncomp = ncomp, 
                     keepX = keepX,
                     design = object$design, max.iter =  max.iter, tol = object$tol, init = object$init, scheme = object$scheme,
-                    mode = object$mode, near.zero.var = near.zero.var))
+                    near.zero.var = near.zero.var))
       }
       
       model = lapply(1:M, function(x) {suppressWarnings(do.call("block.splsda", block.splsda.args(x)))})

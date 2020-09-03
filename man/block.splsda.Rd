@@ -14,7 +14,6 @@ block.splsda(
   keepX,
   design,
   scheme,
-  mode,
   scale = TRUE,
   init = "svd",
   tol = 1e-06,
@@ -31,7 +30,6 @@ wrapper.sgccda(
   keepX,
   design,
   scheme,
-  mode,
   scale = TRUE,
   init = "svd",
   tol = 1e-06,
@@ -66,10 +64,6 @@ relationships to \code{Y}.}
 
 \item{scheme}{Character, one of 'horst', 'factorial' or 'centroid'. Default =
 \code{'horst'}, see reference.}
-
-\item{mode}{Character string. What type of algorithm to use, (partially)
-matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
-or \code{"classic"}. See Details.}
 
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}

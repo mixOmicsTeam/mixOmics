@@ -10,15 +10,16 @@
 #' 
 #' \code{splsda} function fits an sPLS model with \eqn{1, \ldots ,}\code{ncomp}
 #' components to the factor or class vector \code{Y}. The appropriate indicator
-#' (dummy) matrix is created. Logratio transform and multilevel analysis are
+#' (dummy) matrix is created. 
+#' 
+#' Logratio transformation and multilevel analysis are
 #' performed sequentially as internal pre-processing step, through
 #' \code{\link{logratio.transfo}} and \code{\link{withinVariation}}
-#' respectively.
-#' 
-#' Logratio can only be applied if the data do not contain any 0 value (for
+#' respectively. Logratio can only be applied if the data do not contain any 0 value (for
 #' count data, we thus advise the normalise raw data with a 1 offset).
 #' 
-#' More details about the PLS modes in \code{?pls}.
+#' The type of deflation used is \code{'regression'} for discriminant algorithms.
+#' i.e. no deflation is performed on Y.
 #' 
 #' @inheritParams plsda
 #' @inheritParams spls
@@ -71,7 +72,6 @@
 splsda <- function(X,
                    Y,
                    ncomp = 2,
-                   mode = c("regression", "canonical", "invariant", "classic"),
                    keepX,
                    scale = TRUE,
                    tol = 1e-06,
@@ -130,7 +130,7 @@ splsda <- function(X,
         ncomp = ncomp,
         scale = scale,
         near.zero.var = near.zero.var,
-        mode = mode,
+        mode = 'regression',
         keepX = keepX,
         max.iter = max.iter,
         tol = tol,

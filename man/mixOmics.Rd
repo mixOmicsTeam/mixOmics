@@ -15,7 +15,7 @@ mixOmics(
   design,
   tau = NULL,
   scheme,
-  mode,
+  mode = c("regression", "canonical", "invariant", "classic"),
   scale,
   init,
   tol = 1e-06,

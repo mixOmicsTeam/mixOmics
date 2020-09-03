@@ -137,7 +137,7 @@ LOGOCV <- function(X,
             object.res = suppressWarnings(mint.splsda(X.train, Y.train,
                                                       study = study.learn.CV, ncomp = ncomp, keepX =
                                                           c(choice.keepX, test.keepX[i]),
-                                                      scale = scale, mode = "regression", max.iter = max.iter))
+                                                      scale = scale, max.iter = max.iter))
             # suppress NA warnings from explained_variance
             
             # record selected features
