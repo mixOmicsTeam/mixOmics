@@ -27,7 +27,6 @@ algorithm.}
 }
 \value{
 The returned value is a list with components: 
-\itemize{
 \item{call}{The function call.}
 \item{eig}{vector containing the pseudo-singular values of \code{X}, of length
 \code{ncomp}.}
@@ -37,7 +36,6 @@ Note that for a complete data matrix X, the return values \code{eig},
 \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
 \item{rec}{if \code{reonst=TRUE}, matrix obtained by the reconstitution of
 the data using the \code{ncomp} components.}
-}
 }
 \description{
 This function performs NIPALS algorithm, i.e. the singular-value

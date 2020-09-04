@@ -66,7 +66,6 @@ the missing values when set to TRUE, otherwise the missing values will be ignore
 \value{
 \code{pca} returns a list with class \code{"pca"} and \code{"prcomp"}
   containing the following components: 
-  \itemize{ 
   \item{ncomp}{the number of principal components used.}
   \item{sdev}{the eigenvalues of the covariance/correlation matrix, though
   the calculation is actually done with the singular values of the data
@@ -80,7 +79,7 @@ the missing values when set to TRUE, otherwise the missing values will be ignore
   \item{variates}{same as 'x' to keep the mixOmics spirit}
   \item{center, scale}{the centering and scaling used, or \code{FALSE}.}
   \item{explained_variance}{explained variance from the multivariate model,
-  used for plotIndiv} }
+  used for plotIndiv}
 }
 \description{
 Performs a principal components analysis on the given data matrix that can

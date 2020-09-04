@@ -16,7 +16,6 @@
 #' @param reconst logical that specify if \code{nipals} must perform the
 #' reconstitution of the data using the \code{ncomp} components.
 #' @return The returned value is a list with components: 
-#' \itemize{
 #' \item{call}{The function call.}
 #' \item{eig}{vector containing the pseudo-singular values of \code{X}, of length
 #' \code{ncomp}.}
@@ -26,7 +25,6 @@
 #' \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
 #' \item{rec}{if \code{reonst=TRUE}, matrix obtained by the reconstitution of
 #' the data using the \code{ncomp} components.}
-#' }
 #' @author Sébastien Déjean, Ignacio González, Kim-Anh Le Cao, Al J Abadi
 #' @seealso \code{\link{svd}}, \code{\link{princomp}}, \code{\link{prcomp}},
 #' \code{\link{eigen}} and http://www.mixOmics.org for more details.
