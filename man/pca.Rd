@@ -14,7 +14,8 @@ pca(
   logratio = "none",
   ilr.offset = 0.001,
   V = NULL,
-  multilevel = NULL
+  multilevel = NULL,
+  reconst = TRUE
 )
 }
 \arguments{
@@ -56,6 +57,11 @@ avoid infinite value after the logratio transform.}
 
 \item{multilevel}{sample information for multilevel decomposition for
 repeated measurements.}
+
+\item{reconst}{(Default=TRUE) Logical. If matrix includes missing values, whether
+\code{nipals} must perform the reconstitution of the data using the
+\code{ncomp} components. The components are calculated by imputing
+the missing values when set to TRUE, otherwise the missing values will be ignored.}
 }
 \value{
 \code{pca} returns a list with class \code{"pca"} and

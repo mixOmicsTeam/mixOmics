@@ -59,6 +59,10 @@
 #' @param V Matrix used in the logratio transformation if provided.
 #' @param multilevel sample information for multilevel decomposition for
 #' repeated measurements.
+#' @param reconst (Default=TRUE) Logical. If matrix includes missing values, whether
+#'   \code{nipals} must perform the reconstitution of the data using the
+#'   \code{ncomp} components. The components are calculated by imputing
+#'   the missing values when set to TRUE, otherwise the missing values will be ignored.
 #' @return \code{pca} returns a list with class \code{"pca"} and
 #' \code{"prcomp"} containing the following components: \item{ncomp}{the number
 #' of principal components used.} \item{sdev}{the eigenvalues of the
@@ -100,7 +104,8 @@ pca <- function(X,
                 # one of ('none','CLR','ILR')
                 ilr.offset = 0.001,
                 V = NULL,
-                multilevel = NULL)
+                multilevel = NULL,
+                reconst = TRUE)
 {
     
     #-- checking general input parameters --------------------------------------#
@@ -254,12 +259,16 @@ pca <- function(X,
         #-- if there are missing values use NIPALS agorithm
         if (any(is.na.X))
         {
-            res = nipals(X, ncomp = ncomp, reconst = TRUE, max.iter = max.iter, tol = tol)
+            res = nipals(X, ncomp = ncomp, reconst = reconst, max.iter = max.iter, tol = tol)
             result$sdev = res$eig / sqrt(max(1, nrow(X) - 1))
             names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
             result$rotation = res$p
             dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
-            X[is.na.X] = res$rec[is.na.X]
+            if (isFALSE(reconst)) {
+                X[is.na.X] = 0
+            } else {
+                X[is.na.X] = res$rec[is.na.X]
+            }
             result$x = X %*% res$p
             dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
         } else {
