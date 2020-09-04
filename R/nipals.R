@@ -12,14 +12,9 @@
 #' This algorithm allows to realize SVD with missing data, without having to
 #' delete the rows with missing data or to estimate the missing data.
 #' 
-#' @param X real matrix or data frame whose SVD decomposition is to be
-#' computed. It can contain missing values.
-#' @param ncomp integer, the number of components to keep. If missing
-#' \code{ncomp=ncol(X)}.
+#' @inheritParams pca
 #' @param reconst logical that specify if \code{nipals} must perform the
 #' reconstitution of the data using the \code{ncomp} components.
-#' @param max.iter integer, the maximum number of iterations.
-#' @param tol a positive real, the tolerance used in the iterative algorithm.
 #' @return The returned value is a list with components: \item{eig}{vector
 #' containing the pseudosingular values of \code{X}, of length \code{ncomp}.}
 #' \item{t}{matrix whose columns contain the left singular vectors of

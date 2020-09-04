@@ -7,18 +7,23 @@
 nipals(X, ncomp = 1, reconst = FALSE, max.iter = 500, tol = 1e-09)
 }
 \arguments{
-\item{X}{real matrix or data frame whose SVD decomposition is to be
-computed. It can contain missing values.}
+\item{X}{a numeric matrix (or data frame) which provides the data for the
+principal components analysis. It can contain missing values.}
 
-\item{ncomp}{integer, the number of components to keep. If missing
-\code{ncomp=ncol(X)}.}
+\item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
+components and associated eigenvalues to display from the \code{pcasvd}
+algorithm and if the data has missing values, \code{ncomp} gives the number
+of components to keep to perform the reconstitution of the data using the
+NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
+ncol(X))}}
 
 \item{reconst}{logical that specify if \code{nipals} must perform the
 reconstitution of the data using the \code{ncomp} components.}
 
-\item{max.iter}{integer, the maximum number of iterations.}
+\item{max.iter}{Integer, the maximum number of iterations in the NIPALS
+algorithm.}
 
-\item{tol}{a positive real, the tolerance used in the iterative algorithm.}
+\item{tol}{Positive real, the tolerance used in the NIPALS algorithm.}
 }
 \value{
 The returned value is a list with components: \item{eig}{vector
