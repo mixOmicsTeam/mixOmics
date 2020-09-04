@@ -4,7 +4,7 @@
 \alias{nipals}
 \title{Non-linear Iterative Partial Least Squares (NIPALS) algorithm}
 \usage{
-nipals(X, ncomp = 1, reconst = FALSE, max.iter = 500, tol = 1e-09)
+nipals(X, ncomp = 2, reconst = FALSE, max.iter = 500, tol = 1e-06)
 }
 \arguments{
 \item{X}{a numeric matrix (or data frame) which provides the data for the

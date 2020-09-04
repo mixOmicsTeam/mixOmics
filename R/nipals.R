@@ -52,10 +52,10 @@
 #' round(X, 2)
 #' round(X.rec, 2)
 nipals <- function (X,
-                    ncomp = 1,
+                    ncomp = 2,
                     reconst = FALSE,
                     max.iter = 500,
-                    tol = 1e-09)
+                    tol = 1e-06)
 {
     #-- X matrix
     if (is.data.frame(X))
