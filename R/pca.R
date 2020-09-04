@@ -288,19 +288,12 @@ pca <- function(X,
         # if 'ILR', transform data and then back transform in clr space (from RobCompositions package)
         # data have been transformed above
         res = svd(X, nu = max(1, nrow(X) - 1))
-        if (ncomp < ncol(X))
-        {
-            result$sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))  # Note: what differs with RobCompo is that they use: cumsum(eigen(cov(X))$values)/sum(eigen(cov(X))$values)
-            # calculate loadings using back transformation to clr-space
-            result$rotation = V %*% res$v[, 1:ncomp, drop = FALSE]
-            # extract component score from the svd, multiply matrix by vector using diag, NB: this differ from our mixOmics PCA calculations
-            # NB: this differ also from Filmoser paper, but ok from their code: scores are unchanged
-            result$x = res$u[, 1:ncomp, drop = FALSE] %*% diag(res$d[1:ncomp, drop = FALSE])
-        } else {
-            result$sdev = res$d / sqrt(max(1, nrow(X) - 1))
-            result$rotation = V %*% res$v
-            result$x = res$u%*% diag(res$d)
-        }
+        result$sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))  # Note: what differs with RobCompo is that they use: cumsum(eigen(cov(X))$values)/sum(eigen(cov(X))$values)
+        # calculate loadings using back transformation to clr-space
+        result$rotation = V %*% res$v[, 1:ncomp, drop = FALSE]
+        # extract component score from the svd, multiply matrix by vector using diag, NB: this differ from our mixOmics PCA calculations
+        # NB: this differ also from Filmoser paper, but ok from their code: scores are unchanged
+        result$x = res$u[, 1:ncomp, drop = FALSE] %*% diag(res$d[1:ncomp, drop = FALSE])
     }
     
     names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
