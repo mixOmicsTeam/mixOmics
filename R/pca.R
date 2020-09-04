@@ -308,7 +308,7 @@ pca <- function(X,
     dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
     dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
     
-    result$var.tot=sum(X^2 / max(1, nrow(X) - 1))# same as all res$d, or variance after nipals replacement of the missing values
+    result$var.tot=sum(X^2) / max(1, nrow(X) - 1)# same as all res$d, or variance after nipals replacement of the missing values
     
     # to be similar to other methods, add loadings and variates as outputs
     result$loadings = list(X=result$rotation)
