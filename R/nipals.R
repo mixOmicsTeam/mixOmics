@@ -17,7 +17,8 @@
 #' reconstitution of the data using the \code{ncomp} components.
 #' @return The returned value is a list with components: 
 #' \itemize{
-#' \item{eig}{vector containing the pseudosingular values of \code{X}, of length
+#' \item{call}{The function call.}
+#' \item{eig}{vector containing the pseudo-singular values of \code{X}, of length
 #' \code{ncomp}.}
 #' \item{t}{matrix whose columns contain the left singular vectors of \code{X}.}
 #' \item{p}{matrix whose columns contain the right singular vectors of \code{X}.
@@ -179,7 +180,7 @@ nipals <- function (X,
     eig = sqrt(eig)
     t.mat = scale(t.mat, center = FALSE, scale = eig)
     attr(t.mat, "scaled:scale") = NULL
-    result = list(eig = eig, p = p, t = t.mat)
+    result = list(call = match.call(), eig = eig, p = p, t = t.mat)
     
     if (reconst)
     {

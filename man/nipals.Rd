@@ -28,7 +28,8 @@ algorithm.}
 \value{
 The returned value is a list with components: 
 \itemize{
-\item{eig}{vector containing the pseudosingular values of \code{X}, of length
+\item{call}{The function call.}
+\item{eig}{vector containing the pseudo-singular values of \code{X}, of length
 \code{ncomp}.}
 \item{t}{matrix whose columns contain the left singular vectors of \code{X}.}
 \item{p}{matrix whose columns contain the right singular vectors of \code{X}.
