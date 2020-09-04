@@ -116,9 +116,7 @@ nipals <- function (X,
     nc.ones = rep(1, nc)
     nr.ones = rep(1, nr)
     is.na.X = is.na(X)
-    na.X = FALSE
-    if (any(is.na.X)) na.X = TRUE
-    
+    na.X <- ifelse(any(is.na.X), TRUE, FALSE)
     #-- boucle sur h --#
     for (h in 1:ncomp)
     {
