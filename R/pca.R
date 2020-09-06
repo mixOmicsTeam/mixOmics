@@ -263,26 +263,36 @@ pca <- function(X,
         if (any(is.na.X))
         {
             res = nipals(X, ncomp = ncomp, reconst = reconst, max.iter = max.iter, tol = tol)
-            result$sdev = res$eig / sqrt(max(1, nrow(X) - 1))
-            names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
-            result$rotation = res$p
-            dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
             if (isFALSE(reconst)) {
                 X[is.na.X] = 0
             } else {
                 X[is.na.X] = res$rec[is.na.X]
             }
-            result$x = X %*% res$p
-            dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
+            result <-
+                .add_sdev_rotation_and_comps(
+                    result = result,
+                    X = X,
+                    ncomp = ncomp,
+                    sdev = res$eig,
+                    rotation = res$p,
+                    row_names = ind.names,
+                    col_names = X.names
+                )
         } else {
             #-- if data is complete use singular value decomposition
             
             #-- borrowed from 'prcomp' function
             res = svd(X, nu = 0)
-            
-            result$sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))
-            result$rotation = res$v[, 1:ncomp, drop = FALSE]
-            result$x = X %*% res$v[, 1:ncomp, drop = FALSE]
+            result <-
+                .add_sdev_rotation_and_comps(
+                    result = result,
+                    X = X,
+                    ncomp = ncomp,
+                    sdev = res$d,
+                    rotation = res$v,
+                    row_names = ind.names,
+                    col_names = X.names
+                )
         }
     } else {
         # if 'ILR', transform data and then back transform in clr space (from RobCompositions package)
@@ -294,12 +304,10 @@ pca <- function(X,
         # extract component score from the svd, multiply matrix by vector using diag, NB: this differ from our mixOmics PCA calculations
         # NB: this differ also from Filmoser paper, but ok from their code: scores are unchanged
         result$x = res$u[, 1:ncomp, drop = FALSE] %*% diag(res$d[1:ncomp, drop = FALSE])
+        names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
+        dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
+        dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
     }
-    
-    names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
-    dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
-    dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
-    
     result$var.tot=sum(X^2) / max(1, nrow(X) - 1)# same as all res$d, or variance after nipals replacement of the missing values
     
     # to be similar to other methods, add loadings and variates as outputs
@@ -321,6 +329,33 @@ pca <- function(X,
     return(invisible(result))
 }
 
+#' Add sdev, rotation and components to result
+#'
+#' @param result Result list. $sdev, $rotation and $x will be added to it.
+#' @param X A numeric matrix.
+#' @param ncomp Integer, number of components.
+#' @param sdev numeric vector - sqrt(eig) from different analyses
+#' @param rotation Numeric matrix of rotation from different analyses
+#' @param row_names Vector of sample names
+#' @param col_names Vector of feature names
+#' @noRd
+#' @return A modified list
+.add_sdev_rotation_and_comps <-
+    function(result,
+             X,
+             ncomp,
+             sdev,
+             rotation,
+             row_names,
+             col_names) {
+        result$sdev = sdev[seq_len(ncomp)] / sqrt(max(1, nrow(X) - 1))
+        names(result$sdev) = paste("PC", seq_along(result$sdev), sep = "")
+        result$rotation = rotation[, seq_len(ncomp), drop = FALSE]
+        dimnames(result$rotation) = list(col_names, paste("PC", seq_len(ncomp), sep = ""))
+        result$x = X %*% result$rotation
+        dimnames(result$x) = list(row_names, paste("PC", seq_len(ncol(result$x)), sep = ""))
+        result
+    }
 
 
 
