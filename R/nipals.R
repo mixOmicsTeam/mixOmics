@@ -15,16 +15,27 @@
 #' @inheritParams pca
 #' @param reconst logical that specify if \code{nipals} must perform the
 #' reconstitution of the data using the \code{ncomp} components.
-#' @return The returned value is a list with components: 
+#' @return An object of class 'mixo_nipals' contaning slots: 
 #' \item{call}{The function call.}
-#' \item{eig}{vector containing the pseudo-singular values of \code{X}, of length
+#' \item{eig}{Vector containing the pseudo-singular values of \code{X}, of length
 #' \code{ncomp}.}
-#' \item{t}{matrix whose columns contain the left singular vectors of \code{X}.}
-#' \item{p}{matrix whose columns contain the right singular vectors of \code{X}.
+#' \item{p}{Matrix whose columns contain the right singular vectors of \code{X}.}
+#' \item{t}{Matrix whose columns contain the left singular vectors of \code{X}.
 #' Note that for a complete data matrix X, the return values \code{eig},
 #' \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
-#' \item{rec}{if \code{reonst=TRUE}, matrix obtained by the reconstitution of
+#' \item{ncomp}{The number of principal components used.}
+#' \item{rec}{If \code{reonst=TRUE}, matrix obtained by the reconstitution of
 #' the data using the \code{ncomp} components.}
+#' \item{sdev}{Same as 'eig' - for mixOmics consistency.}
+#' \item{var.tot}{Total variance in the data.}
+#' \item{loadings}{ame as 'p' to keep the mixOmics spirit}
+#' \item{x}{the value of the rotated data (the centred (and scaled if
+#' requested) data multiplied by the rotation/loadings matrix), also called
+#' the principal components.}
+#' \item{variates}{Same as 'x' to keep the mixOmics spirit}
+#' \item{explained_variance}{explained variance of each component.}
+#' \item{cum.var}{The cumulative explained variance for components.}
+#'  
 #' @author Sébastien Déjean, Ignacio González, Kim-Anh Le Cao, Al J Abadi
 #' @seealso \code{\link{svd}}, \code{\link{princomp}}, \code{\link{prcomp}},
 #' \code{\link{eigen}} and http://www.mixOmics.org for more details.
@@ -110,12 +121,13 @@ nipals <- function (X,
     
     
     #-- initialisation des matrices --#
+    X.input <- X
     p = matrix(nrow = nc, ncol = ncomp)
     t.mat = matrix(nrow = nr, ncol = ncomp)
     eig = vector("numeric", length = ncomp)
     nc.ones = rep(1, nc)
     nr.ones = rep(1, nr)
-    is.na.X = is.na(X)
+    is.na.X = is.na(X.input)
     na.X <- ifelse(any(is.na.X), TRUE, FALSE)
     #-- boucle sur h --#
     for (h in 1:ncomp)
@@ -176,7 +188,7 @@ nipals <- function (X,
     eig = sqrt(eig)
     t.mat = scale(t.mat, center = FALSE, scale = eig)
     attr(t.mat, "scaled:scale") = NULL
-    result = list(call = match.call(), eig = eig, p = p, t = t.mat)
+    result = list(call = match.call(), eig = eig, p = p, t = t.mat, ncomp = ncomp)
     
     if (reconst)
     {
@@ -184,8 +196,32 @@ nipals <- function (X,
         
         colnames(X.hat) = colnames(X)
         rownames(X.hat) = rownames(X)
-        result$rec = X.hat
+        result$rec <- X.hat
     }
     
+    if (isFALSE(reconst)) { ## replace NA with 0 with messages
+        message('\nreplacing missing values with 0 for calculation',
+            'of components as `reconst=FALSE` used.')
+        if (is.null(attr(X.input, 'scaled:center'))) {
+            message('This will have implications particularly if data are not centred.',
+                    ' (we recommend the use of `center = TRUE`).\n')
+        }
+        X.input[is.na.X] <- 0
+    } else {
+        X.input[is.na.X] <- result$rec[is.na.X]
+    }
+    result <-
+        .add_sdev_rotation_and_comps(
+            result = result,
+            X = X.input,
+            ncomp = ncomp,
+            sdev = result$eig,
+            rotation = result$p,
+            row_names = ind.names,
+            col_names = X.names
+        )
+    ## add variance stats
+    result <- .add_var_stats(result)
+    class(result) <- c('pca', 'mixo_nipals')
     return(invisible(result))
 }

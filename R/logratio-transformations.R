@@ -113,6 +113,9 @@ clr.backtransfo = function(x)
 # CLR transformation
 clr.transfo = function(x, offset = 0)
 {
+    if (any(is.na(x) | x < 0)) {
+        stop('\nFor CLR transformation, data must be non-negative with no missing values\n', call. = FALSE)
+    }
     if(any(x==0) & offset ==0)
         stop("make sure you use pseudo counts before normalisation to avoid 0 values with log ratio transformation")
     

@@ -26,16 +26,26 @@ algorithm.}
 \item{tol}{Positive real, the tolerance used in the NIPALS algorithm.}
 }
 \value{
-The returned value is a list with components: 
+An object of class 'mixo_nipals' contaning slots: 
 \item{call}{The function call.}
-\item{eig}{vector containing the pseudo-singular values of \code{X}, of length
+\item{eig}{Vector containing the pseudo-singular values of \code{X}, of length
 \code{ncomp}.}
-\item{t}{matrix whose columns contain the left singular vectors of \code{X}.}
-\item{p}{matrix whose columns contain the right singular vectors of \code{X}.
+\item{p}{Matrix whose columns contain the right singular vectors of \code{X}.}
+\item{t}{Matrix whose columns contain the left singular vectors of \code{X}.
 Note that for a complete data matrix X, the return values \code{eig},
 \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
-\item{rec}{if \code{reonst=TRUE}, matrix obtained by the reconstitution of
+\item{ncomp}{The number of principal components used.}
+\item{rec}{If \code{reonst=TRUE}, matrix obtained by the reconstitution of
 the data using the \code{ncomp} components.}
+\item{sdev}{Same as 'eig' - for mixOmics consistency.}
+\item{var.tot}{Total variance in the data.}
+\item{loadings}{ame as 'p' to keep the mixOmics spirit}
+\item{x}{the value of the rotated data (the centred (and scaled if
+requested) data multiplied by the rotation/loadings matrix), also called
+the principal components.}
+\item{variates}{Same as 'x' to keep the mixOmics spirit}
+\item{explained_variance}{explained variance of each component.}
+\item{cum.var}{The cumulative explained variance for components.}
 }
 \description{
 This function performs NIPALS algorithm, i.e. the singular-value

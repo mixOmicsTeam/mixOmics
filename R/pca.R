@@ -60,25 +60,31 @@
 #' @param multilevel sample information for multilevel decomposition for
 #' repeated measurements.
 #' @param reconst (Default=TRUE) Logical. If matrix includes missing values, whether
-#'   \code{nipals} must perform the reconstitution of the data using the
-#'   \code{ncomp} components. The components are calculated by imputing
-#'   the missing values when set to TRUE, otherwise the missing values will be ignored.
+#' \code{nipals} must perform the reconstitution of the data using the
+#' \code{ncomp} components. The components are calculated by imputing
+#' the missing values when set to TRUE, otherwise the missing values will be ignored.
 #' @return \code{pca} returns a list with class \code{"pca"} and \code{"prcomp"}
-#'   containing the following components: 
-#'   \item{ncomp}{the number of principal components used.}
-#'   \item{sdev}{the eigenvalues of the covariance/correlation matrix, though
-#'   the calculation is actually done with the singular values of the data
-#'   matrix or by using NIPALS.}
-#'   \item{rotation}{the matrix of variable loadings (i.e., a matrix whose
-#'   columns contain the eigenvectors).}
-#'   \item{loadings}{same as 'rotation' to keep the mixOmics spirit}
-#'   \item{x}{the value of the rotated data (the centred (and scaled if
-#'   requested) data multiplied by the rotation/loadings matrix), also called
-#'   the principal components.}
-#'   \item{variates}{same as 'x' to keep the mixOmics spirit}
-#'   \item{center, scale}{the centering and scaling used, or \code{FALSE}.}
-#'   \item{explained_variance}{explained variance from the multivariate model,
+#' containing the following components: 
+#' \item{call}{The function call.}
+#' \item{ncomp}{The number of principal components used.}
+#' \item{center}{The centering used.}
+#' \item{scale}{The scaling used.}
+#' \item{names}{List of row and column names of data.}
+#' \item{sdev}{The eigenvalues of the covariance/correlation matrix, though
+#' the calculation is actually done with the singular values of the data
+#' matrix or by using NIPALS.}
+#' \item{rotation}{The matrix of variable loadings (i.e., a matrix whose
+#' columns contain the eigenvectors).}
+#' \item{x}{The value of the rotated data (the centred (and scaled if
+#' requested) data multiplied by the rotation/loadings matrix), also called
+#' the principal components.}
+#' \item{var.tot}{Total variance in the data.}
+#' \item{loadings}{Same as 'rotation' to keep the mixOmics spirit}
+#' \item{variates}{Same as 'x' to keep the mixOmics spirit}
+#' \item{explained_variance}{Explained variance from the multivariate model,
 #'   used for plotIndiv}
+#' \item{cum.var}{The cumulative explained variance for components.}
+#' \item{X}{The input data matrix.}
 #' @author Florian Rohart, Kim-Anh Lê Cao, Ignacio González, Al J Abadi
 #' @seealso \code{\link{nipals}}, \code{\link{prcomp}}, \code{\link{biplot}},
 #' \code{\link{plotIndiv}}, \code{\link{plotVar}} and http://www.mixOmics.org
@@ -103,8 +109,7 @@ pca <- function(X,
                 scale = FALSE,
                 max.iter = 500,
                 tol = 1e-09,
-                logratio = 'none',
-                # one of ('none','CLR','ILR')
+                logratio = c('none','CLR','ILR'),
                 ilr.offset = 0.001,
                 V = NULL,
                 multilevel = NULL,
@@ -158,14 +163,11 @@ pca <- function(X,
     #-- log.ratio
     choices = c('CLR', 'ILR', 'none')
     logratio = choices[pmatch(logratio, choices)]
-    
-    if (any(is.na(logratio)) || length(logratio) > 1)
-        stop("'logratio' should be one of 'CLR' ,'ILR'or 'none'.", call. = FALSE)
-    
+    logratio <- match.arg(logratio)
+
     if (logratio != "none" && any(X < 0))
         stop("'X' contains negative values, you can not log-transform your data"
         )
-    
     
     #-- cheking center and scale
     if (!is.logical(center))
@@ -241,46 +243,26 @@ pca <- function(X,
         stop("cannot rescale a constant/zero column to unit variance.",
              call. = FALSE)
     
-    is.na.X = is.na(X)
-    na.X = FALSE
-    if (any(is.na.X)) na.X = TRUE
-    NA.X = any(is.na.X)
-    
     cl = match.call()
     cl[[1]] = as.name('pca')
-    result = list(call = cl, X = X, ncomp = ncomp,NA.X = NA.X,
+    result = list(call = cl, X = X, ncomp = ncomp,
                   center = if (is.null(cen)) {FALSE} else {cen},
                   scale = if (is.null(sc)) {FALSE} else {sc},
                   names = list(X = X.names, sample = ind.names))
     
-    
+
     #-- pca approach -----------------------------------------------------------#
     #---------------------------------------------------------------------------#
     
-    if(logratio == 'CLR' | logratio=='none')
-    {
-        #-- if there are missing values use NIPALS agorithm
-        if (any(is.na.X))
-        {
-            res = nipals(X, ncomp = ncomp, reconst = reconst, max.iter = max.iter, tol = tol)
-            if (isFALSE(reconst)) {
-                X[is.na.X] = 0
-            } else {
-                X[is.na.X] = res$rec[is.na.X]
-            }
-            result <-
-                .add_sdev_rotation_and_comps(
-                    result = result,
-                    X = X,
-                    ncomp = ncomp,
-                    sdev = res$eig,
-                    rotation = res$p,
-                    row_names = ind.names,
-                    col_names = X.names
-                )
-        } else {
+    if (any(is.na(X))) {
+        res <- nipals(X, ncomp = ncomp, reconst = reconst, max.iter = max.iter, tol = tol)
+        res$rotation <- res$p
+        result <- c(result, res[c("ncomp", "sdev", "var.tot", "loadings", 
+                                  "variates", "rotation", "x", "explained_variance", "cum.var")])
+        rm(res)
+    } else {
+        if (logratio %in% c('CLR', 'none')) {
             #-- if data is complete use singular value decomposition
-            
             #-- borrowed from 'prcomp' function
             res = svd(X, nu = 0)
             result <-
@@ -293,38 +275,33 @@ pca <- function(X,
                     row_names = ind.names,
                     col_names = X.names
                 )
+        } else {
+            # if 'ILR', transform data and then back transform in clr space (from RobCompositions package)
+            # data have been transformed above
+            res = svd(X, nu = max(1, nrow(X) - 1))
+            result$sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))  # Note: what differs with RobCompo is that they use: cumsum(eigen(cov(X))$values)/sum(eigen(cov(X))$values)
+            # calculate loadings using back transformation to clr-space
+            result$rotation = V %*% res$v[, 1:ncomp, drop = FALSE]
+            # extract component score from the svd, multiply matrix by vector using diag, NB: this differ from our mixOmics PCA calculations
+            # NB: this differ also from Filmoser paper, but ok from their code: scores are unchanged
+            result$x = res$u[, 1:ncomp, drop = FALSE] %*% diag(res$d[1:ncomp, drop = FALSE])
+            names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
+            dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
+            dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
+            
         }
-    } else {
-        # if 'ILR', transform data and then back transform in clr space (from RobCompositions package)
-        # data have been transformed above
-        res = svd(X, nu = max(1, nrow(X) - 1))
-        result$sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))  # Note: what differs with RobCompo is that they use: cumsum(eigen(cov(X))$values)/sum(eigen(cov(X))$values)
-        # calculate loadings using back transformation to clr-space
-        result$rotation = V %*% res$v[, 1:ncomp, drop = FALSE]
-        # extract component score from the svd, multiply matrix by vector using diag, NB: this differ from our mixOmics PCA calculations
-        # NB: this differ also from Filmoser paper, but ok from their code: scores are unchanged
-        result$x = res$u[, 1:ncomp, drop = FALSE] %*% diag(res$d[1:ncomp, drop = FALSE])
-        names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
-        dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
-        dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
+        ## add variance stats
+        result <- .add_var_stats(result)
+        result$X <- X
     }
-    result$var.tot=sum(X^2) / max(1, nrow(X) - 1)# same as all res$d, or variance after nipals replacement of the missing values
-    
-    # to be similar to other methods, add loadings and variates as outputs
-    result$loadings = list(X=result$rotation)
-    result$variates = list(X=result$x)
     
     # output multilevel if needed
     if(!is.null(multilevel))
         result=c(result, list(Xw = Xw, design = multilevel))
     
-    class(result) = c("pca","prcomp")
+    class(result) = c("pca","prcomp") 
     if(!is.null(multilevel))
         class(result)=c("mlpca",class(result))
-    
-    #calcul explained variance
-    result$explained_variance = result$sdev^2 / result$var.tot
-    result$cum.var = cumsum(result$explained_variance)
     
     return(invisible(result))
 }
@@ -354,8 +331,30 @@ pca <- function(X,
         dimnames(result$rotation) = list(col_names, paste("PC", seq_len(ncomp), sep = ""))
         result$x = X %*% result$rotation
         dimnames(result$x) = list(row_names, paste("PC", seq_len(ncol(result$x)), sep = ""))
+        result$X <- X
         result
     }
 
 
+#' Add cumulative and per-component explained variance 
+#'
+#' @param result A list, output of \code{\link{.add_sdev_rotation_and_comps}}
+#'
+#' @return A list. Modifies input list by adding total variance, loadings and
+#' variates (only for consistency of mixOmics outputs), and per-component and
+#' cumulative explained variance.
+#' @noRd
+.add_var_stats <- function(result) {
+    result$var.tot=sum(result$X^2) / max(1, nrow(result$X) - 1)# same as all res$d, or variance after nipals replacement of the missing values
+    
+    # to be similar to other methods, add loadings and variates as outputs
+    result$loadings = list(X=result$rotation)
+    result$variates = list(X=result$x)
+    
+    # calculate explained variance
+    result$explained_variance = result$sdev^2 / result$var.tot
+    result$cum.var = cumsum(result$explained_variance)
+    result$X <- NULL
+    result
+}
 
