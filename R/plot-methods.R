@@ -1,7 +1,4 @@
-## ------------------------------------------------------------------------ ##
-####                               plot.pca                               ####
-## ------------------------------------------------------------------------ ##
-
+## ------------------------------- plot.pca ------------------------------- ##
 #' Show PCA output
 #' 
 #' @param x A \code{pca} object
@@ -58,10 +55,58 @@ plot.pca  <- function(x,
     
 }
 
-## ------------------------------------------------------------------------ ##
-####                               plot.rcc                               ####
-## ------------------------------------------------------------------------ ##
+## ------------------------------ plot.spca ------------------------------- ##
+#' Show sPCA output
+#' 
+#' @param x A \code{spca} object
+#' @param ncomp Integer, the number of components
+#' @param type Character, default "barplot" or any other type available in plot, as "l","b","p",..
+#' @param ... Not used
+#' @author Al J Abadi, Kim-Anh Lê Cao, Florian Rohart, Leigh Coonan
+#' @method plot spca
+#' @export
+plot.spca  <- function(x,
+                      ncomp = length(x$explained_variance),
+                      type = "barplot",
+                      # either barplot or any other type available in plot, as "l","b","p",..
+                      ...)
+{
+    #-- checking general input parameters --------------------------------------#
+    #---------------------------------------------------------------------------#
+    
+    #-- ncomp
+    ncomp_model <- length(x$explained_variance)
+    if (is.null(ncomp) || !is.numeric(ncomp) || ncomp < 1 || !is.finite(ncomp))
+        stop("invalid value for 'ncomp'.", call. = FALSE)
+    
+    ncomp = round(ncomp)
+    
+    if (ncomp > ncomp_model)
+        stop("'ncomp' must be lower or equal than ", length(ncomp_model), ".",
+             call. = FALSE)
+    
+    #-- end checking --#
+    #------------------#
+    
+    #-- scree plot -------------------------------------------------------------#
+    #---------------------------------------------------------------------------#
+    
+    expl_vars = (x$explained_variance)[seq_len(ncomp)] # relative variance
+    ylab = "Explained Variance"
+    if (type == "barplot")
+    {
+        barplot(expl_vars, names.arg = seq_len(ncomp), xlab = "Principal Components", ylab = ylab,...)
+    } else {
+        plot(expl_vars, type = type, axes = FALSE,
+             xlab = "Principal Components",
+             ylab = ylab,... )
+        axis(1, at = seq_len(ncomp))
+        axis(2)
+    }
+    
+}
 
+## ------------------------------- plot.rcc ------------------------------- ##
 #' Canonical Correlations Plot
 #' 
 #' This function provides scree plot of the canonical correlations.
@@ -115,12 +160,7 @@ plot.rcc <-
         }
     }
 
-## ------------------------------------------------------------------------ ##
-####                              plot.perf                               ####
-## ------------------------------------------------------------------------ ##
-
 ## --------------------------- plot.perf.(s)pls --------------------------- ##
-
 #' Plot for model performance
 #' 
 #' Function to plot performance criteria, such as MSEP, RMSEP, \eqn{R^2},
@@ -292,7 +332,6 @@ plot.perf.pls.mthd <-
 plot.perf.spls.mthd <- plot.perf.pls.mthd
 
 ## -------------------------- plot.perf.(s)plsda -------------------------- ##
-
 #' @rdname plot.perf
 #' @method plot perf.plsda.mthd
 #' @importFrom methods hasArg
@@ -381,7 +420,6 @@ plot.perf.plsda.mthd <-
 plot.perf.splsda.mthd <- plot.perf.plsda.mthd
 
 ## ----------------------- plot.perf.mint.(s)plsda ------------------------ ##
-
 #' @rdname plot.perf
 #' @method plot perf.mint.plsda.mthd
 #' @importFrom methods hasArg
@@ -524,7 +562,6 @@ plot.perf.mint.plsda.mthd <-
 plot.perf.mint.splsda.mthd <- plot.perf.mint.plsda.mthd
 
 ## --------------------------- plot.perf.sgccda --------------------------- ##
-
 #' @rdname plot.perf
 #' @method plot perf.sgccda.mthd 
 #' @importFrom methods hasArg
@@ -647,10 +684,6 @@ plot.perf.sgccda.mthd <-
         return(invisible())
         
     }
-
-## ------------------------------------------------------------------------ ##
-####                              plot.tune                               ####
-## ------------------------------------------------------------------------ ##
 
 ## --------------------------- plot.tune.(s)pls --------------------------- ##
 #' Plot for model performance
