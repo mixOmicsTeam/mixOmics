@@ -198,7 +198,7 @@ tune <-
               # all but pca, rcc
               near.zero.var = FALSE,
               # all but pca, rcc
-              logratio = "none",
+              logratio = c('none','CLR'),
               # all but pca, rcc
               center = TRUE,
               # pca

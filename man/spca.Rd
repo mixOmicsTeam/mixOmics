@@ -12,7 +12,7 @@ spca(
   keepX = rep(ncol(X), ncomp),
   max.iter = 500,
   tol = 1e-06,
-  logratio = "none",
+  logratio = c("none", "CLR"),
   multilevel = NULL
 )
 }

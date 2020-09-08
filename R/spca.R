@@ -60,7 +60,7 @@ spca <-
              keepX = rep(ncol(X), ncomp),
              max.iter = 500, 
              tol = 1e-06,
-             logratio = 'none',# one of ('none','CLR')
+             logratio = c('none','CLR'),
              multilevel = NULL)
     {
         
@@ -108,9 +108,7 @@ spca <-
         #-- log.ratio
         choices = c('CLR','none')
         logratio = choices[pmatch(logratio, choices)]
-        
-        if (any(is.na(logratio)) || length(logratio) > 1)
-            stop("'logratio' should be one of 'CLR'or 'none'.", call. = FALSE)
+        logratio <- match.arg(logratio)
         
         if (logratio != "none" && any(X < 0))
             stop("'X' contains negative values, you can not log-transform your data")

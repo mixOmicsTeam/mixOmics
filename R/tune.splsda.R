@@ -274,11 +274,7 @@ tune.splsda <-
         }
         
         #-- logratio
-        if (length(logratio) > 1)
-            logratio = logratio[1]
-        
-        if (!logratio %in% c("none","CLR"))
-            stop("'logratio must be one of 'none' or 'CLR'")
+        logratio <- match.arg(logratio)
         
         #if ((!is.null(already.tested.X)) && (length(already.tested.X) != (ncomp - 1)) )
         #stop("The number of already tested parameters should be NULL or ", ncomp - 1, " since you set ncomp = ", ncomp)

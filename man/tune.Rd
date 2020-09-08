@@ -27,7 +27,7 @@ tune(
   auc = FALSE,
   progressBar = FALSE,
   near.zero.var = FALSE,
-  logratio = "none",
+  logratio = c("none", "CLR"),
   center = TRUE,
   scale = TRUE,
   max.iter = 100,
