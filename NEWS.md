@@ -3,10 +3,18 @@
 ### new features / enhancements / changes
 
 * `circosPlot`: The radial location of feature names can now be cutomised using `var.adj`
+* added `plot` and `print` methods for `nipals` ouput (#87)
+* all Discriminat Analyses now run solely on `mode=regression` (#79)
+* `cim` argument change: `threshold` replaced by `cutoff`
+* `nipals` and `pca` with missng values allow skipping reconstitution of the input matrix
+* `tune.block.splsda` now allows random number seed also for parallel processing (#72).
 
 ### bug fixes
 
 * `plotIndiv`: Legend bug which misspecified the groups resolved
+* `plotIndiv`: Legends now ordered as inputted, and not alphabetically
+* `plot` method issue for `spca` resolved 
+* `plotLoadings.spca` bug with `var.names` now fixed (#81)
 
 -------------------------------------------------------------------------------
 ## version 6.12.0
