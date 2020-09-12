@@ -238,14 +238,14 @@ ipca <- function (X,
     #-- independent PCs / force orthonormality --#
     ipc = matrix(nrow = nr, ncol = ncomp)
     ipc[, 1] = X %*% S[, 1]
-    ipc[, 1] = ipc[, 1] / sqrt(crossprod(ipc[, 1]))
+    ipc[, 1] = ipc[, 1] / sqrt(c(crossprod(ipc[, 1])))
     
     if (ncomp > 1)
     {
         for (h in 2:ncomp)
         {
             ipc[, h] = lsfit(y = X %*% S[, h], ipc[, 1:(h - 1)], intercept = FALSE)$res
-            ipc[, h] = ipc[, h] / sqrt(crossprod(ipc[, h]))
+            ipc[, h] = ipc[, h] / sqrt(c(crossprod(ipc[, h])))
         }
     }
     
