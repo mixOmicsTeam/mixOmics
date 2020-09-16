@@ -6,8 +6,9 @@
 * added `plot` and `print` methods for `nipals` ouput (#87)
 * all Discriminat Analyses now run solely on `mode=regression` (#79)
 * `cim` argument change: `threshold` replaced by `cutoff`
-* `nipals` and `pca` with missng values allow skipping reconstitution of the input matrix
-* `tune.block.splsda` now allows random number seed also for parallel processing (#72).
+* `nipals` and `pca` with missing values allow skipping reconstitution of the input matrix
+* `tune.block.splsda` now allows random number seed also for parallel processing (#72)
+* New `biplot` methods for the pca family (#90)
 
 ### bug fixes
 
@@ -15,6 +16,7 @@
 * `plotIndiv`: Legends now ordered as inputted, and not alphabetically
 * `plot` method issue for `spca` resolved 
 * `plotLoadings.spca` bug with `var.names` now fixed (#81)
+* `ipca` deprecation warning fixed
 
 -------------------------------------------------------------------------------
 ## version 6.12.0
