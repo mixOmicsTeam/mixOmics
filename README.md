@@ -1,10 +1,10 @@
 
-[![](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
-[![](https://img.shields.io/badge/bioc%20release-6.12.0-green.svg)](https://www.bioconductor.org/packages/mixOmics)
+[![R build
+status](https://github.com/mixOmicsteam/mixOmics/workflows/R-CMD-check/badge.svg)](https://github.com/mixOmicsteam/mixOmics/actions)
+[![](https://img.shields.io/badge/bioc%20release-6.12.2-green.svg)](https://www.bioconductor.org/packages/mixOmics)
 [![Build
 Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
 [![](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
-[![](https://img.shields.io/badge/download-2394/month-green.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![download](http://www.bioconductor.org/shields/downloads/release/mixOmics.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
 [![license](https://img.shields.io/badge/license-GPL%20\(%3E=%202\)-lightgrey.svg)](https://choosealicense.com/)
@@ -163,6 +163,11 @@ Thank you for using `mixOmics`\!
 
 ## What’s New
 
+#### Septermber 2020
+
+  - New biplot now available for `pca` family. See the examples in [this
+    issue](https://github.com/mixOmicsTeam/mixOmics/issues/90)
+
 #### April 2020
 
   - weighted consensus plots for DIABLO objects now consider
@@ -200,8 +205,3 @@ Thank you for using `mixOmics`\!
 
   - You can now customise `auroc` plots in version 6.8.3. See example
     [here](https://github.com/mixOmicsTeam/mixOmics/issues/35)
-
-#### August 2019
-
-  - The infamous `plot.perf` bug has been fixed in version 6.8.2. See
-    example [here](https://github.com/mixOmicsTeam/mixOmics/issues/27)

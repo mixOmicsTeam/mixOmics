@@ -33,11 +33,10 @@ latest_stable_build <- "[![Build Status](https://travis-ci.org/mixOmicsTeam/mixO
 # latest_devel_build <- "[![Build Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=devel)](https://travis-ci.org/mixOmicsTeam/mixOmics)"
 ```
 
-`r badge_travis("mixOmicsTeam/mixOmics")`
+`r badge_github_actions("mixOmicsteam/mixOmics")`
 `r bioc_release_badge`
 `r latest_stable_build`
 `r badge_codecov("mixOmicsTeam/mixOmics")`
-`r badge_bioc_download("mixOmics", "month", "green")`
 `r badge_bioc_download_rank('mixOmics')`
 `r badge_last_commit("mixOmicsTeam/mixOmics")`
 [![license](`r pkg_license_badge`)](https://choosealicense.com/)

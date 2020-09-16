@@ -17,6 +17,10 @@ opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE)
 
 ## What's New
 
+#### Septermber 2020
+
+* New biplot now available for `pca` family. See the examples in [this issue](https://github.com/mixOmicsTeam/mixOmics/issues/90)
+
 #### April 2020
 
 * weighted consensus plots for DIABLO objects now consider per-component weights
@@ -105,10 +109,5 @@ perf.res$auc
 #### September 2019
 
 * You can now customise `auroc` plots in version 6.8.3. See example [here](https://github.com/mixOmicsTeam/mixOmics/issues/35)
-
-####  August 2019
-
-* The infamous `plot.perf` bug has been fixed in version 6.8.2. See example [here](https://github.com/mixOmicsTeam/mixOmics/issues/27)
-
 
 
