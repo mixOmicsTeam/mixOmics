@@ -4,7 +4,7 @@ data(multidrug)
 pca.res <- pca(multidrug$ABC.trans, ncomp = 4, scale = TRUE)
 plot(pca.res)
 print(pca.res)
-biplot(pca.res, xlabs = multidrug$cell.line$Class, cex = 0.7)
+biplot(pca.res, group = multidrug$cell.line$Class, legend.title = 'Class')
 
 # samples representation
 plotIndiv(pca.res, ind.names = multidrug$cell.line$Class,

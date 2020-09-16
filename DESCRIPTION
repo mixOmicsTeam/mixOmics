@@ -1,7 +1,7 @@
 Package: mixOmics
 Type: Package
 Title: Omics Data Integration Project
-Version: 6.13.33
+Version: 6.13.34
 Depends: R (>= 3.5.0), 
          MASS, 
          lattice, 
@@ -21,6 +21,7 @@ Imports: igraph,
          grDevices,
          graphics,
          stats,
+         ggrepel,
          utils
 Suggests: BiocStyle, 
           knitr, 

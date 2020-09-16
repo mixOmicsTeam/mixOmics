@@ -308,7 +308,7 @@ spca <-
                        variates = list(X = mat.u)
         ))
         
-        class(result) = c("spca", "prcomp", "pca")
+        class(result) = c("spca","pca", "prcomp")
         
         #calcul explained variance
         explX=explained_variance(X,result$variates$X,ncomp)
