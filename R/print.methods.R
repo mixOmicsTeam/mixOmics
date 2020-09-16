@@ -390,7 +390,7 @@ print.pca <- function(x, ...)
         cat(" plot (scree plot of explained variance)\n")
     } else {
         cat(" Other functions: \n", "-------------------- \n")
-        cat(" plotIndiv, plot, plotVar, selectVar\n")
+        cat(" plotIndiv, plot, plotVar, selectVar, biplot\n")
     }
 
 }
@@ -419,7 +419,7 @@ print.spca <-
         cat(" variable names: see object$names \n")
         cat("\n")
         cat(" Other functions: \n", "-------------------- \n")
-        cat(" selectVar, tune\n")
+        cat(" selectVar, tune, biplot\n")
         
     }
 
@@ -441,7 +441,7 @@ print.ipca <-
         
         cat(" unmixing matrix: see object$unmixing \n")
         cat(" independent principal components: see object$x \n")
-        cat(" mxing matrix: see object$mixing \n")
+        cat(" mixing matrix: see object$mixing \n")
         cat(" kurtosis: see object$kurtosis \n")
         cat(" variable names: see object$names \n")
         cat(" independent loading vectors: see object$loadings \n")
