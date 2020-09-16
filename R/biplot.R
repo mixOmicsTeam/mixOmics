@@ -39,6 +39,7 @@
 #' directed arrows or vectors.
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel
+#' @example ./examples/biplot-examples.R
 #' @name biplot
 #' @method biplot pca
 #' @export
