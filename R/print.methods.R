@@ -354,7 +354,7 @@ print.rcc <-
         cat(" variable names: see object$names \n")
     }
 
-# ------------------------ print for pca --------------------------------
+# ------------------------ print for (s)pca --------------------------------
 # #' @name print
 #' @rdname S3methods-print
 #' @export
@@ -363,65 +363,58 @@ print.pca <- function(x, ...)
     
     ind.show = min(10, x$ncomp)
     
-    cat("Eigenvalues for the first", ind.show, "principal components, see object$sdev^2:", "\n")
-    print((x$sdev[1:ind.show])^2)
-    cat("\n")
-    
+    if (is(x, 'spca'))
+    {
+        cat("sparse PCA with", x$ncomp, "principal components. \n")
+        cat("  Input data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
+        cat("  Number of selected variables on each prinicipal components:\n")
+        print(x$keepX, print.gap = 3)
+    }
+    else
+    {
+        x$sdev=as.vector(x$sdev)
+        names(x$sdev) = paste("PC", 1:length(x$sdev), sep = "")
+        cat("  Eigenvalues for the first", ind.show, "principal components, see object$sdev^2:", "\n")
+        print((x$sdev[1:ind.show])^2)
+        cat("  \n") 
+    }
+
     per.var = x$explained_variance
-    cum.var=as.vector(cumsum(per.var))
-    x$sdev=as.vector(x$sdev)
-    names(x$sdev) = paste("PC", 1:length(x$sdev), sep = "")
+    cum.var = x$cum.var
+
     names(per.var) = paste("PC", 1:length(per.var), sep = "")
     names(cum.var) = paste("PC", 1:length(cum.var), sep = "")
     
-    cat("Proportion of explained variance for the first", ind.show, "principal components, see object$explained_variance:", "\n")
-    print(per.var[1:ind.show])
-    cat("\n")
+    var.type <- ifelse(is(x, 'spca'), 'adjusted', '')
     
-    cat("Cumulative proportion explained variance for the first", ind.show, "principal components, see object$cum.var:", "\n")
-    print(cum.var[1:ind.show])
-    cat("\n")
+    cat("  Proportion of", var.type, "explained variance for the first", ind.show,
+        "principal components, see object$explained_variance:", "\n")
+    print(per.var[1:ind.show], print.gap = 6)
+    cat("  \n")
     
-    cat(" Other available components: \n", "-------------------- \n")
-    cat(" loading vectors: see object$rotation \n")
+    cat("  Cumulative proportion of", var.type, "explained variance for the first", ind.show, "principal components, see object$cum.var:", "\n")
+    print(cum.var[1:ind.show], print.gap = 6)
+    cat("  \n")
+    
+    cat("  Other available components: \n", "-------------------- \n")
+    cat("  loading vectors: see object$rotation \n")
     
     if (is(x, 'mixo_nipals')) {
-        cat(" Other functions: \n", "-------------------- \n")
-        cat(" plot (scree plot of explained variance)\n")
+        cat("  Other functions: \n", "-------------------- \n")
+        cat("  plot (scree plot of explained variance)\n")
     } else {
-        cat(" Other functions: \n", "-------------------- \n")
-        cat(" plotIndiv, plot, plotVar, selectVar, biplot\n")
+        cat("  Other functions: \n", "-------------------- \n")
+        if (is(x, 'spca'))
+        {
+            cat("  tune.spca, plotIndiv, plot, plotVar, selectVar, biplot\n")
+        }
+        else
+        {
+            cat("  plotIndiv, plot, plotVar, selectVar, biplot\n")
+        }
     }
 
 }
-
-# ------------------------ print for spca -------------------------
-# #' @name print
-#' @rdname S3methods-print
-#' @export
-print.spca <-
-    function(x, ...)
-    {
-        
-        cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-        
-        cat(" sparse pCA with", x$ncomp, "principal components. \n")
-        cat(" You entered data X of dimensions:", nrow(x$X), ncol(x$X), "\n")
-        
-        cat(" Selection of", x$keepX, "variables on each of the principal components on the X data set. \n")
-        
-        cat(" Main numerical outputs: \n",
-            "-------------------- \n")
-        
-        cat(" loading vectors: see object$rotation \n")
-        cat(" principal components: see object$x \n")
-        cat(" cumulative explained variance: see object$varX \n")
-        cat(" variable names: see object$names \n")
-        cat("\n")
-        cat(" Other functions: \n", "-------------------- \n")
-        cat(" selectVar, tune, biplot\n")
-        
-    }
 
 # ------------------------ print for ipca -------------------------
 # #' @name print

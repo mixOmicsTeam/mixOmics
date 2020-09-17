@@ -53,8 +53,6 @@
 
 \method{print}{pca}(x, ...)
 
-\method{print}{spca}(x, ...)
-
 \method{print}{ipca}(x, ...)
 
 \method{print}{sipca}(x, ...)
