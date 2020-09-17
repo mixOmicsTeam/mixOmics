@@ -38,12 +38,22 @@
 #' transformation to deal with compositional values that may arise from
 #' specific normalisation in sequencing data. Default to 'none'
 #' @return \code{spca} returns a list with class \code{"spca"} containing the
-#' following components: \item{ncomp}{the number of components to keep in the
-#' calculation.} \item{varX}{the adjusted cumulative percentage of variances
-#' explained.} \item{keepX}{the number of variables kept in each loading
-#' vector.} \item{iter}{the number of iterations needed to reach convergence
-#' for each component.} \item{rotation}{the matrix containing the sparse
-#' loading vectors.} \item{x}{the matrix containing the principal components.}
+#' following components:
+#' \describe{
+#' \item{ncomp}{the number of components to keep in the
+#' calculation.} 
+#' \item{explained_variance}{the adjusted percentage of variance
+#' explained for each component.} 
+#' \item{cum.var}{the adjusted cumulative percentage of variances
+#' explained.}
+#' \item{keepX}{the number of variables kept in each loading
+#' vector.} 
+#' \item{iter}{the number of iterations needed to reach convergence
+#' for each component.} 
+#' \item{rotation}{the matrix containing the sparse
+#' loading vectors.} 
+#' \item{x}{the matrix containing the principal components.}
+#' }
 #' @author Kim-Anh Lê Cao, Fangzhou Yao, Leigh Coonan, Ignacio Gonzalez, Al J Abadi
 #' @seealso \code{\link{pca}} and http://www.mixOmics.org for more details.
 #' @references Shen, H. and Huang, J. Z. (2008). Sparse principal component
@@ -293,12 +303,19 @@ spca <-
         cl = match.call()
         cl[[1]] = as.name('spca')
         
+        var.tot <- sum(X^2)
+        cum.var <- vect.varX/var.tot
+        ## calculate per-components explained variance from cum.var
+        explained_variance <- c(cum.var[1], diff(cum.var))
+        
+        
         result = (list(call = cl, X = X,
                        ncomp = ncomp,	
                        #sdev = sdev,  # KA: to add if biplot function (but to be fixed!)
                        #center = center, # KA: to add if biplot function (but to be fixed!)
                        #scale = scale,   # KA: to add if biplot function (but to be fixed!)
-                       varX = vect.varX/sum(X^2),
+                       explained_variance = explained_variance,
+                       cum.var = cum.var,
                        keepX = vect.keepX,
                        iter = vect.iter,
                        rotation = mat.v,
@@ -311,12 +328,6 @@ spca <-
         .eval_non.orthogonality(variates = result$variates$X, scale=scale)
         
         class(result) = c("spca","pca", "prcomp")
-        
-        #calcul explained variance
-        explX=explained_variance(X,result$variates$X,ncomp)
-        result$explained_variance=explX
-        
-        
         return(invisible(result))
     }
 

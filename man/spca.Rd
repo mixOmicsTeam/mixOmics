@@ -53,12 +53,22 @@ repeated measurements.}
 }
 \value{
 \code{spca} returns a list with class \code{"spca"} containing the
-following components: \item{ncomp}{the number of components to keep in the
-calculation.} \item{varX}{the adjusted cumulative percentage of variances
-explained.} \item{keepX}{the number of variables kept in each loading
-vector.} \item{iter}{the number of iterations needed to reach convergence
-for each component.} \item{rotation}{the matrix containing the sparse
-loading vectors.} \item{x}{the matrix containing the principal components.}
+following components:
+\describe{
+\item{ncomp}{the number of components to keep in the
+calculation.} 
+\item{explained_variance}{the adjusted percentage of variance
+explained for each component.} 
+\item{cum.var}{the adjusted cumulative percentage of variances
+explained.}
+\item{keepX}{the number of variables kept in each loading
+vector.} 
+\item{iter}{the number of iterations needed to reach convergence
+for each component.} 
+\item{rotation}{the matrix containing the sparse
+loading vectors.} 
+\item{x}{the matrix containing the principal components.}
+}
 }
 \description{
 Performs a sparse principal components analysis to perform variable
