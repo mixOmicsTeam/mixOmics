@@ -307,6 +307,8 @@ spca <-
                        loadings = list(X = mat.v),
                        variates = list(X = mat.u)
         ))
+        ## warning if components are not orthogonal
+        .eval_non.orthogonality(variates = result$variates$X, scale=scale)
         
         class(result) = c("spca","pca", "prcomp")
         
@@ -317,3 +319,58 @@ spca <-
         
         return(invisible(result))
     }
+
+#' Evaluate the non-orthogonality of spca components
+#'
+#' @param variates variates from spca model
+#' @param scale Logical
+#' @param warn_threshold Threshold for soft warning
+#' @param code_red_threshold Threshold for fail warning
+#'
+#' @return NULL, or a condition
+#' @noRd
+#'
+#' @examples
+#' \dontrun{
+#' set.seed(2718)
+#' spca.res <- spca(matrix(rnorm(1000), nrow = 20), ncomp = 5, keepX = rep(40, 5), scale = FALSE)
+#' mixOmics:::.eval_non.orthogonality(spca.res$variates$X, warn_threshold = 1e-23, scale = FALSE)
+#' }
+
+.eval_non.orthogonality <- function(variates, 
+                                    scale, 
+                                    warn_threshold = 0.01, 
+                                    code_red_threshold = 0.1)
+{
+    
+    covmat <- crossprod(variates)
+    ## get total variance
+    trace <- sum(diag(covmat))
+    ## normalise varcov matrix by trace so
+    ## the trace sums to 1
+    covmat.norm <- covmat/trace
+    ## calculate the sum of off-diag (covariances) 
+    non_orthog <- sum(abs(covmat.norm - diag(diag(covmat.norm))))
+    ## if it's more than 'threshold', throw warning. If it's way too high
+    ## warn more strongly (failure). 
+    ## make scale=TRUE recommendations if that is scale=FALSE used
+    
+    recom_scale_msg <- ifelse(
+        non_orthog >= warn_threshold & isFALSE(scale),
+        "Consider using 'scale = TRUE' ",
+        " "
+    )
+    
+    if (non_orthog >= code_red_threshold)
+    {
+        warning("The sPCA algorithm failed to extract orthogonal components. ", 
+                recom_scale_msg)
+    }
+    else if (non_orthog >= warn_threshold & non_orthog < code_red_threshold)
+    {
+        warning("The extracted components are not completely orthogonal. ", 
+                "Regard the results with care. ",
+                recom_scale_msg, "\n")
+    }
+    NULL
+}
