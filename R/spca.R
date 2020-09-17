@@ -15,7 +15,6 @@
 #' vector.
 #' 
 #' Note that \code{spca} does not apply to the data matrix with missing values.
-#' The biplot function for \code{spca} is not available.
 #' 
 #' According to Filzmoser et al., a ILR log ratio transformation is more
 #' appropriate for PCA with compositional data. Both CLR and ILR are valid.
@@ -27,6 +26,10 @@
 #' Logratio can only be applied if the data do not contain any 0 value (for
 #' count data, we thus advise the normalise raw data with a 1 offset). For ILR
 #' transformation and additional offset might be needed.
+#' 
+#' It is important to note that since the derived components are not guaranteed
+#' to be uncorrelated, adjustment is performed for the (cumulative) explained
+#' variance of each component in the output.
 #' 
 #' @inheritParams pca
 #' @param scale (Default=TRUE) Logical indicating whether the variables should be
