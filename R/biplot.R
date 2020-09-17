@@ -82,6 +82,13 @@ biplot.pca <- function(x,
     selection <- rowSums(object$loadings$X[, comp]) != 0 
     loadings <- object$loadings[[block]][selection, comp]
     loadings <- data.frame(loadings)
+    
+    ## cutoff correlation
+    cutoff <- .check.cutoff(cutoff)
+    cors <- cor(object$X, object$variates$X, use = 'pairwise' )
+    above.cutoff <- apply(cors, 1, function(x) any(abs(x) >= cutoff))
+    loadings <- loadings[above.cutoff,]
+    
     variates <- object$variates[[block]][, comp]
     variates <- data.frame(variates)
     ## scaler of var vs sample coordinates

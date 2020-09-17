@@ -243,3 +243,39 @@ pch.legend <- pch.legend & ifelse(length(pch.levels) == 1, FALSE, TRUE)
                 pch.levels = pch.levels,
                 pch.legend = pch.legend))
 }
+
+.check.cutoff <- function(cutoff = 0, 
+                          style = 'ggplot2') {
+    ncomp.vis <- ifelse(style != '3d', yes = 2, no = 3)
+    cutoff <- .change_if_null(cutoff, 0)
+    ## check that cutoff value is valid
+    ## it could be of length 2 when different cutoff for different components
+    ## are needed (useful when most of selected variables tend to contribute
+    ## to one component only so we can tailor the cutoff)
+    err <- FALSE
+    if (length(cutoff) == 1)
+    {
+        if (! (is.numeric(cutoff) | (cutoff > 1) | (cutoff < 0)) )
+        {
+            err <- TRUE   
+        } else
+        {
+            cutoff <- rep(cutoff, ncomp.vis)
+        }
+    }
+    else if (length(cutoff) == ncomp.vis)
+    {
+        if (! (all(is.numeric(cutoff) | (cutoff > 1) | (cutoff < 0)) ))
+            err <- TRUE
+    }
+    else
+    {
+        err <- TRUE
+    }
+    
+    if (isTRUE(err))
+    {
+        stop("cutoff must be a numeric of length 1 (or 'ncomp') between 0 and 1", call. = FALSE)
+    }
+    return(cutoff)
+}

@@ -3,6 +3,10 @@ pca.mtcars <- pca(mtcars, ncomp = 2, scale = TRUE)
 # seed for reproducible geom_text_repel
 set.seed(42)
 biplot(pca.mtcars)
+## correlation cutoff to filter features
+biplot(pca.mtcars, cutoff = c(0.8))
+## tailor threshold for each component
+biplot(pca.mtcars, cutoff = c(0.8, 0.6))
 
 ## cutomise ggplot in an arbitrary way
 biplot(pca.mtcars) + theme_linedraw() + 
