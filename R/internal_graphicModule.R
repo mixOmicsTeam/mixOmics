@@ -184,8 +184,10 @@ internal_graphicModule <-
                 p = p+geom_polygon(data = background,aes(x=Var1, y=Var2,
                                                          fill = col), inherit.aes = FALSE, show.legend
                                    =FALSE)
+                col.vals <- as.character(unique(background$col))
+                names(col.vals) <- col.vals
                 p = p + scale_fill_manual(values =
-                                              unique(as.character(background$col)))
+                                              col.vals)
                 
                 if(is.null(xlim))# we choose xlim that fits the points,
                     #   and not the background
