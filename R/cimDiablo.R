@@ -37,7 +37,8 @@
 #' and/or \code{colnames(mat)} are used. Possible character vectors with row
 #' and/or column labels can be used.
 #' @param size.legend size of the legend
-#' @return none
+#' @param ... Other valid arguments passed to \code{cim}.
+#' @inherit cim return
 #' @author Amrit Singh, Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{cim}}, \code{\link{heatmap}}, \code{\link{hclust}},
 #' \code{\link{plotVar}}, \code{\link{network}} and
@@ -102,7 +103,8 @@ cimDiablo = function(object,
                      transpose = FALSE,
                      row.names = TRUE,
                      col.names = TRUE,
-                     size.legend = 1.5)
+                     size.legend = 1.5,
+                     ...)
 {
     # check input object
     if (!is(object, "block.splsda"))
@@ -189,7 +191,7 @@ cimDiablo = function(object,
     opar = par()[!names(par()) %in% c("cin", "cra", "csi", "cxy", "din",
                                       "page")]
     par(mfrow = c(1, 1))
-    cim(
+    res <- cim(
         XDat,
         transpose = transpose,
         color = color,
@@ -197,7 +199,8 @@ cimDiablo = function(object,
         col.names = col.names,
         col.sideColors = color.blocks[as.numeric(VarLabels)],
         row.sideColors = color.Y[as.numeric(Y)],
-        margins = margins
+        margins = margins,
+        ...
     )
     
     if (!transpose)
@@ -231,5 +234,5 @@ cimDiablo = function(object,
     }
     par(opar)
     
-    return(invisible(XDat))
+    return(invisible(res))
 }

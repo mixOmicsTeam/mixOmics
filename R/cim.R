@@ -1752,12 +1752,12 @@ cim <-
                      object.pca) &
                 mapping == "XY")
                 res$mat.cor = object
+            par(opar)
+            
+            if (!is.null(save))
+                dev.off()
         }
         
-        par(opar)
-        
-        if (!is.null(save))
-            dev.off()
         
         return(invisible(res))
     }

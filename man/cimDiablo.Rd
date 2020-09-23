@@ -15,7 +15,8 @@ cimDiablo(
   transpose = FALSE,
   row.names = TRUE,
   col.names = TRUE,
-  size.legend = 1.5
+  size.legend = 1.5,
+  ...
 )
 }
 \arguments{
@@ -50,9 +51,20 @@ and/or \code{colnames(mat)} are used. Possible character vectors with row
 and/or column labels can be used.}
 
 \item{size.legend}{size of the legend}
+
+\item{...}{Other valid arguments passed to \code{cim}.}
 }
 \value{
-none
+A list containing the following components: \item{M}{the mapped
+matrix used by \code{cim}.} \item{rowInd, colInd}{row and column index
+permutation vectors as returned by \code{\link{order.dendrogram}}.}
+\item{ddr, ddc}{object of class \code{"dendrogram"} which describes the row
+and column trees produced by \code{cim}.} \item{mat.cor}{the correlation
+matrix used for the heatmap. Available only when mapping = "XY".}
+\item{row.names, col.names}{character vectors with row and column labels
+used.} \item{row.sideColors, col.sideColors}{character vector containing the
+color names for vertical and horizontal side bars used to annotate the rows
+and columns.}
 }
 \description{
 This function generates color-coded Clustered Image Maps (CIMs) ("heat
