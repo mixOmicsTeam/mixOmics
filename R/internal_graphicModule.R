@@ -295,8 +295,12 @@ internal_graphicModule <-
                     group.shape <- 19
                 } else {
                     group.shape <- unique(df$pch.legend)
-                    names(group.shape) <- unique(df$group)
-                    group.shape <- group.shape[sort(names(group.shape))]
+                    
+                    if (length(group.shape) > 1)
+                    {
+                        names(group.shape) <- unique(df$group)
+                        group.shape <- group.shape[sort(names(group.shape))]
+                    }
                 }
                 
                 p = p + guides(color =
