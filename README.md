@@ -21,38 +21,39 @@ and our current `GitHub` version.
 **(Mac OS Users Only:)** Ensure you have installed
 [XQuartz](https://www.xquartz.org/) first.
 
-#### Latest Bioconductor Release
-
 Make sure you have the latest R version and the latest `BiocManager`
 package installed following [these
 instructions](https://www.bioconductor.org/install/) (if you use legacy
 R versions (\<=3.5.0) refer to the instructions at the end of the
-mentioned page), you can then install `mixOmics` using the following
-code:
+mentioned page).
 
 ``` r
 ## install BiocManager if not installed
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
+## ensure the following returns TRUE, or follow guidelines
+BiocManager::valid()
+```
+
+#### Latest Bioconductor Release
+
+You can then install `mixOmics` using the following
+code:
+
+```r
 ## install mixOmics
 BiocManager::install('mixOmics')
 ```
 
-#### Stable `GitHub` Version
+#### `GitHub` Versions
 
-Install the [devtools](https://github.com/r-lib/devtools) package in R,
-then load it and install the latest stable version of `mixOmics` from
+##### Stable version
+
+Install the latest stable version (see below for latest [development](https://github.com/ajabadi/mixOmics#development-version) version) of `mixOmics` from
 `GitHub` (as bug-free as it can be):
 
 ``` r
-if (BiocManager::version() >= package_version('3.11')) 
-{
-  BiocManager::install("mixOmicsTeam/mixOmics")
-} else
-{
-  message('Please update to the latest Bioconductor (https://www.bioconductor.org/install/) ',
-          'to install the stable GitHub version')
-}
+BiocManager::install("mixOmicsTeam/mixOmics")
 ```
 
 Check after installation that the following code does not throw any
@@ -66,21 +67,14 @@ library(mixOmics)
 #> Loaded mixOmics ?.?.?
 ```
 
-##### development version
+##### Development version
 
 You can also install the [development
 version](https://github.com/mixOmicsTeam/mixOmics/blob/devel/DESCRIPTION#L4)
-for new features yet to be widely tested:
+for new features yet to be widely tested (see [What's New](/https://github.com/ajabadi/mixOmics#whats-new)):
 
 ``` r
-if (BiocManager::version() >= package_version('3.11')) 
-{
-  BiocManager::install("mixOmicsTeam/mixOmics@devel")
-} else
-{
-  message('Please update to the latest Bioconductor (https://www.bioconductor.org/install/) ',
-          'to install the development version')
-}
+BiocManager::install("mixOmicsTeam/mixOmics@devel")
 ```
 
 ## Contribution
@@ -89,7 +83,7 @@ We welcome community contributions concordant with [our code of
 conduct](https://github.com/mixOmicsTeam/mixOmics/blob/master/CODE_OF_CONDUCT.md).
 We strongly recommend adhering to [Bioconductor’s coding
 guide](https://bioconductor.org/developers/how-to/coding-style/) for
-software consistenncy.
+software consistency if you wish to contribute to `mixOmics` R codes.
 
 ### Bug reports and pull requests
 
@@ -163,7 +157,7 @@ Thank you for using `mixOmics`\!
 
 ## What’s New
 
-#### Septermber 2020
+#### September 2020
 
   - New biplot now available for `pca` family. See the examples in [this
     issue](https://github.com/mixOmicsTeam/mixOmics/issues/90)
