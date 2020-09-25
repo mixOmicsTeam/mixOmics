@@ -115,10 +115,15 @@ circosPlot <- function(object,
             stop("'color.Y' must be of length ", nlevels(object$Y))
         
     }
-    
-    if(missing(color.blocks))
+    if (missing(color.blocks))
     {
         color.blocks = brewer.pal(n = 12, name = 'Paired') #why 12?? ANS: bc max allowed n is 12 for this function
+        if (length(object$X) > 6) {
+            ## if more than 6 X, extend the palette
+            ## 2*length(object$X) because we need dark and clear cols for each block
+            color.blocks <- colorRampPalette(color.blocks)(2*length(object$X))
+        }
+        
     } else {
         if(length(color.blocks) != length(object$X))
             stop("'color.blocks' must be of length ", length(object$X))
@@ -604,8 +609,8 @@ genChr =function (expr, bandWidth = 1.0, color.blocks)
     #dark = c("brown3","darkgoldenrod","antiquewhite3","steelblue3")
     #clear = c("brown1","darkgoldenrod1","antiquewhite1","steelblue1")
     dark.clear = color.blocks#brewer.pal(n = 12, name = 'Paired')
-    dark = dark.clear[seq(2, 12, by = 2)]
-    clear = dark.clear[seq(1, 12, by = 2)]
+    dark = dark.clear[seq(2, length(dark.clear), by = 2)]
+    clear = dark.clear[seq(1, length(dark.clear), by = 2)]
     chrColScheme = data.frame(dark, clear)
     n_datasets = length(unique(expr$Dataset))
     chrColScheme = chrColScheme[c(1:n_datasets),]
