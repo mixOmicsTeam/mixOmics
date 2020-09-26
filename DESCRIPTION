@@ -28,6 +28,7 @@ Suggests: BiocStyle,
           rmarkdown, 
           testthat, 
           rgl
+Remotes: Bioconductor/BiocStyle
 Authors@R: 
     c(person("Kim-Anh", "Le Cao", role = c("aut", "cre"), email = "kimanh.lecao@unimelb.edu.au"), 
       person("Florian", "Rohart", role = "aut"), 
