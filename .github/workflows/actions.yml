@@ -131,7 +131,7 @@ jobs:
 
       - name: Test coverage
         if: (matrix.config.os == 'macOS-latest' && matrix.config.r == 'release')
-        run: covr::codecov(type = c('tests', 'examples', 'vignettes'))
+        run: covr::codecov(type = c('tests', 'examples'))
         shell: Rscript {0}
 
       - name: Notify Slack
