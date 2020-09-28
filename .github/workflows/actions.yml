@@ -84,6 +84,7 @@ jobs:
           options(repos = c(CRAN = "https://cran.r-project.org"))
           remotes::install_deps(dependencies = TRUE, repos = BiocManager::repositories(), Ncpus=2)
           remotes::install_cran("rcmdcheck")
+          remotes::install_cran("covr")
         shell: Rscript {0}
 
       - name: Session info
@@ -129,9 +130,9 @@ jobs:
           path: check
 
       - name: Test coverage
-        if: (github.repository == 'mixOmicsTeam/mixOmics') && (matrix.config.os == 'macOS-latest' && matrix.config.r == 'release')
-        run: |
-          Rscript  -e "install.packages('covr')" -e "covr::codecov(type = c('tests', 'examples', 'vignettes'))"
+        if: (matrix.config.os == 'macOS-latest' && matrix.config.r == 'release')
+        run: covr::codecov(type = c('tests', 'examples', 'vignettes'))
+        shell: Rscript {0}
 
       - name: Notify Slack
         uses: 8398a7/action-slack@v3
