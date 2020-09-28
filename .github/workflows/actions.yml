@@ -83,7 +83,7 @@ jobs:
         run: |
           options(repos = c(CRAN = "https://cran.r-project.org"))
           remotes::install_deps(dependencies = TRUE, repos = BiocManager::repositories(), Ncpus=2)
-          remotes::install_cran("rcmdcheck", Ncpus=2)
+          remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
       - name: Session info
