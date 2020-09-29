@@ -21,8 +21,8 @@ jobs:
       matrix:
         config:
           # - { os: windows-latest, r: 'release', bioc: 'devel'}
-          - { os: macOS-latest, r: 'release', bioc: 'devel'}
-          # - { os: ubuntu-latest, r: 'release', image: 'bioconductor/bioconductor_docker:devel'}
+          # - { os: macOS-latest, r: 'release', bioc: 'devel'}
+          - { os: ubuntu-latest, r: 'release', image: 'bioconductor/bioconductor_docker:devel'}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -39,10 +39,6 @@ jobs:
         if: matrix.config.image == null
         with:
           r-version: ${{ matrix.config.r }}
-
-      - name: Set up pandoc
-        uses: r-lib/actions/setup-pandoc@master
-        if: matrix.config.image == null
 
       - name: Install remotes
         run: |
@@ -102,7 +98,7 @@ jobs:
         if: github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics'
         env:
           _R_CHECK_CRAN_INCOMING_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check/asCRAN")
         shell: Rscript {0}
       - name: BiocCheck
         run: |
@@ -130,7 +126,7 @@ jobs:
           path: check
 
       - name: Test coverage
-        if: (matrix.config.os == 'macOS-latest' && matrix.config.r == 'release')
+        if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
         run: covr::codecov(type = c('tests', 'examples'))
         shell: Rscript {0}
 
@@ -140,4 +136,4 @@ jobs:
           status: ${{ job.status }}
           fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # set in rep's setting >> secrets
