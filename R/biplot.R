@@ -85,14 +85,14 @@ biplot.pca <- function(x,
     
     ## cutoff correlation
     cutoff <- .check.cutoff(cutoff)
-    cors <- cor(object$X, object$variates$X, use = 'pairwise' )
+    cors <- cor(object$X[, selection], object$variates$X[, comp], use = 'pairwise' )
     above.cutoff <- apply(cors, 1, function(x) any(abs(x) >= cutoff))
     loadings <- loadings[above.cutoff,]
     
     variates <- object$variates[[block]][, comp]
     variates <- data.frame(variates)
     ## scaler of var vs sample coordinates
-    scaler <- max(variates)/max(loadings)
+    scaler <- max(variates, na.rm = TRUE)/max(loadings, na.rm = TRUE)
     
     PCs <- colnames(variates)
     expl_vars <- round(object$explained_variance*100)[comp]
