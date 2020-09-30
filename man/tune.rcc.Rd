@@ -4,7 +4,7 @@
 \alias{tune.rcc}
 \title{Estimate the parameters of regularization for Regularized CCA}
 \usage{
-tune.rcc(
+\method{tune}{rcc}(
   X,
   Y,
   grid1 = seq(0.001, 1, length = 5),

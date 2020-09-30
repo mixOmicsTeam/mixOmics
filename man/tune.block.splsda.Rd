@@ -5,7 +5,7 @@
 \title{Tuning function for block.splsda method (N-integration with sparse
 Discriminant Analysis)}
 \usage{
-tune.block.splsda(
+\method{tune}{block.splsda}(
   X,
   Y,
   indY,

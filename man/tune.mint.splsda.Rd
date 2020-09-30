@@ -4,7 +4,7 @@
 \alias{tune.mint.splsda}
 \title{Estimate the parameters of mint.splsda method}
 \usage{
-tune.mint.splsda(
+\method{tune}{mint.splsda}(
   X,
   Y,
   ncomp = 1,

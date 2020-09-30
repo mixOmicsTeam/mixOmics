@@ -4,7 +4,7 @@
 \alias{tune.splslevel}
 \title{Tuning functions for multilevel sPLS method}
 \usage{
-tune.splslevel(
+\method{tune}{splslevel}(
   X,
   Y,
   multilevel,

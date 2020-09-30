@@ -4,7 +4,7 @@
 \alias{tune.pca}
 \title{Tune the number of principal components in PCA}
 \usage{
-tune.pca(
+\method{tune}{pca}(
   X,
   ncomp = NULL,
   center = TRUE,
