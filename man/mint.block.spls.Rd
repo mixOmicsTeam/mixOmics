@@ -29,7 +29,7 @@ Data in the list should be arranged in samples x variables, with samples
 order matching in all data sets.}
 
 \item{Y}{Matrix or vector response for a multivariate regression framework.
-Data should be continuous variables (see \code{?mint.block.plsda} for
+Data should be continuous variables (see \code{?mint.block.splsda} for
 supervised classification and factor response).}
 
 \item{indY}{To be supplied if Y is missing, indicates the position of the

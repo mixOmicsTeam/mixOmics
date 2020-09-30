@@ -33,16 +33,17 @@ tune.block.splsda(
 )
 }
 \arguments{
-\item{X}{numeric matrix of predictors. \code{NA}s are allowed.}
+\item{X}{A named list of data sets (called 'blocks') measured on the same 
+samples. Data in the list should be arranged in matrices, samples x variables, 
+with samples order matching in all data sets.}
 
-\item{Y}{Either a factor or a class vector for the discrete outcome, or a
-numeric vector or matrix of continuous responses (for multi-response
-models).}
+\item{Y}{a factor or a class vector for the discrete outcome.}
 
 \item{indY}{To supply if \code{Y} is missing, indicates the position of 
 the matrix response in the list \code{X}.}
 
-\item{ncomp}{the number of components to include in the model.}
+\item{ncomp}{the number of components to include in the model. Default to 2.
+Applies to all blocks.}
 
 \item{test.keepX}{A named list with the same length and names as X 
 (without the outcome Y, if it is provided in X and designated using 
@@ -73,13 +74,14 @@ the Weighted vote.}
 \item{progressBar}{by default set to \code{TRUE} to output the progress bar
 of the computation.}
 
-\item{tol}{Numeric, convergence tolerance criteria.}
+\item{tol}{Numeric, convergence stopping value.}
 
 \item{max.iter}{Integer, the maximum number of iterations.}
 
-\item{near.zero.var}{boolean, see the internal \code{\link{nearZeroVar}}
+\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
-values). Default value is FALSE}
+values). Setting this argument to FALSE (when appropriate) will speed up the
+computations. Default value is FALSE.}
 
 \item{nrepeat}{Number of times the Cross-Validation process is repeated.}
 
@@ -93,12 +95,8 @@ relationships to \code{Y}.}
 \item{scheme}{Either "horst", "factorial" or "centroid". Default =
 \code{centroid}, see reference.}
 
-\item{scale}{a logical value indicating whether the variables should be
-scaled to have unit variance before the analysis takes place. The default is
-\code{FALSE} for consistency with \code{prcomp} function, but in general
-scaling is advisable. Alternatively, a vector of length equal the number of
-columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}.}
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
+means and unit variances (default: TRUE)}
 
 \item{init}{Mode of initialization use in the algorithm, either by Singular
 Value Decomposition of the product of each block of X with Y ('svd') or each

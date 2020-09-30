@@ -33,7 +33,7 @@
 #' Data in the list should be arranged in samples x variables, with samples
 #' order matching in all data sets.
 #' @param Y Matrix or vector response for a multivariate regression framework.
-#' Data should be continuous variables (see \code{?mint.block.plsda} for
+#' Data should be continuous variables (see \code{?mint.block.splsda} for
 #' supervised classification and factor response).
 #' @param indY To be supplied if Y is missing, indicates the position of the
 #' matrix / vector response in the list \code{X}

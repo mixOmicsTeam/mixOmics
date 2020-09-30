@@ -33,8 +33,8 @@
 #' class, weighted by the number of samples in each class. BER is less biased
 #' towards majority classes during the performance assessment.
 #' 
-#' @inheritParams tune
 #' @inheritParams block.splsda
+#' @inheritParams tune
 #' @param test.keepX A named list with the same length and names as X 
 #' (without the outcome Y, if it is provided in X and designated using 
 #' \code{indY}).  Each entry of this list is a numeric vector for the different 
