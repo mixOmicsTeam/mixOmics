@@ -71,20 +71,16 @@ loading vectors.}
 }
 }
 \description{
-Performs a sparse principal components analysis to perform variable
-selection by using singular value decomposition.
+Performs a sparse principal component analysis for variable
+selection using singular value decomposition and lasso penalisation on the loading vectors.
 }
 \details{
-The calculation employs singular value decomposition of the (centered and
-scaled) data matrix and LASSO to generate sparsity on the loading vectors.
-
 \code{scale= TRUE} is highly recommended as it will help obtaining
 orthogonal sparse loading vectors.
 
-\code{keepX} is the number of variables to keep in loading vectors. The
-difference between number of columns of \code{X} and \code{keepX} is the
-degree of sparsity, which refers to the number of zeros in each loading
-vector.
+\code{keepX} is the number of variables to select in each loading vector. 
+\code{keepX} refers to the number of variables with non zero coefficient in 
+each loading vector.
 
 Note that \code{spca} does not apply to the data matrix with missing values.
 
@@ -99,9 +95,14 @@ Logratio can only be applied if the data do not contain any 0 value (for
 count data, we thus advise the normalise raw data with a 1 offset). For ILR
 transformation and additional offset might be needed.
 
-It is important to note that since the derived components are not guaranteed
-to be uncorrelated, adjustment is performed for the (cumulative) explained
-variance of each component in the output.
+The principal components are not guaranteed to be orthogonal in sPCA. 
+We adopt the approach of Shen and Huang 2008 (Section 2.3) to estimate 
+the explained variance  in the case where the sparse loading vectors 
+(and principal components) are not orthogonal. The data are projected 
+onto the space spanned by the first loading vectors and the variance 
+explained is then adjusted for potential correlation between PCs. 
+Note that in practice, the loading vectors tend to be orthogonal if the
+data are centered and scaled in sPCA.
 }
 \examples{
 data(liver.toxicity)

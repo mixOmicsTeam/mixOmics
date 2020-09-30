@@ -1,18 +1,15 @@
 #' Sparse Principal Components Analysis
 #' 
-#' Performs a sparse principal components analysis to perform variable
-#' selection by using singular value decomposition.
+#' Performs a sparse principal component analysis for variable
+#' selection using singular value decomposition and lasso penalisation on the loading vectors.
 #' 
-#' The calculation employs singular value decomposition of the (centered and
-#' scaled) data matrix and LASSO to generate sparsity on the loading vectors.
 #' 
 #' \code{scale= TRUE} is highly recommended as it will help obtaining
 #' orthogonal sparse loading vectors.
 #' 
-#' \code{keepX} is the number of variables to keep in loading vectors. The
-#' difference between number of columns of \code{X} and \code{keepX} is the
-#' degree of sparsity, which refers to the number of zeros in each loading
-#' vector.
+#' \code{keepX} is the number of variables to select in each loading vector. 
+#' \code{keepX} refers to the number of variables with non zero coefficient in 
+#' each loading vector.
 #' 
 #' Note that \code{spca} does not apply to the data matrix with missing values.
 #' 
@@ -27,9 +24,14 @@
 #' count data, we thus advise the normalise raw data with a 1 offset). For ILR
 #' transformation and additional offset might be needed.
 #' 
-#' It is important to note that since the derived components are not guaranteed
-#' to be uncorrelated, adjustment is performed for the (cumulative) explained
-#' variance of each component in the output.
+#' The principal components are not guaranteed to be orthogonal in sPCA. 
+#' We adopt the approach of Shen and Huang 2008 (Section 2.3) to estimate 
+#' the explained variance  in the case where the sparse loading vectors 
+#' (and principal components) are not orthogonal. The data are projected 
+#' onto the space spanned by the first loading vectors and the variance 
+#' explained is then adjusted for potential correlation between PCs. 
+#' Note that in practice, the loading vectors tend to be orthogonal if the
+#' data are centered and scaled in sPCA.
 #' 
 #' @inheritParams pca
 #' @param scale (Default=TRUE) Logical indicating whether the variables should be
@@ -291,7 +293,8 @@ spca <-
             mat.v[,h] = loadings
             mat.u[,h] = u
             
-            #--calculating adjusted variances explained--#
+            #--calculating the variance explained by projecting the data onto the space spanned by the h loading vectors--#
+            # this is in case the loading vectors are not orthogonal (see Shen and Huang 2008 Section 2.3)
             X.var = X %*% mat.v[,1:h]%*%solve(t(mat.v[,1:h])%*%mat.v[,1:h])%*%t(mat.v[,1:h])
             vect.varX[h] = sum(X.var^2)
             
@@ -308,7 +311,8 @@ spca <-
         
         var.tot <- sum(X^2)
         cum.var <- vect.varX/var.tot
-        ## calculate per-components explained variance from cum.var
+        ## calculate per-component explained variance from cum.var,
+        # the variance is adjusted to account for potential correlation between PCs:                
         explained_variance <- c(cum.var[1], diff(cum.var))
         
         
