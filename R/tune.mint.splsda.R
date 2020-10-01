@@ -56,7 +56,7 @@
 #' performance of the model.
 #' @param progressBar by default set to \code{TRUE} to output the progress bar
 #' of the computation.
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
+#' @param scale Boolean. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
 #' @param tol Convergence stopping value.
 #' @param max.iter integer, the maximum number of iterations.

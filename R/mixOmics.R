@@ -61,7 +61,7 @@
 #' @param mode character string. What type of algorithm to use, (partially)
 #' matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 #' or \code{"classic"}. See Details.
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
+#' @param scale Boolean. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
 #' @param init Mode of initialization use in the algorithm, either by Singular
 #' Value Decompostion of the product of each block of X with Y ("svd") or each

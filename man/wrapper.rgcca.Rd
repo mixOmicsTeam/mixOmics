@@ -45,7 +45,7 @@ number of X[[i]]-variables kept in the model.}
 
 \item{scheme}{Either "horst", "factorial" or "centroid" (Default: "horst").}
 
-\item{scale}{boleean. If scale = TRUE, each block is standardized to zero
+\item{scale}{Boolean. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
 \item{init}{Mode of initialization use in the algorithm, either by Singular

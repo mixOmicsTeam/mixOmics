@@ -30,7 +30,7 @@
 #' Default to 2
 #' @param study factor indicating the membership of each sample to each of the
 #' studies being combined
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
+#' @param scale Boolean. If scale = TRUE, each block is standardized to zero
 #' means and unit variances. Default = \code{TRUE}.
 #' @param tol Convergence stopping value.
 #' @param max.iter integer, the maximum number of iterations.

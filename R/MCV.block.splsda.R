@@ -57,7 +57,7 @@
 #   (should be set to TRUE in particular for data with many zero values).
 # progressBar: show progress,
 # cl: if parallel, the clusters
-# scale: boleean. If scale = TRUE, each block is standardized to zero means and
+# scale: Boolean. If scale = TRUE, each block is standardized to zero means and
 #   unit variances (default: TRUE).
 # misdata: optional. any missing values in the data? list,
 #   misdata[[q]] for each data set
