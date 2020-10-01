@@ -1,3 +1,17 @@
+#' Tune number of selected variables for spca
+#'
+#' @inheritParams spca
+#' @inheritParams tune.splsda
+#'
+#' @return A \code{tune.spca} object containing: \describe{
+#' \item{call}{ The function call}
+#' \item{choice.keepX}{The selected number of components on each component}
+#' \item{cor.comp}{The correlations between the components from the cross-validated 
+#' studies and those from the study which used all of the data in training.}
+#' }
+#' @export
+#'
+#' @example ./examples/tune.spca-examples.R
 tune.spca <- function(X, ncomp, nrepeat=1, kfold, test.keepX, center = TRUE, scale = TRUE) {
     ## optimal keepX for all components
     keepX.opt <- NULL
