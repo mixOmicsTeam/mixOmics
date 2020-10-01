@@ -34,9 +34,11 @@
 #' data are centered and scaled in sPCA.
 #' 
 #' @inheritParams pca
+#' @param X a numeric matrix (or data frame) which provides the data for the sparse
+#' principal components analysis. It should not contain missing values.
 #' @param scale (Default=TRUE) Logical indicating whether the variables should be
 #' scaled to have unit variance before the analysis takes place. 
-#' @param keepX numeric vector of length ncomp, the number of variables to keep
+#' @param keepX numeric vector of length \code{ncomp}, the number of variables to keep
 #' in loading vectors. By default all variables are kept in the model. See
 #' details.
 #' @param logratio one of ('none','CLR'). Specifies the log ratio

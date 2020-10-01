@@ -814,7 +814,6 @@ print.perf.sgccda.mthd = function(x, ...)
 }
 
 
-# tune: "spls", "splsda", "mint.splsda", "rcc", "pca"
 #' @name print
 #' @rdname S3methods-print
 #' @export

@@ -17,8 +17,8 @@ spca(
 )
 }
 \arguments{
-\item{X}{a numeric matrix (or data frame) which provides the data for the
-principal components analysis. It can contain missing values.}
+\item{X}{a numeric matrix (or data frame) which provides the data for the sparse
+principal components analysis. It should not contain missing values.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
@@ -35,7 +35,7 @@ number of columns of \code{X} can be supplied. The value is passed to
 \item{scale}{(Default=TRUE) Logical indicating whether the variables should be
 scaled to have unit variance before the analysis takes place.}
 
-\item{keepX}{numeric vector of length ncomp, the number of variables to keep
+\item{keepX}{numeric vector of length \code{ncomp}, the number of variables to keep
 in loading vectors. By default all variables are kept in the model. See
 details.}
 
