@@ -6,8 +6,8 @@
 \usage{
 tune.spca(
   X,
-  ncomp,
-  nrepeat = 3L,
+  ncomp = 2,
+  nrepeat = 3,
   folds,
   test.keepX,
   center = TRUE,

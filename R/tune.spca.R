@@ -12,12 +12,13 @@
 #' @export
 #'
 #' @example ./examples/tune.spca-examples.R
-tune.spca <- function(X, ncomp, nrepeat=3L, folds, test.keepX, center = TRUE, scale = TRUE) {
+tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, scale = TRUE) {
     
     if (nrepeat < 3)
     {
         stop("'nrepeat' must be >= 3")
     }
+
     ## optimal keepX for all components
     keepX.opt <- NULL
     ## a data.frame to store correlations for each keepX at each repeat
@@ -108,9 +109,11 @@ tune.spca <- function(X, ncomp, nrepeat=3L, folds, test.keepX, center = TRUE, sc
         out[which(out$keepX == opt),]$opt.keepX <- TRUE
         return(out)
     }, SIMPLIFY = FALSE)
-    mc <- match.call()
-    ## evaluate all but X and function
-    mc[-c(1,2)] <- lapply( mc[-c(1,2)], eval)
+
+    # evaluate all for output except X to save memory
+    mc <- mget(names(formals())[-1], sys.frame(sys.nframe()))
+    mc <- as.call(c(as.list(match.call())[1:2], mc))
+    
     result <- list(
         call = mc,
         choice.keepX = choice.keepX,
