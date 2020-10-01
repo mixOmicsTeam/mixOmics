@@ -28,24 +28,10 @@
 #' internal pre-processing step, through \code{\link{logratio.transfo}} and
 #' \code{\link{withinVariation}} respectively.
 #' 
-#' @param X a numeric matrix (or data frame) which provides the data for the
-#' principal components analysis. It can contain missing values.
 #' @param ncomp integer, the number of components to initially analyse in
 #' \code{tune.pca} to choose a final \code{ncomp} for \code{pca}. If
 #' \code{NULL}, function sets \code{ncomp = min(nrow(X), ncol(X))}
-#' @param center a logical value indicating whether the variables should be
-#' shifted to be zero centered. Alternately, a vector of length equal the
-#' number of columns of \code{X} can be supplied. The value is passed to
-#' \code{\link{scale}}.
-#' @param scale a logical value indicating whether the variables should be
-#' scaled to have unit variance before the analysis takes place. The default is
-#' \code{FALSE} for consistency with \code{prcomp} function, but in general
-#' scaling is advisable. Alternatively, a vector of length equal the number of
-#' columns of \code{X} can be supplied. The value is passed to
-#' \code{\link{scale}}.
-#' @param max.iter integer, the maximum number of iterations for the NIPALS
-#' algorithm.
-#' @param tol a positive real, the tolerance used for the NIPALS algorithm.
+#' @inheritParams tune
 #' @param logratio one of ('none','CLR','ILR'). Default to 'none'
 #' @param V Matrix used in the logratio transformation id provided.
 #' @param multilevel Design matrix for multilevel analysis (for repeated
@@ -60,7 +46,7 @@
 #' by the sequential accumulation of principal components is calculated using
 #' the sum of the proportion of explained variance}
 #' @author Ignacio González, Leigh Coonan, Kim-Anh Le Cao, Fangzhou Yao, 
-#' Florian Rohart, AL J Abadi
+#' Florian Rohart, Al J Abadi
 #' @seealso \code{\link{nipals}}, \code{\link{biplot}},
 #' \code{\link{plotIndiv}}, \code{\link{plotVar}} and http://www.mixOmics.org
 #' for more details.
@@ -74,7 +60,7 @@ tune.pca <-
     function(X,
              ncomp = NULL,
              center = TRUE, 	# sets the mean of the data to zero, ensures that the first PC describes the direction of the maximum variance
-             scale = FALSE, 	# variance is unit accross different units
+             scale = FALSE, 	# variance is unit across different units
              max.iter = 500,
              tol = 1e-09,
              logratio = c('none','CLR','ILR'),
@@ -93,7 +79,7 @@ tune.pca <-
         na.X = FALSE
         if (any(is.na.X)) na.X = TRUE
         
-        #  list eigenvalues, prop. of explained varience and cumulative proportion of explained variance
+        #  list eigenvalues, prop. of explained variance and cumulative proportion of explained variance
         prop.var = result$explained_variance
         cum.var = result$cum.var
         
