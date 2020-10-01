@@ -5,6 +5,7 @@
 \alias{plot.tune.spls}
 \alias{plot.tune.splsda}
 \alias{plot.tune.block.splsda}
+\alias{plot.tune.spca}
 \title{Plot for model performance}
 \usage{
 \method{plot}{tune.spls}(x, optimal = TRUE, sd = TRUE, col, ...)
@@ -12,26 +13,33 @@
 \method{plot}{tune.splsda}(x, optimal = TRUE, sd = TRUE, col, ...)
 
 \method{plot}{tune.block.splsda}(x, sd = TRUE, col, ...)
+
+\method{plot}{tune.spca}(x, optimal = TRUE, sd = TRUE, col = NULL, ...)
 }
 \arguments{
 \item{x}{an \code{tune.splsda} object.}
 
 \item{optimal}{If TRUE, highlights the optimal keepX per component}
 
-\item{sd}{If 'nrepeat' was used in the call to 'tune.splsda', error bar
-shows the standard deviation if sd=TRUE}
+\item{sd}{If \code{nrepeat>2} was used in the call to \code{tune.spca}, error bar
+shows the standard deviation if \code{sd=TRUE}.}
 
-\item{col}{character (or symbol) color to be used, possibly vector. One
-color per component.}
+\item{col}{character (or symbol) colour to be used, possibly vector. One
+colour per component.}
 
 \item{\dots}{Further arguments sent to \code{\link{xyplot}} function.}
 }
 \value{
 none
+
+None
 }
 \description{
 Function to plot performance criteria, such as classification error rate or
 balanced error rate on a tune.splsda result.
+
+Function to plot the correlation of cross-validated components from
+the \code{tune.spca} function with respect to the full model.
 }
 \details{
 \code{plot.tune.splsda} plots the classification error rate or the balanced
@@ -57,10 +65,8 @@ test.keepX = c(5, 10, 15), folds = 10, dist = "max.dist",
 progressBar = TRUE)
 
 
-plot(out)
-plot(out, sd=FALSE)
-
-
+plot(out, sd=TRUE)
+}
 \dontrun{
 ## validation for objects of class 'mint.splsda'
 
@@ -112,9 +118,13 @@ plot(tune)
 \code{\link{tune.mint.splsda}}, \code{\link{tune.splsda}}
 \code{\link{tune.block.splsda}} and http://www.mixOmics.org for more
 details.
+
+\code{\link{spca}}, \code{\link{tune.pca}}
 }
 \author{
 Kim-Anh Lê Cao, Florian Rohart, Francois Bartolo, AL J Abadi
+
+Kim-Anh Lê Cao, Al J Abadi
 }
 \keyword{hplot}
 \keyword{multivariate}

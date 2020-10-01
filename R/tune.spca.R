@@ -12,7 +12,12 @@
 #' @export
 #'
 #' @example ./examples/tune.spca-examples.R
-tune.spca <- function(X, ncomp, nrepeat=1, kfold, test.keepX, center = TRUE, scale = TRUE) {
+tune.spca <- function(X, ncomp, nrepeat=3L, folds, test.keepX, center = TRUE, scale = TRUE) {
+    
+    if (nrepeat < 3)
+    {
+        stop("'nrepeat' must be >= 3")
+    }
     ## optimal keepX for all components
     keepX.opt <- NULL
     ## a data.frame to store correlations for each keepX at each repeat
@@ -33,13 +38,13 @@ tune.spca <- function(X, ncomp, nrepeat=1, kfold, test.keepX, center = TRUE, sca
             ## ------ repeated cv
             for (j in seq_len(nrepeat)) {
                 if (nrow(X) > 30) {
-                    folds = split(sample(seq_len(nrow(X))),seq_len(kfold))
+                    repeat.j.folds = split(sample(seq_len(nrow(X))),seq_len(folds))
                 } else {
                     message("\n Low sample size. Using bootstrapped CV.")
-                    folds = lapply(seq_len(kfold), function(i) sample(seq_len(nrow(X)), size = ceiling(30/kfold), replace = TRUE))
+                    repeat.j.folds = lapply(seq_len(folds), function(i) sample(seq_len(nrow(X)), size = ceiling(30/folds), replace = TRUE))
                 }
                ## ------ mean cor for CV
-                cor.pred = sapply(folds, function(test.fold.inds){
+                cor.pred = sapply(repeat.j.folds, function(test.fold.inds){
                     ## split data to train/test
                     X.train = X[-test.fold.inds,]
                     X.test = X[test.fold.inds,]
@@ -87,21 +92,29 @@ tune.spca <- function(X, ncomp, nrepeat=1, kfold, test.keepX, center = TRUE, sca
         } # end keepX loop
         ## use a one-sided t.test using repeat correlations to assess if addition of keepX improved the correlation
         ## and get the index of optimum keepX
-        keepX.opt.comp.ind <-  t.test.process(t(cor.df.list[[ncomp]]), alpha = 0.05, alternative = 'less')
-        keepX.opt.comp <- test.keepX[keepX.opt.comp.ind]
-        ## update keepX.optimum for next comp
-        keepX.opt <- c(keepX.opt, keepX.opt.comp)
+            t.test.df <- data.frame(t(cor.df.list[[ncomp]]))
+            keepX.opt.comp.ind <-  t.test.process(t.test.df, alpha = 0.1, alternative = 'less')
+            keepX.opt.comp <- test.keepX[keepX.opt.comp.ind]
+            ## update keepX.optimum for next comp
+            keepX.opt <- c(keepX.opt, keepX.opt.comp)
     }
     choice.keepX <- keepX.opt
     names(choice.keepX) <- paste0('comp', seq_len(ncomp))
     
-    cor.comp = lapply(cor.df.list, function(df){
-        return(data.frame(cor.mean = apply(df, 1, mean), cor.sd = apply(df, 1, sd)))
-    })
+    ## get the mean and sd values
+    cor.comp = mapply(df=cor.df.list, opt = choice.keepX, FUN = function(df, opt){
+        out <- data.frame(keepX = test.keepX, cor.mean = apply(df, 1, mean), cor.sd = apply(df, 1, sd))
+        out$opt.keepX <- NA
+        out[which(out$keepX == opt),]$opt.keepX <- TRUE
+        return(out)
+    }, SIMPLIFY = FALSE)
+    mc <- match.call()
+    ## evaluate all but X and function
+    mc[-c(1,2)] <- lapply( mc[-c(1,2)], eval)
     result <- list(
-        call = match.call(),
+        call = mc,
         choice.keepX = choice.keepX,
         cor.comp = cor.comp)
     class(result) <- 'tune.spca'
-    result
+    return(result)
 }

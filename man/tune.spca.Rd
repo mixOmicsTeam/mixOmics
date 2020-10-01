@@ -4,7 +4,7 @@
 \alias{tune.spca}
 \title{Tune number of selected variables for spca}
 \usage{
-\method{tune}{spca}(X, ncomp, nrepeat = 1, kfold, test.keepX, center = TRUE, scale = TRUE)
+\method{tune}{spca}(X, ncomp, nrepeat = 3L, folds, test.keepX, center = TRUE, scale = TRUE)
 }
 \arguments{
 \item{X}{a numeric matrix (or data frame) which provides the data for the sparse
@@ -18,6 +18,8 @@ NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
 ncol(X))}}
 
 \item{nrepeat}{Number of times the Cross-Validation process is repeated.}
+
+\item{folds}{the folds in the Mfold cross-validation. See Details.}
 
 \item{test.keepX}{numeric vector for the different number of variables to
 test from the \eqn{X} data set}
@@ -43,6 +45,8 @@ Tune number of selected variables for spca
 }
 \examples{
 data(multidrug)
-tune.spca_res <- tune.spca(X = multidrug$ABC.trans, ncomp = 2, nrepeat = 3, kfold = 3, test.keepX = seq(5,35,5))
-tune.spca_res
+set.seed(42)
+tune.spca.res <- tune.spca(X = multidrug$ABC.trans, ncomp = 2, nrepeat = 5, folds = 3, test.keepX = seq(5,15,5))
+tune.spca.res
+plot(tune.spca.res)
 }

@@ -10,10 +10,8 @@ test.keepX = c(5, 10, 15), folds = 10, dist = "max.dist",
 progressBar = TRUE)
 
 
-plot(out)
-plot(out, sd=FALSE)
-
-
+plot(out, sd=TRUE)
+}
 \dontrun{
 ## validation for objects of class 'mint.splsda'
 

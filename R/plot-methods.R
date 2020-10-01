@@ -938,3 +938,93 @@ plot.tune.block.splsda =
         
         
     }
+
+## --------------------------- plot.tune.spca --------------------------- ##
+#' Plot for tune.spca model performance
+#' 
+#' Function to plot the correlation of cross-validated components from
+#' the \code{tune.spca} function with respect to the full model.
+#' 
+#' 
+#' @param x an \code{tune.splsda} object.
+#' @param optimal If TRUE, highlights the optimal keepX per component
+#' @param sd If \code{nrepeat>2} was used in the call to \code{tune.spca}, error bar
+#' shows the standard deviation if \code{sd=TRUE}.
+#' @param col character (or symbol) colour to be used, possibly vector. One
+#' colour per component.
+#' @param \dots Further arguments sent to \code{\link{xyplot}} function.
+#' @return None
+#' @author Kim-Anh Lê Cao, Al J Abadi
+#' @seealso \code{\link{spca}}, \code{\link{tune.pca}}
+#' @keywords regression multivariate hplot
+#' @name plot.tune
+#' @method plot tune.spca
+#' @export
+plot.tune.spca <-
+    function(x, optimal = TRUE, sd = TRUE, col=NULL, ...)
+    {
+        ncomp <- length(x$cor.comp)
+        nrepeat <- x$call$nrepeat
+        
+        if (nrepeat <= 2 & isTRUE(sd))
+        {
+            cat("nrepeat < 2 so no SD can be calculated.",
+                "setting sd to FALSE")
+            sd <- FALSE
+        }
+        
+        cors <- mapply(z=x$cor.comp, w=seq_len(ncomp), FUN = function(z, w){
+            z$comp = w
+            rownames(z) <- NULL
+            if (nrepeat > 2)
+            {
+                z$corQ1 = z$cor.mean - z$cor.sd
+                z$corQ3 = z$cor.mean + z$cor.sd
+            }
+            z
+        }, SIMPLIFY = FALSE)
+        cors <- Reduce(rbind, cors)
+        if (any(cors$corQ1 < -1 | cors$corQ3 > 1))
+        { #TODO truncated distribution assumption needed?
+            message("The interquartile ranges for correlations ",
+                    "contain values outside valid range [-1, 1]. Consider larger 'nrepeat'.")
+        }
+        
+        cors$comp <- factor(cors$comp)
+        
+        if (is.null(col))
+        {
+            col <- color.mixo(seq_len(ncomp))
+        }
+        names(col) <- seq_len(ncomp)
+        p <- ggplot(cors, aes_string('keepX', 'cor.mean', col = 'comp')) +
+            theme_minimal() +
+            geom_line() +
+            geom_point() +
+            scale_x_log10() +
+            ylim(c(min(cors$corQ1, 0), max(cors$corQ3, 0))) +
+            labs(x= 'Number of features selected',
+                 y = 'Correlation of components',
+                 col = 'Comp') +
+            scale_color_manual(values = col)
+        
+        p <- p +  geom_point(data=cors[!is.na(cors$opt.keepX),], 
+                             aes_string('keepX', 'cor.mean', col = 'comp'), 
+                             size=6, shape = 18, show.legend = FALSE)
+        
+        ## ----- error bars
+        if (isTRUE(sd))
+        {
+            p <- p + geom_errorbar(aes_string(ymin = 'corQ1', ymax = 'corQ3'), 
+                                   position = position_dodge(0.02),
+                                   width = 0.04,
+                                   ...)
+            ## suppress "position_dodge requires non-overlapping x intervals"
+            suppressWarnings(print(p))
+            return(invisible(p))
+        } else
+        {
+            return(p)
+        }
+        
+    }
