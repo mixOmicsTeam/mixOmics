@@ -822,6 +822,20 @@ print.tune.pca = function(x, ...)
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" for all principal components, see object$sdev, object$explained_variance and object$cum.var\n")
 }
+
+#' @name print
+#' @rdname S3methods-print
+#' @export
+print.tune.spca = function(x, ...)
+{
+    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+    cat(" Optimal keepX for each component, see object$choice.keepX \n\n")
+    cat(" Visualisation functions: \n", "-------------------- \n")
+    cat(" plot \n")
+    
+    
+}
+
 #' @name print
 #' @rdname S3methods-print
 #' @export
