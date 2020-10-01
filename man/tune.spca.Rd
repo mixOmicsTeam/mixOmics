@@ -4,7 +4,15 @@
 \alias{tune.spca}
 \title{Tune number of selected variables for spca}
 \usage{
-\method{tune}{spca}(X, ncomp, nrepeat = 3L, folds, test.keepX, center = TRUE, scale = TRUE)
+tune.spca(
+  X,
+  ncomp,
+  nrepeat = 3L,
+  folds,
+  test.keepX,
+  center = TRUE,
+  scale = TRUE
+)
 }
 \arguments{
 \item{X}{a numeric matrix (or data frame) which provides the data for the sparse

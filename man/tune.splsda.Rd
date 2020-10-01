@@ -4,7 +4,7 @@
 \alias{tune.splsda}
 \title{Tuning functions for sPLS-DA method}
 \usage{
-\method{tune}{splsda}(
+tune.splsda(
   X,
   Y,
   ncomp = 1,

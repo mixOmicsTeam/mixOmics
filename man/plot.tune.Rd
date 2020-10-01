@@ -113,7 +113,6 @@ tune$choice.keepX
 plot(tune)
 }
 }
-}
 \seealso{
 \code{\link{tune.mint.splsda}}, \code{\link{tune.splsda}}
 \code{\link{tune.block.splsda}} and http://www.mixOmics.org for more

@@ -4,7 +4,7 @@
 \alias{tune.spls}
 \title{Tuning functions for sPLS method}
 \usage{
-\method{tune}{spls}(
+tune.spls(
   X,
   Y,
   ncomp = 1,

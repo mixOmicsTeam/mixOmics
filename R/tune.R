@@ -2,17 +2,6 @@
 # tun: chose the optimal number of parameters per component on a "method"
 # ========================================================================================================
 
-#' Tune methods for mixOmics models
-#'
-#' @param ... Arguments passed to methods.
-#'
-#' @noRd
-#'
-tune <- function(X, ...) {
-    UseMethod('tune')
-}
-
-
 #' Generic function to choose the parameters in the different methods in
 #' mixOmics
 #' 
@@ -171,10 +160,11 @@ tune <- function(X, ...) {
 #' @keywords regression multivariate
 #' @export
 #' @example ./examples/tune-examples.R
-'tune.default' <-
-    function (X,
+tune <-
+    function (method,
+              # choice of "spls", "splsda", "mint.splsda", "rcc", "pca"
+              X,
               Y,
-              method = c("spls", "splsda", "mint.splsda", "rcc", "pca"), # TODO add spca
               multilevel = NULL,
               ncomp,
               study,
