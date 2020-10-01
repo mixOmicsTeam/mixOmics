@@ -1,10 +1,10 @@
-tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale = TRUE) {
+tune.spca <- function(X, ncomp, nrepeat=1, kfold, test.keepX, center = TRUE, scale = TRUE) {
     ## optimal keepX for all components
     keepX.opt <- NULL
     ## a data.frame to store correlations for each keepX at each repeat
-    cor.df <- data.frame(matrix(ncol = nrepeat, nrow = length(grid.keepX), 
+    cor.df <- data.frame(matrix(ncol = nrepeat, nrow = length(test.keepX), 
                                 dimnames = list(
-                                    paste0('keepX_', grid.keepX),
+                                    paste0('keepX_', test.keepX),
                                     paste0('repeat_', seq_len(nrepeat)))))
     ## a list of cor.df for each component
     cor.df.list <- .name_list(char = paste0('comp', seq_len(ncomp)))
@@ -12,8 +12,8 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale
     
     ## ------ component loop
     for(ncomp in seq_len(ncomp)) {
-        for (keepX_i in seq_along(grid.keepX)) {
-            keepX.value <- grid.keepX[keepX_i]
+        for (keepX_i in seq_along(test.keepX)) {
+            keepX.value <- test.keepX[keepX_i]
             cat('KeepX = ', keepX.value, '\n')  # to remove in the final function
             
             ## ------ repeated cv
@@ -74,7 +74,7 @@ tune.spca <- function(X, ncomp, nrepeat, kfold, grid.keepX, center = TRUE, scale
         ## use a one-sided t.test using repeat correlations to assess if addition of keepX improved the correlation
         ## and get the index of optimum keepX
         keepX.opt.comp.ind <-  t.test.process(t(cor.df.list[[ncomp]]), alpha = 0.05, alternative = 'less')
-        keepX.opt.comp <- grid.keepX[keepX.opt.comp.ind]
+        keepX.opt.comp <- test.keepX[keepX.opt.comp.ind]
         ## update keepX.optimum for next comp
         keepX.opt <- c(keepX.opt, keepX.opt.comp)
     }
