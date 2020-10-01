@@ -23,6 +23,7 @@ Imports: igraph,
          graphics,
          stats,
          ggrepel,
+         BiocParallel,
          utils
 Suggests: BiocStyle, 
           knitr, 

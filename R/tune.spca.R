@@ -2,7 +2,7 @@
 #'
 #' @inheritParams spca
 #' @inheritParams tune.splsda
-#'
+#' @importFrom BiocParallel SerialParam bplapply
 #' @return A \code{tune.spca} object containing: \describe{
 #' \item{call}{ The function call}
 #' \item{choice.keepX}{The selected number of components on each component}
