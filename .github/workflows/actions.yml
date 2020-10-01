@@ -10,7 +10,7 @@ name: R-CMD-check
 
 jobs:
   R-CMD-check:
-    if: (github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (github.event_name != 'schedule' && !contains(github.event.head_commit.message, 'worksave'))
+    if: (github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (github.event_name != 'schedule' && !contains(github.event.head_commit.message, 'worksave') && !contains(github.event.head_commit.message, 'skip-ci'))
     runs-on: ${{ matrix.config.os }}
     container: ${{ matrix.config.image }}
 
