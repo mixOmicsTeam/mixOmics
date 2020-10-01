@@ -84,7 +84,10 @@ tune.spca <- function(X, ncomp, nrepeat=1, kfold, test.keepX, center = TRUE, sca
     cor.comp = lapply(cor.df.list, function(df){
         return(data.frame(cor.mean = apply(df, 1, mean), cor.sd = apply(df, 1, sd)))
     })
-    result <- list(choice.keepX = choice.keepX,
-                   cor.comp = cor.comp)
+    result <- list(
+        call = match.call(),
+        choice.keepX = choice.keepX,
+        cor.comp = cor.comp)
+    class(result) <- 'tune.spca'
     result
 }
