@@ -55,14 +55,27 @@ A \code{tune.spca} object containing: \describe{
   the data in training.} }
 }
 \description{
-Tune number of selected variables for spca
+This function performs sparse pca and optimises the number of variables to
+keep on each component using repeated cross-validation.
+}
+\details{
+Essentially, for the first component, and for a grid of the number of
+variables to select (\code{keepX}), a number of repeats and folds, data are
+split to train and test and the extracted components are compared against
+those from a spca model with all the data to ascertain the optimal
+\code{keepX}.
+
+The number of selected variables for the following components will then be
+sequentially optimised. If the number of observations are less than 30,
+bootstrapped CV is used. Currently, no adjustment is performed on the
+correlations derived using the bootstrap scheme.
 }
 \examples{
-data(multidrug)
+data("nutrimouse")
 set.seed(42)
 nrepeat <- 5
 tune.spca.res <- tune.spca(
-    X = multidrug$ABC.trans,
+    X = nutrimouse$lipid,
     ncomp = 2,
     nrepeat = nrepeat,
     folds = 3,
@@ -76,7 +89,7 @@ plot(tune.spca.res)
 nrepeat <- 20
 BPPARAM <- BiocParallel::MulticoreParam(workers = parallel::detectCores()-1)
 tune.spca.res <- tune.spca(
-    X = multidrug$ABC.trans,
+    X = nutrimouse$lipid,
     ncomp = 2,
     nrepeat = nrepeat,
     folds = 3,

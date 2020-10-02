@@ -1,5 +1,18 @@
 #' Tune number of selected variables for spca
 #'
+#' This function performs sparse pca and optimises the number of variables to
+#' keep on each component using repeated cross-validation.
+#'
+#' Essentially, for the first component, and for a grid of the number of
+#' variables to select (\code{keepX}), a number of repeats and folds, data are
+#' split to train and test and the extracted components are compared against
+#' those from a spca model with all the data to ascertain the optimal
+#' \code{keepX}.
+#'
+#' The number of selected variables for the following components will then be
+#' sequentially optimised. If the number of observations are less than 30,
+#' bootstrapped CV is used. Currently, no adjustment is performed on the
+#' correlations derived using the bootstrap scheme.
 #' @inheritParams spca
 #' @inheritParams tune.splsda
 #' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
@@ -19,6 +32,11 @@
 tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, scale = TRUE, 
                       BPPARAM = SerialParam())
 {
+    X <- as.matrix(X)
+    if (any(is.na(X)) || any(!is.numeric(X)))
+    {
+        stop("'X' must be a numeric matrix without missing values.")
+    }
     if (nrepeat < 3)
     {
         stop("'nrepeat' must be >= 3")
@@ -30,9 +48,8 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
     # cor.df.list <- lapply(cor.df.list, function(x) cor.df)
     
     if (nrow(X) < 30) {
-        cat("\n Low sample size. Using Leave-One-Out CV without repeat")
-        nrepeat <- 1
-        folds <- nrow(X)
+        # TODO correlations need to be adjusted using bootsrtap
+        cat("\n Low sample size. Using boostrapped CV\n")
     }
     all.keepX <- test.keepX
     names(all.keepX) <- paste0('keepX_', all.keepX)
@@ -41,7 +58,17 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
         iter_keepX <- function(keepX.value) {
             ## ------ repeated cv
             repeat_cv_j <- function(j) {
-                repeat.j.folds = split(sample(seq_len(nrow(X))),seq_len(folds))
+                if (nrow(X) < 30) {
+                    out <- seq_len(folds)
+                    names(out) <- out
+                    repeat.j.folds <- lapply(out, function(w){
+                        sample(seq_len(nrow(X)), size = nrow(X), replace = TRUE)
+                    })
+                }
+                else
+                {
+                    repeat.j.folds <- suppressWarnings(split(sample(seq_len(nrow(X))),seq_len(folds)))
+                }
                 ## ------ mean cor for CV
                 cor.pred = sapply(repeat.j.folds, function(test.fold.inds){
                     ## split data to train/test

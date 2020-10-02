@@ -1,8 +1,8 @@
-data(multidrug)
+data("nutrimouse")
 set.seed(42)
 nrepeat <- 5
 tune.spca.res <- tune.spca(
-    X = multidrug$ABC.trans,
+    X = nutrimouse$lipid,
     ncomp = 2,
     nrepeat = nrepeat,
     folds = 3,
@@ -16,7 +16,7 @@ plot(tune.spca.res)
 nrepeat <- 20
 BPPARAM <- BiocParallel::MulticoreParam(workers = parallel::detectCores()-1)
 tune.spca.res <- tune.spca(
-    X = multidrug$ABC.trans,
+    X = nutrimouse$lipid,
     ncomp = 2,
     nrepeat = nrepeat,
     folds = 3,
