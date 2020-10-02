@@ -2,17 +2,18 @@
 #'
 #' @inheritParams spca
 #' @inheritParams tune.splsda
+#' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
+#'   of parallelisation. See examples.
 #' @importFrom BiocParallel SerialParam bplapply
-#' @return A \code{tune.spca} object containing: \describe{
-#' \item{call}{ The function call}
-#' \item{choice.keepX}{The selected number of components on each component}
-#' \item{cor.comp}{The correlations between the components from the cross-validated 
-#' studies and those from the study which used all of the data in training.}
-#' }
+#' @return A \code{tune.spca} object containing: \describe{ \item{call}{ The
+#'   function call} \item{choice.keepX}{The selected number of components on
+#'   each component} \item{cor.comp}{The correlations between the components
+#'   from the cross-validated studies and those from the study which used all of
+#'   the data in training.} }
 #' @export
 #'
 #' @example ./examples/tune.spca-examples.R
-tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, scale = TRUE) {
+tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, scale = TRUE, BPPARAM = SerialParam()) {
     
     if (nrepeat < 3)
     {
@@ -37,7 +38,7 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
             cat('KeepX = ', keepX.value, '\n')  # to remove in the final function
             
             ## ------ repeated cv
-            for (j in seq_len(nrepeat)) {
+            repeat_cv_j <- function(j) {
                 if (nrow(X) > 30) {
                     repeat.j.folds = split(sample(seq_len(nrow(X))),seq_len(folds))
                 } else {
@@ -88,8 +89,10 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
                 
                 # output is correlation between reconstructed components cor.comp on the left out samples and if we had those samples in PCA,
                 # average correlations across folds for the repeat
-                cor.df.list[[ncomp]][keepX_i,j] <- mean(cor.pred, na.rm = TRUE)
-            } # end repeats loop
+                return(mean(cor.pred, na.rm = TRUE))
+            }
+            out <- bplapply(seq_len(nrepeat), function(j) repeat_cv_j(j), BPPARAM = BPPARAM)
+            cor.df.list[[ncomp]][keepX_i,] <- unlist(out)
         } # end keepX loop
         ## use a one-sided t.test using repeat correlations to assess if addition of keepX improved the correlation
         ## and get the index of optimum keepX
