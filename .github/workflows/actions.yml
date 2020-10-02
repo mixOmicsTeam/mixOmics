@@ -125,10 +125,10 @@ jobs:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-bioc-${{ matrix.config.bioc }}-results
           path: check
 
-      - name: Test coverage
-        if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
-        run: covr::codecov(type = c('tests', 'examples'))
-        shell: Rscript {0}
+      # - name: Test coverage
+      #   if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
+      #   run: covr::codecov(type = c('tests', 'examples'))
+      #   shell: Rscript {0}
 
       - name: Notify Slack
         uses: 8398a7/action-slack@v3
