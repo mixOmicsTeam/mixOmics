@@ -392,10 +392,13 @@ print.pca <- function(x, ...)
     print(per.var[1:ind.show], print.gap = 6)
     cat("  \n")
     
-    cat("  Cumulative proportion of", var.type, "explained variance for the first", ind.show, "principal components, see object$cum.var:", "\n")
-    print(cum.var[1:ind.show], print.gap = 6)
-    cat("  \n")
-    
+    if (!is(x, 'spca'))
+    {
+        cat("  Cumulative proportion of", var.type, "explained variance for the first", ind.show, "principal components, see object$cum.var:", "\n")
+        print(cum.var[1:ind.show], print.gap = 6)
+        cat("  \n")
+        
+    }
     cat("  Other available components: \n", "-------------------- \n")
     cat("  loading vectors: see object$rotation \n")
     
