@@ -56,7 +56,6 @@
 # near.zero.var: boolean, see the internal \code{\link{nearZeroVar}} function
 #   (should be set to TRUE in particular for data with many zero values).
 # progressBar: show progress,
-# cl: if parallel, the clusters
 # scale: Boolean. If scale = TRUE, each block is standardized to zero means and
 #   unit variances (default: TRUE).
 # misdata: optional. any missing values in the data? list,
@@ -67,9 +66,8 @@
 #   ind.NA[[q]] for each data set.
 # ind.NA.col: optional. which col have missing values? list,
 #   ind.NA.col[[q]] for each data set.
-# parallel: logical.
-
-
+# BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
+# of parallelisation.
 #' @importFrom matrixStats colVars
 MCVfold.block.splsda <- 
     function(
@@ -94,8 +92,7 @@ MCVfold.block.splsda <-
         scale,
         misdata,
         is.na.A,
-        cpus=1,
-        cl=NULL
+        BPPARAM = SerialParam()
     )
     {    #-- checking general input parameters ------------------------------------#
         #--------------------------------------------------------------------------#
@@ -113,7 +110,6 @@ MCVfold.block.splsda <-
         {
             keepY = rep(nlevels(Y), ncomp-1)
         } else {keepY = NULL}
-        parallel <- cpus > 1
         M = length(folds)
         # prediction of all samples for each test.keepX and  nrep at comp fixed
         folds.input = folds
@@ -441,16 +437,15 @@ MCVfold.block.splsda <-
                 return(list(
                     class.comp.j = class.comp.j, omit = omit, keepA = keepA))
             } # end fonction.j.folds
-            ## mclapply unavailable on windows
-            excess_cpus <- cpus > nrepeat
-            use_mclapply <- .onUnix() && excess_cpus ## mclapply doesn't work on Windows
-            ## if number of CPUs greater than nrepeat, also parallel on folds
-            if (use_mclapply) {
-                # message("\ndetected cores: ", parallel::detectCores())
-                result.all = mclapply(1:M, fonction.j.folds, mc.cores = ceiling(cpus/nrepeat))
-            } else {
-                result.all = lapply(1:M, fonction.j.folds)
-            }
+            ## if number of CPUs greater than nrepeat, also parallel on folds on non-Windows
+            # excess_cpus <- ifelse(is(BPPARAM, 'MulticoreParam') && (BPPARAM$workers - nrepeat) > 0,
+            #                       BPPARAM$workers - nrepeat,
+            #                       0)
+            # if (excess_cpus > 0 & do_excess) {
+            #     result.all = bplapply(1:M, fonction.j.folds, BPPARAM = MulticoreParam(workers = excess_cpus))
+            # } else {
+            result.all = lapply(1:M, fonction.j.folds) ## too much overhead if we also parallelise folds
+            # }
             
             keepA <- result.all[[1]]$keepA[[ncomp]]
             # combine the results
@@ -474,16 +469,8 @@ MCVfold.block.splsda <-
             return(list(class.comp.rep=class.comp.rep, keepA=keepA))
         } #end nrep 1:nrepeat
         
-        if (parallel)
-        {
-            clusterExport(cl, ls(), envir=environment())
-            class.comp.reps <- parLapply(cl, seq_len(nrepeat), repeat_cv)
-        } else {
-            class.comp.reps <- lapply(seq_len(nrepeat), repeat_cv)
-        }
-        
-        
-        
+        class.comp.reps <- bplapply(seq_len(nrepeat), repeat_cv, BPPARAM = BPPARAM)
+
         list2array <- function(cc) {
             ## function to make an array of results of all repeats ino the former form
             ## before nrepeat loop becomes a function

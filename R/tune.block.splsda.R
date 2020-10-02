@@ -35,6 +35,7 @@
 #' 
 #' @inheritParams block.splsda
 #' @inheritParams tune
+#' @inheritParams tune.spca
 #' @param test.keepX A named list with the same length and names as X 
 #' (without the outcome Y, if it is provided in X and designated using 
 #' \code{indY}).  Each entry of this list is a numeric vector for the different 
@@ -50,7 +51,6 @@
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
-#' @param cpus Integer, number of cpus to use. If greater than 1, the code will
 #' @param ... Optional arguments:
 #' \itemize{
 #'  \item \bold{seed} Integer. Seed number for reproducible parallel code.
@@ -119,9 +119,13 @@ tune.block.splsda <-
             light.output = TRUE,
             # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
             signif.threshold=0.01,
-            cpus = 1,
+            BPPARAM = SerialParam(),
             ...)
   {
+    if (hasArg(cpus)) #defunct
+    {
+    stop("'cpus' has been replaced by BPPARAM. See documentation.")  
+    }
     ## ----------- checks -----------
     
     # check inpuy 'Y' and transformation in a dummy matrix
@@ -277,10 +281,10 @@ tune.block.splsda <-
       )
     )
     
-    if (cpus < 2)
+    if (is (BPPARAM, 'SerialParam'))
     {
       message(paste0(
-        "\nYou can look into the 'cpus' argument to speed up computation time."
+        "\nYou can look into the 'BPPARAM' argument to speed up computation time."
       ))
       
     } else {
@@ -354,23 +358,6 @@ tune.block.splsda <-
         
       }
     }
-    
-    ## ---- cpus
-    cpus <- .check_cpus(cpus)
-    parallel <- cpus > 1
-    
-    if (parallel)
-    {
-      if (.onUnix()) {
-        cl <- makeForkCluster(cpus)
-      } else {
-        cl <- makePSOCKcluster(cpus)
-      }
-      
-      clusterSetRNGStream(cl = cl, iseed = list(...)$seed)
-      on.exit(stopCluster(cl))
-    }
-    
     N.test.keepX = nrow(expand.grid(test.keepX))
     
     mat.error.rate = list()
@@ -432,8 +419,7 @@ tune.block.splsda <-
         max.iter = max.iter,
         misdata = misdata,
         is.na.A = is.na.A,
-        cpus = cpus,
-        cl = cl
+        BPPARAM = BPPARAM
       )
       
       

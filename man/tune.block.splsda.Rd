@@ -28,7 +28,7 @@ tune.block.splsda(
   init = "svd",
   light.output = TRUE,
   signif.threshold = 0.01,
-  cpus = 1,
+  BPPARAM = SerialParam(),
   ...
 )
 }
@@ -109,7 +109,8 @@ sample for each of \code{test.keepX} and each comp is returned.}
 threshold required for improvement in error rate of the components. Default
 to 0.01.}
 
-\item{cpus}{Integer, number of cpus to use. If greater than 1, the code will}
+\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
+of parallelisation. See examples.}
 
 \item{...}{Optional arguments:
 \itemize{
@@ -172,6 +173,7 @@ class, weighted by the number of samples in each class. BER is less biased
 towards majority classes during the performance assessment.
 }
 \examples{
+\dontrun{
 data("breast.TCGA")
 # this is the X data as a list of mRNA and miRNA; the Y data set is a single data set of proteins
 data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
@@ -195,9 +197,9 @@ test.keepX = list(mrna = c(10, 30), mirna = c(15, 25), protein = c(4, 8))
 # the following may take some time to run, so we subset the data first.
 # Note that for thorough tuning, nrepeat should be >= 3 so that significance of 
 # the model improvement can be measured
-## ---- subset
+## ---- subset by 3rd of samples
 set.seed(100)
-subset <- stratified.subsampling(breast.TCGA$data.train$subtype, folds = 2)[[1]][[1]]
+subset <- mixOmics:::stratified.subsampling(breast.TCGA$data.train$subtype, folds = 3)[[1]][[1]]
 data <- lapply(data, function(omic) omic[subset,])
 Y <- breast.TCGA$data.train$subtype[subset]
 ## ---- run
@@ -207,8 +209,8 @@ tune <- tune.block.splsda(
     ncomp = ncomp,
     test.keepX = test.keepX,
     design = design,
-    nrepeat = 3, 
-    cpus = detectCores()
+    nrepeat = 2, 
+    BPPARAM = MulticoreParam(workers = detectCores()-1)
 )
 
 plot(tune)
@@ -220,9 +222,10 @@ already.tested.X = tune$choice.keepX
 tune = tune.block.splsda(X = data, Y = Y,
                          ncomp = 4, test.keepX = test.keepX, design = design,
                          already.tested.X = already.tested.X,
-                         cpus = detectCores()
+                         BPPARAM = MulticoreParam(workers = detectCores()-1)
                          )
 tune$choice.keepX
+}
 }
 \references{
 Method:

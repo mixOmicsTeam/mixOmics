@@ -23,32 +23,38 @@ test_that("tune.block.splsda works with and without parallel without auc", {
         protein = c(3, 6)
     )
     
+    set.seed(100)
+    subset <- mixOmics:::stratified.subsampling(breast.TCGA$data.train$subtype, folds = 4)[[1]][[1]]
+    data <- lapply(data, function(omic) omic[subset,])
+    Y <- breast.TCGA$data.train$subtype[subset]
+    
     ## -------------------- 1 cpu 
     set.seed(42)
     tune11 = tune.block.splsda(
         X = data,
-        Y = breast.TCGA$data.train$subtype,
+        Y = Y,
+        folds = 3,
         ncomp = ncomp,
         test.keepX = test.keepX,
         design = design,
         nrepeat = nrep
     )
     expect_is(tune11, "tune.block.splsda")
-    expect_equal(tune11$choice.ncomp$ncomp, 2)
+    expect_equal(tune11$choice.keepX, list(mrna = c(10, 10), mirna = c(20, 20), protein = c(3, 3)))
     
     ## -------------------- parallel
-    set.seed(42)
+    BPPARAM <- if (!.onUnix()) BiocParallel::SnowParam(workers = 2) else BiocParallel::MulticoreParam(workers = 2)
     tune41 = tune.block.splsda(
         X = data,
-        Y = breast.TCGA$data.train$subtype,
+        Y = Y,
+        folds = 3,
         ncomp = ncomp,
         test.keepX = test.keepX,
         design = design,
         nrepeat = nrep,
-        cpus = 2
+        BPPARAM = BPPARAM
     )
     expect_is(tune41, "tune.block.splsda")
-    expect_equal(tune41$choice.ncomp$ncomp, 2)
     
     ## -------------------- already.tested.keepX
     already.tested.X = lapply(tune11$choice.keepX, function(x) {
@@ -57,14 +63,14 @@ test_that("tune.block.splsda works with and without parallel without auc", {
     
     tune42 = tune.block.splsda(
         X = data,
-        Y = breast.TCGA$data.train$subtype,
+        Y = Y,
         ncomp = ncomp,
+        folds = 3,
         test.keepX = test.keepX,
         design = design,
         already.tested.X = already.tested.X,
-        cpus = 2
+        BPPARAM = BPPARAM
     )
-    
     expect_is(tune42, "tune.block.splsda")
     
 })
