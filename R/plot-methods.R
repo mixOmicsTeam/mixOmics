@@ -810,7 +810,7 @@ plot.tune.spls <-
             df$upr = df$y + dferror$value
             
             #adding the error bar to the plot
-            p = p + geom_errorbar(data=df,aes(ymin=lwr, ymax=upr))
+            p = p + geom_errorbar(data=df,aes(ymin=lwr, ymax=upr), width=0.04)
         }
         
         if(optimal)
@@ -891,7 +891,7 @@ plot.tune.block.splsda =
             #    p = ggplot(error.plot, aes(x=reorder(names, -error), y=error)) +
             p = ggplot(error.plot, aes(x=names, y=error)) +
                 geom_bar(stat="identity", fill = error.plot$color)
-            if(sd) p = p + geom_errorbar(aes(ymin=error-error.sd, ymax = error+error.sd), width=0.2)
+            if(sd) p = p + geom_errorbar(aes(ymin=error-error.sd, ymax = error+error.sd), width=0.04)
             
             p= p +
                 ylab(ylab)+
@@ -915,7 +915,7 @@ plot.tune.block.splsda =
             ## ggplot
             p = ggplot(error.plot, aes(x=reorder(names, -error), y=error)) +
                 geom_bar(stat="identity", fill = error.plot$color)
-            if(sd) p = p + geom_errorbar(aes(ymin=error-error.sd, ymax = error+error.sd), width=0.2)
+            if(sd) p = p + geom_errorbar(aes(ymin=error-error.sd, ymax = error+error.sd), width=0.04)
             
             p= p +
                 ylab(ylab)+
@@ -1016,7 +1016,7 @@ plot.tune.spca <-
         if (isTRUE(sd))
         {
             p <- p + geom_errorbar(aes_string(ymin = 'corQ1', ymax = 'corQ3'), 
-                                   position = position_dodge(0.02),
+                                   # position = position_dodge(0.02),
                                    width = 0.04,
                                    ...)
             ## suppress "position_dodge requires non-overlapping x intervals"
