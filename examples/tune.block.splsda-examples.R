@@ -28,6 +28,8 @@ subset <- mixOmics:::stratified.subsampling(breast.TCGA$data.train$subtype, fold
 data <- lapply(data, function(omic) omic[subset,])
 Y <- breast.TCGA$data.train$subtype[subset]
 ## ---- run
+## setup cluster - use SnowParam() on Widnows
+BPPARAM <- BiocParallel::MulticoreParam(workers = parallel::detectCores()-1)
 tune <- tune.block.splsda(
     X = data,
     Y = Y,
@@ -35,7 +37,7 @@ tune <- tune.block.splsda(
     test.keepX = test.keepX,
     design = design,
     nrepeat = 2, 
-    BPPARAM = MulticoreParam(workers = detectCores()-1)
+    BPPARAM = BPPARAM
 )
 
 plot(tune)
@@ -47,7 +49,7 @@ already.tested.X = tune$choice.keepX
 tune = tune.block.splsda(X = data, Y = Y,
                          ncomp = 4, test.keepX = test.keepX, design = design,
                          already.tested.X = already.tested.X,
-                         BPPARAM = MulticoreParam(workers = detectCores()-1)
+                         BPPARAM = BPPARAM
                          )
 tune$choice.keepX
 }
