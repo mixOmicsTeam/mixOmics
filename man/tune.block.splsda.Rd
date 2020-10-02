@@ -175,47 +175,54 @@ towards majority classes during the performance assessment.
 data("breast.TCGA")
 # this is the X data as a list of mRNA and miRNA; the Y data set is a single data set of proteins
 data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
-protein = breast.TCGA$data.train$protein)
+            protein = breast.TCGA$data.train$protein)
 # set up a full design where every block is connected
 # could also consider other weights, see our mixOmics manuscript
 design = matrix(1, ncol = length(data), nrow = length(data),
-dimnames = list(names(data), names(data)))
+                dimnames = list(names(data), names(data)))
 diag(design) =  0
 design
 # set number of component per data set
-ncomp = 5
+ncomp = 3
 
 # Tuning the first two components
 # -------------
-\dontrun{
+## Not run: 
 # definition of the keepX value to be tested for each block mRNA miRNA and protein
 # names of test.keepX must match the names of 'data'
-test.keepX = list(mrna = seq(10,40,20), mirna = seq(10,30,10), protein = seq(1,10,5))
+test.keepX = list(mrna = c(10, 30), mirna = c(15, 25), protein = c(4, 8))
 
-# the following may take some time to run, note that for through tuning
-# nrepeat should be > 1
-tune = tune.block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
-ncomp = ncomp, test.keepX = test.keepX, design = design, nrepeat = 3)
+# the following may take some time to run, so we subset the data first.
+# Note that for thorough tuning, nrepeat should be >= 3 so that significance of 
+# the model improvement can be measured
+## ---- subset
+set.seed(100)
+subset <- stratified.subsampling(breast.TCGA$data.train$subtype, folds = 2)[[1]][[1]]
+data <- lapply(data, function(omic) omic[subset,])
+Y <- breast.TCGA$data.train$subtype[subset]
+## ---- run
+tune <- tune.block.splsda(
+    X = data,
+    Y = Y,
+    ncomp = ncomp,
+    test.keepX = test.keepX,
+    design = design,
+    nrepeat = 3, 
+    cpus = detectCores()
+)
 
+plot(tune)
 tune$choice.ncomp
 tune$choice.keepX
 
-# Only tuning the second component
-# -------------
-
-already.mrna = 4 # 4 variables selected on comp1 for mrna
-already.mirna  = 2 # 2 variables selected on comp1 for mirna
-already.prot  = 1 # 1 variables selected on comp1 for protein
-
-already.tested.X = list(mrna = already.mrna, mirna = already.mirna, protein = already.prot)
-
-tune = tune.block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
-ncomp = 2, test.keepX = test.keepX, design = design,
-already.tested.X = already.tested.X)
-
+# Now tuning a new component given previous tuned keepX
+already.tested.X = tune$choice.keepX
+tune = tune.block.splsda(X = data, Y = Y,
+                         ncomp = 4, test.keepX = test.keepX, design = design,
+                         already.tested.X = already.tested.X,
+                         cpus = detectCores()
+                         )
 tune$choice.keepX
-}
-
 }
 \references{
 Method:

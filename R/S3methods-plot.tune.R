@@ -122,7 +122,7 @@ plot.tune.spls <-
             labs(x = "Number of selected features", y = ylab) +
             theme_bw() +
             geom_line()+ geom_point()
-        p = p+ scale_x_continuous(trans='log10') +
+        p = p+ scale_x_continuous(trans='log10', breaks = df$x) +
             scale_color_manual(values = col)
         
         # error bar
@@ -204,25 +204,26 @@ plot.tune.block.splsda =
             ylab = "Balanced error rate"
         }
         
-        if(FALSE)
-        {
-            # not ordered graph
-            
-            # creating one dataframe with all the comp
-            error.plot = data.frame(comp = rep(colnames(error), each = nrow(error)), names = do.call("rbind", as.list(rownames(error))), error = do.call("rbind", as.list(error)), error.sd = do.call("rbind", as.list(error.rate.sd)), color = rep(col, each = nrow(error)))
-            
-            #    p = ggplot(error.plot, aes(x=reorder(names, -error), y=error)) +
-            p = ggplot(error.plot, aes(x=names, y=error)) +
-                geom_bar(stat="identity", fill = error.plot$color)
-            if(sd) p = p + geom_errorbar(aes(ymin=error-error.sd, ymax = error+error.sd), width=0.04)
-            
-            p= p +
-                ylab(ylab)+
-                xlab("Number of selected features for each block")+
-                coord_flip()+
-                facet_grid(~comp,scales='free')
-            p
-        }
+        # if(FALSE)
+        # {
+        #     # not ordered graph
+        #     
+        #     # creating one dataframe with all the comp
+        #     error.plot = data.frame(comp = rep(colnames(error), each = nrow(error)), names = do.call("rbind", as.list(rownames(error))), error = do.call("rbind", as.list(error)), error.sd = do.call("rbind", as.list(error.rate.sd)), color = rep(col, each = nrow(error)))
+        #     
+        #     #    p = ggplot(error.plot, aes(x=reorder(names, -error), y=error)) +
+        #     p = ggplot(error.plot, aes(x=names, y=error)) + 
+        #         theme_minimal() +
+        #         geom_bar(stat="identity", fill = error.plot$color)
+        #     if(sd) p = p + geom_errorbar(aes(ymin=error-error.sd, ymax = error+error.sd), width=0.04)
+        #     
+        #     p= p +
+        #         ylab(ylab)+
+        #         xlab("Number of selected features for each block")+
+        #         coord_flip()+
+        #         facet_grid(~comp,scales='free')
+        #     p
+        # }
         
         pp=list()
         for(comp in seq_len(comp.tuned))
@@ -237,6 +238,7 @@ plot.tune.block.splsda =
             
             ## ggplot
             p = ggplot(error.plot, aes(x=reorder(names, -error), y=error)) +
+                theme_classic() +
                 geom_bar(stat="identity", fill = error.plot$color)
             if(sd) p = p + geom_errorbar(aes(ymin=error-error.sd, ymax = error+error.sd), width=0.04)
             
@@ -301,7 +303,7 @@ plot.tune.spca <-
             theme_minimal() +
             geom_line() +
             geom_point() +
-            scale_x_log10() +
+            scale_x_continuous(trans='log10', breaks = cors$keepX) +
             ylim(c(min(cors$corQ1, 0), max(cors$corQ3, 0))) +
             labs(x= 'Number of features selected',
                  y = 'Correlation of components',

@@ -2,7 +2,7 @@
 % Please edit documentation in R/S3methods-plot.R
 \name{plot.pca}
 \alias{plot.pca}
-\title{Show (s)pca output}
+\title{Show (s)pca explained variance plots}
 \usage{
 \method{plot}{pca}(x, ncomp = length(x$explained_variance), type = "barplot", ...)
 }
@@ -16,7 +16,7 @@
 \item{...}{Not used}
 }
 \description{
-Show (s)pca output
+Show (s)pca explained variance plots
 }
 \author{
 Kim-Anh Lê Cao, Florian Rohart, Leigh Coonan, Al J Abadi
