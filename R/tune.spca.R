@@ -5,51 +5,48 @@
 #' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
 #'   of parallelisation. See examples.
 #' @importFrom BiocParallel SerialParam bplapply
-#' @return A \code{tune.spca} object containing: \describe{ \item{call}{ The
-#'   function call} \item{choice.keepX}{The selected number of components on
-#'   each component} \item{cor.comp}{The correlations between the components
+#' @return A \code{tune.spca} object containing: \describe{ 
+#' \item{call}{ The
+#'   function call}
+#' \item{choice.keepX}{The selected number of components on
+#'   each component} 
+#' \item{cor.comp}{The correlations between the components
 #'   from the cross-validated studies and those from the study which used all of
 #'   the data in training.} }
 #' @export
 #'
 #' @example ./examples/tune.spca-examples.R
-tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, scale = TRUE, BPPARAM = SerialParam()) {
-    
+tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, scale = TRUE, 
+                      BPPARAM = SerialParam())
+{
     if (nrepeat < 3)
     {
         stop("'nrepeat' must be >= 3")
     }
-
     ## optimal keepX for all components
     keepX.opt <- NULL
-    ## a data.frame to store correlations for each keepX at each repeat
-    cor.df <- data.frame(matrix(ncol = nrepeat, nrow = length(test.keepX), 
-                                dimnames = list(
-                                    paste0('keepX_', test.keepX),
-                                    paste0('repeat_', seq_len(nrepeat)))))
     ## a list of cor.df for each component
     cor.df.list <- .name_list(char = paste0('comp', seq_len(ncomp)))
-    cor.df.list <- lapply(cor.df.list, function(x) cor.df)
+    # cor.df.list <- lapply(cor.df.list, function(x) cor.df)
     
+    if (nrow(X) < 30) {
+        cat("\n Low sample size. Using Leave-One-Out CV without repeat")
+        nrepeat <- 1
+        folds <- nrow(X)
+    }
+    all.keepX <- test.keepX
+    names(all.keepX) <- paste0('keepX_', all.keepX)
     ## ------ component loop
     for(ncomp in seq_len(ncomp)) {
-        for (keepX_i in seq_along(test.keepX)) {
-            keepX.value <- test.keepX[keepX_i]
-            cat('KeepX = ', keepX.value, '\n')  # to remove in the final function
-            
+        iter_keepX <- function(keepX.value) {
             ## ------ repeated cv
             repeat_cv_j <- function(j) {
-                if (nrow(X) > 30) {
-                    repeat.j.folds = split(sample(seq_len(nrow(X))),seq_len(folds))
-                } else {
-                    message("\n Low sample size. Using bootstrapped CV.")
-                    repeat.j.folds = lapply(seq_len(folds), function(i) sample(seq_len(nrow(X)), size = ceiling(30/folds), replace = TRUE))
-                }
-               ## ------ mean cor for CV
+                repeat.j.folds = split(sample(seq_len(nrow(X))),seq_len(folds))
+                ## ------ mean cor for CV
                 cor.pred = sapply(repeat.j.folds, function(test.fold.inds){
                     ## split data to train/test
-                    X.train = X[-test.fold.inds,]
-                    X.test = X[test.fold.inds,]
+                    X.train = X[-test.fold.inds,,drop=FALSE]
+                    X.test = X[test.fold.inds,,drop=FALSE]
                     X.test = scale(X.test, center = center, scale = scale)
                     
                     # ---- run sPCA 
@@ -91,28 +88,33 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
                 # average correlations across folds for the repeat
                 return(mean(cor.pred, na.rm = TRUE))
             }
-            out <- bplapply(seq_len(nrepeat), function(j) repeat_cv_j(j), BPPARAM = BPPARAM)
-            cor.df.list[[ncomp]][keepX_i,] <- unlist(out)
-        } # end keepX loop
+            out <-  lapply(seq_len(nrepeat), FUN=repeat_cv_j)
+            return(unlist(out))
+        }
+        test.keepX.cors <- bplapply(X=all.keepX, FUN=iter_keepX, BPPARAM = BPPARAM)
+        test.keepX.cors <- data.frame(test.keepX.cors)
+        test.keepX.cors <- t(test.keepX.cors)
+        colnames(test.keepX.cors) <- paste0('repeat_', seq_len(nrepeat))
+        cor.df.list[[ncomp]] <- test.keepX.cors
+        # browser()
         ## use a one-sided t.test using repeat correlations to assess if addition of keepX improved the correlation
         ## and get the index of optimum keepX
-            t.test.df <- data.frame(t(cor.df.list[[ncomp]]))
-            keepX.opt.comp.ind <-  t.test.process(t.test.df, alpha = 0.1, alternative = 'less')
-            keepX.opt.comp <- test.keepX[keepX.opt.comp.ind]
-            ## update keepX.optimum for next comp
-            keepX.opt <- c(keepX.opt, keepX.opt.comp)
+        t.test.df <- data.frame(t(cor.df.list[[ncomp]]))
+        keepX.opt.comp.ind <-  t.test.process(t.test.df, alpha = 0.1, alternative = 'less')
+        keepX.opt.comp <- all.keepX[keepX.opt.comp.ind]
+        ## update keepX.optimum for next comp
+        keepX.opt <- c(keepX.opt, keepX.opt.comp)
     }
     choice.keepX <- keepX.opt
     names(choice.keepX) <- paste0('comp', seq_len(ncomp))
     
     ## get the mean and sd values
     cor.comp = mapply(df=cor.df.list, opt = choice.keepX, FUN = function(df, opt){
-        out <- data.frame(keepX = test.keepX, cor.mean = apply(df, 1, mean), cor.sd = apply(df, 1, sd))
+        out <- data.frame(keepX = all.keepX, cor.mean = apply(df, 1, mean), cor.sd = apply(df, 1, sd))
         out$opt.keepX <- NA
         out[which(out$keepX == opt),]$opt.keepX <- TRUE
         return(out)
     }, SIMPLIFY = FALSE)
-
     # evaluate all for output except X to save memory
     mc <- mget(names(formals())[-1], sys.frame(sys.nframe()))
     mc <- as.call(c(as.list(match.call())[1:2], mc))

@@ -31,6 +31,10 @@
 #' @noRd
 t.test.process <- function(mat.error.rate, alpha = 0.01, alternative = "greater")
 {
+    if (nrow(mat.error.rate) < 3)
+    {
+        return(NA)
+    }
     ## ----- helper function to calculate pvalues for two columns of a data.frame:
     .calc_pval <- function(df, col1, col2) {
         x <- df[, col1]
