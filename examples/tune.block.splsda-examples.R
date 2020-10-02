@@ -23,7 +23,7 @@ test.keepX = list(mrna = c(10, 30), mirna = c(15, 25), protein = c(4, 8))
 # the model improvement can be measured
 ## ---- subset
 set.seed(100)
-subset <- stratified.subsampling(breast.TCGA$data.train$subtype, folds = 2)[[1]][[1]]
+subset <- mixOmics:::stratified.subsampling(breast.TCGA$data.train$subtype, folds = 3)[[1]][[1]]
 data <- lapply(data, function(omic) omic[subset,])
 Y <- breast.TCGA$data.train$subtype[subset]
 ## ---- run

@@ -79,7 +79,7 @@ plot.pca  <- function(x,
 plot.rcc <-
     function(x, type = "barplot", ...) 
     {
-        if (hasArg(scree.type)) {
+        if (hasArg('scree.type')) {
            stop("'scree.type' has been replaced by 'type'. See ?plot.rcc\n")
         }
         if (type == "barplot") {
