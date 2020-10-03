@@ -192,6 +192,9 @@ nipals <- function (X,
     
     if (reconst)
     {
+        if (ncomp < 5)
+            message("\nconsider high 'ncomp' for more accurate ",
+                    "imputation of the missing values.\n")
         X.hat = t.mat %*% diag(eig) %*% t(p)
         
         colnames(X.hat) = colnames(X)
