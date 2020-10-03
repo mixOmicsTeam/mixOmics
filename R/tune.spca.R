@@ -41,6 +41,7 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
     {
         stop("'nrepeat' must be >= 3")
     }
+    ncomp <- .check_ncomp(ncomp = ncomp, X = X)
     test.keepX <- .check_test.keepX(test.keepX = test.keepX, X = X)
     ## optimal keepX for all components
     keepX.opt <- NULL

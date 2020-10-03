@@ -443,6 +443,7 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     return(out)
 }
 
+## -------------------------- .check_test.keepX --------------------------- ##
 #' check test.keepX
 #'
 #' @param test.keepX test.keepX
@@ -499,4 +500,24 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
         
     }
     invisible(test.keepX)
+}
+## ----------------------------- .check_ncomp ----------------------------- ##
+
+## check that ncomp is positive integer <= smallest dim in the data
+.check_ncomp <- function(ncomp, X)
+{
+    # TODO use this helper to check all ncomp in the package
+    
+    if (mode(ncomp) != 'numeric' || ncomp%%1 != 0)
+        stop("'ncomp' must be a positive integer")
+    ## ------- X matrix ------- ##
+    if (!is.null(dim(X)))
+    {
+        X <- list(X)
+    } 
+    min.dim <- min(sapply(X, function(z) min(dim(z))))
+    if (ncomp > min.dim)
+        stop("'ncomp' must be smaller than or equal to the smallest dimenion in X: ", min.dim)
+    
+    invisible(ncomp)
 }
