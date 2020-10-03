@@ -442,3 +442,61 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     out$Metrics = out$Metrics[out$Position, ]
     return(out)
 }
+
+#' check test.keepX
+#'
+#' @param test.keepX test.keepX
+#' @param X X input from mixOmics tune models
+#' @param indY indY
+#' @param already.tested.X already.tested.X
+#'
+#' @return test.keepX, possibly re-ordered by names for list X
+#' @noRd
+#' @keywords Internal
+#' @examples
+#' 
+.check_test.keepX <- function(test.keepX, 
+                         X,
+                         indY = NULL, # TODO
+                         already.tested.X = NULL # TODO
+                         )
+{
+    # TODO use this helper to check all test.keepX in the package
+    ## -- checker for a pair of test.keepX and X
+    .check_test.keepX_helper <- function(test.keepX_, X_)
+    {
+        if (is.data.frame(X_))
+        {
+            X_ <- as.matrix(X_)
+        }
+        
+        if (mode(test.keepX_) != 'numeric' || !all(test.keepX_ %in% seq_len(ncol(X_))))
+        {
+            stop( "'test.keepX' values should be positive whole numbers < ncol(X) = ", 
+                  ncol(X_), call. = FALSE)
+        }
+        invisible(NULL)
+    }
+    
+    ## ------- X matrix ------- ##
+    if (!is.null(dim(X)))
+    {
+        .check_test.keepX_helper(test.keepX, X)
+    } 
+    ## -------- X list -------- ##
+    else
+    {
+        ## names
+        if (! (is.list(test.keepX) && setequal(names(test.keepX), names(X)) ) )
+        {
+            stop("'test.keepX' must be a named list with names: names(X) = ", names(X))
+        }
+        else
+        {
+            test.keepX <- test.keepX[names(X)]
+            mapply(z = test.keepX, w = X, FUN = function(z, w) .check_test.keepX_helper(z, w)) 
+        }
+        
+    }
+    invisible(test.keepX)
+}
