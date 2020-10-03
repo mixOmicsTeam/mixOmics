@@ -56,6 +56,7 @@
 #' data(liver.toxicity)
 #' tune <- tune.pca(liver.toxicity$gene, center = TRUE, scale = TRUE)
 #' tune
+#' plot(tune)
 tune.pca <-
     function(X,
              ncomp = NULL,
@@ -85,7 +86,6 @@ tune.pca <-
         
         ind.show = min(10, ncomp)
         
-        print(result)
         
         # Plot the principal components and explained variance
         # note: if NA values, we have an estimation of the variance using NIPALS
@@ -95,11 +95,9 @@ tune.pca <-
         } else{
             ylab = "Estimated Proportion of Explained Variance"
         }
-        barplot(prop.var[1:result$ncomp], names.arg = 1:result$ncomp, xlab = "Principal Components",
-                ylab = ylab)
-        
+ 
         result$call = match.call()
         
-        class(result) = "tune.pca"
+        class(result) = c("tune.pca", "pca")
         return(invisible(result))
     }

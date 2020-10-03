@@ -90,6 +90,7 @@ internal pre-processing step, through \code{\link{logratio.transfo}} and
 data(liver.toxicity)
 tune <- tune.pca(liver.toxicity$gene, center = TRUE, scale = TRUE)
 tune
+plot(tune)
 }
 \seealso{
 \code{\link{nipals}}, \code{\link{biplot}},
