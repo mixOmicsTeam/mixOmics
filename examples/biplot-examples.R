@@ -8,7 +8,7 @@ biplot(pca.lipid, cutoff = c(0.8))
 ## tailor threshold for each component
 biplot(pca.lipid, cutoff = c(0.8, 0.7))
 
-## cutomise ggplot in an arbitrary way
+## customise ggplot in an arbitrary way
 biplot(pca.lipid) + theme_linedraw() + 
     # add vline
     geom_vline(xintercept = 0, col = 'green') +

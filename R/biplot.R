@@ -84,7 +84,7 @@ biplot.pca <- function(x,
     loadings <- data.frame(loadings)
     
     ## scale check
-    if (isFALSE(x$scale))
+    if (isFALSE(object$call$scale))
         warning("The 'tune.spca' algorithm has used scale=FALSE. We recommend scaling the data",
                 " to improve orthogonality in the sparse components.")
     ## cutoff correlation
