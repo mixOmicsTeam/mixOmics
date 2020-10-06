@@ -66,7 +66,12 @@
         }
     } else
     {
-        stop(fail.msg, call. = FALSE)
+        res <- tryCatch(as.character(arg))
+        if (length(res) != length(vec)) 
+        {
+            stop(fail.msg, call. = FALSE)
+        }
+        
     }
     res
 }

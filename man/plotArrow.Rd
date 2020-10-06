@@ -6,75 +6,71 @@
 \usage{
 plotArrow(
   object,
-  comp = NULL,
-  abline = FALSE,
-  xlim = NULL,
-  ylim = NULL,
+  comp = c(1, 2),
+  ind.names = TRUE,
   group = NULL,
-  col,
-  cex,
-  pch,
-  title = NULL,
-  plot.arrows = TRUE,
-  legend = FALSE,
-  X.label = NULL,
-  Y.label = NULL,
-  ind.names = FALSE,
-  position.names = "centroid"
+  col.per.group = NULL,
+  scale.blocks = FALSE,
+  col = NULL,
+  ind.names.position = c("start", "end"),
+  ind.names.size = 2,
+  pch = NULL,
+  pch.size = 2,
+  arrow.alpha = 0.6,
+  arrow.size = 0.5,
+  arrow.length = 0.2,
+  legend = if (is.null(group)) FALSE else TRUE,
+  legend.title = NULL,
+  ...
 )
 }
 \arguments{
 \item{object}{object of class inheriting from \pkg{mixOmics}: \code{PLS,
 sPLS, rCC, rGCCA, sGCCA, sGCCDA}}
 
-\item{comp}{integer vector of length two indicating the components
-represented on the horizontal and the vertical axis to project the
-individuals.}
+\item{comp}{integer vector of length two (or three to 3d). The components
+that will be used on the horizontal and the vertical axis respectively to
+project the individuals.}
 
-\item{abline}{should the vertical and horizontal line through the center be
-plotted? Default set to \code{FALSE}}
+\item{ind.names}{either a character vector of names for the individuals to
+be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
+the first (or second) data matrix is used as names (see Details).}
 
-\item{xlim}{the ranges to be encompassed by the \eqn{x} axis, if \code{NULL}
-they are computed.}
+\item{group}{Factor indicating the group membership for each sample.}
 
-\item{ylim}{the ranges to be encompassed by the \eqn{y} axis, if \code{NULL}
-they are computed.}
+\item{col.per.group}{character (or symbol) color to be used when 'group' is
+defined. Vector of the same length as the number of groups.}
 
-\item{group}{factor indicating the group membership for each sample. Coded
-as default for the supervised method \code{sGCCDA, sPLSDA}, but needs to be
-input for the unsupervised methods \code{PLS, sPLS, rCC, rGCCA, sGCCA}}
+\item{scale.blocks}{Logical, whether to standardise blocks by the X axis
+range of the Y block to represent relative alignment.}
 
-\item{col}{character (or symbol) color to be used, color vector also
-possible.}
+\item{col}{character (or symbol) color to be used, possibly vector.}
 
-\item{cex}{numeric character (or symbol) expansion, , color vector also
-possible.}
+\item{ind.names.position}{One of c('start', 'end') indicating where to show
+the ind.names . Not used in block analyses, where centroids are used.}
 
-\item{pch}{plot character. A character string or a vector of single
-characters or integers. See \code{\link{points}} for all alternatives.}
+\item{ind.names.size}{Numeric, sample name size.}
 
-\item{title}{set of characters for the title plot.}
+\item{pch}{plot character. A character string or a named vector of single
+characters or integers whose names match those of \code{object$variates}.}
 
-\item{plot.arrows}{boolean. Whether arrows should be added or not. Default
-is \code{TRUE}.}
+\item{pch.size}{Numeric, sample point character size.}
 
-\item{legend}{boolean. Whether the legend should be added. Only for the
-supervised methods and if group!=NULL. Default is \code{FALSE}.}
+\item{arrow.alpha}{Numeric between 0 and 1 determining the opacity of arrows.}
 
-\item{X.label}{x axis titles.}
+\item{arrow.size}{Numeric, variable arrow head size.}
 
-\item{Y.label}{y axis titles.}
+\item{arrow.length}{Numeric, length of the arrow head in 'cm'.}
 
-\item{ind.names}{If \code{TRUE}, the row names of the first (or second) data
-matrix are used as sample names (see Details). Can be a vector of length the
+\item{legend}{Logical, whether to show the legend if \code{group != NULL}.}
+
+\item{legend.title}{Character, the legend title if \code{group != NULL}.}
+
+\item{...}{Not currently used.
 sample size to display sample names.}
-
-\item{position.names}{One of \code{"centroid", "start", "end"}. Define where
-sample names are plotted when \code{ind.names=TRUE}. In a multiblock
-analysis, centroid and start will display similarly.}
 }
 \value{
-none
+A ggplot object
 }
 \description{
 Represents samples from multiple coordinates.
@@ -85,7 +81,7 @@ where each sample will be indicated using an arrow. The start of the arrow
 indicates the location of the sample in \eqn{X} in one plot, and the tip the
 location of the sample in \eqn{Y} in the other plot.
 
-For objects of class \code{"GCCA"} and if there are more than 3 blocks, the
+For objects of class \code{"GCCA"} and if there are more than 2 blocks, the
 start of the arrow indicates the centroid between all data sets for a given
 individual and the tips of the arrows the location of that individual in
 each block.
@@ -95,92 +91,80 @@ long arrows a disagreement between the matching data sets.
 }
 \examples{
 
-## plot of individuals for objects of class 'rcc'
+## plot of individuals for objects with two datasets only (X and Y)
 # ----------------------------------------------------
-dev.off()
 data(nutrimouse)
 X <- nutrimouse$lipid
 Y <- nutrimouse$gene
 nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
 
+## plot of individuals for objects of class 'pls' or 'spls'
+# ----------------------------------------------------
 plotArrow(nutri.res)
+## customise the ggplot object as you wish
+plotArrow(nutri.res) + geom_vline(xintercept = 0, alpha = 0.5) + 
+    geom_hline(yintercept = 0, alpha = 0.5) +
+    labs(x = 'Dim 1' , y = 'Dim 2', title = 'Nutrimouse') +
+    theme_minimal() +
+    xlim(-4, 4)
+## individual name position
+plotArrow(nutri.res, ind.names.position = 'end')
+plotArrow(nutri.res, scale.blocks = FALSE) ## do not scale blocks to same X scales
+plotArrow(nutri.res, comp = c(1,3))
+## custom pch
+plotArrow(nutri.res, pch = 10, pch.size = 3)
+plotArrow(nutri.res, pch = c(X = 1, Y = 0))
+## custom arrow
+plotArrow(nutri.res, arrow.alpha = 0.6, arrow.size = 0.6, arrow.length = 0.15)
 
-# names indicate genotype
+## group samples
+plotArrow(nutri.res, group = nutrimouse$genotype)
+plotArrow(nutri.res, group = nutrimouse$genotype, legend.title = 'Genotype')
+
+## custom ind.names
 plotArrow(nutri.res,
-group = nutrimouse$genotype, ind.names = nutrimouse$genotype)
+           ind.names = paste0('ID', rownames(nutrimouse$gene)), 
+           ind.names.size = 3)
 
-
-plotArrow(nutri.res, group = nutrimouse$genotype,
-legend = TRUE)
-
-
-\dontrun{
 ## plot of individuals for objects of class 'pls' or 'spls'
 # ----------------------------------------------------
 data(liver.toxicity)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
 toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
-keepY = c(10, 10, 10))
-
-#default
-plotArrow(toxicity.spls)
-
-
-# colors indicate time of necropsy, text is the dose
-plotArrow(toxicity.spls,  group = liver.toxicity$treatment[, 'Time.Group'],
-ind.names  = liver.toxicity$treatment[, 'Dose.Group'],
-legend = TRUE)
+                      keepY = c(10, 10, 10))
 
 # colors indicate time of necropsy, text is the dose, label at start of arrow
 plotArrow(toxicity.spls,  group = liver.toxicity$treatment[, 'Time.Group'],
-ind.names  = liver.toxicity$treatment[, 'Dose.Group'],
-legend = TRUE, position.names = 'start')
+           ind.names  = liver.toxicity$treatment[, 'Dose.Group'],
+           legend = TRUE, position.names = 'start', legend.title = 'Time.Group')
 
-## variable representation for objects of class 'sgcca' (or 'rgcca')
+## individual representation for objects of class 'sgcca' (or 'rgcca')
 # ----------------------------------------------------
 data(nutrimouse)
 Y = unmap(nutrimouse$diet)
 data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
 design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
 nutrimouse.sgcca <- wrapper.sgcca(X = data,
-design = design1,
-penalty = c(0.3, 0.5, 1),
-ncomp = 3,
-scheme = "centroid")
+                                  design = design1,
+                                  penalty = c(0.3, 0.5, 1),
+                                  ncomp = 3,
+                                  scheme = "centroid")
 
-# default style: same color for all samples
-plotArrow(nutrimouse.sgcca)
+plotArrow(nutrimouse.sgcca, group = nutrimouse$genotype, ind.names = TRUE, 
+           legend.title = 'Genotype' )
 
+## custom pch by block
+blocks <- names(nutrimouse.sgcca$variates)
+pch <- seq_along(blocks)
+names(pch) <- blocks
+pch
+#>   gene   lipid     Y 
+#>   1       2        3 
+plotArrow(nutrimouse.sgcca, group = nutrimouse$genotype, ind.names = TRUE, 
+           pch =pch, legend.title = 'Genotype' )
 
-plotArrow(nutrimouse.sgcca, group = nutrimouse$diet, legend =TRUE,
-title = 'my plot')
-
-# ind.names to visualise the unique individuals
-plotArrow(nutrimouse.sgcca, group = nutrimouse$diet, legend =TRUE,
-title = 'my plot', ind.names = TRUE)
-
-# ind.names to visualise the unique individuals
-plotArrow(nutrimouse.sgcca, group = nutrimouse$diet, legend =TRUE,
-title = 'my plot', ind.names = TRUE,position.names   = 'start')
-
-plotArrow(nutrimouse.sgcca, group = nutrimouse$diet, legend =TRUE,
-title = 'my plot', ind.names = TRUE,position.names   = 'end')
-
-# ind.names indicates the diet
-plotArrow(nutrimouse.sgcca, group = nutrimouse$diet, legend =TRUE,
-title = 'my plot', ind.names = nutrimouse$diet, position.names= 'start')
-
-# ind.names to visualise the unique individuals, start position
-plotArrow(nutrimouse.sgcca, group = nutrimouse$diet, legend =TRUE,
-title = 'my plot', ind.names = TRUE, position.names   = 'start')
-
-# end position
-plotArrow(nutrimouse.sgcca, group = nutrimouse$diet, legend =TRUE,
-title = 'my plot', ind.names = TRUE, position.names   = 'end')
-
-
-## variable representation for objects of class 'sgccda'
+## individual representation for objects of class 'sgccda'
 # ----------------------------------------------------
 # Note: the code differs from above as we use a 'supervised' GCCA analysis
 data(nutrimouse)
@@ -188,23 +172,18 @@ Y = nutrimouse$diet
 data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
 design1 = matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
 
-nutrimouse.sgccda1 <- wrapper.sgccda(X = data,
-Y = Y,
-design = design1,
-ncomp = 2,
-keepX = list(gene = c(10,10), lipid = c(15,15)),
-scheme = "centroid")
+nutrimouse.sgccda1 <- 
+    wrapper.sgccda(X = data,
+                   Y = Y,
+                   design = design1,
+                   ncomp = 2,
+                   keepX = list(gene = c(10,10), lipid = c(15,15)),
+                   scheme = "centroid")
 
 
-#  default colors correspond to outcome Y
+## Default colours correspond to outcome Y
 plotArrow(nutrimouse.sgccda1)
 
-
-# with legend and title and indiv ID
-plotArrow(nutrimouse.sgccda1,  legend = TRUE, title = 'my sample plot',
-ind.names = TRUE, position.names = 'start')
-
-}
 }
 \references{
 Lê Cao, K.-A., Martin, P.G.P., Robert-Granie, C. and Besse, P.
@@ -217,7 +196,7 @@ application to a cross-platform study. \emph{BMC Bioinformatics}
 http://mixOmics.org/graphics for more details.
 }
 \author{
-Francois Bartolo, Ignacio Gonzalez, Kim-Anh Le Cao, Florian Rohart, Al J Abadi
+Al J Abadi
 }
 \keyword{dplot}
 \keyword{hplot}

@@ -10,7 +10,7 @@
 #' indicates the location of the sample in \eqn{X} in one plot, and the tip the
 #' location of the sample in \eqn{Y} in the other plot.
 #' 
-#' For objects of class \code{"GCCA"} and if there are more than 3 blocks, the
+#' For objects of class \code{"GCCA"} and if there are more than 2 blocks, the
 #' start of the arrow indicates the centroid between all data sets for a given
 #' individual and the tips of the arrows the location of that individual in
 #' each block.
@@ -18,41 +18,22 @@
 #' Short arrows indicate a strong agreement between the matching data sets,
 #' long arrows a disagreement between the matching data sets.
 #' 
+#' @inheritParams biplot
 #' @param object object of class inheriting from \pkg{mixOmics}: \code{PLS,
 #' sPLS, rCC, rGCCA, sGCCA, sGCCDA}
-#' @param comp integer vector of length two indicating the components
-#' represented on the horizontal and the vertical axis to project the
-#' individuals.
-#' @param abline should the vertical and horizontal line through the center be
-#' plotted? Default set to \code{FALSE}
-#' @param xlim the ranges to be encompassed by the \eqn{x} axis, if \code{NULL}
-#' they are computed.
-#' @param ylim the ranges to be encompassed by the \eqn{y} axis, if \code{NULL}
-#' they are computed.
-#' @param group factor indicating the group membership for each sample. Coded
-#' as default for the supervised method \code{sGCCDA, sPLSDA}, but needs to be
-#' input for the unsupervised methods \code{PLS, sPLS, rCC, rGCCA, sGCCA}
-#' @param col character (or symbol) color to be used, color vector also
-#' possible.
-#' @param cex numeric character (or symbol) expansion, , color vector also
-#' possible.
-#' @param pch plot character. A character string or a vector of single
-#' characters or integers. See \code{\link{points}} for all alternatives.
-#' @param title set of characters for the title plot.
-#' @param plot.arrows boolean. Whether arrows should be added or not. Default
-#' is \code{TRUE}.
-#' @param legend boolean. Whether the legend should be added. Only for the
-#' supervised methods and if group!=NULL. Default is \code{FALSE}.
-#' @param X.label x axis titles.
-#' @param Y.label y axis titles.
-#' @param ind.names If \code{TRUE}, the row names of the first (or second) data
-#' matrix are used as sample names (see Details). Can be a vector of length the
+#' @param pch plot character. A character string or a named vector of single
+#' characters or integers whose names match those of \code{object$variates}.
+#' @param scale.blocks Logical, whether to standardise blocks by the X axis
+#' range of the Y block to represent relative alignment.
+#' @param ind.names.position One of c('start', 'end') indicating where to show
+#'   the ind.names . Not used in block analyses, where centroids are used.
+#' @param arrow.alpha Numeric between 0 and 1 determining the opacity of arrows.
+#' @param arrow.size Numeric, variable arrow head size.
+#' @param arrow.length Numeric, length of the arrow head in 'cm'.
+#' @param ... Not currently used.
 #' sample size to display sample names.
-#' @param position.names One of \code{"centroid", "start", "end"}. Define where
-#' sample names are plotted when \code{ind.names=TRUE}. In a multiblock
-#' analysis, centroid and start will display similarly.
-#' @return none
-#' @author Francois Bartolo, Ignacio Gonzalez, Kim-Anh Le Cao, Florian Rohart, Al J Abadi
+#' @return A ggplot object
+#' @author Al J Abadi
 #' @seealso \code{\link{arrows}}, \code{\link{text}}, \code{\link{points}} and
 #' http://mixOmics.org/graphics for more details.
 #' @references Lê Cao, K.-A., Martin, P.G.P., Robert-Granie, C. and Besse, P.
@@ -62,403 +43,237 @@
 #' @keywords multivariate hplot dplot
 #' @export
 #' @example ./examples/plotArrow-examples.R
-plotArrow <-
-    function(object,
-             comp = NULL,
-             abline = FALSE,
-             xlim = NULL,
-             ylim = NULL,
-             group = NULL,
-             col,
-             cex,
-             pch,
-             title = NULL,
-             plot.arrows = TRUE,
-             legend = FALSE,
-             X.label = NULL,
-             Y.label = NULL,
-             ind.names = FALSE,
-             position.names = 'centroid')
+plotArrow <- function(object,
+                      comp = c(1,2),
+                      ind.names = TRUE,
+                      group = NULL,
+                      col.per.group=NULL,
+                      scale.blocks=FALSE,
+                      col = NULL,
+                      ind.names.position = c('start', 'end'), 
+                      ind.names.size = 2,
+                      pch = NULL,
+                      pch.size = 2,
+                      # arrow.col = 'grey50',
+                      arrow.alpha = 0.6,
+                      arrow.size = 0.5,
+                      arrow.length = 0.2,
+                      legend = if (is.null(group)) FALSE else TRUE,
+                      legend.title = NULL,
+                      ...
+)
+{
+    ## ------------- checks
+    class.object = class(object)
+    object.pls=c("mixo_pls", "mixo_plsda", "mixo_spls", "mixo_splsda", "rcc")
+    object.blocks=c("sgcca", "sgccda", "rgcca")
+    
+    if (! any(class.object %in% c(object.pls,object.blocks)))
+        stop( " 'plotArrow' is only implemented for the following objects: pls, plsda, spls, splsda, rcc, sgcca, sgccda, rgcca", call.=FALSE)
+    
+    ind.names.position <- match.arg(ind.names.position)
+    is.multiblock <- ifelse(is.list(object$X), TRUE, FALSE)
+    ## keep the plot components only and name columns as x and y
+    variates <- mapply(arr = object$variates, block = names(object$variates), FUN = function(arr, block) {
+        df <- data.frame(arr[,comp])
+        colnames(df) <- c('x', 'y')
+        df
+    }, SIMPLIFY = FALSE)
+    ## remove the Y block and DA analyses
+    if (is(object, 'DA'))
     {
-        
-        class.object = class(object)
-        object.pls=c("mixo_pls", "mixo_plsda", "mixo_spls", "smixo_plsda", "rcc")
-        object.blocks=c("sgcca", "sgccda", "rgcca")
-        
-        if (! any(class.object %in% c(object.pls,object.blocks)))
-            stop( " 'plotArrow' is only implemented for the following objects: pls, plsda, spls, splsda, rcc, sgcca, sgccda, rgcca", call.=FALSE)
-        
-        
-        ### Start: Validation of arguments
-        ncomp = object$ncomp
-        
-        if ((!position.names %in% c("centroid", "start", "end")))
-            stop("'position.names' must be one of 'centroid', 'start' , 'end' .", call. = FALSE)
-        
-        
-        if (any(class.object %in% object.blocks))
+        variates$Y <- NULL
+    }
+    
+    if (scale.blocks) {
+        ## standardise x and y for all blocks using Xlim of Y block to preserve the distances
+        xy_scalers <- lapply(c(x='x', y='y'), function(z)
         {
-            
-            blocks = object$names$blocks
-            
-            #if (class.object[1] == "sgccda")
-            # blocks = blocks[-object$indY]
-            object$variates = object$variates[names(object$variates) %in% blocks]
-            
-            if (any(object$ncomp[blocks] == 1))
-                stop(paste("The number of components for one selected block '", paste(blocks, collapse = " - "),"' is 1. The number of components must be superior or equal to 2."), call. = FALSE)
-            
-            ncomp = object$ncomp[blocks]
+            sapply(variates, function(v) {max(v[,z]) - min(v[,z])})
+        })
+        variates <- mapply(w=variates, z=xy_scalers$x, FUN = function(w, z)
+        {
+            w/z
+        }, SIMPLIFY = FALSE)
+    }
+    
+    blocks <- names(variates)
+    if ('centroid' %in%  names(blocks))
+        stop("'centroid' is a reserved name. Please choose another name for blocks")
+
+    if (is.multiblock) {
+        ## calculate and add centroids
+        centroid_variates <- lapply(c(x='x', y='y'), function(w){
+            xORy <- lapply(variates, function(v) v[,w, drop=FALSE])
+            xORy <- Reduce(x = xORy, f = cbind)
+            xORy <- rowMeans(xORy)
+        })
+        stopifnot(! ('centroid' %in% names(variates)))
+        variates$centroid <- data.frame(centroid_variates)
+    }
+
+    ## prefix colnames by block for cbind() and then ggplot
+    variates <- mapply(df = variates, block = names(variates), FUN = function(df, block) {
+        colnames(df) <- sprintf("%s_%s", colnames(df), block)
+        df
+    }, SIMPLIFY = FALSE)
+    
+    # cbind
+    variates <- Reduce(x = variates, f = cbind)
+    ind.names <- .get.character.vector(ind.names, rownames(variates))
+    ## axes labels
+    xylabels <- paste0('Dimension ', comp, ifelse(scale.blocks, ' - (scaled)', ''))
+    
+    ## colours
+    if (is.null(group) && is(object = object, 'DA'))
+    {
+        group <- object$Y
+    }
+    ## ouputs col.per.group and group based on possible inputs
+    col.group <-
+        .get.cols.and.group(
+            col.per.group = col.per.group,
+            group = group,
+            col = col,
+            object = object,
+            n_ind = nrow(variates)
+        )
+    group <- col.group$group
+    col.per.group <- col.group$col.per.group
+    pch.legend <- TRUE
+    
+    if (is(object, 'DA'))
+    {
+        pch <- seq_len(length(blocks)+1)[-8][seq_along(blocks)] ## keep pch = 8 for centroids
+        names(pch) <- blocks
+    }
+    
+    if (length(col.per.group) == 1)
+    {
+        legend <- FALSE
+    }
+    
+    if (is.null(pch))
+    {
+        pch <- 1
+    } else if (length(pch) == length(blocks))
+    {
+        if (names(pch) %!=% blocks)
+        {
+            stop("'pch' must be either a single value, or a vector whose names are the block names ",
+                 "and whose values are the plot characters") 
         }
+    } else if ( length(pch) != 1 )
+    {
+        stop("'pch' must be either a single value, or a vector whose names are the block names ",
+             "and whose values are the plot characters") 
+    }
+    if (length(pch) == 1)
+    {
+        pch <- rep(pch, length(blocks))
+        names(pch) <- blocks
+        pch.legend <- FALSE
+    }
         
-        #-- arrows
-        if (!is.logical(plot.arrows))
-            stop("'plot.arrows' must be a logical constant (TRUE or FALSE).", call. = FALSE)
-        
-        #-- xlim,ylim
-        lim.X = FALSE
-        if (!is.null(xlim))
-        {
-            if (!is.numeric(xlim) || length(xlim) != 2)
-                stop("'xlim' must be a vector of length 2.",call. = FALSE)
-            
-            lim.X = TRUE
-        }
-        
-        lim.Y = FALSE
-        if (!is.null(ylim))
-        {
-            if (!is.numeric(ylim) || length(ylim) != 2)
-                stop("'ylim' must be a vector  of length 2.",call. = FALSE)
-            
-            lim.Y = TRUE
-        }
-        
-        
-        #-- comp
-        if (is.null(comp))
-            comp=c(1:2)
-        if (length(comp) != 2)
-            stop("'comp' must be a numeric vector of length 2.", call. = FALSE)
-        
-        if (!is.numeric(comp))
-            stop("Invalid vector for 'comp'.")
-        
-        if (any(ncomp < max(comp)))
-            stop("Each element of 'comp' must be smaller or equal than ", max(object$ncomp), ".", call. = FALSE)
-        
-        comp1 = round(comp[1])
-        comp2 = round(comp[2])
-        
-        
-        if (any(class.object %in% object.pls))
-            blocks=c("X","Y");object$variates = object$variates[names(object$variates) %in% blocks]
-        
-        if (is.null(X.label))
-            X.label = sprintf("Dimension %s", comp1)
-        
-        if (is.null(Y.label))
-            Y.label = sprintf("Dimension %s", comp2)
-        
-        
-        
-        #-- ind.names
-        display.names.start = FALSE
-        display.centroid = FALSE
-        display.names.end = FALSE
-        
-        if (isTRUE(ind.names))
-        {
-            ind.names = object$names$sample
-            
-            if ( position.names=="centroid")
-            {
-                display.centroid = TRUE
-            } else if (position.names=="start") {
-                display.names.start =TRUE
-            } else if (position.names=="end") {
-                display.names.end = TRUE
-            }
-            
-        } else if (length(ind.names) > 1 ) {
-            if (length(ind.names) != length(object$names$sample))
-                stop("'ind.names' must be a character vector of length ", length(object$names$sample), " or boolean  .")
-            
-            if ( position.names=="centroid"){
-                display.centroid = TRUE
-            } else if (position.names=="start"){
-                display.names.start =TRUE
-            } else if (position.names=="end") {
-                display.names.end = TRUE
-            }
-        }
-        
-        #-- Start: Retrieve variates from object
-        x = y =list()
-        
-        x = lapply(object$variates, function(x){x[, comp1, drop = FALSE]})
-        y = lapply(object$variates, function(x){x[, comp2, drop = FALSE]})
-        
-        
-        
-        
-        #-- End: Retrieve variates from object
-        
-        
-        
-        #-- Define group
-        missing.group = FALSE
-        if (is.null(group) & any(class.object %in% c("DA")))
-        {
-            group = object$Y#factor(map(object$ind.mat), labels = object$names$colnames$Y)
-        } else if (!is.null(group)) {
-            missing.group = TRUE
-            if (!is.factor(group))
-                group = as.factor(group)
-            
-            object$ind.mat = unmap(group)
-            
-            if (length(group) != length(x[[1]]))
-                stop("Length of 'group' should be of length ", length(x[[1]]), ", the sample size of your data")
+    if (is.multiblock)
+    {
+        if (any(pch == 8)) 
+            stop("'pch=8' is a reserved value. Please use another values")
+        pch <- c(pch, 'centroid' = 8)
+    }
+    
+    ## ------------- outline
+    variates$group <- group
+    p <- ggplot(variates) + 
+        theme_classic() +
+        labs(x = xylabels[1], y = xylabels[2])# +
+
+    if (is(object, 'DA'))
+    {
+        legend.title <- .change_if_null(legend.title, 'Y')
+    }
+    legend.title <- .change_if_null(legend.title, as.character(as.list(match.call())['group']))
+    geom_point_blocks <- if(is.multiblock) c('centroid', blocks) else blocks
+    for (block in geom_point_blocks)
+    {
+        x <- paste0('x_', block)
+        y <- paste0('y_', block)
+        df <- variates[,c(x, y, 'group')]
+        df$pch <- block
+        p <- p + geom_point(data = df, aes_string(x = x, 
+                                                  y = y,
+                                                  col =  'group',
+                                                  shape = 'pch'),
+                            size = pch.size)
+    }
+    p <- p + scale_color_manual(values = col.per.group, guide = if (isTRUE(legend)) guide_legend(title = legend.title) else NULL)
+    p <- p +  scale_shape_manual(values = pch, guide = if (pch.legend) guide_legend(title = 'Block') else NULL)
+    
+    ## ind.names
+    
+    if (!is.null(ind.names))
+    {
+        if (is.multiblock) {
+            x_label <- 'x_centroid'
+            y_label <- 'y_centroid'
         } else {
-            group = factor(rep("No group", length(x[[1]])))
-            object$ind.mat = unmap(group)
-        }
-        
-        #-- col.per.group argument
-        if (nlevels(group) < 10)
-        {   #only 10 colors in color.mixo
-            col.per.group = color.mixo(1:nlevels(group))
-        } else {
-            #use color.jet
-            col.per.group = color.jet(nlevels(group))
-        }
-        
-        levels.color = vector(, length(x[[1]]))
-        if (length(col.per.group) != length(x[[1]]))
-        {
-            for (i in 1 : nlevels(group))
-                levels.color[group == levels(group)[i]] = col.per.group[i]
-        } else {
-            levels.color = col.per.group
-        }
-        
-        
-        #-- col argument
-        missing.col = FALSE
-        if (!missing(col))
-        {
-            if (length(col) > length(x[[1]]))
-                stop("Length of 'col' should be of length inferior or equal to ", length(x[[1]]),".")
-            
-            col = factor(rep(col, ceiling(length(x[[1]])/length(col)))[1 : length(x[[1]])])
-            if (!missing.group)
-            {
-                group = col
-                levels.color = col
-                col.per.group = levels(col)
-                object$ind.mat = unmap(group)
-            }
-            missing.col = TRUE
-        } else {
-            col = levels.color
-        }
-        
-        #-- cex argument
-        if (missing(cex))
-        {
-            cex = rep(1, length(x[[1]]))
-        } else {
-            if (length(cex) == 1)
-            {
-                cex = rep(cex, length(x[[1]]))
-            } else if (length(cex) > length(x[[1]])) {
-                stop("Length of 'cex' should be of length inferior or equal to ", length(x[[1]]),".")
-            } else if (length(cex) == length(unique(group))){
-                cex = cex[as.factor(group)]
-            }else {
-                cex = rep(cex, ceiling(length(x[[1]])/length(cex)))[1 : length(x[[1]])]
-            }
-        }
-        
-        #-- pch argument
-        if (missing(pch))
-        {
-            if (missing.col)
-            {
-                pch = as.numeric(col)
+            if (ind.names.position == 'start') {
+                x_label <- 'x_Y'
+                y_label <- 'y_Y'
             } else {
-                pch = as.numeric(group)
-            }
-        } else {
-            if (length(pch) == 1)
-            {
-                pch = rep(pch, length(x[[1]]))
-            } else if (length(pch) > length(x[[1]])){
-                stop("Length of 'pch' should be of length inferior or equal to ", length(group),".")
-            } else if (length(pch) == length(unique(group))){
-                pch = pch[as.factor(group)]
-            } else {
-                pch = rep(pch, ceiling(length(x[[1]])/length(pch)))[1 : length(x[[1]])]
+                x_label <- 'x_X'
+                y_label <- 'y_X'
             }
         }
         
         
-        arrow1 = function(x0, y0, x1, y1, length = 0.12, angle = 15, color)
-        {
-            
-            d0 <- sqrt((x0 - x1)^2 + (y0 - y1)^2)
-            
-            if (d0 < 1e-07)
-                return(invisible())
-            
-            arrows(x0, y0, x1, y1, angle = angle, length = max(c(length, length * cex)),
-                   col = color)
-        }  #fin function arrow
-        
-        
-        #-- Start: data set
-        df = list()
-        for (i in 1 : length(x))
-            df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group)
-        
-        df = data.frame(do.call(rbind, df), "Block" = paste0("Block: ", unlist(lapply(1 : length(df), function(z){rep(blocks[z], nrow(df[[z]]))}))))
-        
-        
-        names(df)[1:2] = c("x", "y")
-        
-        if (display.names.start ||display.names.end || display.centroid)
-            df$names = rep(ind.names, length(x))
-        
-        df$pch = pch; df$cex = cex; df$col = as.character(col)
-        
-        
-        
-        opar <- par()[! names(par()) %in% c("cin", "cra", "csi", "cxy", "din", "page")]
-        #-- Define layout
-        if (legend)
-        {
-            par(mai=c( 1.360000, 1.093333, 1.093333,(max(strwidth(levels(group),"inches")))+0.6),xpd=TRUE)
-        } else {
-            par(mar=c(5,4,4,2))
-        }
-        
-        plot(df[, "x" ], df[, "y" ],
-             type = "n", xlab = X.label, ylab = Y.label, main = title,
-             xlim = xlim, ylim = ylim)
-        
-        #-- arrows --#
-        
-        for (j in 1 : length(df[ df$Block %in% paste0("Block: ", blocks[1]), "x"]))
-        {
-            if (length(blocks)==2)
-            {
-                x0=df[df$Block %in% paste0("Block: ", blocks[1]), "x"][j]
-                y0=df[df$Block %in% paste0("Block: ", blocks[1]), "y"][j]
-                x1=df[df$Block %in% paste0("Block: ", blocks[2]), "x"][j]
-                y1=df[df$Block %in% paste0("Block: ", blocks[2]), "y"][j]
-                d0 <- sqrt((x0 - x1)^2 + (y0 - y1)^2)
-                if (d0 < 1e-07)
-                    return(invisible())
-                
-                if (plot.arrows)
-                    arrows(x0, y0, x1, y1, col=df[, "col"][j],angle = 15, length = max(c(0.12, 0.12 * df$cex[j])),xpd=FALSE)
-                
-                if (display.centroid)
-                {
-                    x2=mean(c(x0,x1))
-                    y2=mean(c(y0,y1))
-                    text(x2, y2, df[df$Block %in% paste0("Block: ", blocks[1]), "names"][j],col = df[df$Block %in% paste0("Block: ", blocks[1]), "col"][j], cex = df$cex[j],xpd=FALSE)
-                }
-            } else if (length(blocks)>2) {
-                if (display.names.start)
-                {
-                    display.names.start=FALSE
-                    display.centroid=TRUE
-                }
-                x0=y0=0
-                x=y=c()
-                for (i in 1 : length(blocks))
-                {
-                    x0=x0+df[df$Block %in% paste0("Block: ", blocks[i]), "x"][j]
-                    y0=y0+df[df$Block %in% paste0("Block: ", blocks[i]), "y"][j]
-                    x[i]=df[df$Block %in% paste0("Block: ", blocks[i]), "x"][j]
-                    y[i]=df[df$Block %in% paste0("Block: ", blocks[i]), "y"][j]
-                }
-                x0=x0/length(blocks)
-                y0=y0/length(blocks)
-                
-                if (display.centroid)
-                {
-                    text(x0, y0, df[df$Block %in% paste0("Block: ", blocks[1]), "names"][j],col = df[df$Block %in% paste0("Block: ", blocks[1]), "col"][j], cex = df$cex[j],xpd=FALSE)
-                } else{
-                    points(cbind(x0,y0),pch=8,cex=df$cex[j],col=df[df$Block %in% paste0("Block: ", blocks[1]), "col"][j],xpd=FALSE)
-                }
-                if (plot.arrows)
-                {
-                    for (i in 1 : length(blocks))
-                        arrows(x0, y0, x[i], y[i], col=df[, "col"][j],angle = 15, length = max(c(0.12, 0.12 * df$cex[j])),xpd=FALSE)
-                }
-            }
-        }
-        
-        names.end.blocks=TRUE
-        if (display.names.start)
-        {
-            print.names=paste0("Block: ", blocks[1])
-            print.points=paste0("Block: ", blocks[2])
-        } else if (display.names.end) {
-            if (length(blocks)==2)
-            {
-                print.names=paste0("Block: ", blocks[2])
-                print.points=paste0("Block: ", blocks[1])
-            } else {
-                names.end.blocks=FALSE
-                print.names=paste0("Block: ", blocks[1:length(blocks)])
-            }
-        } else {
-            print.points=paste0("Block: ", blocks[1:length(blocks)])
-        }
-        
-        
-        
-        #-- color samples according to col
-        for (i in unique(col))
-        {
-            if (display.names.end || display.names.start)
-                text(x = df[df$Block %in% print.names, "x"],
-                     y = df[df$Block %in% print.names, "y"],
-                     labels = df[df$Block %in% print.names, "names"],
-                     col = df[df$Block %in% print.names, ]$col, cex = df[df$Block %in% print.names, ]$cex,xpd=FALSE)
-            if (names.end.blocks)
-                points(x = df[df$Block %in% print.points, "x"],
-                       y = df[df$Block %in% print.points , "y"],
-                       col = df[df$Block %in% print.points, ]$col, cex = df[df$Block %in% print.points, ]$cex, pch = df[df$Block %in% print.points, ]$pch,xpd=FALSE)
-        }
-        
-        
-        #-- Abline
-        if (abline)
-            abline(v = 0, h = 0, lty = 1,xpd=FALSE)
-        
-        
-        pch.legend=NULL
-        if (missing.col)
-        {
-            for (i in 1:nlevels(factor(col)))
-                pch.legend=c(pch.legend,df[df$col == levels(factor(col))[i], ]$pch)
-        } else {
-            for (i in 1:nlevels(group))
-                pch.legend=c(pch.legend,df[df$group == levels(group)[i], ]$pch)
-        }
-        
-        if (legend && (any(class.object %in% c("sgccda", "DA"))||missing.group))
-            legend(par()$usr[2]+0.1,par()$usr[4] - (par()$usr[4]-par()$usr[3])/2, col = col.per.group, legend = levels(group), pch = if (display.names.end || display.names.start) {16} else {unique(pch.legend)}, title = 'Legend', cex = 0.8)
-        
-        opar["usr"]=par()["usr"]
-        
-        par(opar)
-        
-        return(invisible(df))
+        p <- p + 
+            geom_text(mapping = aes_string(x = x_label,
+                                           y = y_label,
+                                           label = 'ind.names'
+            ), 
+            size = ind.names.size,
+            show.legend = FALSE, vjust=-0.1, hjust=-0.1)
         
     }
+    p
+    ## arrows
+    arrow.offset <- 0.04*pch.size/2
+    if (is.multiblock) {
+        for (block in blocks)
+        {
+            cols <- c('x_centroid', 'y_centroid', paste0(c('x_', 'y_'), block), 'group')
+            df <- variates[,cols]
+            colnames(df) <- c('xs', 'ys', 'xe', 'ye', 'group')
+            p <- p + geom_segment(data = df,
+                                  aes(
+                                      x = xs + (xe - xs) * arrow.offset,
+                                      y = ys + (ye - ys) * arrow.offset,
+                                      xend = xe -  (xe - xs) * arrow.offset,
+                                      yend = ye - (ye - ys) * arrow.offset,
+                                      col = group
+                                  ),
+                                  alpha = arrow.alpha,
+                                  arrow = arrow(type='closed', angle = 30, length = unit(arrow.length, "cm"), ends = 'last'),
+                                  size = arrow.size,
+                                  show.legend = FALSE
+            )
+        }
+    } else {
+        p <- p + geom_segment(
+            aes(
+                x = x_X + (x_Y - x_X)*arrow.offset,
+                y = y_X+ (y_Y - y_X)*arrow.offset,
+                xend = x_Y - (x_Y - x_X)*arrow.offset,
+                yend = y_Y - (y_Y - y_X)*arrow.offset,
+                col = group
+            ),
+            alpha = arrow.alpha,
+            arrow = arrow(type='closed', angle = 30, length = unit(arrow.length, "cm"), ends = 'last'),
+            size = arrow.size,
+            show.legend = FALSE
+        ) 
+    } 
+    p
+    
+}

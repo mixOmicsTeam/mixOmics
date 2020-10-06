@@ -1013,7 +1013,7 @@ Instead of projecting the samples into the combined XY representation space, as 
 
 ```{r}
 plotArrow(MyResult.spls,group=nutrimouse$diet, legend = TRUE,
-          X.label = 'PLS comp 1', Y.label = 'PLS comp 2')
+          X.label = 'PLS comp 1', Y.label = 'PLS comp 2', legend.title = 'Diet')
 ```
 
 

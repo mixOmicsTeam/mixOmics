@@ -521,3 +521,31 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     
     invisible(ncomp)
 }
+
+## ----------------------------- %=% ----------------------------- ##
+## check if LHS and RHS contain exactly the same elemnts without caring about order
+## TODO use this throughout for col.per.group etc.
+#'@noRd
+#'@examples
+#' letters %=% rev(letters)
+#' #> TRUE
+'%=%' <- function(LHS, RHS)
+{
+    diffs <- c(setdiff(LHS, RHS), setdiff(RHS, LHS))
+    if (length(diffs))
+    {
+        return(FALSE)
+    }
+    return(TRUE)
+}
+## NOT '%=%'
+#' @noRd
+#' @examples
+#' letters %!=% rev(letters)
+#' #> FALSE
+#' letters %!=% LETTERS
+#' #> TRUE
+'%!=%' <- function(LHS, RHS)
+{
+    ! (LHS %=% RHS)
+}

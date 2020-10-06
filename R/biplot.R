@@ -38,6 +38,7 @@
 #' points/names and the contributions of features to each dimension are shown as
 #' directed arrows or vectors.
 #' @return A ggplot object.
+#' @author Al J Abadi
 #' @importFrom ggrepel geom_text_repel
 #' @example ./examples/biplot-examples.R
 #' @name biplot

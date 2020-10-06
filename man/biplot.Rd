@@ -160,3 +160,6 @@ spca.lipid <- spca(nutrimouse$lipid, ncomp = 2, scale = TRUE, keepX = c(8, 6))
 biplot(spca.lipid, var.names.col = 'black', group = nutrimouse$diet, 
        legend.title = 'Diet')
 }
+\author{
+Al J Abadi
+}
