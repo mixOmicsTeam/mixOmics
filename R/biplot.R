@@ -121,7 +121,7 @@ biplot.pca <- function(x,
     }
     
     ## ------------- outline
-    biplot <- 
+    gg_biplot <- 
         ggplot() + 
         theme_classic() +  
         labs(x = axes.titles[1], 
@@ -129,11 +129,11 @@ biplot.pca <- function(x,
     ## vline and hline
     if (vline)
     {
-        biplot <- biplot + geom_vline(xintercept = 0, size = 0.3, col = 'grey75')
+        gg_biplot <- gg_biplot + geom_vline(xintercept = 0, size = 0.3, col = 'grey75')
     }
     if (hline)
     {
-        biplot <- biplot +  geom_hline(yintercept = 0, size = 0.3, col = 'grey75')
+        gg_biplot <- gg_biplot +  geom_hline(yintercept = 0, size = 0.3, col = 'grey75')
     }
    
         
@@ -157,7 +157,7 @@ biplot.pca <- function(x,
             legend.title <- .change_if_null(legend.title, as.character(as.list(match.call())['group']))
             
             # pch.col <- .get.ind.colors(group, col, col.per.group, n_ind = nrow(variates))
-            biplot <- biplot + 
+            gg_biplot <- gg_biplot + 
                 geom_point(aes(x = variates[, comp[1]], 
                                y = variates[, comp[2]],
                                col = group,
@@ -176,7 +176,7 @@ biplot.pca <- function(x,
         if (!is.null(ind.names))
         {
             if (isTRUE(ind.names.repel)) {
-                biplot <- biplot + 
+                gg_biplot <- gg_biplot + 
                     geom_text_repel(mapping = aes(x = variates[, comp[1]],
                                                   y = variates[, comp[2]],
                                                   label = ind.names,
@@ -185,7 +185,7 @@ biplot.pca <- function(x,
                                     size = ind.names.size,
                                     show.legend = FALSE)
             } else {
-                biplot <- biplot + 
+                gg_biplot <- gg_biplot + 
                     geom_text(mapping = aes(x = variates[, comp[1]],
                                                   y = variates[, comp[2]],
                                                   label = ind.names,
@@ -196,7 +196,7 @@ biplot.pca <- function(x,
             }
             
         }
-        biplot <- biplot + 
+        gg_biplot <- gg_biplot + 
             scale_color_manual(values = col.per.group,
                                guide = if (isTRUE(legend)) guide_legend(title = legend.title) else NULL)
     }
@@ -219,8 +219,8 @@ biplot.pca <- function(x,
             loadings$var.names.col <- var.names.col
             loadings$var.arrow.col <- var.arrow.col
             ## lines and arrows
-            biplot <-
-                biplot + geom_segment(
+            gg_biplot <-
+                gg_biplot + geom_segment(
                     aes(
                         x = 0,
                         y = 0,
@@ -247,8 +247,8 @@ biplot.pca <- function(x,
                 angle <- atan(loadings[, comp[2]]/loadings[, comp[1]]) * 360/(2 * pi)
             }
             
-            biplot <-
-                biplot + geom_text_repel(
+            gg_biplot <-
+                gg_biplot + geom_text_repel(
                     aes(
                         x = loadings[, comp[1]],
                         y = loadings[, comp[2]],
@@ -265,8 +265,8 @@ biplot.pca <- function(x,
         } 
         
         ## second set of axes
-        biplot <- biplot + scale_y_continuous(sec.axis = sec_axis(~.*1/scaler)) +
+        gg_biplot <- gg_biplot + scale_y_continuous(sec.axis = sec_axis(~.*1/scaler)) +
             scale_x_continuous(sec.axis = sec_axis(~.*1/scaler)) 
     }
-    biplot
+    gg_biplot
 }
