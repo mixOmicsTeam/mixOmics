@@ -9,7 +9,7 @@ on:
 name: R-CMD-check
 
 jobs:
-
+  ## pre-job to determine if a job has been run for the same SHA (e.g. on a different branch)
   Check_for_duplicate_action:
     if: (github.event_name != 'schedule')
     runs-on: ubuntu-latest
@@ -23,6 +23,7 @@ jobs:
 
   R-CMD-check:
     needs: Check_for_duplicate_action
+    ## run scheduled jobs only on main repo - do not run a duplicate job for merges etc. Do not run if commit messages include any of 'worksave' or 'skip-ci'
     if: (github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (github.event_name != 'schedule' && (needs.Check_for_duplicate_action.outputs.should_skip == 'false') && !contains(github.event.head_commit.message, 'worksave') && !contains(github.event.head_commit.message, 'skip-ci'))
     runs-on: ${{ matrix.config.os }}
     container: ${{ matrix.config.image }}
@@ -138,10 +139,13 @@ jobs:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-bioc-${{ matrix.config.bioc }}-results
           path: check
 
-      # - name: Test coverage
-      #   if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
-      #   run: covr::codecov(type = c('tests', 'examples'))
-      #   shell: Rscript {0}
+      - name: Test coverage
+        # if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
+        # the commands between 'set +e' and 'set -e' are run without throwing any error
+        run: |
+          set +e
+          Rscript -e "covr::codecov(type = c('tests', 'examples'))"
+          set -e
 
       - name: Notify Slack
         uses: 8398a7/action-slack@v3
