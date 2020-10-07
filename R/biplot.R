@@ -77,7 +77,8 @@ biplot.pca <- function(x,
 {
     object <- x
     rm(x)
-    block <- 'X'
+    ## for implicit support of non-pca objects - experimental
+    block <- .change_if_null(list(...)$block, 'X')
     # hide <- match.arg(hide)
     hide <- 'none'
     selection <- rowSums(object$loadings$X[, comp]) != 0 
@@ -100,7 +101,7 @@ biplot.pca <- function(x,
     scaler <- max(variates, na.rm = TRUE)/max(loadings, na.rm = TRUE)
     
     PCs <- colnames(variates)
-    expl_vars <- round(object$explained_variance*100)[comp]
+    expl_vars <- round(object$explained_variance[[block]]*100)[comp]
     axes.titles <- sprintf("%s (%s%%)", PCs, expl_vars)
     ind.names <- .get.character.vector(ind.names, vec = rownames(variates))
     

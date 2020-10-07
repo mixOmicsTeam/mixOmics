@@ -379,7 +379,7 @@ print.pca <- function(x, ...)
         cat("  \n") 
     }
 
-    per.var = x$explained_variance
+    per.var = x$explained_variance$X
     cum.var = x$cum.var
 
     names(per.var) = paste("PC", 1:length(per.var), sep = "")

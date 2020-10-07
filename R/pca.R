@@ -352,8 +352,9 @@ pca <- function(X,
     result$variates = list(X=result$x)
     
     # calculate explained variance
-    result$explained_variance = result$sdev^2 / result$var.tot
-    result$cum.var = cumsum(result$explained_variance)
+    explained_variance <- with(result, sdev^2 / var.tot)
+    result$cum.var = cumsum(explained_variance)
+    result$explained_variance = list(X = explained_variance)
     result$X <- NULL
     result
 }

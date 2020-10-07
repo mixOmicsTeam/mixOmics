@@ -323,7 +323,7 @@ spca <-
                        #sdev = sdev,  # KA: to add if biplot function (but to be fixed!)
                        #center = center, # KA: to add if biplot function (but to be fixed!)
                        #scale = scale,   # KA: to add if biplot function (but to be fixed!)
-                       explained_variance = explained_variance,
+                       explained_variance = list(X=explained_variance),
                        cum.var = cum.var,
                        keepX = vect.keepX,
                        iter = vect.iter,

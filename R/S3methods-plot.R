@@ -29,7 +29,7 @@ plot.pca  <- function(x,
         stop("'ncomp' must be lower or equal to ", length(ncomp_model), ".",
              call. = FALSE)
     ## end check - begin screeplot
-    expl_vars = (x$explained_variance)[seq_len(ncomp)] # relative variance
+    expl_vars = (x$explained_variance$X)[seq_len(ncomp)] # relative variance
     ylab = "Explained Variance"
     if (type == "barplot")
     {
