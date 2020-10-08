@@ -91,7 +91,7 @@ plotArrow <- function(object,
         {
             sapply(variates, function(v) {max(v[,z]) - min(v[,z])})
         })
-        variates <- mapply(w=variates, z=xy_scalers$x, FUN = function(w, z)
+        variates <- mapply(w=variates, z=xy_scalers, FUN = function(w, z)
         {
             w/z
         }, SIMPLIFY = FALSE)
