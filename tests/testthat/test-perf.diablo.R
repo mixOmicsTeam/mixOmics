@@ -44,3 +44,28 @@ test_that("perf.diablo works with and without parallel processing and with auroc
     aucs <- round(unname(perf.res42$auc$comp1[,1]), 2)
     expect_equal(aucs,c(0.97, 0.66, 0.6, 0.59, 0.79))
 })
+
+test_that("perf.diablo is able to process a model with one component only", {
+    data(nutrimouse)
+    nrep <- 3
+    folds <- 2
+    Y = nutrimouse$diet
+    data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+    design = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
+    
+    nutrimouse.sgccda <- block.splsda(X=data,
+                                      Y = Y,
+                                      design = design,
+                                      keepX = list(gene=c(10), lipid=c(15)),
+                                      ncomp = 1,
+                                      scheme = "horst")
+    
+    RNGversion(.mixo_rng()) ## in case RNG changes!
+    set.seed(100)
+    
+    # Running perf.sgccda would previously throw an exception when weights were not in a matrix format
+    perf.res = perf.sgccda(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = FALSE, progressBar = TRUE)
+    
+    error.rates.comp.count <- nrow(perf.res$error.rate[[1]])
+    expect_equal(error.rates.comp.count, 1)
+})
