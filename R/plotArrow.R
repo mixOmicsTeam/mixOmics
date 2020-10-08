@@ -245,6 +245,7 @@ plotArrow <- function(object,
             cols <- c('x_centroid', 'y_centroid', paste0(c('x_', 'y_'), block), 'group')
             df <- variates[,cols]
             colnames(df) <- c('xs', 'ys', 'xe', 'ye', 'group')
+            xs <- ys <- xe <- ye <- NULL ## avoid check warnings
             p <- p + geom_segment(data = df,
                                   aes(
                                       x = xs + (xe - xs) * arrow.offset,
@@ -260,6 +261,7 @@ plotArrow <- function(object,
             )
         }
     } else {
+        x_X <- y_X <- x_Y <- y_Y <- NULL ## avoid check warnings
         p <- p + geom_segment(
             aes(
                 x = x_X + (x_Y - x_X)*arrow.offset,
@@ -274,6 +276,11 @@ plotArrow <- function(object,
             show.legend = FALSE
         ) 
     } 
+    ## second set of axes
+    if (scale.blocks) 
+    {
+        p <- p + scale_y_continuous(sec.axis = sec_axis(~.*1/xy_scalers$y['Y'])) +
+            scale_x_continuous(sec.axis = sec_axis(~.*1/xy_scalers$x['Y'])) 
+    }
     p
-    
 }
