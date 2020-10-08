@@ -10,7 +10,7 @@ plotArrow(
   ind.names = TRUE,
   group = NULL,
   col.per.group = NULL,
-  scale.blocks = FALSE,
+  scale.blocks = TRUE,
   col = NULL,
   ind.names.position = c("start", "end"),
   ind.names.size = 2,

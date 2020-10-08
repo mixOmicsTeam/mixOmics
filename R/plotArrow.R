@@ -48,7 +48,7 @@ plotArrow <- function(object,
                       ind.names = TRUE,
                       group = NULL,
                       col.per.group=NULL,
-                      scale.blocks=FALSE,
+                      scale.blocks=TRUE,
                       col = NULL,
                       ind.names.position = c('start', 'end'), 
                       ind.names.size = 2,
@@ -63,6 +63,7 @@ plotArrow <- function(object,
                       ...
 )
 {
+    # TODO allow for arbitrary blocks (e.g. Y and X[[i]] in block.spls)
     ## ------------- checks
     class.object = class(object)
     object.pls=c("mixo_pls", "mixo_plsda", "mixo_spls", "mixo_splsda", "rcc")
@@ -87,14 +88,21 @@ plotArrow <- function(object,
     
     if (scale.blocks) {
         ## standardise x and y for all blocks using Xlim of Y block to preserve the distances
-        xy_scalers <- lapply(c(x='x', y='y'), function(z)
+        xy_range <- mapply(z = c(x='x', y='y'), v = variates, FUN = function(z, v)
         {
-            sapply(variates, function(v) {max(v[,z]) - min(v[,z])})
-        })
-        variates <- mapply(w=variates, z=xy_scalers, FUN = function(w, z)
-        {
-            w/z
+           max(v[,z]) - min(v[,z])
         }, SIMPLIFY = FALSE)
+        
+        variates <- lapply(variates, FUN = function(v)
+        {
+            res <- mapply(V = v, Z = xy_range, FUN = function(V, Z)
+            {
+                V * (Z)/ (max(V) - min(V))
+            }, SIMPLIFY = FALSE)
+            res <- data.frame(res)
+            rownames(res) <- rownames(v)
+            res
+        })
     }
     
     blocks <- names(variates)
@@ -279,8 +287,8 @@ plotArrow <- function(object,
     ## second set of axes
     if (scale.blocks) 
     {
-        p <- p + scale_y_continuous(sec.axis = sec_axis(~.*1/xy_scalers$y['Y'])) +
-            scale_x_continuous(sec.axis = sec_axis(~.*1/xy_scalers$x['Y'])) 
+        p <- p + scale_y_continuous(sec.axis = sec_axis(~.*1/xy_range$y)) +
+            scale_x_continuous(sec.axis = sec_axis(~.*1/xy_range$x)) 
     }
     p
 }
