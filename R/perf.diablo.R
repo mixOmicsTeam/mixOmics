@@ -181,7 +181,7 @@ perf.sgccda <-
       
       ### Retrieve weights
       weights = sapply(1:M, function(x){model[[x]]$weights})
-      if (is.list(weights)) {
+      if (!is.matrix(weights)) {
         # In a single component model, the sapply function can create a list
         # instead of the the expected matrix
         weights <- t(as.matrix(weights))
