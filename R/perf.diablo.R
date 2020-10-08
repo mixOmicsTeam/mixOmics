@@ -181,6 +181,14 @@ perf.sgccda <-
       
       ### Retrieve weights
       weights = sapply(1:M, function(x){model[[x]]$weights})
+      if (is.list(weights)) {
+        # In a single component model, the sapply function can create a list
+        # instead of the the expected matrix
+        weights <- t(as.matrix(weights))
+        rownames(weights) <- c("comp1")
+      }
+
+      ### Add fold counts to column names
       colnames(weights) = names(crit) = paste0("fold",1:M)
       
       ### Retrieve selected variables per component
