@@ -10,24 +10,15 @@
 #' @method plot pca
 #' @export
 plot.pca  <- function(x,
-                      ncomp = length(x$explained_variance),
+                      ncomp = NULL,
                       type = "barplot",
                       # either barplot or any other type available in plot, as "l","b","p",..
                       ...)
 {
     #-- checking general input parameters --------------------------------------#
     #---------------------------------------------------------------------------#
-    
-    #-- ncomp
-    ncomp_model <- length(x$explained_variance)
-    if (is.null(ncomp) || !is.numeric(ncomp) || ncomp < 1 || !is.finite(ncomp))
-        stop("invalid value for 'ncomp'.", call. = FALSE)
-    
-    ncomp = round(ncomp)
-    
-    if (ncomp > ncomp_model)
-        stop("'ncomp' must be lower or equal to ", length(ncomp_model), ".",
-             call. = FALSE)
+    #-- ncomp check
+    ncomp <- .check_ncomp(ncomp, X = x$X, default = x$ncomp)
     ## end check - begin screeplot
     expl_vars = (x$explained_variance$X)[seq_len(ncomp)] # relative variance
     ylab = "Explained Variance"

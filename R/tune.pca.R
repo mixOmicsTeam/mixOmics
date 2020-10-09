@@ -81,7 +81,7 @@ tune.pca <-
         if (any(is.na.X)) na.X = TRUE
         
         #  list eigenvalues, prop. of explained variance and cumulative proportion of explained variance
-        prop.var = result$explained_variance
+        prop.var = result$explained_variance$X
         cum.var = result$cum.var
         
         ind.show = min(10, ncomp)

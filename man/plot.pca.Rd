@@ -4,7 +4,7 @@
 \alias{plot.pca}
 \title{Show (s)pca explained variance plots}
 \usage{
-\method{plot}{pca}(x, ncomp = length(x$explained_variance), type = "barplot", ...)
+\method{plot}{pca}(x, ncomp = NULL, type = "barplot", ...)
 }
 \arguments{
 \item{x}{A \code{(s)pca} object}

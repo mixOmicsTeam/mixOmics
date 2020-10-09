@@ -444,23 +444,24 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
 }
 
 ## -------------------------- .check_test.keepX --------------------------- ##
-#' check test.keepX
+#' Check test.keepX
 #'
+#' Check test.keepX is valid when X is either matrix or list
 #' @param test.keepX test.keepX
 #' @param X X input from mixOmics tune models
 #' @param indY indY
 #' @param already.tested.X already.tested.X
 #'
 #' @return test.keepX, possibly re-ordered by names for list X
-#' @noRd
+#' @rdname Internals
 #' @keywords Internal
 #' @examples
 #' 
 .check_test.keepX <- function(test.keepX, 
-                         X,
-                         indY = NULL, # TODO
-                         already.tested.X = NULL # TODO
-                         )
+                              X,
+                              indY = NULL, # TODO
+                              already.tested.X = NULL # TODO
+)
 {
     # TODO use this helper to check all test.keepX in the package
     ## -- checker for a pair of test.keepX and X
@@ -503,10 +504,30 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
 }
 ## ----------------------------- .check_ncomp ----------------------------- ##
 
-## check that ncomp is positive integer <= smallest dim in the data
-.check_ncomp <- function(ncomp, X)
+#' Check ncomp
+#'
+#' Check that ncomp is positive integer <= smallest dim in the data
+#' @param ncomp ncomp arg
+#' @param X A matrix or a list of matrices with \code{dim} method
+#' @param default Integer, default value if \code{ncomp} is \code{NULL}
+#'
+#' @return Integer, or a condition
+#' @rdname Internals
+#' @examples
+#' \dontrun{
+#' .check_ncomp(300, X = mtcars)
+#' #> Error in .check_ncomp(300, X = mtcars) : 
+#' #>     'ncomp' must be smaller than or equal to the smallest dimenion in X: 11
+#' .check_ncomp(NULL, X = mtcars, default = 3)
+#' #> 3
+#' }
+#' 
+.check_ncomp <- function(ncomp, X, default = 2)
 {
     # TODO use this helper to check all ncomp in the package
+    
+    if ( is.null(ncomp) )
+        ncomp <- default
     
     if (mode(ncomp) != 'numeric' || ncomp%%1 != 0)
         stop("'ncomp' must be a positive integer")
@@ -519,7 +540,7 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     if (ncomp > min.dim)
         stop("'ncomp' must be smaller than or equal to the smallest dimenion in X: ", min.dim)
     
-    invisible(ncomp)
+    return(ncomp)
 }
 
 ## ----------------------------- %=% ----------------------------- ##
