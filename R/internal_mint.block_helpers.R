@@ -35,9 +35,10 @@
 # --------------------------------------
 # get.weights: used in (MCV.)(block.)(s)pls(da).R
 # --------------------------------------
-#' Get block weights for in analyses
+#' Get block weights for block analyses
 #'
-#' weights saved in objects and used by \code{internal.predict.DA}
+#' weights are calculated as correlation of block components with those of
+#' Y. Values saved in objects and used by \code{internal.predict.DA}
 #'
 #' @param variates Named list of variates from internal_wrapper.mint.block
 #' @param indY Integer, the Y matrix index from internal_wrapper.mint.block

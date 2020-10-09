@@ -178,10 +178,16 @@ perf.sgccda <-
       
       ### Retrieve convergence criterion
       crit = lapply(1:M, function(x){model[[x]]$crit})
-      
       ### Retrieve weights
-      weights = sapply(1:M, function(x){model[[x]]$weights})
-      colnames(weights) = names(crit) = paste0("fold",1:M)
+      weights = lapply(1:M, function(fold_i){
+        fold_weights <- model[[fold_i]]$weights
+        fold_weights$fold <- fold_i
+        fold_weights$rep <- nrep
+        fold_weights$block <- rownames(fold_weights)
+        rownames(fold_weights) <- NULL
+        fold_weights
+        })
+      weights <- Reduce(rbind , weights)
       
       ### Retrieve selected variables per component
       features = lapply(1 : J, function(x)
@@ -817,8 +823,9 @@ perf.sgccda <-
         result$WeightedVote.error.rate.sd = WeightedVote.error.rate.sd
         result$WeightedVote.error.rate.all = WeightedVote.error.rate.all
       }
-      
-      result$weights = weights
+      weights <- Reduce(rbind, weights)
+      weights <- weights[order(weights$block),]
+      result$weights <- weights
       
     }
     
