@@ -848,7 +848,7 @@ shape.input.plotIndiv <-
       
       # if pch is given and ind.names is TRUE, pch takes over
       if(display.names)
-        warning("'ind.names' is set to FALSE as 'pch' overrides it")
+        cat("'ind.names' is set to FALSE as 'pch' overrides it")
       
       display.names = FALSE
       
