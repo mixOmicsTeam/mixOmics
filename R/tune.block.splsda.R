@@ -122,7 +122,7 @@ tune.block.splsda <-
             BPPARAM = SerialParam(),
             ...)
   {
-    if (hasArg(cpus)) #defunct
+    if (hasArg('cpus')) #defunct
     {
     stop("'cpus' has been replaced by BPPARAM. See documentation.")  
     }
