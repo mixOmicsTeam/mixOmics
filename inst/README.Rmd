@@ -8,6 +8,7 @@ knit: (function(inputFile, encoding) {
     rmarkdown::render(inputFile, output_file="README.md", encoding = encoding, output_dir = "../") })
 ---
 
+<!-- PLEASE DO NOT EDIT BY HAND, EDIT ./inst/README.Rmd AND RENDER TO CREATE THIS -->
 
 ```{r create-badges, include=FALSE, eval=TRUE}
 library(badger)
@@ -50,38 +51,39 @@ opts_knit$set( cache.path = "whatsnew-files/")
 
 ![](http://mixomics.org/wp-content/uploads/2019/07/MixOmics-Logo-1.png)
 
-This repository contains the `R` package [now hosted on Bioconductor](http://bioconductor.org/packages/release/bioc/html/mixOmics.html) and our current `GitHub` version.
+This repository contains the `R` package [now hosted on Bioconductor](http://bioconductor.org/packages/release/bioc/html/mixOmics.html) and our stable and development `GitHub` versions.
 
 ## Installation
 
 **(Mac OS Users Only:)** Ensure you have installed [XQuartz](https://www.xquartz.org/) first.
 
-
-#### Latest Bioconductor Release
-
-Make sure you have the latest R version and the latest `BiocManager` package installed following [these instructions](https://www.bioconductor.org/install/) (if you use legacy R versions (<=3.5.0) refer to the instructions at the end of the mentioned page), you can then install `mixOmics` using the following code: 
+Make sure you have the latest R version and the latest `BiocManager` package installed following [these instructions](https://www.bioconductor.org/install/) (if you use legacy R versions (<=3.5.0) refer to the instructions at the end of the mentioned page).
 ```{r}
 ## install BiocManager if not installed
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
+## ensure the following returns TRUE, or follow guidelines
+BiocManager::valid()
+```
+
+#### Latest Bioconductor Release
+
+You can then install `mixOmics` using the following
+code:
+
+```{r}
 ## install mixOmics
 BiocManager::install('mixOmics')
 ```
 
-#### Stable `GitHub` Version
+#### `GitHub` Versions
 
-Install the [devtools](https://github.com/r-lib/devtools) package in R, then load it and install the latest stable version of `mixOmics` from `GitHub` (as bug-free as it can be):
+##### Stable version
+
+Install the latest stable version (see below for latest [development](https://github.com/ajabadi/mixOmics#development-version) version) of `mixOmics` from `GitHub` (as bug-free as it can be):
 
 ```{r}
-if (BiocManager::version() >= package_version('3.11')) 
-{
-  BiocManager::install("mixOmicsTeam/mixOmics")
-} else
-{
-  message('Please update to the latest Bioconductor (https://www.bioconductor.org/install/) ',
-          'to install the stable GitHub version')
-}
-  
+BiocManager::install("mixOmicsTeam/mixOmics") 
 ```
 
 Check after installation that the following code does not throw any error (especially Mac users - refer to [installation instructions](#installation)) and that the welcome message confirms you have installed [the latest version](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION#L4):
@@ -91,32 +93,24 @@ library(mixOmics)
 #> Loaded mixOmics ?.?.?
 ```
 
-##### development version
+##### Development version
 
-You can also install the [development version](https://github.com/mixOmicsTeam/mixOmics/blob/devel/DESCRIPTION#L4) for new features yet to be widely tested:
+You can also install the [development version](https://github.com/mixOmicsTeam/mixOmics/blob/devel/DESCRIPTION#L4) for new features yet to be widely tested (see [What's New](/https://github.com/ajabadi/mixOmics#whats-new)):
 ```{r}
-if (BiocManager::version() >= package_version('3.11')) 
-{
-  BiocManager::install("mixOmicsTeam/mixOmics@devel")
-} else
-{
-  message('Please update to the latest Bioconductor (https://www.bioconductor.org/install/) ',
-          'to install the development version')
-}
-
+BiocManager::install("mixOmicsTeam/mixOmics@devel")
 ```
 
 ## Contribution
 
-We welcome community contributions concordant with [our code of conduct](https://github.com/mixOmicsTeam/mixOmics/blob/master/CODE_OF_CONDUCT.md). We strongly recommend adhering to [Bioconductor's coding guide](https://bioconductor.org/developers/how-to/coding-style/) for software consistenncy.
+We welcome community contributions concordant with [our code of conduct](https://github.com/mixOmicsTeam/mixOmics/blob/master/CODE_OF_CONDUCT.md). We strongly recommend adhering to [Bioconductor's coding guide](https://bioconductor.org/developers/how-to/coding-style/) for software consistency if you wish to contribute to `mixOmics` R codes.
 
 ### Bug reports and pull requests
 
-To report a bug (or offer a solution for a bug!):  https://github.com/mixOmicsTeam/mixOmics/issues. We fully welcome and appreciate well-formatted and detailed pull requests. Preferrably with tests on our datasets.
+To report a bug (or offer a solution for a bug!) visit:  https://github.com/mixOmicsTeam/mixOmics/issues. We fully welcome and appreciate well-formatted and detailed pull requests. Preferably with tests on our datasets.
 
 ### Discussion forum
 
-We wish to make our discussions transparent so please direct your questions to our discussion forum https://mixomics-users.discourse.group. This forum is aimed to host discussions on choices of multivariate analyses, bug report as well as comments and suggestions to improve the package. We hope to create an active community of users, data analysts, developers and R programmers alike! Thank you!
+We wish to make our discussions transparent so please direct your analysis questions to our discussion forum https://mixomics-users.discourse.group. This forum is aimed to host discussions on choices of multivariate analyses, as well as comments and suggestions to improve the package. We hope to create an active community of users, data analysts, developers and R programmers alike! Thank you!
 
 
 ## About the `mixOmics` team
@@ -139,7 +133,7 @@ Our latest bookdown vignette: https://mixomicsteam.github.io/Bookdown/.
 ## Different types of methods
 
 We have developed 17 novel multivariate methods (the package includes 19 methods in total). The names are full of acronyms, but are represented in this diagram. 
-_PLS_ stands for _Projection to Latent Structures_ (also called Partial Least Squares, but not our prefered nomenclature), _CCA_ for _Canonical Correlation Analysis_. 
+_PLS_ stands for _Projection to Latent Structures_ (also called Partial Least Squares, but not our preferred nomenclature), _CCA_ for _Canonical Correlation Analysis_. 
 
 That's it! Ready! Set! Go!
 
