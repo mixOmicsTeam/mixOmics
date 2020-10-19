@@ -92,9 +92,11 @@ MCVfold.block.splsda <-
         scale,
         misdata,
         is.na.A,
-        BPPARAM = SerialParam()
-    )
-    {    #-- checking general input parameters ------------------------------------#
+        BPPARAM = SerialParam())
+    {
+        ## evaluate all args -- essential for SnowParam()
+        mget(names(formals()), sys.frame(sys.nframe()))
+        #-- checking general input parameters ------------------------------------#
         #--------------------------------------------------------------------------#
         #-- set up a progress bar --#
         if (progressBar ==  TRUE)
