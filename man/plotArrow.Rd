@@ -10,7 +10,6 @@ plotArrow(
   ind.names = TRUE,
   group = NULL,
   col.per.group = NULL,
-  scale.blocks = TRUE,
   col = NULL,
   ind.names.position = c("start", "end"),
   ind.names.size = 2,
@@ -41,9 +40,6 @@ the first (or second) data matrix is used as names (see Details).}
 \item{col.per.group}{character (or symbol) color to be used when 'group' is
 defined. Vector of the same length as the number of groups.}
 
-\item{scale.blocks}{Logical, whether to standardise blocks by the X axis
-range of the Y block to represent relative alignment.}
-
 \item{col}{character (or symbol) color to be used, possibly vector.}
 
 \item{ind.names.position}{One of c('start', 'end') indicating where to show
@@ -73,21 +69,24 @@ sample size to display sample names.}
 A ggplot object
 }
 \description{
-Represents samples from multiple coordinates.
+Represents samples from multiple coordinates to assess the alignment in the
+latent space.
 }
 \details{
 Graphical of the samples (individuals) is displayed in a superimposed manner
 where each sample will be indicated using an arrow. The start of the arrow
 indicates the location of the sample in \eqn{X} in one plot, and the tip the
-location of the sample in \eqn{Y} in the other plot.
+location of the sample in \eqn{Y} in the other plot. Short arrows indicate a
+strong agreement between the matching data sets, long arrows a disagreement
+between the matching data sets. The representation space is scaled using the
+range of coordinates so minimum and maximum values are equal for all blocks.
+Since the algorithm maximises the covariance of these components, the
+absolute values do not affect the alignment.
 
 For objects of class \code{"GCCA"} and if there are more than 2 blocks, the
 start of the arrow indicates the centroid between all data sets for a given
 individual and the tips of the arrows the location of that individual in
 each block.
-
-Short arrows indicate a strong agreement between the matching data sets,
-long arrows a disagreement between the matching data sets.
 }
 \examples{
 
@@ -105,11 +104,9 @@ plotArrow(nutri.res)
 plotArrow(nutri.res) + geom_vline(xintercept = 0, alpha = 0.5) + 
     geom_hline(yintercept = 0, alpha = 0.5) +
     labs(x = 'Dim 1' , y = 'Dim 2', title = 'Nutrimouse') +
-    theme_minimal() +
-    xlim(-4, 4)
+    theme_minimal()
 ## individual name position
 plotArrow(nutri.res, ind.names.position = 'end')
-plotArrow(nutri.res, scale.blocks = FALSE) ## do not scale blocks to same X scales
 plotArrow(nutri.res, comp = c(1,3))
 ## custom pch
 plotArrow(nutri.res, pch = 10, pch.size = 3)

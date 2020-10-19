@@ -3,28 +3,29 @@
 #----------------------------------------------------------------------------------------------------------#
 #' Arrow sample plot
 #' 
-#' Represents samples from multiple coordinates.
+#' Represents samples from multiple coordinates to assess the alignment in the
+#' latent space.
 #' 
 #' Graphical of the samples (individuals) is displayed in a superimposed manner
 #' where each sample will be indicated using an arrow. The start of the arrow
 #' indicates the location of the sample in \eqn{X} in one plot, and the tip the
-#' location of the sample in \eqn{Y} in the other plot.
+#' location of the sample in \eqn{Y} in the other plot. Short arrows indicate a
+#' strong agreement between the matching data sets, long arrows a disagreement
+#' between the matching data sets. The representation space is scaled using the
+#' range of coordinates so minimum and maximum values are equal for all blocks.
+#' Since the algorithm maximises the covariance of these components, the
+#' absolute values do not affect the alignment.
 #' 
 #' For objects of class \code{"GCCA"} and if there are more than 2 blocks, the
 #' start of the arrow indicates the centroid between all data sets for a given
 #' individual and the tips of the arrows the location of that individual in
 #' each block.
 #' 
-#' Short arrows indicate a strong agreement between the matching data sets,
-#' long arrows a disagreement between the matching data sets.
-#' 
 #' @inheritParams biplot
 #' @param object object of class inheriting from \pkg{mixOmics}: \code{PLS,
 #' sPLS, rCC, rGCCA, sGCCA, sGCCDA}
 #' @param pch plot character. A character string or a named vector of single
 #' characters or integers whose names match those of \code{object$variates}.
-#' @param scale.blocks Logical, whether to standardise blocks by the X axis
-#' range of the Y block to represent relative alignment.
 #' @param ind.names.position One of c('start', 'end') indicating where to show
 #'   the ind.names . Not used in block analyses, where centroids are used.
 #' @param arrow.alpha Numeric between 0 and 1 determining the opacity of arrows.
@@ -48,7 +49,6 @@ plotArrow <- function(object,
                       ind.names = TRUE,
                       group = NULL,
                       col.per.group=NULL,
-                      scale.blocks=TRUE,
                       col = NULL,
                       ind.names.position = c('start', 'end'), 
                       ind.names.size = 2,
@@ -86,24 +86,16 @@ plotArrow <- function(object,
         variates$Y <- NULL
     }
     
-    if (scale.blocks) {
-        ## standardise x and y for all blocks using Xlim of Y block to preserve the distances
-        xy_range <- mapply(z = c(x='x', y='y'), v = variates, FUN = function(z, v)
-        {
-           max(v[,z]) - min(v[,z])
-        }, SIMPLIFY = FALSE)
-        
-        variates <- lapply(variates, FUN = function(v)
-        {
-            res <- mapply(V = v, Z = xy_range, FUN = function(V, Z)
-            {
-                V * (Z)/ (max(V) - min(V))
-            }, SIMPLIFY = FALSE)
-            res <- data.frame(res)
-            rownames(res) <- rownames(v)
-            res
-        })
-    }
+    ## standardise x and y for all blocks
+    variates <- lapply(variates, function(df){
+        x_min <- min(df[,1])
+        x_max <- max(df[,1])
+        y_min <- min(df[,2])
+        y_max <- max(df[,2])
+        df[,1] <- (df[,1] - x_min)/ (x_max - x_min) - 0.5
+        df[,2] <- (df[,2] - y_min)/ (y_max - y_min) - 0.5
+        df
+    })
     
     blocks <- names(variates)
     if ('centroid' %in%  names(blocks))
@@ -130,7 +122,7 @@ plotArrow <- function(object,
     variates <- Reduce(x = variates, f = cbind)
     ind.names <- .get.character.vector(ind.names, rownames(variates))
     ## axes labels
-    xylabels <- paste0('Dimension ', comp, ifelse(scale.blocks, ' - (scaled)', ''))
+    xylabels <- paste0('Dimension ', comp)
     
     ## colours
     if (is.null(group) && is(object = object, 'DA'))
@@ -284,11 +276,9 @@ plotArrow <- function(object,
             show.legend = FALSE
         ) 
     } 
-    ## second set of axes
-    if (scale.blocks) 
-    {
-        p <- p + scale_y_continuous(sec.axis = sec_axis(~.*1/xy_range$y)) +
-            scale_x_continuous(sec.axis = sec_axis(~.*1/xy_range$x)) 
-    }
-    p
+    
+    ## no axes values
+    p <- p + scale_y_continuous(breaks = NULL) +
+        scale_x_continuous(breaks = NULL) 
+    return(p)
 }

@@ -13,11 +13,9 @@ plotArrow(nutri.res)
 plotArrow(nutri.res) + geom_vline(xintercept = 0, alpha = 0.5) + 
     geom_hline(yintercept = 0, alpha = 0.5) +
     labs(x = 'Dim 1' , y = 'Dim 2', title = 'Nutrimouse') +
-    theme_minimal() +
-    xlim(-4, 4)
+    theme_minimal()
 ## individual name position
 plotArrow(nutri.res, ind.names.position = 'end')
-plotArrow(nutri.res, scale.blocks = FALSE) ## do not scale blocks to same X scales
 plotArrow(nutri.res, comp = c(1,3))
 ## custom pch
 plotArrow(nutri.res, pch = 10, pch.size = 3)
