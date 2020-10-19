@@ -62,7 +62,7 @@ explained_variance <- function(data, variates, ncomp)
     ta = t(a)
     # this is equivalent to calculate the redundancy as detailed in the help file
     exp_var_new <- a%*%ta / c(crossprod(variates[, h],variates[, h])) / nor2x
-    
+
     if (anyNA(data))
     {
         warning("\nNA values set to zero for explained variance calculations")

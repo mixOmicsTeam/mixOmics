@@ -108,13 +108,13 @@ jobs:
         run: rcmdcheck::rcmdcheck(args = c("--no-manual"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
-      - name: Check --as-cran ✅✅ 
+      - name: Check --as-cran ✅ ✅ 
         if: github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics'
         env:
           _R_CHECK_CRAN_INCOMING_: false
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check/asCRAN")
         shell: Rscript {0}
-      - name: BiocCheck 🧬✅
+      - name: BiocCheck 🧬 ✅
         run: |
           BiocManager::install("BiocCheck")
           BiocCheck::BiocCheck(".")
