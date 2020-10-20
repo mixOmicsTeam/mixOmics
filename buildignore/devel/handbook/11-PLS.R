@@ -2,7 +2,7 @@
 # used in the handbook, for section 10.5.4
 # anything that called 'tune_spls2_repeat' and 'perf_spls_repeat' is what you should run.
 ## ----------------------------------------------------------------------------------------
-library(mixOmics)
+devtools::load_all()
 data(liver.toxicity)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
@@ -128,9 +128,8 @@ nrepeat = 3
 
 
 # update with tuning code later + outputs
-source('buildignore/devel/handbook/tune_spls2_repeat.R')
 set.seed(33)  # for reproducibility with this handbook, remove otherwise
-sPLS.tune.reg.cor.liver = tune_spls2_repeat(X, Y, list.keepX = list.keepX, list.keepY = list.keepY, ncomp = ncomp, nrepeat = nrepeat, mode = 'regression', type.tune = 'cor', pls.model = FALSE)
+sPLS.tune.reg.cor.liver = tune.pls(X, Y, list.keepX = list.keepX, list.keepY = list.keepY, ncomp = ncomp, nrepeat = nrepeat, mode = 'regression', type.tune = 'cor', pls.model = FALSE)
 
 sPLS.tune.reg.cor.liver$best.keepX
 #  20 110
