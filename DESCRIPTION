@@ -1,7 +1,7 @@
 Package: mixOmics
 Type: Package
 Title: Omics Data Integration Project
-Version: 6.13.100
+Version: 6.13.101
 Date: 2020-10-20
 Depends: R (>= 3.5.0), 
          MASS, 
