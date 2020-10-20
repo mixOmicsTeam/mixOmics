@@ -119,21 +119,23 @@ abline(h = 0.0975); abline(h = 0, col = 'red')
 
 
 ## ---- eval = FALSE-----------------------------------------------------------------------
-## list.keepX = c(seq(5, 50, 5), seq(60, 150, 10))
-## list.keepY = c(3:10)
-## ncomp = 2
-## nrepeat = 10
-## 
-## 
-## # update with tuning code later + outputs
-## source('tune_spls2_repeat.R')
-## set.seed(33)  # for reproducibility with this handbook, remove otherwise
-## sPLS.tune.reg.cor.liver = tune_spls2_repeat(X, Y, list.keepX = list.keepX, list.keepY = list.keepY, ncomp = ncomp, nrepeat = nrepeat, mode = 'regression', type.tune = 'cor', pls.model = FALSE)
-## 
-## sPLS.tune.reg.cor.liver$best.keepX
-## #  20 110
-## sPLS.tune.reg.cor.liver$best.keepY
-## # 3 4
+list.keepX = c(seq(5, 50, 5), seq(60, 150, 10))
+list.keepX = c(2, 5)
+list.keepY = c(3:10)
+list.keepY = c(3:6)
+ncomp = 2
+nrepeat = 3
+
+
+# update with tuning code later + outputs
+source('buildignore/devel/handbook/tune_spls2_repeat.R')
+set.seed(33)  # for reproducibility with this handbook, remove otherwise
+sPLS.tune.reg.cor.liver = tune_spls2_repeat(X, Y, list.keepX = list.keepX, list.keepY = list.keepY, ncomp = ncomp, nrepeat = nrepeat, mode = 'regression', type.tune = 'cor', pls.model = FALSE)
+
+sPLS.tune.reg.cor.liver$best.keepX
+#  20 110
+sPLS.tune.reg.cor.liver$best.keepY
+# 3 4
 
 
 ## ----------------------------------------------------------------------------------------
