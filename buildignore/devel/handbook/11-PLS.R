@@ -129,7 +129,7 @@ nrepeat = 3
 
 # update with tuning code later + outputs
 set.seed(33)  # for reproducibility with this handbook, remove otherwise
-sPLS.tune.reg.cor.liver = tune.pls(X, Y, list.keepX = list.keepX, list.keepY = list.keepY, ncomp = ncomp, nrepeat = nrepeat, mode = 'regression', type.tune = 'cor', pls.model = FALSE)
+sPLS.tune.reg.cor.liver = tune.spls(X, Y, test.keepX = list.keepX, test.keepY = list.keepY, ncomp = ncomp, nrepeat = nrepeat, mode = 'regression', type.tune = 'cor', pls.model = FALSE)
 
 sPLS.tune.reg.cor.liver$best.keepX
 #  20 110
