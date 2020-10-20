@@ -29,7 +29,13 @@
 #' @export
 #'
 #' @example ./examples/tune.spca-examples.R
-tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, scale = TRUE, 
+tune.spca <- function(X, 
+                      ncomp=2, 
+                      nrepeat=1, 
+                      folds, 
+                      test.keepX, 
+                      center = TRUE, 
+                      scale = TRUE, 
                       BPPARAM = SerialParam())
 {
     ## evaluate all args
@@ -40,8 +46,8 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
     ## optimal keepX for all components
     keepX.opt <- NULL
     ## a list of cor.df for each component
-    cor.df.list <- .name_list(char = paste0('comp', seq_len(ncomp)))
-    # cor.df.list <- lapply(cor.df.list, function(x) cor.df)
+    cor.df.list <- rep(list(NA), ncomp)
+    names(cor.df.list) <- paste0('comp', seq_len(ncomp))
     
     if (folds > nrow(X)) {
         stop("'folds' must be an integer smaller than or equal to nrow(X) = ", 
@@ -109,7 +115,6 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
         test.keepX.cors <- t(test.keepX.cors)
         colnames(test.keepX.cors) <- paste0('repeat_', seq_len(nrepeat))
         cor.df.list[[ncomp]] <- test.keepX.cors
-        # browser()
         ## use a one-sided t.test using repeat correlations to assess if addition of keepX improved the correlation
         ## and get the index of optimum keepX
         t.test.df <- data.frame(t(cor.df.list[[ncomp]]))

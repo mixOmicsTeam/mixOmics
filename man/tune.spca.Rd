@@ -7,7 +7,7 @@
 tune.spca(
   X,
   ncomp = 2,
-  nrepeat = 3,
+  nrepeat = 1,
   folds,
   test.keepX,
   center = TRUE,
