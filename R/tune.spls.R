@@ -168,291 +168,192 @@
 #' plot(tune)
 #' }
 tune.spls <- 
-    function (X, 
-              Y,
-              ncomp = 1,
-              test.keepX = c(5, 10, 15),
-              already.tested.X,
-              validation = "Mfold",
-              folds = 10,
-              measure = "MSE", # can do a R2 per Y (correlation, linear regression R2), need to call MSEP (see perf.spls).
-              scale = TRUE,
-              progressBar = FALSE,
-              tol = 1e-06,
-              max.iter = 100,
-              near.zero.var = FALSE,
-              nrepeat = 1,
-              multilevel = NULL,
-              light.output = TRUE,
-              cpus = 1
-    )
-    {    #-- checking general input parameters --------------------------------------#
-        #---------------------------------------------------------------------------#
-        
-        #------------------#
-        if(!is(X, "matrix"))
-            X= as.matrix(X)
-        
-        if(!is(Y, "matrix"))
-            Y= as.matrix(Y)
-        
-        #-- check entries --#
-        if (length(dim(X)) != 2 || !is.numeric(X))
-            stop("'X' must be a numeric matrix.")
-        
-        if (length(dim(Y)) != 2 || !is.numeric(Y))
-            stop("'Y' must be a numeric matrix.")
-        
-        #-- progressBar
-        if (!is.logical(progressBar))
-            stop("'progressBar' must be a logical constant (TRUE or FALSE).", call. = FALSE)
-        
-        #-- measure
-        choices = c("MSE", "MAE","Bias","R2")
-        measure = choices[pmatch(measure, choices)]
-        if (is.na(measure))
-            stop("'measure' must be one of 'MSE', 'MAE', 'bias' or 'R2' ")
-        
-        if (is.null(ncomp) || !is.numeric(ncomp) || ncomp <= 0)
-            stop("invalid number of variates, 'ncomp'.")
+    function(X,
+             Y,
+             test.keepX,
+             test.keepY,
+             ncomp,
+             nrepeat,
+             mode,
+             type.tune, # ! shoud be null for a PLS model
+             pls.model) {
         
         
-        #-- validation
-        choices = c("Mfold", "loo")
-        validation = choices[pmatch(validation, choices)]
-        if (is.na(validation))
-            stop("'validation' must be either 'Mfold' or 'loo'")
+        out = list()
         
-        if (validation == 'loo')
-        {
-            if (nrepeat != 1)
-                warning("Leave-One-Out validation does not need to be repeated: 'nrepeat' is set to '1'.")
-            nrepeat = 1
-        }
-        
-        
-        #-- already.tested.X
-        if (missing(already.tested.X))
-        {
-            already.tested.X = NULL
-        } else {
-            if(is.null(already.tested.X) | length(already.tested.X)==0)
-                stop("''already.tested.X' must be a vector of keepX values")
-            
-            if(is.list(already.tested.X))
-                stop("''already.tested.X' must be a vector of keepX values")
-            
-            message(paste("Number of variables selected on the first", length(already.tested.X), "component(s):", paste(already.tested.X,collapse = " ")))
-        }
-        
-        if(length(already.tested.X) >= ncomp)
-            stop("'ncomp' needs to be higher than the number of components already tuned, which is length(already.tested.X)=",length(already.tested.X) , call. = FALSE)
-        
-        if (any(is.na(validation)) || length(validation) > 1)
-            stop("'validation' should be one of 'Mfold' or 'loo'.", call. = FALSE)
-        
-        #-- test.keepX
-        if (is.null(test.keepX) | length(test.keepX) == 1 | !is.numeric(test.keepX))
-            stop("'test.keepX' must be a numeric vector with more than two entries", call. = FALSE)
-        
-        #-- cpus
-        cpus <- .check_cpus(cpus)
-        parallel <- cpus > 1
-        
-        if (parallel)
-        {
-            if (.onUnix()) {
-                cl <- makeForkCluster(cpus)
-            } else {
-                cl <- makePSOCKcluster(cpus)
-            }
-            
-            on.exit(stopCluster(cl))
-            clusterEvalQ(cl, library(mixOmics))
-            
-            if(progressBar == TRUE)
-                message(paste("As code is running in parallel, the progressBar will only show 100% upon completion of each nrepeat/ component.",sep=""))
+        if(isFALSE(pls.model)){
+            cor.tpred = cor.upred = RSS.tpred = RSS.upred = array(dim = c(length(test.keepX), length(test.keepY), nrepeat),
+                                                                  dimnames = list(paste0('keepX', test.keepX), 
+                                                                                  paste0('keepY', test.keepY),
+                                                                                  paste0('repeat', 1:nrepeat)))
+            best.keepX = best.keepY = NULL
+        }else{
+            type.tune = NULL
+            cor.tpred = cor.upred = RSS.tpred = RSS.upred = matrix(nrow = ncomp, ncol = nrepeat, 
+                                                                   dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
+            Q2.tot.ave = matrix(nrow = ncomp, ncol = nrepeat,
+                                dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
             
         }
-        
-        # add colnames and rownames if missing
-        X.names = dimnames(X)[[2]]
-        if (is.null(X.names))
-        {
-            X.names = paste("X", seq_len(ncol(X)), sep = "")
-            dimnames(X)[[2]] = X.names
-        }
-        
-        ind.names = dimnames(X)[[1]]
-        if (is.null(ind.names))
-        {
-            ind.names = seq_len(nrow(X))
-            rownames(X)  = ind.names
-        }
-        
-        if (length(unique(rownames(X))) != nrow(X))
-            stop("samples should have a unique identifier/rowname")
-        if (length(unique(X.names)) != ncol(X))
-            stop("Unique indentifier is needed for the columns of X")
-        
-        
-        #-- end checking --#
-        #------------------#
+        cor.pred = RSS.pred = list()
+        cov.pred = list()
         
         
         
-        #---------------------------------------------------------------------------#
-        #-- NA calculation      ----------------------------------------------------#
-        
-        misdata = c(X=anyNA(X), Y=anyNA(Y)) # Detection of missing data. we assume no missing values in the factor Y
-        
-        if (any(misdata))
-        {
-            is.na.A.X = is.na(X)
-            is.na.A.Y = is.na(Y)
-            is.na.A = list(X=is.na.A.X, Y=is.na.A.Y)
-        } else {
-            is.na.A = NULL
-        }
-        #-- NA calculation      ----------------------------------------------------#
-        #---------------------------------------------------------------------------#
-        
-        
-        
-        test.keepX = sort(unique(test.keepX)) #sort test.keepX so as to be sure to chose the smallest in case of several minimum
-        names(test.keepX) = test.keepX
-        
-        # if some components have already been tuned (eg comp1 and comp2), we're only tuning the following ones (comp3 comp4 .. ncomp)
-        if ((!is.null(already.tested.X)))
-        {
-            comp.real = (length(already.tested.X) + 1):ncomp
-        } else {
-            comp.real = seq_len(ncomp)
-        }
-        
-        
-        mat.error.rate = list()
-        error.per.class = list()
-        
-        mat.sd.error = matrix(0,nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
-                              dimnames = list(test.keepX, c(paste0('comp', comp.real))))
-        mat.mean.error = matrix(nrow = length(test.keepX), ncol = ncomp-length(already.tested.X),
-                                dimnames = list(test.keepX, c(paste0('comp', comp.real))))
-        
-        # first: near zero var on the whole data set
-        if(near.zero.var == TRUE)
-        {
-            nzv = nearZeroVar(X)
-            if (length(nzv$Position > 0))
-            {
-                warning("Zero- or near-zero variance predictors.\nReset predictors matrix to not near-zero variance predictors.\nSee $nzv for problematic predictors.")
-                X = X[, -nzv$Position, drop=TRUE]
+        ## for a PLS only to extract Q2.total (or anything else)
+        if(isTRUE(pls.model)){
+            for(k in 1:nrepeat){
+                cat('repeat', k, '\n')
                 
-                if(ncol(X)==0)
-                    stop("No more predictors after Near Zero Var has been applied!")
+                # run a full PLS model up to the last comp
+                pls.res = spls(X = X, Y = Y, 
+                               keepX = c(rep(ncol(X), ncomp)), 
+                               keepY = c(rep(ncol(Y), ncomp)), 
+                               ncomp = ncomp, mode = mode)
+                # fold CV
+                res.perf = perf.mixo_pls6(pls.res, validation = 'Mfold', folds = 10)
                 
-            }
-        }
-        
-        if (is.null(multilevel) | (!is.null(multilevel) && ncol(multilevel) == 2))
-        {
-            if(light.output == FALSE)
-                prediction.all = list()
+                # extract Q2.total for a PLS, we could extract other outputs such as R2, MSEP etc (only valid for regression)
+                Q2.tot.ave[, k] = res.perf$Q2.total 
+                
+                # extract the predicted components per dimension, take abs value
+                cor.tpred[, k] = diag(abs(cor(res.perf$t.pred.cv, pls.res$variates$X)))
+                cor.upred[, k] = diag(abs(cor(res.perf$u.pred.cv, pls.res$variates$Y)))
+                
+                # RSS: no abs values here
+                RSS.tpred[, k] = apply((res.perf$t.pred.cv - pls.res$variates$X)^2, 2, sum)/(nrow(X) -1)
+                RSS.upred[, k] = apply((res.perf$u.pred.cv - pls.res$variates$Y)^2, 2, sum)/(nrow(X) -1)
+            } #end repeat       
             
+            # # calculate mean across repeats
+            cor.pred$u = apply(cor.upred, 1, mean) 
+            cor.pred$t = apply(cor.tpred, 1, mean)
+            RSS.pred$u = apply(RSS.upred, 1, mean)
+            RSS.pred$t = apply(RSS.tpred, 1, mean)
             
-            class.object="mixo_spls"
-            
-            if (parallel)
-                clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
-            
-            # successively tune the components until ncomp: comp1, then comp2, ...
-            for(comp in seq_len(length(comp.real)))
-            {
+        }else{ # if sPLS model 
+            for (comp in 1:ncomp){
+                cat('Comp', comp, '\n')
+                for(k in 1:nrepeat){
+                    cat('repeat', k, '\n')
+                    for(keepX in 1:length(test.keepX)){
+                        #cat('KeepX', list.keepX[keepX], '\n')
+                        for(keepY in 1:length(test.keepY)){
+                            #cat('KeepY', list.keepY[keepY], '\n')
+                            
+                            # sPLS model, updated with the best keepX
+                            spls.res = spls(X = X, Y = Y, 
+                                            keepX = c(best.keepX, test.keepX[keepX]), 
+                                            keepY = c(best.keepY, test.keepY[keepY]), 
+                                            ncomp = comp, mode = mode)
+                            # fold CV
+                            res.perf = perf.mixo_pls6(spls.res, validation = 'Mfold', folds = 10)
+                            
+                            # extract the predicted components: 
+                            if(type.tune == 'cor' ){
+                                cor.tpred[keepX, keepY, k] = cor(res.perf$t.pred.cv[,comp], spls.res$variates$X[, comp])
+                                cor.upred[keepX, keepY,k] = cor(res.perf$u.pred.cv[,comp], spls.res$variates$Y[, comp])
+                            }
+                            if(type.tune == 'RSS'){
+                                # RSS: no abs values here
+                                RSS.tpred[keepX, keepY, k] = sum((res.perf$t.pred.cv[,comp] - spls.res$variates$X[, comp])^2)/(nrow(X) -1) 
+                                RSS.upred[keepX, keepY, k] = sum((res.perf$u.pred.cv[,comp] - spls.res$variates$Y[, comp])^2)/(nrow(X) -1)
+                            }
+                            # covariance between predicted variates
+                            ##cov.variate.pred[keepX, keepY, k] = cov(res.perf$t.pred.cv[,comp], res.perf$u.pred.cv[,comp])
+                        } # end keepY
+                    } #end keepX
+                } # end repeat
+                cat('\t')
                 
-                if (progressBar == TRUE)
-                    cat("\ncomp",comp.real[comp], "\n")
+                # # calculate mean across repeats
+                cor.pred$u[[comp]] = apply(cor.upred, c(1,2), mean)  #mean(cor.upred[keepX, keepY,])
+                cor.pred$t[[comp]] = apply(cor.tpred, c(1,2), mean)  #mean(cor.tpred[keepX, keepY,])
+                RSS.pred$u[[comp]] = apply(RSS.upred, c(1,2), mean)  #mean(RSS.upred[keepX, keepY,])
+                RSS.pred$t[[comp]] = apply(RSS.tpred, c(1,2), mean)  #mean(RSS.tpred[keepX, keepY,])
                 
-                result = MCVfold.spls(X, Y, multilevel = multilevel, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = 1 + length(already.tested.X),
-                                      choice.keepX = already.tested.X,
-                                      test.keepX = test.keepX, test.keepY = ncol(Y), measure = measure, dist = NULL, auc=FALSE, scale=scale,
-                                      near.zero.var = near.zero.var, progressBar = progressBar, tol = tol, max.iter = max.iter,
-                                      cl = cl, parallel = parallel,
-                                      misdata = misdata, is.na.A = is.na.A, class.object=class.object)
-                
-                #save(list=ls(),file="temp.Rdata")
-                # in the following, there is [[1]] because 'tune' is working with only 1 distance and 'MCVfold.spls' can work with multiple distances
-                mat.error.rate[[comp]] = result[[measure]]$mat.error.rate[[1]]
-                mat.mean.error[, comp]=result[[measure]]$error.rate.mean[[1]]
-                if (!is.null(result[[measure]]$error.rate.sd[[1]]))
-                    mat.sd.error[, comp]=result[[measure]]$error.rate.sd[[1]]
-                
-                
-                # best keepX
-                already.tested.X = c(already.tested.X, result[[measure]]$keepX.opt[[1]])
-                
-                if(light.output == FALSE)
-                {
-                    #prediction of each samples for each fold and each repeat, on each comp
-                    prediction.all[[comp]] = result$prediction.comp
-                }
-                
-                
-                
+                # choose the best keepX and keepY based on type.tune
+                if(mode != 'canonical'){  #regression, invariant, classic
+                    # define best keepX and keepY based on u
+                    if(type.tune == 'cor'){
+                        cor.component = cor.pred$u[[comp]]
+                        index = which(cor.component == max(cor.component), arr.ind = TRUE)
+                    }else{ # if type.tune = 'RSS'
+                        RSS.component = RSS.pred$u[[comp]]
+                        index = which(RSS.component == min(RSS.component), arr.ind = TRUE)
+                    }
+                    best.keepX = c(best.keepX, test.keepX[index[1,1]])
+                    best.keepY = c(best.keepY, test.keepY[index[1,2]])
+                    
+                }else{  # mode = 'canonical'
+                    if(type.tune == 'cor'){
+                        cor.component.t = cor.pred$t[[comp]]
+                        cor.component.u = cor.pred$u[[comp]]
+                        index.t = which(cor.component.t == max(cor.component.t), arr.ind = TRUE)
+                        index.u = which(cor.component.u == max(cor.component.u), arr.ind = TRUE)
+                    }else{ # if type.tune = 'RSS'
+                        RSS.component.t = RSS.pred$t[[comp]]
+                        RSS.component.u = RSS.pred$u[[comp]]
+                        index.t = which(RSS.component.t == min(RSS.component.t), arr.ind = TRUE)
+                        index.u = which(RSS.component.u == min(RSS.component.u), arr.ind = TRUE)
+                    }
+                    best.keepX = c(best.keepX, test.keepX[index.t[1,1]])
+                    best.keepY = c(best.keepY, test.keepY[index.u[1,2]])
+                } # canonical
             } # end comp
             
-            names(mat.error.rate) = c(paste0('comp', comp.real))
-            names(already.tested.X) = c(paste0('comp', seq_len(ncomp)))
-            
-            if (progressBar == TRUE)
-                cat('\n')
-            
-            # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
-            if(nrepeat > 2 & length(comp.real) >1)
-            {
-                keepX = already.tested.X
-                error.keepX = NULL
-                for(comp in seq_len(length(comp.real)))
-                {
-                    ind.row = match(keepX[[comp.real[comp]]],test.keepX)
-                    error.keepX = cbind(error.keepX, apply(matrix(mat.error.rate[[comp]][[ind.row]],ncol=nrepeat),2,mean))
-                }
-                colnames(error.keepX) = c(paste0('comp', comp.real))
-                rownames(error.keepX) = c(paste0('nrep.', seq_len(nrepeat)))
-                
-                opt = t.test.process(error.keepX)
-                
-                ncomp_opt = comp.real[opt]
-            } else {
-                ncomp_opt = error.keepX = NULL
-            }
-            
-            
-            result = list(
-                error.rate = mat.mean.error,
-                error.rate.sd = mat.sd.error,
-                error.rate.all = mat.error.rate,
-                choice.keepX = already.tested.X,
-                choice.ncomp = list(ncomp = ncomp_opt, values = error.keepX))
-            
-            if(light.output == FALSE)
-            {
-                names(prediction.all) = c(paste0('comp', comp.real))
-                result$predict = prediction.all
-            }
-            
-            result$measure = measure
-            result$call = match.call()
-            
-            class(result) = "tune.spls"
-            
-            return(result)
-        } else {
-            # if multilevel with 2 factors, we can not do as before because withinvariation depends on the factors, we maximase a correlation
-            message("Not implemented at the moment")
-            
+            out$best.keepX = best.keepX
+            out$best.keepY = best.keepY
+        } # end sPLS
+        
+        
+        
+        
+        # 
+        # # # summary of results
+        # summary = list()
+        # for(k in 1:ncomp){
+        #   RSS.upred = RSS.pred$u[[k]]
+        #   RSS.tpred = RSS.pred$t[[k]]
+        # 
+        #   cor.upred = cor.pred$u[[k]]
+        #   cor.tpred = cor.pred$t[[k]]
+        # 
+        #   # u.pred
+        #   index = which(cor.upred == max(cor.upred), arr.ind = TRUE)
+        #   #list.keepX[index[1,1]]; list.keepY[index[1, 2]];
+        #   #cor.upred[index]
+        #   summary$u[[k]] = c(list.keepX[index[1,1]], list.keepY[index[1, 2]], cor.upred[index])
+        # 
+        #   # t.pred
+        #   index = which(cor.tpred == max(cor.tpred), arr.ind = TRUE)
+        #   #list.keepX[index[1,1]]; list.keepY[index[1, 2]];
+        #   #cor.tpred[index]
+        #   summary$t[[k]] = c(list.keepX[index[1,1]], list.keepY[index[1, 2]], cor.tpred[index])
+        # 
+        #   # RSS.u: same as upred
+        #   index = which(RSS.upred == min(RSS.upred), arr.ind = TRUE)
+        #   #list.keepX[index[1,1]]; list.keepY[index[1, 2]];
+        #   #RSS.upred[index]
+        #   summary$RSSu[[k]] = c(list.keepX[index[1,1]], list.keepY[index[1, 2]], RSS.upred[index])
+        # 
+        # 
+        #   # RSS.t: different from tpred?
+        #   index = which(RSS.tpred == min(RSS.tpred), arr.ind = TRUE)
+        #   #list.keepX[index[1,1]]; list.keepY[index[1, 2]];
+        #   #RSS.tpred[index]
+        #   summary$RSSt[[k]] = c(list.keepX[index[1,1]], list.keepY[index[1, 2]], RSS.tpred[index])
+        # } # end ncomp
+        #   out$summary = summary
+        
+        if(isTRUE(pls.model)){
+            out$cor.pred = cor.pred
+            out$RSS.pred = RSS.pred
+            out$Q2.tot.ave = apply(Q2.tot.ave, 1, mean)
+        }else{
+            if(type.tune == 'cor') out$cor.pred = cor.pred
+            if(type.tune == 'RSS') out$RSS.pred = RSS.pred
         }
-    }
-
-
-
-
+        
+        return(out)
+    } 
