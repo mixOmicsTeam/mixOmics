@@ -233,14 +233,14 @@ tune.spls <-
             
         }else{ # if sPLS model 
             for (comp in 1:ncomp){
+                
                 cat('Comp', comp, '\n')
                 for(k in 1:nrepeat){
                     cat('repeat', k, '\n')
                     for(keepX in 1:length(test.keepX)){
-                        #cat('KeepX', list.keepX[keepX], '\n')
+                        cat('KeepX', list.keepX[keepX], '\n')
                         for(keepY in 1:length(test.keepY)){
-                            #cat('KeepY', list.keepY[keepY], '\n')
-                            
+                            cat('KeepY', list.keepY[keepY], '\n')
                             # sPLS model, updated with the best keepX
                             spls.res = spls(X = X, Y = Y, 
                                             keepX = c(best.keepX, test.keepX[keepX]), 

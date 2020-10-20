@@ -123,7 +123,7 @@ load('buildignore/devel/handbook/env.RData')
 list.keepX = c(seq(5, 50, 5), seq(60, 150, 10))
 list.keepX = c(2, 5)
 list.keepY = c(3:10)
-list.keepY = c(3:6)
+list.keepY = c(3, 8)
 ncomp = 2
 nrepeat = 3
 
