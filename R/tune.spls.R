@@ -211,7 +211,7 @@ tune.spls <-
                                keepY = c(rep(ncol(Y), ncomp)), 
                                ncomp = ncomp, mode = mode)
                 # fold CV
-                res.perf = perf.mixo_pls6(pls.res, validation = 'Mfold', folds = 10)
+                res.perf = .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = 10)
                 
                 # extract Q2.total for a PLS, we could extract other outputs such as R2, MSEP etc (only valid for regression)
                 Q2.tot.ave[, k] = res.perf$Q2.total 
@@ -247,7 +247,7 @@ tune.spls <-
                                             keepY = c(best.keepY, test.keepY[keepY]), 
                                             ncomp = comp, mode = mode)
                             # fold CV
-                            res.perf = perf.mixo_pls6(spls.res, validation = 'Mfold', folds = 10)
+                            res.perf = .perf.mixo_pls_folds(spls.res, validation = 'Mfold', folds = 10)
                             
                             # extract the predicted components: 
                             if(type.tune == 'cor' ){
