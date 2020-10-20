@@ -32,6 +32,8 @@
 tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, scale = TRUE, 
                       BPPARAM = SerialParam())
 {
+    ## evaluate all args
+    mget(names(formals()), sys.frame(sys.nframe()))
     X <- as.matrix(X)
     ncomp <- .check_ncomp(ncomp = ncomp, X = X)
     test.keepX <- .check_test.keepX(test.keepX = test.keepX, X = X)

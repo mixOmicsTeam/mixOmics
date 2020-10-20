@@ -12,9 +12,9 @@ tune.spca.res
 plot(tune.spca.res)
 \dontrun{
 ## parallel processing using BiocParallel on repeats with more workers (cpus)
-## SnowParam() on Windows OS
-nrepeat <- 20
-BPPARAM <- BiocParallel::MulticoreParam(workers = parallel::detectCores()-1)
+## You can use BiocParallel::MulticoreParam() on non_Windows machines 
+## for faster computation
+BPPARAM <- BiocParallel::SnowParam(workers = max(parallel::detectCores()-1, 2))
 tune.spca.res <- tune.spca(
     X = nutrimouse$lipid,
     ncomp = 2,
