@@ -3,121 +3,122 @@
 # anything that called 'tune_spls2_repeat' and 'perf_spls_repeat' is what you should run.
 ## ----------------------------------------------------------------------------------------
 devtools::load_all()
-data(liver.toxicity)
-X <- liver.toxicity$gene
-Y <- liver.toxicity$clinic
+# data(liver.toxicity)
+# X <- liver.toxicity$gene
+# Y <- liver.toxicity$clinic
+# 
+# 
+# ## ----------------------------------------------------------------------------------------
+# head(data.frame(rownames(X), rownames(Y)))
+# 
+# 
+# ## ---- eval = FALSE, fig.show = 'hide', message = FALSE-----------------------------------
+# ## pls.result <- pls(X, Y)     # 1 Run the method
+# ## plotIndiv(pls.result)       # 2 Plot the samples
+# ## plotVar(pls.result)         # 3 Plot the variables
+# 
+# 
+# ## ---- eval = FALSE, fig.show = 'hide', message = FALSE-----------------------------------
+# ## spls.result <- spls(X, Y, keepX = c(10, 20), keepY = c(3, 2), ncomp = 2)
+# ## plotIndiv(spls.result)
+# ## plotVar(spls.result)
+# 
+# 
+# ## ----------------------------------------------------------------------------------------
+# y = liver.toxicity$clinic[, "ALB.g.dL."]
+# 
+# 
+# ## ----pls1-Q2, fig.cap='(ref:pls1-Q2)'----------------------------------------------------
+# pls1.liver.for.tune = pls(X = X, Y = y, ncomp = 10, mode = 'regression')
+# set.seed(33)  # for reproducibility with this handbook, remove otherwise
+# Q2.pls1.liver = perf(pls1.liver.for.tune, validation = 'Mfold', folds = 10)
+# plot(Q2.pls1.liver,criterion = 'Q2')
+# 
+# 
+# ## ----spls1-MAE, fig.cap='(ref:spls1-MAE)'------------------------------------------------
+# # set up grid of values: 
+# list.keepX = c(5:10, seq(15, 50, 5))     
+# # list.keepX  # to have a look at the keepX grid
+# set.seed(33)  # for reproducibility with this handbook, remove otherwise
+# tune.spls1.MAE = tune.spls(X, y, ncomp= 2, 
+#                           test.keepX = list.keepX, 
+#                           validation = 'Mfold', folds = 10,
+#                           nrepeat = 10, progressBar = FALSE, 
+#                           measure = 'MAE')
+# plot(tune.spls1.MAE)
+# 
+# 
+# ## ----------------------------------------------------------------------------------------
+# choice.ncomp = tune.spls1.MAE$choice.ncomp$ncomp
+# # optimal number of variables to select in X based on the MAE criterion
+# choice.keepX = tune.spls1.MAE$choice.keepX[1:choice.ncomp]  # we stop at choice.ncomp
+# 
+# choice.ncomp
+# choice.keepX
+# 
+# 
+# ## ----------------------------------------------------------------------------------------
+# spls1.liver <- spls(X, y, ncomp = choice.ncomp, keepX = choice.keepX, mode = "regression")
+# 
+# 
+# ## ---- eval = FALSE-----------------------------------------------------------------------
+# ## selectVar(spls1.liver, comp = 1)$X$name
+# 
+# 
+# ## ----------------------------------------------------------------------------------------
+# spls1.liver$explained_variance$X
+# pls1.liver.for.tune$explained_variance$X
+# 
+# 
+# ## ----spls1-ext, fig.cap='(ref:spls1-ext)'------------------------------------------------
+# spls1.liver.c2 <- spls(X, y, ncomp = 2, keepX = c(rep(choice.keepX, 2)), 
+#                    mode = "regression")
+# 
+# plotIndiv(spls1.liver.c2,
+#           group = liver.toxicity$treatment$Time.Group,
+#           pch = as.factor(liver.toxicity$treatment$Dose.Group),
+#           legend = TRUE, legend.title = 'Time', legend.title.pch = 'Dose')
+# 
+# 
+# 
+# ## ----spls1-comp1, fig.cap='(ref:spls1-comp1)'--------------------------------------------
+# plot(spls1.liver$variates$X[,1], spls1.liver$variates$Y[,1], 
+#      xlab = 'X component', ylab = 'y component / scaled y',
+#      main = 'Dimension 1')
+# 
+# cor(spls1.liver$variates$X, spls1.liver$variates$Y)
+# 
+# 
+# ## ----------------------------------------------------------------------------------------
+# set.seed(33)  # for reproducibility with this handbook, remove otherwise
+# # PLS1 model and performance
+# pls1.liver <- pls(X, y, ncomp = choice.ncomp, mode = "regression")
+# perf.pls1.liver <- perf(pls1.liver, validation = "Mfold", folds =10, 
+#                    nrepeat = 10, progressBar = FALSE)
+# 
+# 
+# # sPLS1 performance
+# perf.spls1.liver <- perf(spls1.liver, validation = "Mfold", folds = 10, 
+#                    nrepeat = 10, progressBar = FALSE)
+# 
+# perf.pls1.liver$MSEP; perf.spls1.liver$MSEP
+# 
+# 
+# ## ----------------------------------------------------------------------------------------
+# dim(Y)
+# 
+# 
+# ## ----pls2-Q2, fig.cap='(ref:pls2-Q2)'----------------------------------------------------
+# pls2.liver.for.tune = pls(X = X, Y = Y, ncomp = 10, mode = 'regression')
+# set.seed(33)  # for reproducibility with this handbook, remove otherwise
+# Q2.pls2.liver = perf(pls2.liver.for.tune, validation = 'Mfold', folds = 10)
+# 
+# 
+# plot(Q2.pls2.liver$Q2.total, xlab = 'Components', ylab = 'Q2 total')
+# abline(h = 0.0975); abline(h = 0, col = 'red')
 
-
-## ----------------------------------------------------------------------------------------
-head(data.frame(rownames(X), rownames(Y)))
-
-
-## ---- eval = FALSE, fig.show = 'hide', message = FALSE-----------------------------------
-## pls.result <- pls(X, Y)     # 1 Run the method
-## plotIndiv(pls.result)       # 2 Plot the samples
-## plotVar(pls.result)         # 3 Plot the variables
-
-
-## ---- eval = FALSE, fig.show = 'hide', message = FALSE-----------------------------------
-## spls.result <- spls(X, Y, keepX = c(10, 20), keepY = c(3, 2), ncomp = 2)
-## plotIndiv(spls.result)
-## plotVar(spls.result)
-
-
-## ----------------------------------------------------------------------------------------
-y = liver.toxicity$clinic[, "ALB.g.dL."]
-
-
-## ----pls1-Q2, fig.cap='(ref:pls1-Q2)'----------------------------------------------------
-pls1.liver.for.tune = pls(X = X, Y = y, ncomp = 10, mode = 'regression')
-set.seed(33)  # for reproducibility with this handbook, remove otherwise
-Q2.pls1.liver = perf(pls1.liver.for.tune, validation = 'Mfold', folds = 10)
-plot(Q2.pls1.liver,criterion = 'Q2')
-
-
-## ----spls1-MAE, fig.cap='(ref:spls1-MAE)'------------------------------------------------
-# set up grid of values: 
-list.keepX = c(5:10, seq(15, 50, 5))     
-# list.keepX  # to have a look at the keepX grid
-set.seed(33)  # for reproducibility with this handbook, remove otherwise
-tune.spls1.MAE = tune.spls(X, y, ncomp= 2, 
-                          test.keepX = list.keepX, 
-                          validation = 'Mfold', folds = 10,
-                          nrepeat = 10, progressBar = FALSE, 
-                          measure = 'MAE')
-plot(tune.spls1.MAE)
-
-
-## ----------------------------------------------------------------------------------------
-choice.ncomp = tune.spls1.MAE$choice.ncomp$ncomp
-# optimal number of variables to select in X based on the MAE criterion
-choice.keepX = tune.spls1.MAE$choice.keepX[1:choice.ncomp]  # we stop at choice.ncomp
-
-choice.ncomp
-choice.keepX
-
-
-## ----------------------------------------------------------------------------------------
-spls1.liver <- spls(X, y, ncomp = choice.ncomp, keepX = choice.keepX, mode = "regression")
-
-
-## ---- eval = FALSE-----------------------------------------------------------------------
-## selectVar(spls1.liver, comp = 1)$X$name
-
-
-## ----------------------------------------------------------------------------------------
-spls1.liver$explained_variance$X
-pls1.liver.for.tune$explained_variance$X
-
-
-## ----spls1-ext, fig.cap='(ref:spls1-ext)'------------------------------------------------
-spls1.liver.c2 <- spls(X, y, ncomp = 2, keepX = c(rep(choice.keepX, 2)), 
-                   mode = "regression")
-
-plotIndiv(spls1.liver.c2,
-          group = liver.toxicity$treatment$Time.Group,
-          pch = as.factor(liver.toxicity$treatment$Dose.Group),
-          legend = TRUE, legend.title = 'Time', legend.title.pch = 'Dose')
-
-
-
-## ----spls1-comp1, fig.cap='(ref:spls1-comp1)'--------------------------------------------
-plot(spls1.liver$variates$X[,1], spls1.liver$variates$Y[,1], 
-     xlab = 'X component', ylab = 'y component / scaled y',
-     main = 'Dimension 1')
-
-cor(spls1.liver$variates$X, spls1.liver$variates$Y)
-
-
-## ----------------------------------------------------------------------------------------
-set.seed(33)  # for reproducibility with this handbook, remove otherwise
-# PLS1 model and performance
-pls1.liver <- pls(X, y, ncomp = choice.ncomp, mode = "regression")
-perf.pls1.liver <- perf(pls1.liver, validation = "Mfold", folds =10, 
-                   nrepeat = 10, progressBar = FALSE)
-
-
-# sPLS1 performance
-perf.spls1.liver <- perf(spls1.liver, validation = "Mfold", folds = 10, 
-                   nrepeat = 10, progressBar = FALSE)
-
-perf.pls1.liver$MSEP; perf.spls1.liver$MSEP
-
-
-## ----------------------------------------------------------------------------------------
-dim(Y)
-
-
-## ----pls2-Q2, fig.cap='(ref:pls2-Q2)'----------------------------------------------------
-pls2.liver.for.tune = pls(X = X, Y = Y, ncomp = 10, mode = 'regression')
-set.seed(33)  # for reproducibility with this handbook, remove otherwise
-Q2.pls2.liver = perf(pls2.liver.for.tune, validation = 'Mfold', folds = 10)
-
-
-plot(Q2.pls2.liver$Q2.total, xlab = 'Components', ylab = 'Q2 total')
-abline(h = 0.0975); abline(h = 0, col = 'red')
-
-
+# save.image(file = 'buildignore/devel/handbook/env.RData')
+load('buildignore/devel/handbook/env.RData')
 ## ---- eval = FALSE-----------------------------------------------------------------------
 list.keepX = c(seq(5, 50, 5), seq(60, 150, 10))
 list.keepX = c(2, 5)
