@@ -33,14 +33,6 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
                       BPPARAM = SerialParam())
 {
     X <- as.matrix(X)
-    if (any(is.na(X)) || any(!is.numeric(X)))
-    {
-        stop("'X' must be a numeric matrix without missing values.")
-    }
-    if (nrepeat < 3)
-    {
-        stop("'nrepeat' must be >= 3")
-    }
     ncomp <- .check_ncomp(ncomp = ncomp, X = X)
     test.keepX <- .check_test.keepX(test.keepX = test.keepX, X = X)
     ## optimal keepX for all components
@@ -119,19 +111,29 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
         ## use a one-sided t.test using repeat correlations to assess if addition of keepX improved the correlation
         ## and get the index of optimum keepX
         t.test.df <- data.frame(t(cor.df.list[[ncomp]]))
-        keepX.opt.comp.ind <-  t.test.process(t.test.df, alpha = 0.1, alternative = 'less')
+        if (nrepeat > 2) 
+            keepX.opt.comp.ind <-  t.test.process(t.test.df, alpha = 0.1, alternative = 'less') 
+        else 
+            keepX.opt.comp.ind <-  which.max(colMeans(t.test.df))
+        
         keepX.opt.comp <- all.keepX[keepX.opt.comp.ind]
         ## update keepX.optimum for next comp
         keepX.opt <- c(keepX.opt, keepX.opt.comp)
     }
-    choice.keepX <- keepX.opt
-    names(choice.keepX) <- paste0('comp', seq_len(ncomp))
-    
+    if (nrepeat > 2)
+    {
+        choice.keepX <- keepX.opt
+        names(choice.keepX) <- paste0('comp', seq_len(ncomp))
+        
+    } else
+    {
+        choice.keepX <- "not computable with 'nrepeat < 3'"
+    }
     ## get the mean and sd values
-    cor.comp = mapply(df=cor.df.list, opt = choice.keepX, FUN = function(df, opt){
+    cor.comp = mapply(df=cor.df.list, opt = keepX.opt, FUN = function(df, opt){
         out <- data.frame(keepX = all.keepX, cor.mean = apply(df, 1, mean), cor.sd = apply(df, 1, sd))
         out$opt.keepX <- NA
-        out[which(out$keepX == opt),]$opt.keepX <- TRUE
+        out[which(out$keepX == opt),]$opt.keepX <- ifelse(nrepeat > 2 ,TRUE, NA)
         return(out)
     }, SIMPLIFY = FALSE)
     # evaluate all for output except X to save memory

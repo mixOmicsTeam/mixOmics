@@ -14,7 +14,7 @@
 
 \method{plot}{tune.block.splsda}(x, sd = TRUE, col, ...)
 
-\method{plot}{tune.spca}(x, optimal = TRUE, sd = TRUE, col = NULL, ...)
+\method{plot}{tune.spca}(x, optimal = TRUE, sd = NULL, col = NULL, ...)
 }
 \arguments{
 \item{x}{an \code{tune.*} object. See details for supported objects.}

@@ -269,7 +269,7 @@ plot.tune.block.splsda =
 #' @method plot tune.spca
 #' @export
 plot.tune.spca <-
-    function(x, optimal = TRUE, sd = TRUE, col=NULL, ...)
+    function(x, optimal = TRUE, sd = NULL, col=NULL, ...)
     {
         ncomp <- length(x$cor.comp)
         nrepeat <- x$call$nrepeat
@@ -279,6 +279,9 @@ plot.tune.spca <-
             cat("nrepeat < 2 so no SD can be calculated.",
                 "setting sd to FALSE")
             sd <- FALSE
+        } else if (nrepeat > 2 & is.null(sd))
+        {
+            sd <- TRUE
         }
         
         cors <- mapply(z=x$cor.comp, w=seq_len(ncomp), FUN = function(z, w){
@@ -304,15 +307,18 @@ plot.tune.spca <-
             geom_line() +
             geom_point() +
             scale_x_continuous(trans='log10', breaks = cors$keepX) +
-            ylim(c(min(cors$corQ1, 0), max(cors$corQ3, 0))) +
+            ylim(c(min(cors$corQ1, 0), max(cors$corQ3, 1))) +
             labs(x= 'Number of features selected',
                  y = 'Correlation of components',
                  col = 'Comp') +
             scale_color_manual(values = col)
         
-        p <- p +  geom_point(data=cors[!is.na(cors$opt.keepX),], 
-                             aes_string('keepX', 'cor.mean', col = 'comp'), 
-                             size=6, shape = 18, show.legend = FALSE)
+        if (nrepeat > 2) {
+            p <- p +  geom_point(data=cors[!is.na(cors$opt.keepX),], 
+                                 aes_string('keepX', 'cor.mean', col = 'comp'), 
+                                 size=6, shape = 18, show.legend = FALSE)
+        }
+        
         
         ## ----- error bars
         if (isTRUE(sd))
