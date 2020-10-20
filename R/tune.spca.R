@@ -10,9 +10,9 @@
 #' \code{keepX}.
 #'
 #' The number of selected variables for the following components will then be
-#' sequentially optimised. If the number of observations are less than 30,
-#' bootstrapped CV is used. Currently, no adjustment is performed on the
-#' correlations derived using the bootstrap scheme.
+#' sequentially optimised. If the number of observations are small (e.g. < 30),
+#' it is recommended to use Leave-One-Out Cross-Validation which can be
+#' achieved by setting \code{folds = nrow(X)}.
 #' @inheritParams spca
 #' @inheritParams tune.splsda
 #' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
@@ -49,9 +49,9 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
     cor.df.list <- .name_list(char = paste0('comp', seq_len(ncomp)))
     # cor.df.list <- lapply(cor.df.list, function(x) cor.df)
     
-    if (nrow(X) < 30) {
-        # TODO correlations need to be adjusted using bootsrtap
-        cat("\n Low sample size. Using boostrapped CV\n")
+    if (folds > nrow(X)) {
+        stop("'folds' must be an integer smaller than or equal to nrow(X) = ", 
+             nrow(X), call. = FALSE)
     }
     all.keepX <- test.keepX
     names(all.keepX) <- paste0('keepX_', all.keepX)
@@ -60,17 +60,7 @@ tune.spca <- function(X, ncomp=2, nrepeat=3, folds, test.keepX, center = TRUE, s
         iter_keepX <- function(keepX.value) {
             ## ------ repeated cv
             repeat_cv_j <- function(j) {
-                if (nrow(X) < 30) {
-                    out <- seq_len(folds)
-                    names(out) <- out
-                    repeat.j.folds <- lapply(out, function(w){
-                        sample(seq_len(nrow(X)), size = nrow(X), replace = TRUE)
-                    })
-                }
-                else
-                {
-                    repeat.j.folds <- suppressWarnings(split(sample(seq_len(nrow(X))),seq_len(folds)))
-                }
+                repeat.j.folds <- suppressWarnings(split(sample(seq_len(nrow(X))),seq_len(folds)))
                 ## ------ mean cor for CV
                 cor.pred = sapply(repeat.j.folds, function(test.fold.inds){
                     ## split data to train/test

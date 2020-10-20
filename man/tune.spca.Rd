@@ -66,9 +66,9 @@ those from a spca model with all the data to ascertain the optimal
 \code{keepX}.
 
 The number of selected variables for the following components will then be
-sequentially optimised. If the number of observations are less than 30,
-bootstrapped CV is used. Currently, no adjustment is performed on the
-correlations derived using the bootstrap scheme.
+sequentially optimised. If the number of observations are small (e.g. < 30),
+it is recommended to use Leave-One-Out Cross-Validation which can be
+achieved by setting \code{folds = nrow(X)}.
 }
 \examples{
 data("nutrimouse")
