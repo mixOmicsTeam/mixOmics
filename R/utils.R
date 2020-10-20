@@ -572,7 +572,7 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
 }
 
 ## ---------------------------- .create_design ---------------------------- ##
-#' create design matrix for block.pls(da)
+#' create design matrix for block.(s)pls(da)
 #'
 #' @param X Named list of datasets. When
 #' type = 'null', for non-DA analyses the first one is 
@@ -617,7 +617,7 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     }
     
     blocks <- names(X)
-    ## diag will be 0, specify off-diags
+    ## diag will be 0 at the end, specify off-diag elements
     off_diag <- 1
     if (is.character(design))
     {
@@ -647,4 +647,28 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     
     diag(design) <- 0
     return(design)
+}
+## ---------------------------- .check_logical ---------------------------- ##
+#' Check logical arguments
+#'
+#' @param arg A function argument provided as name
+#'
+#' @return arg or condition, invisibly
+#'
+#' @noRd
+#' @keywords Internal
+#' @examples
+#' \dontrun{
+#' foo <- function(a=TRUE) .check_logical(a)
+#' foo(a = 1)
+#' #> Error: ‘a’ must be a class logical (TRUE or FALSE).
+#' }
+.check_logical <- function(arg)
+{
+    # TODO use this throughout the package
+    if (!is.logical(arg))
+    {
+        stop(sQuote(deparse(substitute(arg))), " must be a class logical (TRUE or FALSE).", call. = FALSE)
+    }
+    invisible(arg)
 }

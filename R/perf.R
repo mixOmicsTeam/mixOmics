@@ -245,36 +245,17 @@ perf.mixo_pls <- function(object,
                           ...)
 {
     # changes to bypass the loop for the Q2
+
+    ## -------- checks -------- ##
+    if (object$mode == 'invariant')
+        stop("'perf' is only available for (s)pls with modes: 'regression', 'canonical' or 'classic'.  Object has mode 'invariant'", call. = FALSE)
     
-    # Al: include check entries
-    # ! remove invariant as we cannot calculate RSS
-    
-    #------------------#
-    #-- check entries --#
-    
-    # #-- check spls mode
-    # if (object$mode == 'canonical')
-    #   stop("'perf' is only available for (s)pls with modes: 'regression', 'invariant' or 'classic'.  Object has mode 'canonical'", call. = FALSE)
-    # 
-    # #-- validation
-    # choices = c("Mfold", "loo")
-    # validation = choices[pmatch(validation, choices)]
-    # 
-    # if (any(is.na(validation)) || length(validation) > 1)
-    #   stop("'validation' should be one of 'Mfold' or 'loo'.", call. = FALSE)
-    # 
-    # #-- progressBar
-    # if (!is.logical(progressBar))
-    #   stop("'progressBar' must be a logical constant (TRUE or FALSE).", call. = FALSE)
-    # 
-    # #-- end checking --#
-    # #------------------#
+    validation = match.arg(validation)
+    progressBar <- .check_logical(progressBar)
     
     
-    #-- cross-validation approach  ---------------------------------------------#
-    #---------------------------------------------------------------------------#
-    
-    #-- initialising arguments --#
+    ## ---------- CV ---------- ##
+    ## ------------- initialise
     # these are the centered and scaled matrices output from pls, we remove $nzv if needed
     if (length(object$nzv$Position)>0)
     {
@@ -606,7 +587,7 @@ perf.mixo_pls <- function(object,
     } else if (is(object, "mixo_pls")) {
         method = "pls.mthd"
     } else {
-        warning("Something happened. Please contact us.")
+        warning("Something went wrong. Please contact us.")
     }
     class(result) = c("perf",paste(c("perf", method), collapse ="."))
     result$call = match.call()
