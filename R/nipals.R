@@ -13,6 +13,8 @@
 #' delete the rows with missing data or to estimate the missing data.
 #' 
 #' @inheritParams pca
+#' @param X a numeric matrix (or data.frame) which is column-centered. It can
+#'   contain missing values.
 #' @param reconst logical that specify if \code{nipals} must perform the
 #' reconstitution of the data using the \code{ncomp} components.
 #' @return An object of class 'mixo_nipals' contaning slots: 
@@ -64,6 +66,16 @@
 #' X.rec <- nipals(X.na, reconst = TRUE)$rec
 #' round(X, 2)
 #' round(X.rec, 2)
+#' ## nutrimouse lipid data
+#' data("nutrimouse")
+#' lipid <- nutrimouse$lipid
+#' ## center data
+#' lipid <- scale(lipid, center = TRUE, scale = FALSE)
+#' ## nipals
+#' res <- nipals(scale(nutrimouse$lipid, center = TRUE, scale = FALSE), ncomp = 10)
+#' res
+#' plot(res)
+
 nipals <- function (X,
                     ncomp = 2,
                     reconst = FALSE,
@@ -203,12 +215,8 @@ nipals <- function (X,
     }
     
     if (isFALSE(reconst)) { ## replace NA with 0 with messages
-        message('\nreplacing missing values with 0 for calculation',
+        message('\nreplacing missing values with 0 for calculation ',
             'of components as `reconst=FALSE` used.')
-        if (is.null(attr(X.input, 'scaled:center'))) {
-            message('This will have implications particularly if data are not centred.',
-                    ' (we recommend the use of `center = TRUE`).\n')
-        }
         X.input[is.na.X] <- 0
     } else {
         X.input[is.na.X] <- result$rec[is.na.X]
