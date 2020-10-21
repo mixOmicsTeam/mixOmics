@@ -1,4 +1,5 @@
 data("nutrimouse")
+## --------- pca ---------- ##
 pca.lipid <- pca(nutrimouse$lipid, ncomp = 2, scale = TRUE)
 # seed for reproducible geom_text_repel
 set.seed(42)
@@ -40,3 +41,9 @@ biplot(pca.lipid, group = nutrimouse$diet, legend.title = 'Diet',
 spca.lipid <- spca(nutrimouse$lipid, ncomp = 2, scale = TRUE, keepX = c(8, 6))
 biplot(spca.lipid, var.names.col = 'black', group = nutrimouse$diet, 
        legend.title = 'Diet')
+
+## --------- spls ---------- ##
+data("nutrimouse")
+pls.nutrimouse <- pls(X = nutrimouse$gene, Y = nutrimouse$lipid, ncomp = 2)
+biplot(pls.nutrimouse, group = nutrimouse$genotype, 
+       legend.title = 'Genotype', cutoff = 0.878) 

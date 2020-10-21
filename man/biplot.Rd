@@ -3,11 +3,44 @@
 \name{biplot}
 \alias{biplot}
 \alias{biplot.pca}
+\alias{biplot.mixo_pls}
 \title{biplot methods for \code{pca} family}
 \usage{
 \method{biplot}{pca}(
   x,
   comp = c(1, 2),
+  block = NULL,
+  ind.names = TRUE,
+  group = NULL,
+  cutoff = 0,
+  col.per.group = NULL,
+  col = NULL,
+  ind.names.size = 3,
+  ind.names.col = color.mixo(4),
+  ind.names.repel = TRUE,
+  pch = 19,
+  pch.levels = NULL,
+  pch.size = 2,
+  var.names = TRUE,
+  var.names.col = "grey40",
+  var.names.size = 4,
+  var.names.angle = FALSE,
+  var.arrow.col = "grey40",
+  var.arrow.size = 0.5,
+  var.arrow.length = 0.2,
+  ind.legend.title = NULL,
+  vline = FALSE,
+  hline = FALSE,
+  legend = if (is.null(group)) FALSE else TRUE,
+  legend.title = NULL,
+  pch.legend.title = NULL,
+  ...
+)
+
+\method{biplot}{mixo_pls}(
+  x,
+  comp = c(1, 2),
+  block = NULL,
   ind.names = TRUE,
   group = NULL,
   cutoff = 0,
@@ -36,11 +69,14 @@
 )
 }
 \arguments{
-\item{x}{A 'pca' object.}
+\item{x}{An object of class 'pca'or mixOmics '(s)pls'.}
 
 \item{comp}{integer vector of length two (or three to 3d). The components
 that will be used on the horizontal and the vertical axis respectively to
 project the individuals.}
+
+\item{block}{Character, name of the block to show for \code{pls} object.
+Default to \code{'X'}.}
 
 \item{ind.names}{either a character vector of names for the individuals to
 be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
@@ -115,9 +151,12 @@ observations/samples and variables of a matrix of multivariate data on the
 same plot. Essentially, in the reduced space the samples are shown as
 points/names and the contributions of features to each dimension are shown as
 directed arrows or vectors.
+For \code{pls} objects it is possible to use either \code{'X'} or \code{'Y'}
+latent space using \code{block} argument.
 }
 \examples{
 data("nutrimouse")
+## --------- pca ---------- ##
 pca.lipid <- pca(nutrimouse$lipid, ncomp = 2, scale = TRUE)
 # seed for reproducible geom_text_repel
 set.seed(42)
@@ -159,6 +198,12 @@ biplot(pca.lipid, group = nutrimouse$diet, legend.title = 'Diet',
 spca.lipid <- spca(nutrimouse$lipid, ncomp = 2, scale = TRUE, keepX = c(8, 6))
 biplot(spca.lipid, var.names.col = 'black', group = nutrimouse$diet, 
        legend.title = 'Diet')
+
+## --------- spls ---------- ##
+data("nutrimouse")
+pls.nutrimouse <- pls(X = nutrimouse$gene, Y = nutrimouse$lipid, ncomp = 2)
+biplot(pls.nutrimouse, group = nutrimouse$genotype, 
+       legend.title = 'Genotype', cutoff = 0.878) 
 }
 \author{
 Al J Abadi
