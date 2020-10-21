@@ -69,12 +69,12 @@ tune.spca <- function(X,
                     X.test = scale(X.test, center = center, scale = scale)
                     
                     # ---- run sPCA 
-                    suppressWarnings({
-                        ## train
-                        spca.train = mixOmics::spca(X.train, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = scale)
-                        # full data
-                        spca.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = scale)
-                    })
+                    # suppressWarnings({
+                    ## train
+                    spca.train = mixOmics::spca(X.train, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = scale)
+                    # full data
+                    spca.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = scale)
+                    # })
                     # ---- deflation on X with only the fold left out
                     for(k in seq_len(ncomp)){ 
                         # loop to calculate deflated matrix and predicted comp

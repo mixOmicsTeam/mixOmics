@@ -200,6 +200,11 @@ spca <-
         #--initialization--#
         X=as.matrix(X)
         X.temp=as.matrix(X)
+        if (isFALSE(center) && any(colMeans(X) != 0)) {
+            warning("data contain missing values which will be ",
+                    "set to zero for caluclations. Consider using center = TRUE ",
+                    "to lessen the side-effects or imputing the missing values.")
+        }
         X.temp[is.na(X.temp)] <- 0
         n=nrow(X)
         p=ncol(X)
