@@ -168,7 +168,7 @@ mint.plsda <- function(X,
         explained_variance = result$explained_variance
     )
     
-    class(out) <- c("mint.plsda","mint.pls","mixo_pls","DA")
+    class(out) <- c("mint.plsda", "mixo_plsda", "mixo_pls", "DA")
     return(invisible(out))
     
     

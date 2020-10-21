@@ -373,11 +373,11 @@ plotVar <-
                     cord.X[[2]] = cor(object$Y, object$variates$X[, c(comp1, comp2)] + object$variates$Y[, c(comp1, comp2)], use = "pairwise")
                     sample.X = lapply(cord.X, function(x){seq_len(nrow(x))})
                     
-                } else if (any(class.object %in% "mixo_plsda")) {
+                } else if (any(class.object == "mixo_plsda")) {
                     cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2)], use = "pairwise")
                     sample.X = lapply(cord.X, function(x){seq_len(nrow(x))})
                     
-                } else if (any(class.object %in%  "mixo_pls")) {
+                } else if (any(class.object ==  "mixo_pls")) {
                     cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2)], use = "pairwise")
                     cord.X[[2]] = cor(object$Y, if(object$mode ==  "canonical"){object$variates$Y[, c(comp1, comp2)]} else {object$variates$X[, c(comp1, comp2)]}, use = "pairwise")
                     sample.X = lapply(cord.X, function(x){seq_len(nrow(x))})
