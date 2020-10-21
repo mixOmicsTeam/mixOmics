@@ -44,7 +44,8 @@
 #' columns in a multi panel display. If not specified, \code{plot.perf} tries
 #' to be intelligent.
 #' @param sd If 'nrepeat' was used in the call to 'perf', error bar shows the
-#' standard deviation if sd=TRUE
+#' standard deviation if sd=TRUE. For mint objects sd is set to FALSE as the
+#' number of repeats is 1.
 #' @param \dots Further arguments sent to \code{\link{xyplot}} function.
 #' @return none
 #' @author Ignacio González, Florian Rohart, Francois Bartolo, Kim-Anh Lê Cao, Al J Abadi
@@ -278,6 +279,8 @@ plot.perf.mint.plsda.mthd <-
               ...
     )
     {
+        if (isTRUE(list(...)$sd))
+            message("'sd' not applicable to perf.mint.plsda objects. See ?plot.perf.")
         # maybe later, so far we set type = "l"
         type = "l"
         
