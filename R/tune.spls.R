@@ -188,14 +188,16 @@ tune.spls <-
         pls.model <- (method == 'pls')
         
         if(isFALSE(pls.model)){
+            # TODO check test.keepX and test.keepY
+            measure.tune <- match.arg(measure.tune, choices = c('cor', 'RSS'))
             cor.tpred = cor.upred = RSS.tpred = RSS.upred = array(dim = c(length(test.keepX), length(test.keepY), nrepeat),
                                                                   dimnames = list(paste0('keepX', test.keepX), 
                                                                                   paste0('keepY', test.keepY),
                                                                                   paste0('repeat', 1:nrepeat)))
             best.keepX = best.keepY = NULL
         }else{
-            if (!is.null(measure.tune))
-                message("ignoring 'measure.tune' for method = 'pls'")
+            if (!is.null(test.keepX) | !is.null(test.keepY))
+                stop("'test.keepX' and 'test.keepY' can only be provided with method = 'spls'", call. = FALSE)
             cor.tpred = cor.upred = RSS.tpred = RSS.upred = matrix(nrow = ncomp, ncol = nrepeat, 
                                                                    dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
             Q2.tot.ave = matrix(nrow = ncomp, ncol = nrepeat,
