@@ -212,6 +212,8 @@ tune.spls <-
         ## for a PLS only to extract Q2.total (or anything else)
         if(isTRUE(pls.model)){
             comps <- ncomp
+            for (comp in comps) 
+            {
             for(k in 1:nrepeat){
                 cat('repeat', k, '\n')
                 
@@ -235,12 +237,13 @@ tune.spls <-
                 RSS.upred[, k] = apply((res.perf$u.pred.cv - pls.res$variates$Y)^2, 2, sum)/(nrow(X) -1)
             } #end repeat       
             
-            # # calculate mean across repeats
-            cor.pred$u = apply(cor.upred, 1, mean) 
-            cor.pred$t = apply(cor.tpred, 1, mean)
-            RSS.pred$u = apply(RSS.upred, 1, mean)
-            RSS.pred$t = apply(RSS.tpred, 1, mean)
-            
+                # # calculate mean across repeats
+                cor.pred$u[[paste0('comp_', comp)]] = apply(cor.upred, c(1,2), mean)
+                cor.pred$t[[paste0('comp_', comp)]] = apply(cor.tpred, c(1,2), mean)
+                RSS.pred$u[[paste0('comp_', comp)]] = apply(RSS.upred, c(1,2), mean)
+                RSS.pred$t[[paste0('comp_', comp)]] = apply(RSS.tpred, c(1,2), mean)
+                # TODO if nrepeat < 2
+            }
         }else{ # if sPLS model 
             comps <- seq_len(ncomp)
             for (comp in comps){
@@ -277,19 +280,19 @@ tune.spls <-
                 cat('\t')
                 
                 # # calculate mean across repeats
-                cor.pred$u[[comp]] = apply(cor.upred, c(1,2), mean)  #mean(cor.upred[keepX, keepY,])
-                cor.pred$t[[comp]] = apply(cor.tpred, c(1,2), mean)  #mean(cor.tpred[keepX, keepY,])
-                RSS.pred$u[[comp]] = apply(RSS.upred, c(1,2), mean)  #mean(RSS.upred[keepX, keepY,])
-                RSS.pred$t[[comp]] = apply(RSS.tpred, c(1,2), mean)  #mean(RSS.tpred[keepX, keepY,])
+                cor.pred$u[[paste0('comp_', comp)]] = apply(cor.upred, c(1,2), mean)  #mean(cor.upred[keepX, keepY,])
+                cor.pred$t[[paste0('comp_', comp)]] = apply(cor.tpred, c(1,2), mean)  #mean(cor.tpred[keepX, keepY,])
+                RSS.pred$u[[paste0('comp_', comp)]] = apply(RSS.upred, c(1,2), mean)  #mean(RSS.upred[keepX, keepY,])
+                RSS.pred$t[[paste0('comp_', comp)]] = apply(RSS.tpred, c(1,2), mean)  #mean(RSS.tpred[keepX, keepY,])
                 
                 # choose the best keepX and keepY based on type.tune
                 if(mode != 'canonical'){  #regression, invariant, classic
                     # define best keepX and keepY based on u
                     if(measure.tune == 'cor'){
-                        cor.component = cor.pred$u[[comp]]
+                        cor.component = cor.pred$u[[paste0('comp_', comp)]]
                         index = which(cor.component == max(cor.component), arr.ind = TRUE)
                     }else{ # if type.tune = 'RSS'
-                        RSS.component = RSS.pred$u[[comp]]
+                        RSS.component = RSS.pred$u[[paste0('comp_', comp)]]
                         index = which(RSS.component == min(RSS.component), arr.ind = TRUE)
                     }
                     choice.keepX = c(choice.keepX, test.keepX[index[1,1]])
@@ -297,13 +300,13 @@ tune.spls <-
                     
                 }else{  # mode = 'canonical'
                     if(measure.tune == 'cor'){
-                        cor.component.t = cor.pred$t[[comp]]
-                        cor.component.u = cor.pred$u[[comp]]
+                        cor.component.t = cor.pred$t[[paste0('comp_', comp)]]
+                        cor.component.u = cor.pred$u[[paste0('comp_', comp)]]
                         index.t = which(cor.component.t == max(cor.component.t), arr.ind = TRUE)
                         index.u = which(cor.component.u == max(cor.component.u), arr.ind = TRUE)
                     }else{ # if type.tune = 'RSS'
-                        RSS.component.t = RSS.pred$t[[comp]]
-                        RSS.component.u = RSS.pred$u[[comp]]
+                        RSS.component.t = RSS.pred$t[[paste0('comp_', comp)]]
+                        RSS.component.u = RSS.pred$u[[paste0('comp_', comp)]]
                         index.t = which(RSS.component.t == min(RSS.component.t), arr.ind = TRUE)
                         index.u = which(RSS.component.u == min(RSS.component.u), arr.ind = TRUE)
                     }
