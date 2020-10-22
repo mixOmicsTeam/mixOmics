@@ -170,14 +170,15 @@
 tune.spls <- 
     function(X,
              Y,
-             test.keepX,
-             test.keepY,
+             method = c('pls', 'spls'),
+             test.keepX = NULL,
+             test.keepY = NULL,
              ncomp,
              nrepeat,
              folds = 10,
              mode,
-             measure.tune, # ! shoud be null for a PLS model
-             method = c('pls', 'spls')) {
+             measure.tune = if (method == 'pls') NULL else c('cor', 'RSS') # ! shoud be null for a PLS model
+             ) {
         
         
         out = list()
@@ -191,7 +192,8 @@ tune.spls <-
                                                                                   paste0('repeat', 1:nrepeat)))
             best.keepX = best.keepY = NULL
         }else{
-            measure.tune = NULL
+            if (!is.null(measure.tune))
+                message("ignoring 'measure.tune' for method = 'pls'")
             cor.tpred = cor.upred = RSS.tpred = RSS.upred = matrix(nrow = ncomp, ncol = nrepeat, 
                                                                    dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
             Q2.tot.ave = matrix(nrow = ncomp, ncol = nrepeat,
