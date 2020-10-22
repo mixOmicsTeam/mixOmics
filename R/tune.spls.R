@@ -275,15 +275,15 @@ tune.spls <-
                             if (spls.model)
                             {
                                 # extract the predicted components: 
-                                if(measure.tune == 'cor' ){
+                                # if(measure.tune == 'cor' ){
                                     cor.tpred[keepX, keepY, k] = cor(t.pred.cv[, comp], X.variates[, comp])
                                     cor.upred[keepX, keepY,k] = cor(u.pred.cv[, comp], Y.variates[, comp])
-                                }
-                                if(measure.tune == 'RSS'){
+                                # }
+                                # if(measure.tune == 'RSS'){
                                     # RSS: no abs values here
                                     RSS.tpred[keepX, keepY, k] = sum((t.pred.cv[, comp] - X.variates[, comp])^2)/(nrow(X) -1) 
                                     RSS.upred[keepX, keepY, k] = sum((u.pred.cv[, comp] - Y.variates[, comp])^2)/(nrow(X) -1)
-                                }
+                                # }
                                 # covariance between predicted variates
                                 ##cov.variate.pred[keepX, keepY, k] = cov(t.pred.cv[, comp], u.pred.cv[, comp])
                                 
@@ -356,7 +356,8 @@ tune.spls <-
                             
                         }
                     }
-                    return(c(ind.choice.keepX = choice.keepX_i, ind.choice.keepY = choice.keepY_j))
+                    return(c(ind.choice.keepX = choice.keepX_i, 
+                             ind.choice.keepY = choice.keepY_j))
                 }
                 
                 
@@ -403,8 +404,8 @@ tune.spls <-
         # } # end sPLS
         
         if(spls.model){
-            if(measure.tune == 'cor')  out$cor.pred = cor.pred
-            if(measure.tune == 'RSS')  out$RSS.pred = RSS.pred
+            out$cor.pred = cor.pred
+            out$RSS.pred = RSS.pred
         }else{
             out$cor.pred = cor.pred
             out$RSS.pred = RSS.pred
