@@ -194,7 +194,6 @@ tune.spls <-
                                                                   dimnames = list(paste0('keepX', test.keepX), 
                                                                                   paste0('keepY', test.keepY),
                                                                                   paste0('repeat', 1:nrepeat)))
-            choice.keepX = choice.keepY = NULL
         }else{
             if (!is.null(test.keepX) | !is.null(test.keepY))
                 stop("'test.keepX' and 'test.keepY' can only be provided with method = 'spls'", call. = FALSE)
@@ -204,6 +203,7 @@ tune.spls <-
                                 dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
             
         }
+        choice.keepX = choice.keepY = NULL
         cor.pred = RSS.pred = list()
         cov.pred = list()
         
@@ -212,15 +212,21 @@ tune.spls <-
         ## for a PLS only to extract Q2.total (or anything else)
         if(isTRUE(pls.model)){
             comps <- ncomp
+            test.keepX <- ncol(X)
+            test.keepY <- ncol(Y)
             for (comp in comps) 
             {
             for(k in 1:nrepeat){
+                for(keepX in 1:length(test.keepX)){
+                    cat('KeepX', test.keepX[keepX], '\n')
+                    for(keepY in 1:length(test.keepY)){
+                        cat('KeepY', test.keepY[keepY], '\n')
                 cat('repeat', k, '\n')
                 
                 # run a full PLS model up to the last comp
                 pls.res = spls(X = X, Y = Y, 
-                               keepX = c(rep(ncol(X), ncomp)), 
-                               keepY = c(rep(ncol(Y), ncomp)), 
+                               keepX = c(choice.keepX, test.keepX[keepX]), 
+                               keepY = c(choice.keepY, test.keepY[keepY]),  
                                ncomp = ncomp, mode = mode)
                 # fold CV
                 res.perf = .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
@@ -235,6 +241,8 @@ tune.spls <-
                 # RSS: no abs values here
                 RSS.tpred[, k] = apply((res.perf$t.pred.cv - pls.res$variates$X)^2, 2, sum)/(nrow(X) -1)
                 RSS.upred[, k] = apply((res.perf$u.pred.cv - pls.res$variates$Y)^2, 2, sum)/(nrow(X) -1)
+                    }
+                    }
             } #end repeat       
             
                 # # calculate mean across repeats
@@ -251,26 +259,26 @@ tune.spls <-
                 for(k in 1:nrepeat){
                     cat('repeat', k, '\n')
                     for(keepX in 1:length(test.keepX)){
-                        cat('KeepX', list.keepX[keepX], '\n')
+                        cat('KeepX', test.keepX[keepX], '\n')
                         for(keepY in 1:length(test.keepY)){
-                            cat('KeepY', list.keepY[keepY], '\n')
+                            cat('KeepY', test.keepY[keepY], '\n')
                             # sPLS model, updated with the best keepX
-                            spls.res = spls(X = X, Y = Y, 
+                            pls.res = spls(X = X, Y = Y, 
                                             keepX = c(choice.keepX, test.keepX[keepX]), 
                                             keepY = c(choice.keepY, test.keepY[keepY]), 
                                             ncomp = comp, mode = mode)
                             # fold CV
-                            res.perf = .perf.mixo_pls_folds(spls.res, validation = 'Mfold', folds = folds)
+                            res.perf = .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
                             
                             # extract the predicted components: 
                             if(measure.tune == 'cor' ){
-                                cor.tpred[keepX, keepY, k] = cor(res.perf$t.pred.cv[,comp], spls.res$variates$X[, comp])
-                                cor.upred[keepX, keepY,k] = cor(res.perf$u.pred.cv[,comp], spls.res$variates$Y[, comp])
+                                cor.tpred[keepX, keepY, k] = cor(res.perf$t.pred.cv[,comp], pls.res$variates$X[, comp])
+                                cor.upred[keepX, keepY,k] = cor(res.perf$u.pred.cv[,comp], pls.res$variates$Y[, comp])
                             }
                             if(measure.tune == 'RSS'){
                                 # RSS: no abs values here
-                                RSS.tpred[keepX, keepY, k] = sum((res.perf$t.pred.cv[,comp] - spls.res$variates$X[, comp])^2)/(nrow(X) -1) 
-                                RSS.upred[keepX, keepY, k] = sum((res.perf$u.pred.cv[,comp] - spls.res$variates$Y[, comp])^2)/(nrow(X) -1)
+                                RSS.tpred[keepX, keepY, k] = sum((res.perf$t.pred.cv[,comp] - pls.res$variates$X[, comp])^2)/(nrow(X) -1) 
+                                RSS.upred[keepX, keepY, k] = sum((res.perf$u.pred.cv[,comp] - pls.res$variates$Y[, comp])^2)/(nrow(X) -1)
                             }
                             # covariance between predicted variates
                             ##cov.variate.pred[keepX, keepY, k] = cov(res.perf$t.pred.cv[,comp], res.perf$u.pred.cv[,comp])
