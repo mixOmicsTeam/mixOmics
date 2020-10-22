@@ -211,6 +211,7 @@ tune.spls <-
         
         ## for a PLS only to extract Q2.total (or anything else)
         if(isTRUE(pls.model)){
+            comps <- ncomp
             for(k in 1:nrepeat){
                 cat('repeat', k, '\n')
                 
@@ -241,8 +242,8 @@ tune.spls <-
             RSS.pred$t = apply(RSS.tpred, 1, mean)
             
         }else{ # if sPLS model 
-            for (comp in 1:ncomp){
-                
+            comps <- seq_len(ncomp)
+            for (comp in comps){
                 cat('Comp', comp, '\n')
                 for(k in 1:nrepeat){
                     cat('repeat', k, '\n')
