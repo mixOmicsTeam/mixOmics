@@ -185,75 +185,73 @@ tune.spls <-
         mode <- match.arg(mode)
         
         method <- match.arg(method)
-        pls.model <- (method == 'pls')
-        
-        if(isFALSE(pls.model)){
+        spls.model <- (method == 'spls')
+
+        if (spls.model) {
+            comps <- seq_len(ncomp)
             # TODO check test.keepX and test.keepY
             measure.tune <- match.arg(measure.tune, choices = c('cor', 'RSS'))
             cor.tpred = cor.upred = RSS.tpred = RSS.upred = array(dim = c(length(test.keepX), length(test.keepY), nrepeat),
-                                                                  dimnames = list(paste0('keepX', test.keepX), 
+                                                                  dimnames = list(paste0('keepX', test.keepX),
                                                                                   paste0('keepY', test.keepY),
                                                                                   paste0('repeat', 1:nrepeat)))
         }else{
             if (!is.null(test.keepX) | !is.null(test.keepY))
                 stop("'test.keepX' and 'test.keepY' can only be provided with method = 'spls'", call. = FALSE)
-            cor.tpred = cor.upred = RSS.tpred = RSS.upred = matrix(nrow = ncomp, ncol = nrepeat, 
+            comps <- ncomp
+            test.keepX <- ncol(X)
+            test.keepY <- ncol(Y)
+            cor.tpred = cor.upred = RSS.tpred = RSS.upred = matrix(nrow = ncomp, ncol = nrepeat,
                                                                    dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
             Q2.tot.ave = matrix(nrow = ncomp, ncol = nrepeat,
                                 dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
-            
+
         }
         choice.keepX = choice.keepY = NULL
         cor.pred = RSS.pred = list()
         cov.pred = list()
-        
-        
-        
-        ## for a PLS only to extract Q2.total (or anything else)
-        if(isTRUE(pls.model)){
-            comps <- ncomp
-            test.keepX <- ncol(X)
-            test.keepY <- ncol(Y)
-            for (comp in comps) 
-            {
-            for(k in 1:nrepeat){
-                for(keepX in 1:length(test.keepX)){
-                    cat('KeepX', test.keepX[keepX], '\n')
-                    for(keepY in 1:length(test.keepY)){
-                        cat('KeepY', test.keepY[keepY], '\n')
-                cat('repeat', k, '\n')
-                
-                # run a full PLS model up to the last comp
-                pls.res = spls(X = X, Y = Y, 
-                               keepX = c(choice.keepX, test.keepX[keepX]), 
-                               keepY = c(choice.keepY, test.keepY[keepY]),  
-                               ncomp = ncomp, mode = mode)
-                # fold CV
-                res.perf = .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
-                
-                # extract Q2.total for a PLS, we could extract other outputs such as R2, MSEP etc (only valid for regression)
-                Q2.tot.ave[, k] = res.perf$Q2.total 
-                
-                # extract the predicted components per dimension, take abs value
-                cor.tpred[, k] = diag(abs(cor(res.perf$t.pred.cv, pls.res$variates$X)))
-                cor.upred[, k] = diag(abs(cor(res.perf$u.pred.cv, pls.res$variates$Y)))
-                
-                # RSS: no abs values here
-                RSS.tpred[, k] = apply((res.perf$t.pred.cv - pls.res$variates$X)^2, 2, sum)/(nrow(X) -1)
-                RSS.upred[, k] = apply((res.perf$u.pred.cv - pls.res$variates$Y)^2, 2, sum)/(nrow(X) -1)
-                    }
-                    }
-            } #end repeat       
-            
-                # # calculate mean across repeats
-                cor.pred$u[[paste0('comp_', comp)]] = apply(cor.upred, c(1,2), mean)
-                cor.pred$t[[paste0('comp_', comp)]] = apply(cor.tpred, c(1,2), mean)
-                RSS.pred$u[[paste0('comp_', comp)]] = apply(RSS.upred, c(1,2), mean)
-                RSS.pred$t[[paste0('comp_', comp)]] = apply(RSS.tpred, c(1,2), mean)
-                # TODO if nrepeat < 2
-            }
-        }else{ # if sPLS model 
-            comps <- seq_len(ncomp)
+
+        # ## for a PLS only to extract Q2.total (or anything else)
+        # if(!spls.model){
+        #     for (comp in comps) 
+        #     {
+        #     for(k in 1:nrepeat){
+        #         for(keepX in 1:length(test.keepX)){
+        #             cat('KeepX', test.keepX[keepX], '\n')
+        #             for(keepY in 1:length(test.keepY)){
+        #                 cat('KeepY', test.keepY[keepY], '\n')
+        #         cat('repeat', k, '\n')
+        #         
+        #         # run a full PLS model up to the last comp
+        #         pls.res = spls(X = X, Y = Y, 
+        #                        keepX = c(choice.keepX, test.keepX[keepX]), 
+        #                        keepY = c(choice.keepY, test.keepY[keepY]),  
+        #                        ncomp = ncomp, mode = mode)
+        #         # fold CV
+        #         res.perf = .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
+        #         
+        #         # extract Q2.total for a PLS, we could extract other outputs such as R2, MSEP etc (only valid for regression)
+        #         Q2.tot.ave[, k] = res.perf$Q2.total 
+        #         
+        #         # extract the predicted components per dimension, take abs value
+        #         cor.tpred[, k] = diag(abs(cor(res.perf$t.pred.cv, pls.res$variates$X)))
+        #         cor.upred[, k] = diag(abs(cor(res.perf$u.pred.cv, pls.res$variates$Y)))
+        #         
+        #         # RSS: no abs values here
+        #         RSS.tpred[, k] = apply((res.perf$t.pred.cv - pls.res$variates$X)^2, 2, sum)/(nrow(X) -1)
+        #         RSS.upred[, k] = apply((res.perf$u.pred.cv - pls.res$variates$Y)^2, 2, sum)/(nrow(X) -1)
+        #             }
+        #             }
+        #     } #end repeat       
+        #     
+        #         # # calculate mean across repeats
+        #         cor.pred$u[[paste0('comp_', comp)]] = apply(cor.upred, c(1,2), mean)
+        #         cor.pred$t[[paste0('comp_', comp)]] = apply(cor.tpred, c(1,2), mean)
+        #         RSS.pred$u[[paste0('comp_', comp)]] = apply(RSS.upred, c(1,2), mean)
+        #         RSS.pred$t[[paste0('comp_', comp)]] = apply(RSS.tpred, c(1,2), mean)
+        #         # TODO if nrepeat < 2
+        #     }
+        # }else{ # if sPLS model 
             for (comp in comps){
                 cat('Comp', comp, '\n')
                 for(k in 1:nrepeat){
@@ -270,7 +268,7 @@ tune.spls <-
                             # fold CV
                             res.perf = .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
                             
-                            if (!pls.model)
+                            if (spls.model)
                             {
                                 # extract the predicted components: 
                                 if(measure.tune == 'cor' ){
@@ -285,6 +283,18 @@ tune.spls <-
                                 # covariance between predicted variates
                                 ##cov.variate.pred[keepX, keepY, k] = cov(res.perf$t.pred.cv[,comp], res.perf$u.pred.cv[,comp])
                                 
+                            } else {
+                                
+                                # extract Q2.total for a PLS, we could extract other outputs such as R2, MSEP etc (only valid for regression)
+                                Q2.tot.ave[, k] = res.perf$Q2.total 
+                                
+                                # extract the predicted components per dimension, take abs value
+                                cor.tpred[, k] = diag(abs(cor(res.perf$t.pred.cv, pls.res$variates$X)))
+                                cor.upred[, k] = diag(abs(cor(res.perf$u.pred.cv, pls.res$variates$Y)))
+                                
+                                # RSS: no abs values here
+                                RSS.tpred[, k] = apply((res.perf$t.pred.cv - pls.res$variates$X)^2, 2, sum)/(nrow(X) -1)
+                                RSS.upred[, k] = apply((res.perf$u.pred.cv - pls.res$variates$Y)^2, 2, sum)/(nrow(X) -1)
                             }
     
                         } # end keepY
@@ -298,7 +308,7 @@ tune.spls <-
                 RSS.pred$u[[paste0('comp_', comp)]] = apply(RSS.upred, c(1,2), mean)
                 RSS.pred$t[[paste0('comp_', comp)]] = apply(RSS.tpred, c(1,2), mean)
                 
-                if (!pls.model)
+                if (spls.model)
                 {
                 # choose the best keepX and keepY based on type.tune
                 if(mode != 'canonical'){  #regression, invariant, classic
@@ -330,21 +340,21 @@ tune.spls <-
                 } # canonical
                 }
                     } # end comp
-            if (!pls.model)
+            if (spls.model)
             {
                 out$choice.keepX = choice.keepX
                 out$choice.keepY = choice.keepY
             }
 
-        } # end sPLS
+        # } # end sPLS
         
-        if(pls.model){
+        if(spls.model){
+            if(measure.tune == 'cor') out$cor.pred = cor.pred
+            if(measure.tune == 'RSS') out$RSS.pred = RSS.pred
+        }else{
             out$cor.pred = cor.pred
             out$RSS.pred = RSS.pred
             out$Q2.tot.ave = apply(Q2.tot.ave, 1, mean)
-        }else{
-            if(measure.tune == 'cor') out$cor.pred = cor.pred
-            if(measure.tune == 'RSS') out$RSS.pred = RSS.pred
         }
         
         return(out)

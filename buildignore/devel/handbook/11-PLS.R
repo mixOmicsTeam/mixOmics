@@ -140,8 +140,8 @@ PLS.tune.reg.cor.liver = tune.spls(X, Y, ncomp = ncomp, nrepeat = nrepeat, mode 
 load('res.RData')
 # testthat::expect_equal(sPLS.tune.reg.cor.liver, sPLS.tune.reg.cor.liver.ref)
 # testthat::expect_equal(PLS.tune.reg.cor.liver, PLS.tune.reg.cor.liver.ref)
-waldo::compare(sPLS.tune.reg.cor.liver, sPLS.tune.reg.cor.liver.ref)
-waldo::compare(PLS.tune.reg.cor.liver, PLS.tune.reg.cor.liver.ref)
+waldo::compare(y = sPLS.tune.reg.cor.liver, sPLS.tune.reg.cor.liver.ref)
+waldo::compare(y = PLS.tune.reg.cor.liver, PLS.tune.reg.cor.liver.ref)
 
 testthat::expect_condition(tune.spls(X, Y, test.keepX = list.keepX, test.keepY = list.keepY, ncomp = ncomp, nrepeat = nrepeat, mode = 'regression', measure.tune = 'cor', method = 'pls'))
 sPLS.tune.reg.cor.liver$best.keepX
