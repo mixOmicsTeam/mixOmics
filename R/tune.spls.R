@@ -178,7 +178,8 @@ tune.spls <-
              folds = 10,
              mode = c('regression', 'canonical', 'classic'),
              measure.tune = if (method == 'pls') NULL else c('cor', 'RSS'),
-             BPPARAM = BiocParallel::SerialParam()
+             BPPARAM = BiocParallel::SerialParam(),
+             progressBar = FALSE
              ) {
         
         
@@ -232,48 +233,24 @@ tune.spls <-
                 Q2.total = res.perf$Q2.total
             )
         }
-
+        use_progressBar <- progressBar & (is(BPPARAM, 'SerialParam'))
+        
             for (comp in comps){
-                cat('Comp', comp, '\n')
-                pb <- txtProgressBar(min = 0, max = nrepeat, style = 3)
+                if (use_progressBar) {
+                    msg <- if (spls.model) sprintf("\ntuning component: %s\n", comp) else sprintf("\ntuning pls model ...\n")
+                    cat(msg)
+                    pb <- txtProgressBar(min = 0, max = nrepeat, style = 3)
+                }
+   
                 cv.repeat.res <- bplapply(seq_len(nrepeat), 
                                         FUN = function(k){ 
-                                            progressBar <- TRUE
-                                            # pb.length <- length(test.keepX) * length(test.keepY) * nrepeat
-                                            if (progressBar) {
-                                                # pb <- txtProgressBar(min = 0, max = pb.length, style = 3)
-                                                setTxtProgressBar(pb = pb, value = k, title = 'repeat: ')
+                                            if (use_progressBar) {
+                                                setTxtProgressBar(pb = pb, value = k)
                                             }
                                             .tune.spls.repeat(test.keepX = test.keepX, test.keepY = test.keepY, X = X, Y = Y, 
                                                               choice.keepX = choice.keepX, choice.keepY = choice.keepY, comp = comp, 
                                                               mode = mode, validation = 'Mfold', folds = folds)}, BPPARAM = BPPARAM)
-                # cv.repeat.res <- list()
-                # for(k in 1:nrepeat){
-                #     cat('repeat', k, '\n')
-                #     for(keepX in 1:length(test.keepX)){
-                #         cat('KeepX', test.keepX[keepX], '\n')
-                #         for(keepY in 1:length(test.keepY)){
-                #             cat('KeepY', test.keepY[keepY], '\n')
-                #             # sPLS model, updated with the best keepX
-                #             pls.res = spls(X = X, Y = Y,
-                #                            keepX = c(choice.keepX, test.keepX[keepX]),
-                #                            keepY = c(choice.keepY, test.keepY[keepY]),
-                #                            ncomp = comp, mode = mode)
-                #             # fold CV
-                #             res.perf = .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
-                #             
-                #             cv.repeat.res[[k]] <- list(
-                #                 t.pred.cv = res.perf$t.pred.cv,
-                #                 u.pred.cv = res.perf$u.pred.cv,
-                #                 X.variates =  pls.res$variates$X,
-                #                 Y.variates =  pls.res$variates$Y,
-                #                 Q2.total = res.perf$Q2.total
-                #             )
-                #         }
-                #     }
-                # }
-
-                # cat('Comp', comp, '\n')
+   
                 for(k in 1:nrepeat){
                     for(keepX in 1:length(test.keepX)){
                         for(keepY in 1:length(test.keepY)){

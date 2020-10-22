@@ -14,6 +14,7 @@ nrepeat = 3
 set.seed(33)  # for reproducibility with this handbook, remove otherwise
 sPLS.tune.reg.cor.liver = tune.spls(X, Y, folds= 3, test.keepX = list.keepX, test.keepY = list.keepY, ncomp = ncomp, nrepeat = nrepeat, mode = 'regression', measure.tune = 'cor', method = 'spls')
 PLS.tune.reg.cor.liver = tune.spls(X, Y, folds= 3, ncomp = ncomp, nrepeat = nrepeat, mode = 'regression', measure.tune = NULL, method = 'pls')
+sPLS.tune.reg.cor.liver = tune.spls(X, Y, test.keepX = list.keepX, test.keepY = list.keepY, ncomp = ncomp, nrepeat = nrepeat, mode = 'regression', measure.tune = 'cor', method = 'spls', progressBar = TRUE)
 
 st <- list()
 st$serial <- system.time({
