@@ -176,10 +176,12 @@ tune.spls <-
              nrepeat,
              mode,
              measure.tune, # ! shoud be null for a PLS model
-             pls.model) {
+             method = c('pls', 'spls')) {
         
         
         out = list()
+        method <- match.arg(method)
+        pls.model <- (method == 'pls')
         
         if(isFALSE(pls.model)){
             cor.tpred = cor.upred = RSS.tpred = RSS.upred = array(dim = c(length(test.keepX), length(test.keepY), nrepeat),

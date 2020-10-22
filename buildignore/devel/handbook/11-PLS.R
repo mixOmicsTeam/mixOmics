@@ -119,6 +119,7 @@ devtools::load_all()
 
 # save.image(file = 'buildignore/devel/handbook/env.RData')
 load('buildignore/devel/handbook/env.RData')
+X <- X[,1:100]
 ## ---- eval = FALSE-----------------------------------------------------------------------
 list.keepX = c(seq(5, 50, 5), seq(60, 150, 10))
 list.keepX = c(2, 5)
