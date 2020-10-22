@@ -270,29 +270,36 @@ tune.spls <-
                             # fold CV
                             res.perf = .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
                             
-                            # extract the predicted components: 
-                            if(measure.tune == 'cor' ){
-                                cor.tpred[keepX, keepY, k] = cor(res.perf$t.pred.cv[,comp], pls.res$variates$X[, comp])
-                                cor.upred[keepX, keepY,k] = cor(res.perf$u.pred.cv[,comp], pls.res$variates$Y[, comp])
+                            if (!pls.model)
+                            {
+                                # extract the predicted components: 
+                                if(measure.tune == 'cor' ){
+                                    cor.tpred[keepX, keepY, k] = cor(res.perf$t.pred.cv[,comp], pls.res$variates$X[, comp])
+                                    cor.upred[keepX, keepY,k] = cor(res.perf$u.pred.cv[,comp], pls.res$variates$Y[, comp])
+                                }
+                                if(measure.tune == 'RSS'){
+                                    # RSS: no abs values here
+                                    RSS.tpred[keepX, keepY, k] = sum((res.perf$t.pred.cv[,comp] - pls.res$variates$X[, comp])^2)/(nrow(X) -1) 
+                                    RSS.upred[keepX, keepY, k] = sum((res.perf$u.pred.cv[,comp] - pls.res$variates$Y[, comp])^2)/(nrow(X) -1)
+                                }
+                                # covariance between predicted variates
+                                ##cov.variate.pred[keepX, keepY, k] = cov(res.perf$t.pred.cv[,comp], res.perf$u.pred.cv[,comp])
+                                
                             }
-                            if(measure.tune == 'RSS'){
-                                # RSS: no abs values here
-                                RSS.tpred[keepX, keepY, k] = sum((res.perf$t.pred.cv[,comp] - pls.res$variates$X[, comp])^2)/(nrow(X) -1) 
-                                RSS.upred[keepX, keepY, k] = sum((res.perf$u.pred.cv[,comp] - pls.res$variates$Y[, comp])^2)/(nrow(X) -1)
-                            }
-                            # covariance between predicted variates
-                            ##cov.variate.pred[keepX, keepY, k] = cov(res.perf$t.pred.cv[,comp], res.perf$u.pred.cv[,comp])
+    
                         } # end keepY
                     } #end keepX
                 } # end repeat
                 cat('\t')
                 
-                # # calculate mean across repeats
-                cor.pred$u[[paste0('comp_', comp)]] = apply(cor.upred, c(1,2), mean)  #mean(cor.upred[keepX, keepY,])
-                cor.pred$t[[paste0('comp_', comp)]] = apply(cor.tpred, c(1,2), mean)  #mean(cor.tpred[keepX, keepY,])
-                RSS.pred$u[[paste0('comp_', comp)]] = apply(RSS.upred, c(1,2), mean)  #mean(RSS.upred[keepX, keepY,])
-                RSS.pred$t[[paste0('comp_', comp)]] = apply(RSS.tpred, c(1,2), mean)  #mean(RSS.tpred[keepX, keepY,])
+                # # calculate mean across repeat
+                cor.pred$u[[paste0('comp_', comp)]] = apply(cor.upred, c(1,2), mean)
+                cor.pred$t[[paste0('comp_', comp)]] = apply(cor.tpred, c(1,2), mean)
+                RSS.pred$u[[paste0('comp_', comp)]] = apply(RSS.upred, c(1,2), mean)
+                RSS.pred$t[[paste0('comp_', comp)]] = apply(RSS.tpred, c(1,2), mean)
                 
+                if (!pls.model)
+                {
                 # choose the best keepX and keepY based on type.tune
                 if(mode != 'canonical'){  #regression, invariant, classic
                     # define best keepX and keepY based on u
@@ -321,13 +328,17 @@ tune.spls <-
                     choice.keepX = c(choice.keepX, test.keepX[index.t[1,1]])
                     choice.keepY = c(choice.keepY, test.keepY[index.u[1,2]])
                 } # canonical
-            } # end comp
-            
-            out$choice.keepX = choice.keepX
-            out$choice.keepY = choice.keepY
+                }
+                    } # end comp
+            if (!pls.model)
+            {
+                out$choice.keepX = choice.keepX
+                out$choice.keepY = choice.keepY
+            }
+
         } # end sPLS
         
-        if(isTRUE(pls.model)){
+        if(pls.model){
             out$cor.pred = cor.pred
             out$RSS.pred = RSS.pred
             out$Q2.tot.ave = apply(Q2.tot.ave, 1, mean)
