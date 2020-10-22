@@ -306,11 +306,55 @@ tune.spls <-
                 } # end repeat
                 cat('\t')
                 
-                # # calculate mean across repeat
-                cor.pred$u[[paste0('comp_', comp)]] = apply(cor.upred, c(1,2), mean)
-                cor.pred$t[[paste0('comp_', comp)]] = apply(cor.tpred, c(1,2), mean)
-                RSS.pred$u[[paste0('comp_', comp)]] = apply(RSS.upred, c(1,2), mean)
-                RSS.pred$t[[paste0('comp_', comp)]] = apply(RSS.tpred, c(1,2), mean)
+                # # calculate mean and sd across repeat
+                .get_mean_and_sd <- function(arr) list(mean = apply(arr, c(1,2), mean), sd = apply(arr, c(1,2), mean))
+                cor.pred$u[[paste0('comp_', comp)]] = .get_mean_and_sd(cor.upred)
+                cor.pred$t[[paste0('comp_', comp)]] = .get_mean_and_sd(cor.tpred)
+                RSS.pred$u[[paste0('comp_', comp)]] = .get_mean_and_sd(RSS.upred)
+                RSS.pred$t[[paste0('comp_', comp)]] = .get_mean_and_sd(RSS.tpred)
+                
+                t.test.arr <- function(arr, is_cor) {
+                    
+                    .atanh.transform <- function(x) {
+                        out <- atanh(x)
+                        out[out > atanh(0.99)] <-
+                            atanh(0.99) + runif(n = length(x),
+                                                min = 1e-4,
+                                                max = 1e-3) ## to avoid t.test error for fixed x and y
+                        out
+                    }
+                    if (is_cor) {
+                        arr <- .atanh.transform(arr)
+                    } else {
+                        arr <- -arr
+                    }
+                    choice.keepX_i <- 1
+                    choice.keepY_j <- 1
+                    for (keepX_i in seq_len(dim(arr)[1])[-1]) {
+                        for (keepY_j in seq_len(dim(arr)[2])[-1])
+                        {
+                            x <- arr[choice.keepX_i, choice.keepY_j, ]
+                            y <- arr[keepX_i, keepY_j, ]
+                            if (is_cor &
+                                mean(x) < atanh(0.98))
+                                ## how can we skip if already too well?
+                            {
+                                t.test.res <- t.test(x,
+                                                     y,
+                                                     alternative = 'less',
+                                                     paired = FALSE)
+                                if (t.test.res$p.value < 0.05)
+                                {
+                                    choice.keepX_i <- keepX_i
+                                    choice.keepY_j <- keepY_j
+                                }
+                            }
+                            
+                        }
+                    }
+                    return(list(choice.keepX_i = choice.keepX_i, choice.keepY_j = choice.keepY_j))
+                }
+                
                 
                 if (spls.model)
                 {
@@ -320,9 +364,11 @@ tune.spls <-
                     if(measure.tune == 'cor'){
                         cor.component = cor.pred$u[[paste0('comp_', comp)]]
                         index = which(cor.component == max(cor.component), arr.ind = TRUE)
+                        index <- t.test.arr(arr = cor.component, is_cor = TRUE)
                     }else{ # if type.tune = 'RSS'
                         RSS.component = RSS.pred$u[[paste0('comp_', comp)]]
                         index = which(RSS.component == min(RSS.component), arr.ind = TRUE)
+                        index <- t.test.arr(arr = cor.component, is_cor = FALSE)
                     }
                     choice.keepX = c(choice.keepX, test.keepX[index[1,1]])
                     choice.keepY = c(choice.keepY, test.keepY[index[1,2]])
