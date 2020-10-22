@@ -177,7 +177,8 @@ tune.spls <-
              nrepeat,
              folds = 10,
              mode = c('regression', 'canonical', 'classic'),
-             measure.tune = if (method == 'pls') NULL else c('cor', 'RSS') # ! shoud be null for a PLS model
+             measure.tune = if (method == 'pls') NULL else c('cor', 'RSS'),
+             BPPARAM = BiocParallel::SerialParam()
              ) {
         
         
@@ -210,14 +211,10 @@ tune.spls <-
         choice.keepX = choice.keepY = NULL
         cor.pred = RSS.pred = list()
         cov.pred = list()
-        
-        .tune.spls.repeat <- function(k, test.keepX, test.keepY, X, Y, choice.keepX, choice.keepY, comp, mode, validation, folds)
+        .tune.spls.repeat <- function(test.keepX, test.keepY, X, Y, choice.keepX, choice.keepY, comp, mode, validation, folds)
         {
-            cat('repeat', k, '\n')
             for(keepX in 1:length(test.keepX)){
-                cat('KeepX', test.keepX[keepX], '\n')
                 for(keepY in 1:length(test.keepY)){
-                    cat('KeepY', test.keepY[keepY], '\n')
                     # sPLS model, updated with the best keepX
                     pls.res = spls(X = X, Y = Y, 
                                    keepX = c(choice.keepX, test.keepX[keepX]), 
@@ -238,11 +235,18 @@ tune.spls <-
 
             for (comp in comps){
                 cat('Comp', comp, '\n')
-                cv.repeat.res <- lapply(seq_len(nrepeat), 
+                pb <- txtProgressBar(min = 0, max = nrepeat, style = 3)
+                cv.repeat.res <- bplapply(seq_len(nrepeat), 
                                         FUN = function(k){ 
-                                            .tune.spls.repeat(k = k, test.keepX = test.keepX, test.keepY = test.keepY, X = X, Y = Y, 
+                                            progressBar <- TRUE
+                                            # pb.length <- length(test.keepX) * length(test.keepY) * nrepeat
+                                            if (progressBar) {
+                                                # pb <- txtProgressBar(min = 0, max = pb.length, style = 3)
+                                                setTxtProgressBar(pb = pb, value = k, title = 'repeat: ')
+                                            }
+                                            .tune.spls.repeat(test.keepX = test.keepX, test.keepY = test.keepY, X = X, Y = Y, 
                                                               choice.keepX = choice.keepX, choice.keepY = choice.keepY, comp = comp, 
-                                                              mode = mode, validation = 'Mfold', folds = folds)})
+                                                              mode = mode, validation = 'Mfold', folds = folds)}, BPPARAM = BPPARAM)
                 # cv.repeat.res <- list()
                 # for(k in 1:nrepeat){
                 #     cat('repeat', k, '\n')
@@ -271,12 +275,8 @@ tune.spls <-
 
                 # cat('Comp', comp, '\n')
                 for(k in 1:nrepeat){
-                    cat('repeat', k, '\n')
                     for(keepX in 1:length(test.keepX)){
-                        cat('KeepX', test.keepX[keepX], '\n')
                         for(keepY in 1:length(test.keepY)){
-                            cat('KeepY', test.keepY[keepY], '\n')
-
                             t.pred.cv <-  cv.repeat.res[[k]]$t.pred.cv
                             u.pred.cv <-  cv.repeat.res[[k]]$u.pred.cv
                             X.variates <-  cv.repeat.res[[k]]$ X.variates
