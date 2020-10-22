@@ -175,7 +175,7 @@ tune.spls <-
              ncomp,
              nrepeat,
              mode,
-             type.tune, # ! shoud be null for a PLS model
+             measure.tune, # ! shoud be null for a PLS model
              pls.model) {
         
         
@@ -188,7 +188,7 @@ tune.spls <-
                                                                                   paste0('repeat', 1:nrepeat)))
             best.keepX = best.keepY = NULL
         }else{
-            type.tune = NULL
+            measure.tune = NULL
             cor.tpred = cor.upred = RSS.tpred = RSS.upred = matrix(nrow = ncomp, ncol = nrepeat, 
                                                                    dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
             Q2.tot.ave = matrix(nrow = ncomp, ncol = nrepeat,
@@ -250,11 +250,11 @@ tune.spls <-
                             res.perf = .perf.mixo_pls_folds(spls.res, validation = 'Mfold', folds = 10)
                             
                             # extract the predicted components: 
-                            if(type.tune == 'cor' ){
+                            if(measure.tune == 'cor' ){
                                 cor.tpred[keepX, keepY, k] = cor(res.perf$t.pred.cv[,comp], spls.res$variates$X[, comp])
                                 cor.upred[keepX, keepY,k] = cor(res.perf$u.pred.cv[,comp], spls.res$variates$Y[, comp])
                             }
-                            if(type.tune == 'RSS'){
+                            if(measure.tune == 'RSS'){
                                 # RSS: no abs values here
                                 RSS.tpred[keepX, keepY, k] = sum((res.perf$t.pred.cv[,comp] - spls.res$variates$X[, comp])^2)/(nrow(X) -1) 
                                 RSS.upred[keepX, keepY, k] = sum((res.perf$u.pred.cv[,comp] - spls.res$variates$Y[, comp])^2)/(nrow(X) -1)
@@ -275,7 +275,7 @@ tune.spls <-
                 # choose the best keepX and keepY based on type.tune
                 if(mode != 'canonical'){  #regression, invariant, classic
                     # define best keepX and keepY based on u
-                    if(type.tune == 'cor'){
+                    if(measure.tune == 'cor'){
                         cor.component = cor.pred$u[[comp]]
                         index = which(cor.component == max(cor.component), arr.ind = TRUE)
                     }else{ # if type.tune = 'RSS'
@@ -286,7 +286,7 @@ tune.spls <-
                     best.keepY = c(best.keepY, test.keepY[index[1,2]])
                     
                 }else{  # mode = 'canonical'
-                    if(type.tune == 'cor'){
+                    if(measure.tune == 'cor'){
                         cor.component.t = cor.pred$t[[comp]]
                         cor.component.u = cor.pred$u[[comp]]
                         index.t = which(cor.component.t == max(cor.component.t), arr.ind = TRUE)
@@ -351,8 +351,8 @@ tune.spls <-
             out$RSS.pred = RSS.pred
             out$Q2.tot.ave = apply(Q2.tot.ave, 1, mean)
         }else{
-            if(type.tune == 'cor') out$cor.pred = cor.pred
-            if(type.tune == 'RSS') out$RSS.pred = RSS.pred
+            if(measure.tune == 'cor') out$cor.pred = cor.pred
+            if(measure.tune == 'RSS') out$RSS.pred = RSS.pred
         }
         
         return(out)
