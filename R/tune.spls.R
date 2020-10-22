@@ -182,8 +182,9 @@ tune.spls <-
         
         
         out = list()
-        method <- match.arg(method)
         mode <- match.arg(mode)
+        
+        method <- match.arg(method)
         pls.model <- (method == 'pls')
         
         if(isFALSE(pls.model)){
