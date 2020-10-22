@@ -308,10 +308,10 @@ tune.spls <-
                 
                 # # calculate mean and sd across repeat
                 .get_mean_and_sd <- function(arr) list(mean = apply(arr, c(1,2), mean), sd = apply(arr, c(1,2), mean))
-                cor.pred$u[[paste0('comp_', comp)]] = .get_mean_and_sd(cor.upred)
-                cor.pred$t[[paste0('comp_', comp)]] = .get_mean_and_sd(cor.tpred)
-                RSS.pred$u[[paste0('comp_', comp)]] = .get_mean_and_sd(RSS.upred)
-                RSS.pred$t[[paste0('comp_', comp)]] = .get_mean_and_sd(RSS.tpred)
+                cor.pred$u[[paste0('comp_', comp)]] = cor.upred #.get_mean_and_sd(cor.upred)
+                cor.pred$t[[paste0('comp_', comp)]] = cor.tpred #.get_mean_and_sd(cor.tpred)
+                RSS.pred$u[[paste0('comp_', comp)]] = RSS.upred # .get_mean_and_sd(RSS.upred)
+                RSS.pred$t[[paste0('comp_', comp)]] = RSS.tpred # .get_mean_and_sd(RSS.tpred)
                 
                 t.test.arr <- function(arr, is_cor) {
                     
@@ -352,7 +352,7 @@ tune.spls <-
                             
                         }
                     }
-                    return(list(choice.keepX_i = choice.keepX_i, choice.keepY_j = choice.keepY_j))
+                    return(c(ind.choice.keepX = choice.keepX_i, ind.choice.keepY = choice.keepY_j))
                 }
                 
                 
@@ -363,15 +363,15 @@ tune.spls <-
                     # define best keepX and keepY based on u
                     if(measure.tune == 'cor'){
                         cor.component = cor.pred$u[[paste0('comp_', comp)]]
-                        index = which(cor.component == max(cor.component), arr.ind = TRUE)
+                        # index = which(cor.component == max(cor.component), arr.ind = TRUE)
                         index <- t.test.arr(arr = cor.component, is_cor = TRUE)
                     }else{ # if type.tune = 'RSS'
                         RSS.component = RSS.pred$u[[paste0('comp_', comp)]]
-                        index = which(RSS.component == min(RSS.component), arr.ind = TRUE)
-                        index <- t.test.arr(arr = cor.component, is_cor = FALSE)
+                        # index = which(RSS.component == min(RSS.component), arr.ind = TRUE)
+                        indices <- t.test.arr(arr = cor.component, is_cor = FALSE)
                     }
-                    choice.keepX = c(choice.keepX, test.keepX[index[1,1]])
-                    choice.keepY = c(choice.keepY, test.keepY[index[1,2]])
+                    choice.keepX = c(choice.keepX, test.keepX[index['ind.choice.keepX']])
+                    choice.keepY = c(choice.keepY, test.keepY[index['ind.choice.keepY']])
                     
                 }else{  # mode = 'canonical'
                     if(measure.tune == 'cor'){
