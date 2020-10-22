@@ -194,7 +194,7 @@ tune.spls <-
                                                                   dimnames = list(paste0('keepX', test.keepX), 
                                                                                   paste0('keepY', test.keepY),
                                                                                   paste0('repeat', 1:nrepeat)))
-            best.keepX = best.keepY = NULL
+            choice.keepX = choice.keepY = NULL
         }else{
             if (!is.null(test.keepX) | !is.null(test.keepY))
                 stop("'test.keepX' and 'test.keepY' can only be provided with method = 'spls'", call. = FALSE)
@@ -252,8 +252,8 @@ tune.spls <-
                             cat('KeepY', list.keepY[keepY], '\n')
                             # sPLS model, updated with the best keepX
                             spls.res = spls(X = X, Y = Y, 
-                                            keepX = c(best.keepX, test.keepX[keepX]), 
-                                            keepY = c(best.keepY, test.keepY[keepY]), 
+                                            keepX = c(choice.keepX, test.keepX[keepX]), 
+                                            keepY = c(choice.keepY, test.keepY[keepY]), 
                                             ncomp = comp, mode = mode)
                             # fold CV
                             res.perf = .perf.mixo_pls_folds(spls.res, validation = 'Mfold', folds = folds)
@@ -291,8 +291,8 @@ tune.spls <-
                         RSS.component = RSS.pred$u[[comp]]
                         index = which(RSS.component == min(RSS.component), arr.ind = TRUE)
                     }
-                    best.keepX = c(best.keepX, test.keepX[index[1,1]])
-                    best.keepY = c(best.keepY, test.keepY[index[1,2]])
+                    choice.keepX = c(choice.keepX, test.keepX[index[1,1]])
+                    choice.keepY = c(choice.keepY, test.keepY[index[1,2]])
                     
                 }else{  # mode = 'canonical'
                     if(measure.tune == 'cor'){
@@ -306,13 +306,13 @@ tune.spls <-
                         index.t = which(RSS.component.t == min(RSS.component.t), arr.ind = TRUE)
                         index.u = which(RSS.component.u == min(RSS.component.u), arr.ind = TRUE)
                     }
-                    best.keepX = c(best.keepX, test.keepX[index.t[1,1]])
-                    best.keepY = c(best.keepY, test.keepY[index.u[1,2]])
+                    choice.keepX = c(choice.keepX, test.keepX[index.t[1,1]])
+                    choice.keepY = c(choice.keepY, test.keepY[index.u[1,2]])
                 } # canonical
             } # end comp
             
-            out$best.keepX = best.keepX
-            out$best.keepY = best.keepY
+            out$choice.keepX = choice.keepX
+            out$choice.keepY = choice.keepY
         } # end sPLS
         
         
