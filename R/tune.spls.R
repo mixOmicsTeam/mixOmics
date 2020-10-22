@@ -210,91 +210,106 @@ tune.spls <-
         choice.keepX = choice.keepY = NULL
         cor.pred = RSS.pred = list()
         cov.pred = list()
+        
+        .tune.spls.repeat <- function(k, test.keepX, test.keepY, X, Y, choice.keepX, choice.keepY, comp, mode, validation, folds)
+        {
+            cat('repeat', k, '\n')
+            for(keepX in 1:length(test.keepX)){
+                cat('KeepX', test.keepX[keepX], '\n')
+                for(keepY in 1:length(test.keepY)){
+                    cat('KeepY', test.keepY[keepY], '\n')
+                    # sPLS model, updated with the best keepX
+                    pls.res = spls(X = X, Y = Y, 
+                                   keepX = c(choice.keepX, test.keepX[keepX]), 
+                                   keepY = c(choice.keepY, test.keepY[keepY]), 
+                                   ncomp = comp, mode = mode)
+                    # fold CV
+                    res.perf <- .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
+                }
+            }
+            list(
+                t.pred.cv = res.perf$t.pred.cv,
+                u.pred.cv = res.perf$u.pred.cv,
+                X.variates =  pls.res$variates$X,
+                Y.variates =  pls.res$variates$Y,
+                Q2.total = res.perf$Q2.total
+            )
+        }
 
-        # ## for a PLS only to extract Q2.total (or anything else)
-        # if(!spls.model){
-        #     for (comp in comps) 
-        #     {
-        #     for(k in 1:nrepeat){
-        #         for(keepX in 1:length(test.keepX)){
-        #             cat('KeepX', test.keepX[keepX], '\n')
-        #             for(keepY in 1:length(test.keepY)){
-        #                 cat('KeepY', test.keepY[keepY], '\n')
-        #         cat('repeat', k, '\n')
-        #         
-        #         # run a full PLS model up to the last comp
-        #         pls.res = spls(X = X, Y = Y, 
-        #                        keepX = c(choice.keepX, test.keepX[keepX]), 
-        #                        keepY = c(choice.keepY, test.keepY[keepY]),  
-        #                        ncomp = ncomp, mode = mode)
-        #         # fold CV
-        #         res.perf = .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
-        #         
-        #         # extract Q2.total for a PLS, we could extract other outputs such as R2, MSEP etc (only valid for regression)
-        #         Q2.tot.ave[, k] = res.perf$Q2.total 
-        #         
-        #         # extract the predicted components per dimension, take abs value
-        #         cor.tpred[, k] = diag(abs(cor(res.perf$t.pred.cv, pls.res$variates$X)))
-        #         cor.upred[, k] = diag(abs(cor(res.perf$u.pred.cv, pls.res$variates$Y)))
-        #         
-        #         # RSS: no abs values here
-        #         RSS.tpred[, k] = apply((res.perf$t.pred.cv - pls.res$variates$X)^2, 2, sum)/(nrow(X) -1)
-        #         RSS.upred[, k] = apply((res.perf$u.pred.cv - pls.res$variates$Y)^2, 2, sum)/(nrow(X) -1)
-        #             }
-        #             }
-        #     } #end repeat       
-        #     
-        #         # # calculate mean across repeats
-        #         cor.pred$u[[paste0('comp_', comp)]] = apply(cor.upred, c(1,2), mean)
-        #         cor.pred$t[[paste0('comp_', comp)]] = apply(cor.tpred, c(1,2), mean)
-        #         RSS.pred$u[[paste0('comp_', comp)]] = apply(RSS.upred, c(1,2), mean)
-        #         RSS.pred$t[[paste0('comp_', comp)]] = apply(RSS.tpred, c(1,2), mean)
-        #         # TODO if nrepeat < 2
-        #     }
-        # }else{ # if sPLS model 
             for (comp in comps){
                 cat('Comp', comp, '\n')
+                cv.repeat.res <- lapply(seq_len(nrepeat), 
+                                        FUN = function(k){ 
+                                            .tune.spls.repeat(k = k, test.keepX = test.keepX, test.keepY = test.keepY, X = X, Y = Y, 
+                                                              choice.keepX = choice.keepX, choice.keepY = choice.keepY, comp = comp, 
+                                                              mode = mode, validation = 'Mfold', folds = folds)})
+                # cv.repeat.res <- list()
+                # for(k in 1:nrepeat){
+                #     cat('repeat', k, '\n')
+                #     for(keepX in 1:length(test.keepX)){
+                #         cat('KeepX', test.keepX[keepX], '\n')
+                #         for(keepY in 1:length(test.keepY)){
+                #             cat('KeepY', test.keepY[keepY], '\n')
+                #             # sPLS model, updated with the best keepX
+                #             pls.res = spls(X = X, Y = Y,
+                #                            keepX = c(choice.keepX, test.keepX[keepX]),
+                #                            keepY = c(choice.keepY, test.keepY[keepY]),
+                #                            ncomp = comp, mode = mode)
+                #             # fold CV
+                #             res.perf = .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
+                #             
+                #             cv.repeat.res[[k]] <- list(
+                #                 t.pred.cv = res.perf$t.pred.cv,
+                #                 u.pred.cv = res.perf$u.pred.cv,
+                #                 X.variates =  pls.res$variates$X,
+                #                 Y.variates =  pls.res$variates$Y,
+                #                 Q2.total = res.perf$Q2.total
+                #             )
+                #         }
+                #     }
+                # }
+
+                # cat('Comp', comp, '\n')
                 for(k in 1:nrepeat){
                     cat('repeat', k, '\n')
                     for(keepX in 1:length(test.keepX)){
                         cat('KeepX', test.keepX[keepX], '\n')
                         for(keepY in 1:length(test.keepY)){
                             cat('KeepY', test.keepY[keepY], '\n')
-                            # sPLS model, updated with the best keepX
-                            pls.res = spls(X = X, Y = Y, 
-                                            keepX = c(choice.keepX, test.keepX[keepX]), 
-                                            keepY = c(choice.keepY, test.keepY[keepY]), 
-                                            ncomp = comp, mode = mode)
-                            # fold CV
-                            res.perf = .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
+
+                            t.pred.cv <-  cv.repeat.res[[k]]$t.pred.cv
+                            u.pred.cv <-  cv.repeat.res[[k]]$u.pred.cv
+                            X.variates <-  cv.repeat.res[[k]]$ X.variates
+                            Y.variates <-  cv.repeat.res[[k]]$Y.variates
+                            Q2.total <- cv.repeat.res[[k]]$Q2.total
                             
                             if (spls.model)
                             {
                                 # extract the predicted components: 
                                 if(measure.tune == 'cor' ){
-                                    cor.tpred[keepX, keepY, k] = cor(res.perf$t.pred.cv[,comp], pls.res$variates$X[, comp])
-                                    cor.upred[keepX, keepY,k] = cor(res.perf$u.pred.cv[,comp], pls.res$variates$Y[, comp])
+                                    cor.tpred[keepX, keepY, k] = cor(t.pred.cv[, comp], X.variates[, comp])
+                                    cor.upred[keepX, keepY,k] = cor(u.pred.cv[, comp], Y.variates[, comp])
                                 }
                                 if(measure.tune == 'RSS'){
                                     # RSS: no abs values here
-                                    RSS.tpred[keepX, keepY, k] = sum((res.perf$t.pred.cv[,comp] - pls.res$variates$X[, comp])^2)/(nrow(X) -1) 
-                                    RSS.upred[keepX, keepY, k] = sum((res.perf$u.pred.cv[,comp] - pls.res$variates$Y[, comp])^2)/(nrow(X) -1)
+                                    RSS.tpred[keepX, keepY, k] = sum((t.pred.cv[, comp] - X.variates[, comp])^2)/(nrow(X) -1) 
+                                    RSS.upred[keepX, keepY, k] = sum((u.pred.cv[, comp] - Y.variates[, comp])^2)/(nrow(X) -1)
                                 }
                                 # covariance between predicted variates
-                                ##cov.variate.pred[keepX, keepY, k] = cov(res.perf$t.pred.cv[,comp], res.perf$u.pred.cv[,comp])
+                                ##cov.variate.pred[keepX, keepY, k] = cov(t.pred.cv[, comp], u.pred.cv[, comp])
                                 
                             } else {
                                 
                                 # extract Q2.total for a PLS, we could extract other outputs such as R2, MSEP etc (only valid for regression)
-                                Q2.tot.ave[, k] = res.perf$Q2.total 
+                                Q2.tot.ave[, k] = Q2.total 
                                 
                                 # extract the predicted components per dimension, take abs value
-                                cor.tpred[, k] = diag(abs(cor(res.perf$t.pred.cv, pls.res$variates$X)))
-                                cor.upred[, k] = diag(abs(cor(res.perf$u.pred.cv, pls.res$variates$Y)))
+                                cor.tpred[, k] = diag(abs(cor(t.pred.cv, X.variates)))
+                                cor.upred[, k] = diag(abs(cor(u.pred.cv, Y.variates)))
                                 
                                 # RSS: no abs values here
-                                RSS.tpred[, k] = apply((res.perf$t.pred.cv - pls.res$variates$X)^2, 2, sum)/(nrow(X) -1)
-                                RSS.upred[, k] = apply((res.perf$u.pred.cv - pls.res$variates$Y)^2, 2, sum)/(nrow(X) -1)
+                                RSS.tpred[, k] = apply((t.pred.cv - X.variates)^2, 2, sum)/(nrow(X) -1)
+                                RSS.upred[, k] = apply((u.pred.cv - Y.variates)^2, 2, sum)/(nrow(X) -1)
                             }
     
                         } # end keepY
