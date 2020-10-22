@@ -306,12 +306,16 @@ tune.spls <-
                 } # end repeat
                 cat('\t')
                 
-                # # calculate mean and sd across repeat
-                .get_mean_and_sd <- function(arr) list(mean = apply(arr, c(1,2), mean), sd = apply(arr, c(1,2), mean))
-                cor.pred$u[[paste0('comp_', comp)]] = cor.upred #.get_mean_and_sd(cor.upred)
-                cor.pred$t[[paste0('comp_', comp)]] = cor.tpred #.get_mean_and_sd(cor.tpred)
-                RSS.pred$u[[paste0('comp_', comp)]] = RSS.upred # .get_mean_and_sd(RSS.upred)
-                RSS.pred$t[[paste0('comp_', comp)]] = RSS.tpred # .get_mean_and_sd(RSS.tpred)
+                ## add mean and sd across repeats for output
+                .get_mean_and_sd <- function(arr) {
+                    list(values = arr, 
+                         mean   = apply(arr, c(1,2), mean), 
+                         sd     = apply(arr, c(1,2), sd))
+                } 
+                cor.pred$u[[paste0('comp_', comp)]] = .get_mean_and_sd(cor.upred)
+                cor.pred$t[[paste0('comp_', comp)]] = .get_mean_and_sd(cor.tpred)
+                RSS.pred$u[[paste0('comp_', comp)]] = .get_mean_and_sd(RSS.upred)
+                RSS.pred$t[[paste0('comp_', comp)]] = .get_mean_and_sd(RSS.tpred)
                 
                 t.test.arr <- function(arr, is_cor) {
                     
@@ -364,11 +368,11 @@ tune.spls <-
                     if(measure.tune == 'cor'){
                         cor.component = cor.pred$u[[paste0('comp_', comp)]]
                         # index = which(cor.component == max(cor.component), arr.ind = TRUE)
-                        index <- t.test.arr(arr = cor.component, is_cor = TRUE)
+                        index <- t.test.arr(arr = cor.component$values, is_cor = TRUE)
                     }else{ # if type.tune = 'RSS'
                         RSS.component = RSS.pred$u[[paste0('comp_', comp)]]
                         # index = which(RSS.component == min(RSS.component), arr.ind = TRUE)
-                        indices <- t.test.arr(arr = cor.component, is_cor = FALSE)
+                        index <- t.test.arr(arr = RSS.component$values, is_cor = FALSE)
                     }
                     choice.keepX = c(choice.keepX, test.keepX[index['ind.choice.keepX']])
                     choice.keepY = c(choice.keepY, test.keepY[index['ind.choice.keepY']])
@@ -377,30 +381,30 @@ tune.spls <-
                     if(measure.tune == 'cor'){
                         cor.component.t = cor.pred$t[[paste0('comp_', comp)]]
                         cor.component.u = cor.pred$u[[paste0('comp_', comp)]]
-                        index.t = which(cor.component.t == max(cor.component.t), arr.ind = TRUE)
-                        index.u = which(cor.component.u == max(cor.component.u), arr.ind = TRUE)
+                        index.t = t.test.arr(arr = cor.component.t$values, is_cor = TRUE)
+                        index.u = t.test.arr(arr = cor.component.u$values, is_cor = TRUE)
                     }else{ # if type.tune = 'RSS'
                         RSS.component.t = RSS.pred$t[[paste0('comp_', comp)]]
                         RSS.component.u = RSS.pred$u[[paste0('comp_', comp)]]
-                        index.t = which(RSS.component.t == min(RSS.component.t), arr.ind = TRUE)
-                        index.u = which(RSS.component.u == min(RSS.component.u), arr.ind = TRUE)
+                        index.t = t.test.arr(arr = RSS.component.t$values, is_cor = FALSE)
+                        index.u = t.test.arr(arr = RSS.component.u$values, is_cor = FALSE)
                     }
-                    choice.keepX = c(choice.keepX, test.keepX[index.t[1,1]])
-                    choice.keepY = c(choice.keepY, test.keepY[index.u[1,2]])
+                    choice.keepX = c(choice.keepX, test.keepX[index.t['ind.choice.keepX']])
+                    choice.keepY = c(choice.keepY, test.keepY[index.u['ind.choice.keepY']])
                 } # canonical
                 }
                     } # end comp
             if (spls.model)
             {
-                out$choice.keepX = choice.keepX
-                out$choice.keepY = choice.keepY
+               out$choice.keepX = choice.keepX
+               out$choice.keepY = choice.keepY
             }
 
         # } # end sPLS
         
         if(spls.model){
-            out$cor.pred = cor.pred
-            out$RSS.pred = RSS.pred
+            if(measure.tune == 'cor')  out$cor.pred = cor.pred
+            if(measure.tune == 'RSS')  out$RSS.pred = RSS.pred
         }else{
             out$cor.pred = cor.pred
             out$RSS.pred = RSS.pred
