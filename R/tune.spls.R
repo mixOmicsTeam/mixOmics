@@ -188,17 +188,29 @@ tune.spls <-
         
         method <- match.arg(method)
         spls.model <- (method == 'spls')
-
+        
+        test.keepX <- .change_if_null(arg = test.keepX, default = ncol(X))
+        test.keepY <- .change_if_null(arg = test.keepY, default = ncol(Y))
+        
+        test.keepX <- unique(test.keepX)
+        test.keepY <- unique(test.keepY)
+        
         if (spls.model) {
             comps <- seq_len(ncomp)
             # TODO check test.keepX and test.keepY
             measure.tune <- match.arg(measure.tune, choices = c('cor', 'RSS'))
-            cor.tpred = cor.upred = RSS.tpred = RSS.upred = array(dim = c(length(test.keepX), length(test.keepY), nrepeat),
-                                                                  dimnames = list(paste0('keepX', test.keepX),
-                                                                                  paste0('keepY', test.keepY),
-                                                                                  paste0('repeat', 1:nrepeat)))
+            cor.tpred <- 
+                cor.upred <- 
+                RSS.tpred <- 
+                RSS.upred <- 
+                array(dim      =    c(length(test.keepX), 
+                                      length(test.keepY), 
+                                      nrepeat),
+                      dimnames = list(paste0('keepX', test.keepX),
+                                      paste0('keepY', test.keepY),
+                                      paste0('repeat', 1:nrepeat)))
         }else{
-            if (!is.null(test.keepX) | !is.null(test.keepY))
+            if ((test.keepX != ncol(X)) | (test.keepY != ncol(Y)))
                 stop("'test.keepX' and 'test.keepY' can only be provided with method = 'spls'", call. = FALSE)
             comps <- ncomp
             test.keepX <- ncol(X)
@@ -341,13 +353,19 @@ tune.spls <-
         # } # end sPLS
         
         if(spls.model){
-            if(measure.tune == 'cor') out$cor.pred = cor.pred
-            if(measure.tune == 'RSS') out$RSS.pred = RSS.pred
+            out$cor.pred = cor.pred
+            out$RSS.pred = RSS.pred
         }else{
             out$cor.pred = cor.pred
             out$RSS.pred = RSS.pred
             out$Q2.tot.ave = apply(Q2.tot.ave, 1, mean)
         }
-        
+        ### evaluate all for output except X and Y to save memory
+        ## eval all but X and Y
+        mc <- mget(names(formals())[-1:-2], sys.frame(sys.nframe()))
+        ## replace function, X and Y with unevaluated call
+        mc <- as.call(c(as.list(match.call())[1:3], mc))
+        out <- c(list(call = mc), out)
+        class(out) <- if (spls.model) c('tune.spls', 'tune.pls') else c('tune.pls')
         return(out)
     } 
