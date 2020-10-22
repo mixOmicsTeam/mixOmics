@@ -176,13 +176,14 @@ tune.spls <-
              ncomp,
              nrepeat,
              folds = 10,
-             mode,
+             mode = c('regression', 'canonical', 'classic'),
              measure.tune = if (method == 'pls') NULL else c('cor', 'RSS') # ! shoud be null for a PLS model
              ) {
         
         
         out = list()
         method <- match.arg(method)
+        mode <- match.arg(mode)
         pls.model <- (method == 'pls')
         
         if(isFALSE(pls.model)){
