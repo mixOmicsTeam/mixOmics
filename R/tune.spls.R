@@ -315,46 +315,6 @@ tune.spls <-
             out$choice.keepY = choice.keepY
         } # end sPLS
         
-        
-        
-        
-        # 
-        # # # summary of results
-        # summary = list()
-        # for(k in 1:ncomp){
-        #   RSS.upred = RSS.pred$u[[k]]
-        #   RSS.tpred = RSS.pred$t[[k]]
-        # 
-        #   cor.upred = cor.pred$u[[k]]
-        #   cor.tpred = cor.pred$t[[k]]
-        # 
-        #   # u.pred
-        #   index = which(cor.upred == max(cor.upred), arr.ind = TRUE)
-        #   #list.keepX[index[1,1]]; list.keepY[index[1, 2]];
-        #   #cor.upred[index]
-        #   summary$u[[k]] = c(list.keepX[index[1,1]], list.keepY[index[1, 2]], cor.upred[index])
-        # 
-        #   # t.pred
-        #   index = which(cor.tpred == max(cor.tpred), arr.ind = TRUE)
-        #   #list.keepX[index[1,1]]; list.keepY[index[1, 2]];
-        #   #cor.tpred[index]
-        #   summary$t[[k]] = c(list.keepX[index[1,1]], list.keepY[index[1, 2]], cor.tpred[index])
-        # 
-        #   # RSS.u: same as upred
-        #   index = which(RSS.upred == min(RSS.upred), arr.ind = TRUE)
-        #   #list.keepX[index[1,1]]; list.keepY[index[1, 2]];
-        #   #RSS.upred[index]
-        #   summary$RSSu[[k]] = c(list.keepX[index[1,1]], list.keepY[index[1, 2]], RSS.upred[index])
-        # 
-        # 
-        #   # RSS.t: different from tpred?
-        #   index = which(RSS.tpred == min(RSS.tpred), arr.ind = TRUE)
-        #   #list.keepX[index[1,1]]; list.keepY[index[1, 2]];
-        #   #RSS.tpred[index]
-        #   summary$RSSt[[k]] = c(list.keepX[index[1,1]], list.keepY[index[1, 2]], RSS.tpred[index])
-        # } # end ncomp
-        #   out$summary = summary
-        
         if(isTRUE(pls.model)){
             out$cor.pred = cor.pred
             out$RSS.pred = RSS.pred
