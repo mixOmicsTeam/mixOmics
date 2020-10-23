@@ -206,9 +206,9 @@ tune.spls <-
                 array(dim      =    c(length(test.keepX), 
                                       length(test.keepY), 
                                       nrepeat),
-                      dimnames = list(paste0('keepX', test.keepX),
-                                      paste0('keepY', test.keepY),
-                                      paste0('repeat', 1:nrepeat)))
+                      dimnames = list(paste0('keepX_', test.keepX),
+                                      paste0('keepY_', test.keepY),
+                                      paste0('repeat_', seq_len(nrepeat))))
         }else{
             if ((test.keepX != ncol(X)) | (test.keepY != ncol(Y)))
                 stop("'test.keepX' and 'test.keepY' can only be provided with method = 'spls'", call. = FALSE)
@@ -216,9 +216,9 @@ tune.spls <-
             test.keepX <- ncol(X)
             test.keepY <- ncol(Y)
             cor.tpred = cor.upred = RSS.tpred = RSS.upred = matrix(nrow = ncomp, ncol = nrepeat,
-                                                                   dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
+                                                                   dimnames = list(paste0('comp_', seq_len(ncomp)), paste0('repeat_', seq_len(nrepeat))))
             Q2.tot.ave = matrix(nrow = ncomp, ncol = nrepeat,
-                                dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
+                                dimnames = list(paste0('comp_', seq_len(ncomp)), paste0('repeat_', seq_len(nrepeat))))
 
         }
         choice.keepX = choice.keepY = NULL
@@ -263,7 +263,7 @@ tune.spls <-
                                                               choice.keepX = choice.keepX, choice.keepY = choice.keepY, comp = comp, 
                                                               mode = mode, validation = 'Mfold', folds = folds)}, BPPARAM = BPPARAM)
    
-                for(k in 1:nrepeat){
+                for(k in seq_len(nrepeat)){
                     for(keepX in 1:length(test.keepX)){
                         for(keepY in 1:length(test.keepY)){
                             t.pred.cv <-  cv.repeat.res[[k]]$t.pred.cv
