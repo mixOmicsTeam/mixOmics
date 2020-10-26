@@ -61,9 +61,9 @@ NULL
         ## scaler of var vs sample coordinates
         scaler <- max(variates, na.rm = TRUE)/max(loadings, na.rm = TRUE)
         
-        PCs <- colnames(variates)
+        PCs <- paste0('component_', comp)
         expl_vars <- round(object$explained_variance[[block]]*100)[comp]
-        axes.titles <- sprintf("%s (%s%%)", PCs, expl_vars)
+        axes.titles <- sprintf("%s   (%s%%)", PCs, expl_vars)
         ind.names <- .get.character.vector(ind.names, vec = rownames(variates))
         
         variates$ind.names <- ind.names
@@ -116,9 +116,11 @@ NULL
                 ## get 'pch' and 'group' arg used for legends so we can handle
                 ## legends whether needed or not in a unified way (see scale_*_manual)
                 pch.legend.title <- .change_if_null(pch.legend.title, as.character(as.list(match.call())['pch']))
-                legend.title <- .change_if_null(legend.title, as.character(as.list(match.call())['group']))
+                if (is.null(legend.title))
+                {
+                    legend.title <- ifelse(is(object, 'DA'), yes = 'Y', no = as.character(as.list(match.call())['group']))
+                }
                 
-                # pch.col <- .get.ind.colors(group, col, col.per.group, n_ind = nrow(variates))
                 gg_biplot <- gg_biplot + 
                     geom_point(aes(x = variates[, comp[1]], 
                                    y = variates[, comp[2]],

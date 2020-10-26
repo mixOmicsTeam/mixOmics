@@ -194,16 +194,32 @@ biplot(pca.lipid, group = nutrimouse$diet, legend.title = 'Diet',
        var.arrow.col = NULL, var.names.col = 'black', 
        vline = TRUE, hline = TRUE)
 
+## --------- spca
 ## example with spca
 spca.lipid <- spca(nutrimouse$lipid, ncomp = 2, scale = TRUE, keepX = c(8, 6))
 biplot(spca.lipid, var.names.col = 'black', group = nutrimouse$diet, 
        legend.title = 'Diet')
 
-## --------- spls ---------- ##
+## --------- pls ---------- ##
 data("nutrimouse")
 pls.nutrimouse <- pls(X = nutrimouse$gene, Y = nutrimouse$lipid, ncomp = 2)
-biplot(pls.nutrimouse, group = nutrimouse$genotype, 
+biplot(pls.nutrimouse, group = nutrimouse$genotype, block = 'X',
        legend.title = 'Genotype', cutoff = 0.878) 
+
+biplot(pls.nutrimouse, group = nutrimouse$genotype, block = 'Y',
+       legend.title = 'Genotype', cutoff = 0.8) 
+
+## --------- plsda ---------- ##
+data(breast.tumors)
+X <- breast.tumors$gene.exp
+colnames(X) <- paste0('GENE_', colnames(X))
+rownames(X) <- paste0('SAMPLE_', rownames(X))
+Y <- breast.tumors$sample$treatment
+
+plsda.breast <- plsda(X, Y, ncomp = 2)
+biplot(plsda.breast, cutoff = 0.72)
+## remove arrows
+biplot(plsda.breast, cutoff = 0.72, var.arrow.col = NULL, var.names.size = 4)
 }
 \author{
 Al J Abadi
