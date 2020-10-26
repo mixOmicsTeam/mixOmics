@@ -570,3 +570,81 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
 {
     ! (LHS %=% RHS)
 }
+
+## ---------------------------- .create_design ---------------------------- ##
+#' create design matrix for block.pls(da)
+#'
+#' @param X Named list of datasets. When
+#' type = 'null', for non-DA analyses the first one is 
+#' taken to be the response matrix which is fully connected to others.
+#' @param design Character, one of c('full', 'null'). If 'full' all blocks will
+#'   be connected, otherwise only the first block is connected. Alternatively, a
+#'   numeric between 0 and 1 which specifies all off-diagonal elements of a
+#'   fully connected matrix. Default is 'full'.
+#' @param indY Integer, index of Y dataset. It could also be NUL/missing.
+#' @return A matrix whose both dimension names match the names of \code{X} while
+#' after adding a placeholder 'Y' to it.
+#' @noRd
+#' @examples
+#' \dontrun{
+#' .create_design(list(rna = cars, met = mtcars, acc = faithful), design = 'full')
+#' .create_design(list(rna = cars, met = mtcars, acc = faithful), design = 'null')
+#' .create_design(list(rna = cars, met = mtcars, acc = faithful), design = 'null', indY = 2)
+#' .create_design(list(rna = cars, met = mtcars, acc = faithful), design = 0.3)
+#' .create_design(list(rna = cars, met = mtcars, acc = faithful), design = 0.3, indY = 2)
+#' 
+#' data("breast.TCGA")
+#' data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
+#'             protein = breast.TCGA$data.train$protein)
+#' diag(design) =  0
+#' ncomp = c(2)
+#' list.keepX = list(mrna = rep(20, 2), mirna = rep(10,2), protein = rep(10, 2))
+#' 
+#' block.splsda(X = data, Y = breast.TCGA$data.train$subtype, ncomp = ncomp, keepX = list.keepX, design = 'null')$design
+#' block.splsda(X = data, Y = breast.TCGA$data.train$subtype, ncomp = ncomp, keepX = list.keepX, design = 'full')$design
+#' block.splsda(X = data, Y = breast.TCGA$data.train$subtype, ncomp = ncomp, keepX = list.keepX, design = 0.1)$design
+#' block.spls(X = data, Y = data$mrna, ncomp = ncomp, keepX = list.keepX, design = 'null')$design
+#' block.spls(X = data, Y = data$protein, ncomp = ncomp, keepX = list.keepX, design = 'full')$design
+#' block.spls(X = data, Y = data$protein, ncomp = ncomp, keepX = list.keepX, design = 0.1)$design
+#'}
+.create_design <- function(X, design = 'full', indY = NULL) {
+    if (!all(is.list(X) && length(unique(names(X))) == length(X)))
+        stop("'X' must be a named list. See documentation.", call. = FALSE)
+    
+    if ((missing(indY) || is.null(indY)) ) {
+        indY <- length(X) + 1
+        X <- c(X, list(Y = matrix())) ## just so we have Y in X for design
+    }
+    
+    blocks <- names(X)
+    ## diag will be 0, specify off-diags
+    off_diag <- 1
+    if (is.character(design))
+    {
+        design <- match.arg(tolower(design), choices = c('full', 'null'))
+        if (design == 'null')
+            off_diag <- 0
+    } else if (isTRUE(tryCatch(design<= 1 & design >= 0)))
+    {
+        off_diag <- design
+    } else {
+        stop("'design' must be a matrix, or one of c('full', 'null'), or a numeric ",
+             "between 0 and 1. See documentation for details.")
+    }
+    
+    design <-  matrix(off_diag, nrow = length(blocks), ncol = length(blocks) ,dimnames = rep(list(blocks), 2))
+    
+    if (!(missing(indY) || is.null(indY)) ) {
+        if (isTRUE(tryCatch(is.integer(as.integer(indY)) && indY <= length(X))))
+        {
+            indY <- as.integer(indY)
+        } else 
+        {
+            stop("'indY' must be an integer from 1:length(X):", seq_along(X))
+        }
+        design[,indY] <-  design[indY,] <- 1
+    }
+    
+    diag(design) <- 0
+    return(design)
+}

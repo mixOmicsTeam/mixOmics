@@ -42,9 +42,12 @@ Applies to all blocks.}
 \item{design}{numeric matrix of size (number of blocks in X) x (number of
 blocks in X) with values between 0 and 1. Each value indicates the strenght
 of the relationship to be modelled between two blocks; a value of 0
-indicates no relationship, 1 is the maximum value. If \code{Y} is provided
-instead of \code{indY}, the \code{design} matrix is changed to include
-relationships to \code{Y}.}
+indicates no relationship, 1 is the maximum value. Alternatively, one of
+c('null', 'full') indicating a disconnected or fully connected design,
+respecively, or a numeric between 0 and 1 which will designate all
+off-diagonal elements of a fully connected design (see examples in
+\code{block.splsda}). If \code{Y} is provided instead of \code{indY}, the
+\code{design} matrix is changed to include relationships to \code{Y}.}
 
 \item{scheme}{Character, one of 'horst', 'factorial' or 'centroid'. Default =
 \code{'horst'}, see reference.}

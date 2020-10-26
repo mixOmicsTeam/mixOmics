@@ -522,6 +522,9 @@ Check.entry.wrapper.mint.block = function(X,
         {
             design = 1 - diag(length(A)+1)
             rownames(design) = colnames(design) = c(names(A), "Y")
+        } else if (is.null(dim(design)))
+        {
+            design <- .create_design(X = X, design = design, indY = indY)
         } else if (ncol(design) != nrow(design) || ncol(design) < length(X) ||
                    ncol(design) > (length(X) + 1) ){#|| any(!design %in% c(0,1))) {
             stop(paste0("'design' must be a square matrix with ", length(X),
@@ -559,7 +562,10 @@ Check.entry.wrapper.mint.block = function(X,
         if (missing(design))
         {
             design = 1 - diag(length(A))
-        } else if (ncol(design) != nrow(design) || ncol(design) < length(A) ||
+        } else if (is.null(dim(design)))
+        {
+            design <- .create_design(X = X, design = design, indY = indY)
+        }  else if (ncol(design) != nrow(design) || ncol(design) < length(A) ||
                    ncol(design) > (length(A) + 1) )#|| any( !design %in% c(0,1)))
         {
             stop(paste0("'design' must be a square matrix with ", length(A),
