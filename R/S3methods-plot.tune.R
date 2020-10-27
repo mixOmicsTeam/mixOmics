@@ -39,116 +39,134 @@
 NULL
 ## --------------------------- plot.tune.(s)pls --------------------------- ##
 #' @method plot tune.spls
-#' @importFrom reshape2 melt
 #' @rdname plot.tune
 #' @export
 plot.tune.spls <-
-    function(x, optimal = TRUE, sd = TRUE, col, ...)
+    function(x, optimal = TRUE, sd = TRUE, measure = NULL, block = NULL, interactive = FALSE, pch = 16, pch.size = 2 , cex = 1.2,...)
     {
         # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
-        y = Comp = lwr = upr = NULL
-        
+        # y = Comp = lwr = upr = NULL
+        ncomp <- x$call$ncomp
         if (!is.logical(optimal))
             stop("'optimal' must be logical.", call. = FALSE)
         
-        
-        error <- x$error.rate
-        if(sd & !is.null(x$error.rate.sd))
+        block <- match.arg(block, choices = c('X', 'Y'))
+        ## if measure not given, use object's 'measure.tune' for spls
+        if (is.null(measure) & is(x, 'tune.spls') )
         {
-            error.rate.sd = x$error.rate.sd
-            ylim = range(c(error + error.rate.sd), c(error - error.rate.sd))
+            measure <- x$call$measure.tune
         } else {
-            error.rate.sd = NULL
-            ylim = range(error)
+            measure <- match.arg(measure, c('cor', 'RSS'))    
         }
         
-        select.keepX <- x$choice.keepX[colnames(error)]
-        comp.tuned = length(select.keepX)
-        
-        legend=NULL
-        measure = x$measure
-        
-        if (length(select.keepX) < 10)
-        {
-            #only 10 colors in color.mixo
-            if(missing(col))
-                col = color.mixo(seq_len(comp.tuned))
-        } else {
-            #use color.jet
-            if(missing(col))
-                col = color.jet(comp.tuned)
-        }
-        if(length(col) != comp.tuned)
-            stop("'col' should be a vector of length ", comp.tuned,".")
-        
-        if(measure == "overall")
-        {
-            ylab = "Classification error rate"
-        } else if (measure == "BER")
-        {
-            ylab = "Balanced error rate"
-        } else if (measure == "MSE"){
-            ylab = "MSE"
-        }else if (measure == "MAE"){
-            ylab = "MAE"
-        }else if (measure == "Bias"){
-            ylab = "Bias"
-        }else if (measure == "R2"){
-            ylab = "R2"
-        }else if (measure == "AUC"){
-            ylab = "AUC"
-        }
-        
-        #legend
-        names.comp = substr(colnames(error),5,10) # remove "comp" from the name
-        if(length(x$choice.keepX) == 1){
-            #only first comp tuned
-            legend = "1"
-        } else if(length(x$choice.keepX) == comp.tuned) {
-            # all components have been tuned
-            legend = c("1", paste("1 to", names.comp[-1]))
-        } else {
-            #first components were not tuned
-            legend = paste("1 to", names.comp)
-        }
-        
-        
-        # creating data.frame with all the information
-        df = melt(error)
-        colnames(df) = c("x","Comp","y")
-        df$Comp = factor(df$Comp, labels=legend)
-        
-        p = ggplot(df, aes(x = x, y = y, color = Comp)) +
-            labs(x = "Number of selected features", y = ylab) +
-            theme_bw() +
-            geom_line()+ geom_point()
-        p = p+ scale_x_continuous(trans='log10', breaks = df$x) +
-            scale_color_manual(values = col)
-        
-        # error bar
-        if(!is.null(error.rate.sd))
-        {
-            dferror = melt(error.rate.sd)
-            df$lwr = df$y - dferror$value
-            df$upr = df$y + dferror$value
+        ggplot_measure <- function(x, v = c('u', 't'), title = NULL, measure = 'cor') {
             
-            #adding the error bar to the plot
-            p = p + geom_errorbar(data=df,aes(ymin=lwr, ymax=upr), width=0.04)
-        }
-        
-        if(optimal)
-        {
-            index = NULL
-            for(i in seq_len(comp.tuned))
-                index = c(index, which(df$x == select.keepX[i] & df$Comp == levels(df$Comp)[i]))
+            pred <- ifelse(measure == 'cor', 'cor.pred', 'RSS.pred')
             
-            # adding the choseen keepX to the graph
-            p=p + geom_point(data=df[index,],size=7, shape = 18)
-            p = p + guides(color = guide_legend(override.aes =
-                                                    list(size=0.7,stroke=1)))
+            ut <- lapply(c(u='u', t='t'), function(o){
+                mean = x[[pred]][[o]][[ncomp]]$mean
+                sd = x[[pred]][[o]][[ncomp]]$sd
+                list(mean = round(mean, 2), sd = round(sd, 3))
+            })
+            
+            df.list <- lapply(v, function(V) {
+                df <- expand.grid(keepX = x$call$test.keepX, keepY = x$call$test.keepY)
+                df$V <- V
+                df$mean <- as.vector(ut[[V]]$mean)
+                df$sd <- as.vector(ut[[V]]$sd)
+                df
+            })
+            
+            df <- Reduce(f = rbind, df.list)
+            text.size = as.integer(cex*10)
+            p <- ggplot(df, aes(keepX, mean, col = factor(keepY))) + 
+                geom_point(shape = pch, size = pch.size) + geom_line(show.legend = FALSE) + theme_bw() +
+                labs(title = title) +
+                geom_point(data = df[df$keepX == x$choice.keepX & df$keepY == x$choice.keepY,], 
+                           mapping = aes(keepX, mean, col = factor(keepY)), shape = 18, size = as.integer(pch.size*2))
+            
+            if (measure == 'cor') {
+                p <- p +  scale_size_continuous(limits = c(0, 1))
+            }
+            p <-  p +  
+                facet_wrap(.~V) +
+                labs(col = 'keepY',
+                     y = ifelse(measure == 'cor', 'Correlation', 'RSS')
+                     ) +
+                scale_x_log10(breaks = as.integer(unique(df$keepX))) +
+                guides(col = guide_legend(override.aes = list(shape = pch, size = pch.size))) + 
+                theme( axis.text = element_text( size = text.size ),
+                       axis.text.x = element_text( size = text.size ),
+                       axis.title = element_text( size = text.size, face = "bold" ),
+                       legend.text = element_text( size = text.size ),
+                       legend.title =  element_text( size = text.size, face = "bold"),
+                       # subtitles
+                       strip.text = element_text(size = text.size, face = 'bold'))
+            list(gg.plot = p, df= df)
         }
         
-        p
+        res <- ggplot_measure(x=x, measure = measure)
+        
+        if (interactive && interactive())
+        {
+            comp <- x$call$ncomp
+            df <- res$df
+            loadNamespace("shiny")
+            loadNamespace("shinyWidgets")
+            
+            keepY <- unique(df$keepY)
+            choice.keepY <- x$choice.keepY
+            ind.choice.keepY <- which(keepY == choice.keepY[comp])
+            ## show those closest to optimum keepY only by default
+            ind.selected <- which(abs(seq_along(keepY) -ind.choice.keepY) <=2)
+            keepY.selected <- x$call$test.keepY[ind.selected]
+            
+            
+            ui <- fluidPage(
+                titlePanel(title=h4("tune model performance", align="left")),
+                hr(),
+                fluidRow(
+                    column(3,
+                           selectInput(inputId = 'block', label = h4('Block:'), choices = c('X', 'Y'), selected = 'Y')
+                    ),
+                    column(3,
+                           shinyWidgets::sliderTextInput(inputId = "keepY", 
+                                                         label = h4("KeepY range:"), 
+                                                         choices = x$call$test.keepY,
+                                                         selected = keepY.selected)
+                    ),
+                ),
+                
+                hr(),
+                
+                fluidRow(column(10, align="center",
+                                plotOutput("ggp")
+                ))
+            )
+            
+            server <- function(input,output){
+                
+                dat <- reactive({
+                    a <- ifelse(input$block == 'X', 't', 'u')
+                    test <- df[df$V == a,]
+                    test <- test[test$keepY >= input$keepY[1] & test$keepY <= input$keepY[2],]
+                    test$keepY <- factor(test$keepY)
+                    test
+                })
+                
+                output$ggp<-renderPlot({
+                    ggplot(dat(),aes(x=keepX,y=mean, col = keepY)) + 
+                        theme_bw()+
+                        geom_point(colour='red', shape = 18) +
+                        geom_line()
+                })}
+            return(shinyApp(ui, server))
+            
+        } else {
+         return(res$gg.plot)    
+        }
+        
+        
     }
 
 #' @rdname plot.tune
