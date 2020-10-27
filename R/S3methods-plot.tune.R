@@ -84,12 +84,28 @@ plot.tune.spls <-
                 labs(title = title) +
                 geom_point(data = df[df$keepX == x$choice.keepX & df$keepY == x$choice.keepY,], 
                            mapping = aes(keepX, mean, col = factor(keepY)), shape = 18, size = as.integer(pch.size*2))
-            
-            if (measure == 'cor') {
-                p <- p +  ylim(c(0,1))
+            ## y limits for cor and RSS with and without sd
+            if (sd == TRUE) {
+                ymin <- min(0, df$mean - df$sd)
+                if (measure == 'cor')
+                {
+                    ymax <- max(1, df$mean + df$sd)
+                } else {
+                    ymax <- max(df$mean + df$sd)
+                }
             } else {
-                p <- p + ylim(c(0, max(df$mean)))
+                
+                ymin <- 0
+                if (measure == 'cor')
+                {
+                    ymax <- 1
+                } else {
+                    ymax <- max(df$mean)
+                }
+                
             }
+            p <- p +  ylim(c(ymin, ymax))
+            
             p <-  p +  
                 facet_wrap(.~V) +
                 labs(col = 'keepY',

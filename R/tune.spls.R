@@ -226,6 +226,7 @@ tune.spls <-
         cov.pred = list()
         .tune.spls.repeat <- function(test.keepX, test.keepY, X, Y, choice.keepX, choice.keepY, comp, mode, validation, folds)
         {
+            out <- list()
             for(keepX in 1:length(test.keepX)){
                 for(keepY in 1:length(test.keepY)){
                     # sPLS model, updated with the best keepX
@@ -235,15 +236,16 @@ tune.spls <-
                                    ncomp = comp, mode = mode)
                     # fold CV
                     res.perf <- .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
+                    out[[paste0('keepX_', keepX)]][[paste0('keepY_', keepY)]] <- list(
+                        t.pred.cv = res.perf$t.pred.cv,
+                        u.pred.cv = res.perf$u.pred.cv,
+                        X.variates =  pls.res$variates$X,
+                        Y.variates =  pls.res$variates$Y,
+                        Q2.total = res.perf$Q2.total
+                    )
                 }
             }
-            list(
-                t.pred.cv = res.perf$t.pred.cv,
-                u.pred.cv = res.perf$u.pred.cv,
-                X.variates =  pls.res$variates$X,
-                Y.variates =  pls.res$variates$Y,
-                Q2.total = res.perf$Q2.total
-            )
+            out
         }
         use_progressBar <- progressBar & (is(BPPARAM, 'SerialParam'))
         
@@ -253,7 +255,7 @@ tune.spls <-
                     cat(msg)
                     pb <- txtProgressBar(min = 0, max = nrepeat, style = 3)
                 }
-   
+                
                 cv.repeat.res <- bplapply(seq_len(nrepeat), 
                                         FUN = function(k){ 
                                             if (use_progressBar) {
@@ -266,11 +268,11 @@ tune.spls <-
                 for(k in seq_len(nrepeat)){
                     for(keepX in 1:length(test.keepX)){
                         for(keepY in 1:length(test.keepY)){
-                            t.pred.cv <-  cv.repeat.res[[k]]$t.pred.cv
-                            u.pred.cv <-  cv.repeat.res[[k]]$u.pred.cv
-                            X.variates <-  cv.repeat.res[[k]]$ X.variates
-                            Y.variates <-  cv.repeat.res[[k]]$Y.variates
-                            Q2.total <- cv.repeat.res[[k]]$Q2.total
+                            t.pred.cv <-  cv.repeat.res[[k]][[paste0('keepX_', keepX)]][[paste0('keepY_', keepY)]]$t.pred.cv
+                            u.pred.cv <-  cv.repeat.res[[k]][[paste0('keepX_', keepX)]][[paste0('keepY_', keepY)]]$u.pred.cv
+                            X.variates <-  cv.repeat.res[[k]][[paste0('keepX_', keepX)]][[paste0('keepY_', keepY)]]$ X.variates
+                            Y.variates <-  cv.repeat.res[[k]][[paste0('keepX_', keepX)]][[paste0('keepY_', keepY)]]$Y.variates
+                            Q2.total <- cv.repeat.res[[k]][[paste0('keepX_', keepX)]][[paste0('keepY_', keepY)]]$Q2.total
                             
                             if (spls.model)
                             {
