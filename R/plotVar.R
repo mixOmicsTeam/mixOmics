@@ -267,7 +267,7 @@ plotVar <-
             stop("Invalid vector for 'comp'.")
         
         if (any(ncomp < max(comp)) || min(comp) <= 0)
-            stop("Each element of 'comp' must be positive smaller or equal than ", min(object$ncomp), ".", call. = FALSE)
+            stop("Each element of 'comp' must be positive <= ", min(object$ncomp), ".", call. = FALSE)
         
         comp1 = round(comp[1])
         comp2 = round(comp[2])
@@ -281,7 +281,7 @@ plotVar <-
                 stop("Invalid vector for 'comp'.", call. = FALSE)
             
             if (any(ncomp < max(comp.select)) || min(comp.select) <= 0)
-                stop("Each element of 'comp.select' must be positive and smaller or equal than ", max(object$ncomp), ".", call. = FALSE)
+                stop("Each element of 'comp.select' must be positive and <= ", max(object$ncomp), ".", call. = FALSE)
         } else {
             comp.select = comp
         }

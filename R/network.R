@@ -310,7 +310,7 @@ network <- function(mat,
                 stop("invalid vector for 'comp'.", call. = FALSE)
             
             if (any(comp > ncomp))
-                stop("the elements of 'comp' must be smaller or equal than ", ncomp, ".",
+                stop("the elements of 'comp' must be <= ", ncomp, ".",
                      call. = FALSE)
         }
         
@@ -455,7 +455,7 @@ network <- function(mat,
                     stop("invalid value for 'comp' of the block '", i, "'.", call. = FALSE)
                 
                 if (any(comp[[i]] > mat$ncomp[i]))
-                    stop("the elements of 'comp' for block '", i, "' must be smaller or equal than ",
+                    stop("the elements of 'comp' for block '", i, "' must be <= ",
                          mat$ncomp[i], ".", call. = FALSE)
                 
                 if (any(comp[[i]] < 1))
