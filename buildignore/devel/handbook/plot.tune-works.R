@@ -13,8 +13,16 @@ plot.tune.spls(tune.cor, pch.size = 3, cex = 1.8)
 plot.tune.spls(tune.cor, measure = 'RSS')
 plot.tune.spls(tune.cor, interactive = TRUE)
 
-tune.RSS = tune.spls(X, Y, ncomp=2, test.keepX = c(5,10),test.keepY = c(5,8,10),, measure.tune = "RSS", method = 'spls',
-                 nrepeat=3, progressBar = TRUE, folds =3, BPPARAM = BiocParallel::MulticoreParam(workers = 4))
+data("nutrimouse")
+X <- nutrimouse$gene
+Y <- nutrimouse$lipid
 
-# plot the results
-plot.tune.spls(tune.RSS)
+
+set.seed(42)
+tune.nutri = tune.spls(X, Y, ncomp=2, test.keepX = c(2, 20, 40, 80),test.keepY = c(1, 5, 20), measure.tune = "cor", method = 'spls',
+                     nrepeat=3, progressBar = TRUE, folds =3, BPPARAM = BiocParallel::MulticoreParam(workers = 4, RNGseed = 23))
+tune.nutri
+plot.tune.spls(tune.nutri)
+plot.tune.spls(tune.nutri, pch.size = 3, cex = 1.8)
+plot.tune.spls(tune.nutri, measure = 'RSS')
+plot.tune.spls(tune.nutri, interactive = TRUE)

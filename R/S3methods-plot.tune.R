@@ -80,13 +80,15 @@ plot.tune.spls <-
             df <- Reduce(f = rbind, df.list)
             text.size = as.integer(cex*10)
             p <- ggplot(df, aes(keepX, mean, col = factor(keepY))) + 
-                geom_point(shape = pch, size = pch.size) + geom_line(show.legend = FALSE) + theme_bw() +
+                geom_point(shape = pch, size = pch.size) + geom_line(show.legend = FALSE) + theme_bw() + geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.04, show.legend = FALSE) +
                 labs(title = title) +
                 geom_point(data = df[df$keepX == x$choice.keepX & df$keepY == x$choice.keepY,], 
                            mapping = aes(keepX, mean, col = factor(keepY)), shape = 18, size = as.integer(pch.size*2))
             
             if (measure == 'cor') {
-                p <- p +  scale_size_continuous(limits = c(0, 1))
+                p <- p +  ylim(c(0,1))
+            } else {
+                p <- p + ylim(c(0, max(df$mean)))
             }
             p <-  p +  
                 facet_wrap(.~V) +
