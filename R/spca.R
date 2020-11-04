@@ -198,14 +198,16 @@ spca <-
         
         
         #--initialization--#
-        X=as.matrix(X)
-        X.temp=as.matrix(X)
+        X <- as.matrix(X)
+
         if (isFALSE(center) && any(colMeans(X, na.rm = TRUE) != 0)) {
             warning("Data are not column-centered and contain missing values which will be ",
                     "set to zero for caluclations. Consider either using center = TRUE ",
                     "to lessen the side-effects, or imputing the missing values.")
         }
-        X.temp[is.na(X.temp)] <- 0
+        is.na.X <- is.na(X)
+        X[is.na.X] <- 0
+        X.temp <- X
         n=nrow(X)
         p=ncol(X)
         
@@ -322,7 +324,8 @@ spca <-
         # the variance is adjusted to account for potential correlation between PCs:                
         explained_variance <- c(cum.var[1], diff(cum.var))
         
-        
+        ## return missing values for output
+        X[is.na.X] <- NA_real_
         result = (list(call = cl, X = X,
                        ncomp = ncomp,	
                        #sdev = sdev,  # KA: to add if biplot function (but to be fixed!)
