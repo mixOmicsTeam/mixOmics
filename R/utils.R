@@ -544,7 +544,7 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
 }
 
 ## ----------------------------- %=% ----------------------------- ##
-## check if LHS and RHS contain exactly the same elemnts without caring about order
+## check if LHS and RHS contain exactly the same elements without caring about order
 ## TODO use this throughout for col.per.group etc.
 #'@noRd
 #'@examples
