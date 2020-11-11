@@ -23,7 +23,7 @@
 #' 
 #' @param method This parameter is used to pass all other argument to the
 #' suitable function. \code{method} has to be one of the following: "spls",
-#' "splsda", "mint.splsda", "rcc", "pca".
+#' "splsda", "mint.splsda", "rcc", "pca", "spca".
 #' @param X numeric matrix of predictors. \code{NA}s are allowed.
 #' @param Y Either a factor or a class vector for the discrete outcome, or a
 #' numeric vector or matrix of continuous responses (for multi-response
@@ -161,8 +161,7 @@
 #' @export
 #' @example ./examples/tune-examples.R
 tune <-
-    function (method,
-              # choice of "spls", "splsda", "mint.splsda", "rcc", "pca"
+    function (method = c("spls", "splsda", "mint.splsda", "rcc", "pca", "spca"),
               X,
               Y,
               multilevel = NULL,
@@ -214,8 +213,7 @@ tune <-
               
     )
     {
-        choice.method = c("spls", "splsda", "mint.splsda", "rcc", "pca")
-        method = match.arg(method, choice.method)
+        method = match.arg(method)
         mode <- match.arg(mode)
         
         if (method == "mint.splsda") {
@@ -262,6 +260,21 @@ tune <-
                               scale = scale,
                               max.iter = max.iter,
                               tol = tol)
+            
+            
+        } else if (method == "spca") {
+            message("Calling 'tune.spca'")
+            
+            if (missing(ncomp))
+                ncomp = 2
+            #TODO use match.call() arg matching for these function calls
+            result = tune.spca(X = X,
+                               ncomp = ncomp,
+                               nrepeat = nrepeat,
+                               folds = folds,
+                               test.keepX = test.keepX,
+                               center = center,
+                               scale = scale)
             
             
         } else if (method == "splsda") {

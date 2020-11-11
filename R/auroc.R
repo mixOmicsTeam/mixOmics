@@ -145,6 +145,9 @@ auroc.mint.plsda <-
             stop("`roc.study' must be a single entry,
     either `global' or one of levels(object$study)")
         
+        if( length(roc.comp) != 1)
+            stop("`roc.comp' must be a single integer")
+        
         if(roc.study == "global"){
             if(dim(newdata)[[1]] != length(outcome.test))
                 stop("Factor outcome.test must be a factor with ",dim(newdata)[[1]],
@@ -178,18 +181,15 @@ auroc.mint.plsda <-
         res.predict = predict.mixo_spls(object, newdata = newdata, dist = "max.dist",
                                         multilevel = multilevel, study.test = study.test)$predict
         
-        for (i in seq_len(object$ncomp))
-        {
-            data$data=res.predict[,,i]
-            
-            if (is.null(title)) {
-                title=paste0("ROC Curve Comp ",i, title.temp)
-            }
-            
-            temp = statauc(data, plot = ifelse(i%in%roc.comp,plot,FALSE), title=title,...)
-            statauc.res[[paste0("Comp", i, sep = "")]] = temp[[1]]
-            graph[[paste0("Comp", i, sep = "")]] = temp$graph
+        data$data=res.predict[,,roc.comp]
+        
+        if (is.null(title)) {
+            title=paste0("ROC Curve Comp ", roc.comp, title.temp)
         }
+        
+        temp = statauc(data, plot = ifelse(roc.comp%in% roc.comp,plot,FALSE), title=title,...)
+        statauc.res[[paste0("Comp", roc.comp, sep = "")]] = temp[[1]]
+        graph[[paste0("Comp", roc.comp, sep = "")]] = temp$graph
         if (isTRUE(print))
             print(statauc.res)
         

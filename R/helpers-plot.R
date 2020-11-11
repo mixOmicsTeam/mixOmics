@@ -66,7 +66,12 @@
         }
     } else
     {
-        stop(fail.msg, call. = FALSE)
+        res <- tryCatch(as.character(arg))
+        if (length(res) != length(vec)) 
+        {
+            stop(fail.msg, call. = FALSE)
+        }
+        
     }
     res
 }
@@ -147,10 +152,10 @@
         }
         else
         { ## group is of length >= 2
-            col.per.group <- color.mixo(seq_len(1+nlevels(group))[-3]) ## bc 3rd one is grey
+            col.per.group <- color.mixo(seq_len(nlevels(group)))
         }
        
-        names(col.per.group) <- unique(group)
+        names(col.per.group) <- levels(group)
     }
     ## valid col.per.group
     if (!all(names(col.per.group) %in% levels(group)))

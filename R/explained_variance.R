@@ -61,7 +61,7 @@ explained_variance <- function(data, variates, ncomp)
     a <- t(variates[, h, drop=FALSE]) %*% data
     ta = t(a)
     # this is equivalent to calculate the redundancy as detailed in the help file
-    exp_var_new <- a%*%ta /crossprod(variates[, h],variates[, h])/nor2x
+    exp_var_new <- a%*%ta / c(crossprod(variates[, h],variates[, h])) / nor2x
     
     if (anyNA(data))
     {

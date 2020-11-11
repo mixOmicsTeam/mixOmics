@@ -33,8 +33,9 @@
 #' class, weighted by the number of samples in each class. BER is less biased
 #' towards majority classes during the performance assessment.
 #' 
-#' @inheritParams tune
 #' @inheritParams block.splsda
+#' @inheritParams tune
+#' @inheritParams tune.spca
 #' @param test.keepX A named list with the same length and names as X 
 #' (without the outcome Y, if it is provided in X and designated using 
 #' \code{indY}).  Each entry of this list is a numeric vector for the different 
@@ -50,7 +51,6 @@
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
-#' @param cpus Integer, number of cpus to use. If greater than 1, the code will
 #' @param ... Optional arguments:
 #' \itemize{
 #'  \item \bold{seed} Integer. Seed number for reproducible parallel code.
@@ -92,51 +92,7 @@
 #' e1005752
 #' @keywords regression multivariate
 #' @export
-#' @examples
-#' data("breast.TCGA")
-#' # this is the X data as a list of mRNA and miRNA; the Y data set is a single data set of proteins
-#' data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
-#' protein = breast.TCGA$data.train$protein)
-#' # set up a full design where every block is connected
-#' # could also consider other weights, see our mixOmics manuscript
-#' design = matrix(1, ncol = length(data), nrow = length(data),
-#' dimnames = list(names(data), names(data)))
-#' diag(design) =  0
-#' design
-#' # set number of component per data set
-#' ncomp = 5
-#' 
-#' # Tuning the first two components
-#' # -------------
-#' \dontrun{
-#' # definition of the keepX value to be tested for each block mRNA miRNA and protein
-#' # names of test.keepX must match the names of 'data'
-#' test.keepX = list(mrna = seq(10,40,20), mirna = seq(10,30,10), protein = seq(1,10,5))
-#' 
-#' # the following may take some time to run, note that for through tuning
-#' # nrepeat should be > 1
-#' tune = tune.block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
-#' ncomp = ncomp, test.keepX = test.keepX, design = design, nrepeat = 3)
-#' 
-#' tune$choice.ncomp
-#' tune$choice.keepX
-#' 
-#' # Only tuning the second component
-#' # -------------
-#' 
-#' already.mrna = 4 # 4 variables selected on comp1 for mrna
-#' already.mirna  = 2 # 2 variables selected on comp1 for mirna
-#' already.prot  = 1 # 1 variables selected on comp1 for protein
-#' 
-#' already.tested.X = list(mrna = already.mrna, mirna = already.mirna, protein = already.prot)
-#' 
-#' tune = tune.block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
-#' ncomp = 2, test.keepX = test.keepX, design = design,
-#' already.tested.X = already.tested.X)
-#' 
-#' tune$choice.keepX
-#' }
-#' 
+#' @example ./examples/tune.block.splsda-examples.R
 tune.block.splsda <- 
   function (X,
             Y,
@@ -163,9 +119,13 @@ tune.block.splsda <-
             light.output = TRUE,
             # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
             signif.threshold=0.01,
-            cpus = 1,
+            BPPARAM = SerialParam(),
             ...)
   {
+    if (hasArg('cpus')) #defunct
+    {
+    stop("'cpus' has been replaced by BPPARAM. See documentation.")  
+    }
     ## ----------- checks -----------
     
     # check inpuy 'Y' and transformation in a dummy matrix
@@ -321,10 +281,10 @@ tune.block.splsda <-
       )
     )
     
-    if (cpus < 2)
+    if (is (BPPARAM, 'SerialParam'))
     {
       message(paste0(
-        "\nYou can look into the 'cpus' argument to speed up computation time."
+        "\nYou can look into the 'BPPARAM' argument to speed up computation time."
       ))
       
     } else {
@@ -398,23 +358,6 @@ tune.block.splsda <-
         
       }
     }
-    
-    ## ---- cpus
-    cpus <- .check_cpus(cpus)
-    parallel <- cpus > 1
-    
-    if (parallel)
-    {
-      if (.onUnix()) {
-        cl <- makeForkCluster(cpus)
-      } else {
-        cl <- makePSOCKcluster(cpus)
-      }
-      
-      clusterSetRNGStream(cl = cl, iseed = list(...)$seed)
-      on.exit(stopCluster(cl))
-    }
-    
     N.test.keepX = nrow(expand.grid(test.keepX))
     
     mat.error.rate = list()
@@ -476,8 +419,7 @@ tune.block.splsda <-
         max.iter = max.iter,
         misdata = misdata,
         is.na.A = is.na.A,
-        cpus = cpus,
-        cl = cl
+        BPPARAM = BPPARAM
       )
       
       

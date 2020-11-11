@@ -58,9 +58,12 @@ default all variables are kept in the model.}
 \item{design}{numeric matrix of size (number of blocks in X) x (number of
 blocks in X) with values between 0 and 1. Each value indicates the strenght
 of the relationship to be modelled between two blocks; a value of 0
-indicates no relationship, 1 is the maximum value. If \code{Y} is provided
-instead of \code{indY}, the \code{design} matrix is changed to include
-relationships to \code{Y}.}
+indicates no relationship, 1 is the maximum value. Alternatively, one of
+c('null', 'full') indicating a disconnected or fully connected design,
+respecively, or a numeric between 0 and 1 which will designate all
+off-diagonal elements of a fully connected design (see examples in
+\code{block.splsda}). If \code{Y} is provided instead of \code{indY}, the
+\code{design} matrix is changed to include relationships to \code{Y}.}
 
 \item{scheme}{Character, one of 'horst', 'factorial' or 'centroid'. Default =
 \code{'horst'}, see reference.}
@@ -154,11 +157,22 @@ ncomp = c(2)
 list.keepX = list(mrna = rep(20, 2), mirna = rep(10,2), protein = rep(10, 2))
 
 
-TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
-ncomp = ncomp, keepX = list.keepX, design = design)
-TCGA.block.splsda
+TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype, 
+                                 ncomp = ncomp, keepX = list.keepX, design = design)
+## use design = 'full'
+TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype, 
+                                 ncomp = ncomp, keepX = list.keepX, design = 'full')
+TCGA.block.splsda$design
 
 plotIndiv(TCGA.block.splsda, ind.names = FALSE)
+## use design = 'null'
+TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype, 
+                                 ncomp = ncomp, keepX = list.keepX, design = 'null')
+TCGA.block.splsda$design
+## set all off-diagonal elements to 0.5
+TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype, 
+                                 ncomp = ncomp, keepX = list.keepX, design = 0.5)
+TCGA.block.splsda$design
 # illustrates coefficient weights in each block
 plotLoadings(TCGA.block.splsda, ncomp = 1, contrib = 'max')
 plotVar(TCGA.block.splsda, style = 'graphics', legend = TRUE)

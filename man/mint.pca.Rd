@@ -16,7 +16,7 @@ Default to 2}
 \item{study}{factor indicating the membership of each sample to each of the
 studies being combined}
 
-\item{scale}{boleean. If scale = TRUE, each block is standardized to zero
+\item{scale}{Boolean. If scale = TRUE, each block is standardized to zero
 means and unit variances. Default = \code{TRUE}.}
 
 \item{tol}{Convergence stopping value.}

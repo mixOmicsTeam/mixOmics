@@ -27,3 +27,36 @@ test_that(".get.character.vector works as expected", code = {
     expect_error(.get.character.vector(arg = letters, vec = letters[1:10]))
 })
 
+test_that(".check_test.keepX works as expected for single and list X", code = {
+    expect_equal(.check_test.keepX(test.keepX = c(3, 8, 1), X = mtcars), c(3, 8, 1))
+    expect_condition(.check_test.keepX(test.keepX = c(1, 2.2, 3), X = mtcars))
+    expect_condition(.check_test.keepX(test.keepX = c(1, '2', 3), X = mtcars))
+    expect_condition(.check_test.keepX(test.keepX = seq(3, ncol(mtcars)+1, 1), X = mtcars))
+    
+    expect_equal(.check_test.keepX(
+        test.keepX = list('a'=c(1,4), 'b'=c(3,5,8)), 
+        X =          list('a'=mtcars, 'b'=mtcars)
+    ),
+    list('a'=c(1,4), 'b'=c(3,5,8)))
+    
+    expect_condition(.check_test.keepX(
+        test.keepX = list('a'=c(1,4), 'b'=c(3,5,8)),
+        X =          list('a'=mtcars, 'b'=mtcars, 'c'=mtcars  )
+    ))
+    expect_condition(.check_test.keepX(
+        test.keepX = list('a'=c(1,4), 'b'=c(3,5,8), 'c'=c(4,8)),
+        X =          list('a'=mtcars, 'b'=mtcars)
+    ))
+    expect_condition(.check_test.keepX(
+        test.keepX = list('a'=c(1,4), 'b'=c(3,ncol(mtcars)+1)), 
+        X =          list('a'=mtcars, 'b'=mtcars               )
+    ))
+    
+})
+test_that(".check_ncomp works as expected for single and list X", code = {
+    expect_true(.check_ncomp(ncomp=2, X = mtcars) == 2)
+    expect_true(.check_ncomp(ncomp=2, X = list(a=mtcars, b=mtcars)) == 2)
+    expect_condition(.check_ncomp(ncomp=min(dim(mtcars))+1, X = mtcars))
+    expect_condition(.check_ncomp(ncomp=4, X = list(a=mtcars, b=mtcars[,1:3])))
+    
+})

@@ -28,21 +28,22 @@ tune.block.splsda(
   init = "svd",
   light.output = TRUE,
   signif.threshold = 0.01,
-  cpus = 1,
+  BPPARAM = SerialParam(),
   ...
 )
 }
 \arguments{
-\item{X}{numeric matrix of predictors. \code{NA}s are allowed.}
+\item{X}{A named list of data sets (called 'blocks') measured on the same 
+samples. Data in the list should be arranged in matrices, samples x variables, 
+with samples order matching in all data sets.}
 
-\item{Y}{Either a factor or a class vector for the discrete outcome, or a
-numeric vector or matrix of continuous responses (for multi-response
-models).}
+\item{Y}{a factor or a class vector for the discrete outcome.}
 
 \item{indY}{To supply if \code{Y} is missing, indicates the position of 
 the matrix response in the list \code{X}.}
 
-\item{ncomp}{the number of components to include in the model.}
+\item{ncomp}{the number of components to include in the model. Default to 2.
+Applies to all blocks.}
 
 \item{test.keepX}{A named list with the same length and names as X 
 (without the outcome Y, if it is provided in X and designated using 
@@ -73,32 +74,32 @@ the Weighted vote.}
 \item{progressBar}{by default set to \code{TRUE} to output the progress bar
 of the computation.}
 
-\item{tol}{Numeric, convergence tolerance criteria.}
+\item{tol}{Numeric, convergence stopping value.}
 
 \item{max.iter}{Integer, the maximum number of iterations.}
 
-\item{near.zero.var}{boolean, see the internal \code{\link{nearZeroVar}}
+\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
-values). Default value is FALSE}
+values). Setting this argument to FALSE (when appropriate) will speed up the
+computations. Default value is FALSE.}
 
 \item{nrepeat}{Number of times the Cross-Validation process is repeated.}
 
 \item{design}{numeric matrix of size (number of blocks in X) x (number of
 blocks in X) with values between 0 and 1. Each value indicates the strenght
 of the relationship to be modelled between two blocks; a value of 0
-indicates no relationship, 1 is the maximum value. If \code{Y} is provided
-instead of \code{indY}, the \code{design} matrix is changed to include
-relationships to \code{Y}.}
+indicates no relationship, 1 is the maximum value. Alternatively, one of
+c('null', 'full') indicating a disconnected or fully connected design,
+respecively, or a numeric between 0 and 1 which will designate all
+off-diagonal elements of a fully connected design (see examples in
+\code{block.splsda}). If \code{Y} is provided instead of \code{indY}, the
+\code{design} matrix is changed to include relationships to \code{Y}.}
 
 \item{scheme}{Either "horst", "factorial" or "centroid". Default =
 \code{centroid}, see reference.}
 
-\item{scale}{a logical value indicating whether the variables should be
-scaled to have unit variance before the analysis takes place. The default is
-\code{FALSE} for consistency with \code{prcomp} function, but in general
-scaling is advisable. Alternatively, a vector of length equal the number of
-columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}.}
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
+means and unit variances (default: TRUE)}
 
 \item{init}{Mode of initialization use in the algorithm, either by Singular
 Value Decomposition of the product of each block of X with Y ('svd') or each
@@ -111,7 +112,8 @@ sample for each of \code{test.keepX} and each comp is returned.}
 threshold required for improvement in error rate of the components. Default
 to 0.01.}
 
-\item{cpus}{Integer, number of cpus to use. If greater than 1, the code will}
+\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
+of parallelisation. See examples.}
 
 \item{...}{Optional arguments:
 \itemize{
@@ -174,50 +176,61 @@ class, weighted by the number of samples in each class. BER is less biased
 towards majority classes during the performance assessment.
 }
 \examples{
+\dontrun{
 data("breast.TCGA")
 # this is the X data as a list of mRNA and miRNA; the Y data set is a single data set of proteins
 data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
-protein = breast.TCGA$data.train$protein)
+            protein = breast.TCGA$data.train$protein)
 # set up a full design where every block is connected
 # could also consider other weights, see our mixOmics manuscript
 design = matrix(1, ncol = length(data), nrow = length(data),
-dimnames = list(names(data), names(data)))
+                dimnames = list(names(data), names(data)))
 diag(design) =  0
 design
 # set number of component per data set
-ncomp = 5
+ncomp = 3
 
 # Tuning the first two components
 # -------------
-\dontrun{
+## Not run: 
 # definition of the keepX value to be tested for each block mRNA miRNA and protein
 # names of test.keepX must match the names of 'data'
-test.keepX = list(mrna = seq(10,40,20), mirna = seq(10,30,10), protein = seq(1,10,5))
+test.keepX = list(mrna = c(10, 30), mirna = c(15, 25), protein = c(4, 8))
 
-# the following may take some time to run, note that for through tuning
-# nrepeat should be > 1
-tune = tune.block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
-ncomp = ncomp, test.keepX = test.keepX, design = design, nrepeat = 3)
+# the following may take some time to run, so we subset the data first.
+# Note that for thorough tuning, nrepeat should be >= 3 so that significance of 
+# the model improvement can be measured
+## ---- subset by 3rd of samples
+set.seed(100)
+subset <- mixOmics:::stratified.subsampling(breast.TCGA$data.train$subtype, folds = 3)[[1]][[1]]
+data <- lapply(data, function(omic) omic[subset,])
+Y <- breast.TCGA$data.train$subtype[subset]
+## ---- run
+## setup cluster - use SnowParam() on Widnows
+BPPARAM <- BiocParallel::MulticoreParam(workers = parallel::detectCores()-1)
+tune <- tune.block.splsda(
+    X = data,
+    Y = Y,
+    ncomp = ncomp,
+    test.keepX = test.keepX,
+    design = design,
+    nrepeat = 2, 
+    BPPARAM = BPPARAM
+)
 
+plot(tune)
 tune$choice.ncomp
 tune$choice.keepX
 
-# Only tuning the second component
-# -------------
-
-already.mrna = 4 # 4 variables selected on comp1 for mrna
-already.mirna  = 2 # 2 variables selected on comp1 for mirna
-already.prot  = 1 # 1 variables selected on comp1 for protein
-
-already.tested.X = list(mrna = already.mrna, mirna = already.mirna, protein = already.prot)
-
-tune = tune.block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
-ncomp = 2, test.keepX = test.keepX, design = design,
-already.tested.X = already.tested.X)
-
+# Now tuning a new component given previous tuned keepX
+already.tested.X = tune$choice.keepX
+tune = tune.block.splsda(X = data, Y = Y,
+                         ncomp = 4, test.keepX = test.keepX, design = design,
+                         already.tested.X = already.tested.X,
+                         BPPARAM = BPPARAM
+                         )
 tune$choice.keepX
 }
-
 }
 \references{
 Method:

@@ -57,7 +57,7 @@ performance of the model.}
 \item{progressBar}{by default set to \code{TRUE} to output the progress bar
 of the computation.}
 
-\item{scale}{boleean. If scale = TRUE, each block is standardized to zero
+\item{scale}{Boolean. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
 \item{tol}{Convergence stopping value.}

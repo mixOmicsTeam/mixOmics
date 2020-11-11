@@ -27,7 +27,7 @@ Data in the list should be arranged in samples x variables, with samples
 order matching in all data sets.}
 
 \item{Y}{Matrix or vector response for a multivariate regression framework.
-Data should be continuous variables (see \code{?mint.block.plsda} for
+Data should be continuous variables (see \code{?mint.block.splsda} for
 supervised classification and factor response).}
 
 \item{indY}{To be supplied if Y is missing, indicates the position of the
@@ -42,9 +42,12 @@ Applies to all blocks.}
 \item{design}{numeric matrix of size (number of blocks in X) x (number of
 blocks in X) with values between 0 and 1. Each value indicates the strenght
 of the relationship to be modelled between two blocks; a value of 0
-indicates no relationship, 1 is the maximum value. If \code{Y} is provided
-instead of \code{indY}, the \code{design} matrix is changed to include
-relationships to \code{Y}.}
+indicates no relationship, 1 is the maximum value. Alternatively, one of
+c('null', 'full') indicating a disconnected or fully connected design,
+respecively, or a numeric between 0 and 1 which will designate all
+off-diagonal elements of a fully connected design (see examples in
+\code{block.splsda}). If \code{Y} is provided instead of \code{indY}, the
+\code{design} matrix is changed to include relationships to \code{Y}.}
 
 \item{scheme}{Character, one of 'horst', 'factorial' or 'centroid'. Default =
 \code{'horst'}, see reference.}

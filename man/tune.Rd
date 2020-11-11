@@ -6,7 +6,7 @@
 mixOmics}
 \usage{
 tune(
-  method,
+  method = c("spls", "splsda", "mint.splsda", "rcc", "pca", "spca"),
   X,
   Y,
   multilevel = NULL,
@@ -39,7 +39,7 @@ tune(
 \arguments{
 \item{method}{This parameter is used to pass all other argument to the
 suitable function. \code{method} has to be one of the following: "spls",
-"splsda", "mint.splsda", "rcc", "pca".}
+"splsda", "mint.splsda", "rcc", "pca", "spca".}
 
 \item{X}{numeric matrix of predictors. \code{NA}s are allowed.}
 

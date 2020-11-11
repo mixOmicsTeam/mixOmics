@@ -1,18 +1,15 @@
 #' Sparse Principal Components Analysis
 #' 
-#' Performs a sparse principal components analysis to perform variable
-#' selection by using singular value decomposition.
+#' Performs a sparse principal component analysis for variable
+#' selection using singular value decomposition and lasso penalisation on the loading vectors.
 #' 
-#' The calculation employs singular value decomposition of the (centered and
-#' scaled) data matrix and LASSO to generate sparsity on the loading vectors.
 #' 
 #' \code{scale= TRUE} is highly recommended as it will help obtaining
 #' orthogonal sparse loading vectors.
 #' 
-#' \code{keepX} is the number of variables to keep in loading vectors. The
-#' difference between number of columns of \code{X} and \code{keepX} is the
-#' degree of sparsity, which refers to the number of zeros in each loading
-#' vector.
+#' \code{keepX} is the number of variables to select in each loading vector. 
+#' \code{keepX} refers to the number of variables with non zero coefficient in 
+#' each loading vector.
 #' 
 #' Note that \code{spca} does not apply to the data matrix with missing values.
 #' 
@@ -27,14 +24,21 @@
 #' count data, we thus advise the normalise raw data with a 1 offset). For ILR
 #' transformation and additional offset might be needed.
 #' 
-#' It is important to note that since the derived components are not guaranteed
-#' to be uncorrelated, adjustment is performed for the (cumulative) explained
-#' variance of each component in the output.
+#' The principal components are not guaranteed to be orthogonal in sPCA. 
+#' We adopt the approach of Shen and Huang 2008 (Section 2.3) to estimate 
+#' the explained variance  in the case where the sparse loading vectors 
+#' (and principal components) are not orthogonal. The data are projected 
+#' onto the space spanned by the first loading vectors and the variance 
+#' explained is then adjusted for potential correlation between PCs. 
+#' Note that in practice, the loading vectors tend to be orthogonal if the
+#' data are centered and scaled in sPCA.
 #' 
 #' @inheritParams pca
+#' @param X a numeric matrix (or data frame) which provides the data for the sparse
+#' principal components analysis. It should not contain missing values.
 #' @param scale (Default=TRUE) Logical indicating whether the variables should be
 #' scaled to have unit variance before the analysis takes place. 
-#' @param keepX numeric vector of length ncomp, the number of variables to keep
+#' @param keepX numeric vector of length \code{ncomp}, the number of variables to keep
 #' in loading vectors. By default all variables are kept in the model. See
 #' details.
 #' @param logratio one of ('none','CLR'). Specifies the log ratio
@@ -194,9 +198,16 @@ spca <-
         
         
         #--initialization--#
-        X=as.matrix(X)
-        X.temp=as.matrix(X)
-        X.temp[is.na(X.temp)] <- 0
+        X <- as.matrix(X)
+
+        if (isFALSE(center) && any(colMeans(X, na.rm = TRUE) != 0)) {
+            warning("Data are not column-centered and contain missing values which will be ",
+                    "set to zero for caluclations. Consider either using center = TRUE ",
+                    "to lessen the side-effects, or imputing the missing values.")
+        }
+        is.na.X <- is.na(X)
+        X[is.na.X] <- 0
+        X.temp <- X
         n=nrow(X)
         p=ncol(X)
         
@@ -291,7 +302,8 @@ spca <-
             mat.v[,h] = loadings
             mat.u[,h] = u
             
-            #--calculating adjusted variances explained--#
+            #--calculating the variance explained by projecting the data onto the space spanned by the h loading vectors--#
+            # this is in case the loading vectors are not orthogonal (see Shen and Huang 2008 Section 2.3)
             X.var = X %*% mat.v[,1:h]%*%solve(t(mat.v[,1:h])%*%mat.v[,1:h])%*%t(mat.v[,1:h])
             vect.varX[h] = sum(X.var^2)
             
@@ -308,16 +320,18 @@ spca <-
         
         var.tot <- sum(X^2)
         cum.var <- vect.varX/var.tot
-        ## calculate per-components explained variance from cum.var
+        ## calculate per-component explained variance from cum.var,
+        # the variance is adjusted to account for potential correlation between PCs:                
         explained_variance <- c(cum.var[1], diff(cum.var))
         
-        
+        ## return missing values for output
+        X[is.na.X] <- NA_real_
         result = (list(call = cl, X = X,
                        ncomp = ncomp,	
                        #sdev = sdev,  # KA: to add if biplot function (but to be fixed!)
                        #center = center, # KA: to add if biplot function (but to be fixed!)
                        #scale = scale,   # KA: to add if biplot function (but to be fixed!)
-                       explained_variance = explained_variance,
+                       explained_variance = list(X=explained_variance),
                        cum.var = cum.var,
                        keepX = vect.keepX,
                        iter = vect.iter,

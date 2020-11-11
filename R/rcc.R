@@ -193,7 +193,7 @@ rcc <-
     ncomp = round(ncomp)
     
     if (ncomp > min(p, q))
-      stop("'comp' must be smaller or equal than ", min(p, q), ".",
+      stop("'comp' must be <= ", min(p, q), ".",
            call. = FALSE)
     
     #-- lambda1

@@ -164,7 +164,7 @@ sipca <-
         
         #calcul explained variance
         explX=explained_variance(X,result$variates$X,ncomp)
-        result$explained_variance=explX
+        result$explained_variance = list(X = explX)
         
         
         

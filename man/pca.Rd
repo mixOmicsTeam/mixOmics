@@ -32,7 +32,8 @@ ncol(X))}}
 \item{center}{(Default=TRUE) Logical, whether the variables should be
 shifted to be zero centered. Alternatively, a vector of length equal the
 number of columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}.}
+\code{\link{scale}}. If the data contain missing values, columns should be
+centered for reliable results.}
 
 \item{scale}{(Default=FALSE) Logical indicating whether the variables should be
 scaled to have unit variance before the analysis takes place. The default is

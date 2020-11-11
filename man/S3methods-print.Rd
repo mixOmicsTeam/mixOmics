@@ -26,6 +26,7 @@
 \alias{print.perf.mint.splsda.mthd}
 \alias{print.perf.sgccda.mthd}
 \alias{print.tune.pca}
+\alias{print.tune.spca}
 \alias{print.tune.rcc}
 \alias{print.tune.splsda}
 \alias{print.tune.mint.splsda}
@@ -78,6 +79,8 @@
 \method{print}{perf.sgccda.mthd}(x, ...)
 
 \method{print}{tune.pca}(x, ...)
+
+\method{print}{tune.spca}(x, ...)
 
 \method{print}{tune.rcc}(x, ...)
 

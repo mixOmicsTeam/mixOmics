@@ -88,7 +88,7 @@
 #' @param measure Three misclassification measure are available: overall
 #' misclassification error \code{overall}, the Balanced Error Rate \code{BER}
 #' or the Area Under the Curve \code{AUC}
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
+#' @param scale Boolean. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
 #' @param auc if \code{TRUE} calculate the Area Under the Curve (AUC)
 #' performance of the model based on the optimisation measure \code{measure}.
@@ -598,7 +598,7 @@ tune.splsda <-
             
             for (i in 1:length(test.keepX))
             {
-                spls.train = mixOmics::splsda(X, Y, ncomp = ncomp, keepX = c(already.tested.X, test.keepX[i]), logratio = logratio, near.zero.var = FALSE, mode = "regression")
+                spls.train = splsda(X, Y, ncomp = ncomp, keepX = c(already.tested.X, test.keepX[i]), logratio = logratio, near.zero.var = FALSE)
                 
                 # Note: this is performed on the full data set
                 # (could be done with resampling (bootstrap) (option 1) and/or prediction (option 2))

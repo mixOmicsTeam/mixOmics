@@ -17,8 +17,7 @@ tune.pca(
 )
 }
 \arguments{
-\item{X}{a numeric matrix (or data frame) which provides the data for the
-principal components analysis. It can contain missing values.}
+\item{X}{numeric matrix of predictors. \code{NA}s are allowed.}
 
 \item{ncomp}{integer, the number of components to initially analyse in
 \code{tune.pca} to choose a final \code{ncomp} for \code{pca}. If
@@ -36,10 +35,9 @@ scaling is advisable. Alternatively, a vector of length equal the number of
 columns of \code{X} can be supplied. The value is passed to
 \code{\link{scale}}.}
 
-\item{max.iter}{integer, the maximum number of iterations for the NIPALS
-algorithm.}
+\item{max.iter}{Integer, the maximum number of iterations.}
 
-\item{tol}{a positive real, the tolerance used for the NIPALS algorithm.}
+\item{tol}{Numeric, convergence tolerance criteria.}
 
 \item{logratio}{one of ('none','CLR','ILR'). Default to 'none'}
 
@@ -92,6 +90,7 @@ internal pre-processing step, through \code{\link{logratio.transfo}} and
 data(liver.toxicity)
 tune <- tune.pca(liver.toxicity$gene, center = TRUE, scale = TRUE)
 tune
+plot(tune)
 }
 \seealso{
 \code{\link{nipals}}, \code{\link{biplot}},
@@ -100,6 +99,6 @@ for more details.
 }
 \author{
 Ignacio González, Leigh Coonan, Kim-Anh Le Cao, Fangzhou Yao, 
-Florian Rohart, AL J Abadi
+Florian Rohart, Al J Abadi
 }
 \keyword{algebra}

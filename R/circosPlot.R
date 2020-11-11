@@ -32,6 +32,8 @@
 #'  \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
 #'  units of the arc band width. Positive values push feature names radially 
 #'  outward. Default to -0.33.
+#'  \item \bold{block.labels.adj} Numeric between -1 and 1. Adjusts the radial
+#'  location of block names radially inward or outward. Default to 0.
 #' }
 #' @return If saved in an object, the circos plot will output the similarity
 #' matrix and the names of the variables displayed on the plot (see
@@ -277,7 +279,7 @@ circosPlot <- function(object,
     drawIdeogram(R=circleR, cir=db, W=segmentWidth,  show.band.labels=TRUE,
                  show.chr.labels=TRUE, chr.labels.R= chrLabelsR, chrData=chr,
                  size.variables = size.variables, size.labels=size.labels,
-                 color.blocks = color.blocks, line = line, var.adj = list(...)$var.adj)
+                 color.blocks = color.blocks, line = line, ...)
     # Plot links
     if(nrow(links)>0)
         drawLinks(R=linksR, cir=db,   mapping=links,   col=linkColors,
@@ -352,14 +354,14 @@ drawIdeogram = function(R, xc=400, yc=400, cir, W,
                         size.labels,
                         color.blocks,
                         line,
-                        var.adj = NULL)
+                        var.adj = -0.33, ## radial adjustment of feature names
+                        block.labels.adj = 0, ## radial adjustment of block label names
+                        ...)
 {
     # Draw the main circular plot: segments, bands and labels
     chr.po    = cir 
     chr.po[,1]  = gsub("chr","",chr.po[,1]) 
     chr.num     = nrow(chr.po) 
-    
-    var.adj <- .change_if_null(arg = var.adj, default = -0.33)
     dat.c     = chrData 
     dat.c[,1] = gsub("chr", "", dat.c[,1]) 
     
@@ -406,7 +408,7 @@ drawIdeogram = function(R, xc=400, yc=400, cir, W,
             } else {
                 #put the labels closer to the circle
                 draw.text.rt(xc, xc, chr.labels.R, w.m, chr.t, cex=size.labels,
-                             segmentWidth = 75, parallel=TRUE)
+                             segmentWidth = 55 + ceiling(block.labels.adj*55), parallel=TRUE)
             }
         }
     } #End for

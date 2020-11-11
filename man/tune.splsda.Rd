@@ -57,7 +57,7 @@ classification error rate, should be a subset of \code{"centroids.dist"},
 misclassification error \code{overall}, the Balanced Error Rate \code{BER}
 or the Area Under the Curve \code{AUC}}
 
-\item{scale}{boleean. If scale = TRUE, each block is standardized to zero
+\item{scale}{Boolean. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)

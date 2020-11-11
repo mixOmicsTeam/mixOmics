@@ -11,9 +11,12 @@ design
 # set number of component per data set
 ncomp = c(2)
 
-TCGA.block.pls = block.pls(X = data, Y = breast.TCGA$data.train$protein, ncomp = ncomp,
-design = design)
+TCGA.block.pls = block.pls(X = data, Y = breast.TCGA$data.train$protein, 
+                           ncomp = ncomp, design = design)
 TCGA.block.pls
+## use design = 'full'
+TCGA.block.pls = block.pls(X = data, Y = breast.TCGA$data.train$protein, 
+                           ncomp = ncomp, design = 'full')
 # in plotindiv we color the samples per breast subtype group but the method is unsupervised!
 # here Y is the protein data set
 plotIndiv(TCGA.block.pls, group =  breast.TCGA$data.train$subtype, ind.names = FALSE)

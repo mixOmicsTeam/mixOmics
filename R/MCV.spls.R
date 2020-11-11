@@ -47,7 +47,7 @@
 # progressBar: show progress,
 # class.object
 # cl: if parallel, the clusters
-# scale: boleean. If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
+# scale: Boolean. If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
 # misdata: optional. any missing values in the data? list, misdata[[q]] for each data set
 # is.na.A: optional. where are the missing values? list, is.na.A[[q]] for each data set (if misdata[[q]] == TRUE)
 # ind.NA: optional. which rows have missing values? list, ind.NA[[q]] for each data set.

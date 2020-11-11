@@ -165,7 +165,7 @@ Check.entry.single = function(X,  ncomp, q)
 # keepX: number of \eqn{X} variables kept in the model on the last components.
 # keepY: number of \eqn{Y} variables kept in the model on the last components.
 # mode: deflation mode
-# scale: boleean. If scale = TRUE, each block is standardized to zero means and
+# scale: Boolean. If scale = TRUE, each block is standardized to zero means and
 #   unit variances (default: TRUE).
 # near.zero.var: boolean, see the internal \code{\link{nearZeroVar}} function
 #   (should be set to TRUE in particular for data with many zero values).
@@ -399,7 +399,7 @@ Check.entry.pls = function(X, Y, ncomp, keepX, keepY, test.keepX, test.keepY,
 #   Default to "svd"
 # scheme: the input scheme, one of "horst", "factorial" or ""centroid".
 #   Default to "centroid"
-# scale: boleean. If scale = TRUE, each block is standardized to zero means
+# scale: Boolean. If scale = TRUE, each block is standardized to zero means
 #   and unit variances (default: TRUE).
 # near.zero.var: boolean, see the internal \code{\link{nearZeroVar}} function
 #   (should be set to TRUE in particular for data with many zero values).
@@ -522,6 +522,9 @@ Check.entry.wrapper.mint.block = function(X,
         {
             design = 1 - diag(length(A)+1)
             rownames(design) = colnames(design) = c(names(A), "Y")
+        } else if (is.null(dim(design)))
+        {
+            design <- .create_design(X = X, design = design, indY = indY)
         } else if (ncol(design) != nrow(design) || ncol(design) < length(X) ||
                    ncol(design) > (length(X) + 1) ){#|| any(!design %in% c(0,1))) {
             stop(paste0("'design' must be a square matrix with ", length(X),
@@ -559,7 +562,10 @@ Check.entry.wrapper.mint.block = function(X,
         if (missing(design))
         {
             design = 1 - diag(length(A))
-        } else if (ncol(design) != nrow(design) || ncol(design) < length(A) ||
+        } else if (is.null(dim(design)))
+        {
+            design <- .create_design(X = X, design = design, indY = indY)
+        }  else if (ncol(design) != nrow(design) || ncol(design) < length(A) ||
                    ncol(design) > (length(A) + 1) )#|| any( !design %in% c(0,1)))
         {
             stop(paste0("'design' must be a square matrix with ", length(A),
@@ -694,7 +700,7 @@ Check.entry.wrapper.mint.block = function(X,
 #   Default to "centroid"
 # mode: input mode, one of "canonical", "classic", "invariant" or "regression".
 #   Default to "regression"
-# scale: boleean. If scale = TRUE, each block is standardized to zero means and
+# scale: Boolean. If scale = TRUE, each block is standardized to zero means and
 #   unit variances (default: TRUE).
 # init: intialisation of the algorithm, one of "svd" or "svd.single".
 #   Default to "svd"
@@ -864,7 +870,7 @@ Check.entry.sgcca = function(X,
 #   By default set to 2 per block.
 # scheme: the input scheme, one of "horst", "factorial" or ""centroid".
 #   Default to "centroid"
-# scale: boleean. If scale = TRUE, each block is standardized to zero means and
+# scale: Boolean. If scale = TRUE, each block is standardized to zero means and
 #    unit variances (default: TRUE).
 # init: intialisation of the algorithm, one of "svd" or "svd.single".
 #   Default to "svd"

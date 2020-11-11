@@ -105,10 +105,10 @@ plotIndiv.pca <-
         
         if (style ==  "3d")
         {
-            inf = object$explained_variance[c(comp[1], comp[2], comp[3])]
+            inf = object$explained_variance$X[c(comp[1], comp[2], comp[3])]
             inf = round(inf, 2)
         } else {
-            inf = object$explained_variance[c(comp[1], comp[2])]
+            inf = object$explained_variance$X[c(comp[1], comp[2])]
             inf = round(inf, 2)}
         
         

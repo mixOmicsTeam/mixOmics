@@ -514,7 +514,7 @@ cim <-
                 if (!is.numeric(comp) || any(comp < 1))
                     stop("invalid vector for 'comp'.", call. = FALSE)
                 if (any(comp > ncomp))
-                    stop("the elements of 'comp' must be smaller or equal than ",
+                    stop("the elements of 'comp' must be <= ",
                          ncomp,
                          ".",
                          call. = FALSE)

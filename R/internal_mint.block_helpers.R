@@ -35,9 +35,10 @@
 # --------------------------------------
 # get.weights: used in (MCV.)(block.)(s)pls(da).R
 # --------------------------------------
-#' Get block weights for in analyses
+#' Get block weights for block analyses
 #'
-#' weights saved in objects and used by \code{internal.predict.DA}
+#' weights are calculated as correlation of block components with those of
+#' Y. Values saved in objects and used by \code{internal.predict.DA}
 #'
 #' @param variates Named list of variates from internal_wrapper.mint.block
 #' @param indY Integer, the Y matrix index from internal_wrapper.mint.block
@@ -100,24 +101,42 @@ study_split <- function(data, study)
 # --------------------------------------
 # soft_thresholding: used in sparsity (below)
 # --------------------------------------
-# x: vector
-# nx: number of entries to put to zero
-
-soft_thresholding_L1 <- function(x,nx)
+#' Soft-thresholding of loading vectors
+#'
+#' @param x A vector of loadings
+#' @param nx Integer, number of features whose loadings are to be set to 0
+#'
+#' @return A numeric vector of the penalised loadings
+#'
+#' @details If the number of features to be dropped are greater than 0, the
+#'   procedure does so by setting the smallest weight by absolute value to 0.
+#'   The weights of the remaining features are then shrunk towards zero by the
+#'   absolute value of the greatest weight eliminated.
+#' @noRd
+#' @examples
+#' x1 = c(0.9, -1.2, 0.23, 0.11)
+#' x2 = c(0.9, -1.2, 0.23, 0.89)
+#' 
+#' soft_thresholding_L1(x = x1, nx = 2)
+#' #> 0.67 -0.97  0.00  0.00
+#' 
+#' soft_thresholding_L1(x = x2, nx = 2)
+#' #> 0.01 -0.31  0.00  0.00
+soft_thresholding_L1 <- function(x, nx)
 {
-    #selection on a (loadings.X). modified on 19/02/15 to make sure that a!=0
-    if (nx!=0)
+    if (nx > 0)
     {
-        absa = abs(x)
-        if (any(rank(absa, ties.method = "max") <= nx))
+        abs.a = abs(x)
+        select_feature <- rank(abs.a, ties.method = "max") > nx
+        if (!all(select_feature))
         {
-            x = ifelse(rank(absa, ties.method = "max") <= nx, 0,
-                       sign(x) * (absa - max(absa[rank(absa,
-                                                       ties.method = "max") <= nx])))
+            x <- ifelse(test = select_feature, 
+                        yes = sign(x) * (abs.a - max(abs.a[!select_feature])), 
+                        no = 0)
         }
     }
     
-    x
+    return(x)
 }
 
 # -----------------------------------------------------------------------------

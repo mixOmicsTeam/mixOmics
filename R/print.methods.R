@@ -379,7 +379,7 @@ print.pca <- function(x, ...)
         cat("  \n") 
     }
 
-    per.var = x$explained_variance
+    per.var = x$explained_variance$X
     cum.var = x$cum.var
 
     names(per.var) = paste("PC", 1:length(per.var), sep = "")
@@ -392,10 +392,13 @@ print.pca <- function(x, ...)
     print(per.var[1:ind.show], print.gap = 6)
     cat("  \n")
     
-    cat("  Cumulative proportion of", var.type, "explained variance for the first", ind.show, "principal components, see object$cum.var:", "\n")
-    print(cum.var[1:ind.show], print.gap = 6)
-    cat("  \n")
-    
+    if (!is(x, 'spca'))
+    {
+        cat("  Cumulative proportion of", var.type, "explained variance for the first", ind.show, "principal components, see object$cum.var:", "\n")
+        print(cum.var[1:ind.show], print.gap = 6)
+        cat("  \n")
+        
+    }
     cat("  Other available components: \n", "-------------------- \n")
     cat("  loading vectors: see object$rotation \n")
     
@@ -814,7 +817,6 @@ print.perf.sgccda.mthd = function(x, ...)
 }
 
 
-# tune: "spls", "splsda", "mint.splsda", "rcc", "pca"
 #' @name print
 #' @rdname S3methods-print
 #' @export
@@ -823,6 +825,20 @@ print.tune.pca = function(x, ...)
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
     cat(" for all principal components, see object$sdev, object$explained_variance and object$cum.var\n")
 }
+
+#' @name print
+#' @rdname S3methods-print
+#' @export
+print.tune.spca = function(x, ...)
+{
+    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+    cat(" Optimal keepX for each component, see object$choice.keepX \n\n")
+    cat(" Visualisation functions: \n", "-------------------- \n")
+    cat(" plot \n")
+    
+    
+}
+
 #' @name print
 #' @rdname S3methods-print
 #' @export

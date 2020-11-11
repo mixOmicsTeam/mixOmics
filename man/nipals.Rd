@@ -7,8 +7,8 @@
 nipals(X, ncomp = 2, reconst = FALSE, max.iter = 500, tol = 1e-06)
 }
 \arguments{
-\item{X}{a numeric matrix (or data frame) which provides the data for the
-principal components analysis. It can contain missing values.}
+\item{X}{a numeric matrix (or data.frame) which is column-centered. It can
+contain missing values.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
@@ -73,6 +73,15 @@ X.na[idx.na == 0] <- NA
 X.rec <- nipals(X.na, reconst = TRUE)$rec
 round(X, 2)
 round(X.rec, 2)
+## nutrimouse lipid data
+data("nutrimouse")
+lipid <- nutrimouse$lipid
+## center data
+lipid <- scale(lipid, center = TRUE, scale = FALSE)
+## nipals
+res <- nipals(scale(nutrimouse$lipid, center = TRUE, scale = FALSE), ncomp = 10)
+res
+plot(res)
 }
 \references{
 Tenenhaus, M. (1998). \emph{La regression PLS: theorie et

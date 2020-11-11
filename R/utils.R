@@ -173,9 +173,10 @@ stratified.subsampling <- function(Y, folds = 10)
 #' @author Al J Abadi
 #'
 #' @noRd
-.name_list <- function(char) {
+.name_list <- function(char, names=NULL) {
     out <- as.list(char)
-    names(out) <- char
+    names <- if (is.null(names)) char else names
+    names(out) <- names
     return(out)
 }
 
@@ -440,4 +441,210 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     out$Metrics = data.frame(freqRatio = freqRatio, percentUnique = percentUnique)
     out$Metrics = out$Metrics[out$Position, ]
     return(out)
+}
+
+## -------------------------- .check_test.keepX --------------------------- ##
+#' Check test.keepX
+#'
+#' Check test.keepX is valid when X is either matrix or list
+#' @param test.keepX test.keepX
+#' @param X X input from mixOmics tune models
+#' @param indY indY
+#' @param already.tested.X already.tested.X
+#'
+#' @return test.keepX, possibly re-ordered by names for list X
+#' @rdname Internals
+#' @keywords Internal
+#' @examples
+#' 
+.check_test.keepX <- function(test.keepX, 
+                              X,
+                              indY = NULL, # TODO
+                              already.tested.X = NULL # TODO
+)
+{
+    # TODO use this helper to check all test.keepX in the package
+    ## -- checker for a pair of test.keepX and X
+    .check_test.keepX_helper <- function(test.keepX_, X_)
+    {
+        if (is.data.frame(X_))
+        {
+            X_ <- as.matrix(X_)
+        }
+        
+        if (mode(test.keepX_) != 'numeric' || !all(test.keepX_ %in% seq_len(ncol(X_))))
+        {
+            stop( "'test.keepX' values should be positive whole numbers < ncol(X) = ", 
+                  ncol(X_), call. = FALSE)
+        }
+        invisible(NULL)
+    }
+    
+    ## ------- X matrix ------- ##
+    if (!is.null(dim(X)))
+    {
+        .check_test.keepX_helper(test.keepX, X)
+    } 
+    ## -------- X list -------- ##
+    else
+    {
+        ## names
+        if (! (is.list(test.keepX) && setequal(names(test.keepX), names(X)) ) )
+        {
+            stop("'test.keepX' must be a named list with names: names(X) = ", names(X))
+        }
+        else
+        {
+            test.keepX <- test.keepX[names(X)]
+            mapply(z = test.keepX, w = X, FUN = function(z, w) .check_test.keepX_helper(z, w)) 
+        }
+        
+    }
+    invisible(test.keepX)
+}
+## ----------------------------- .check_ncomp ----------------------------- ##
+
+#' Check ncomp
+#'
+#' Check that ncomp is positive integer <= smallest dim in the data
+#' @param ncomp ncomp arg
+#' @param X A matrix or a list of matrices with \code{dim} method
+#' @param default Integer, default value if \code{ncomp} is \code{NULL}
+#'
+#' @return Integer, or a condition
+#' @rdname Internals
+#' @examples
+#' \dontrun{
+#' .check_ncomp(300, X = mtcars)
+#' #> Error in .check_ncomp(300, X = mtcars) : 
+#' #>     'ncomp' must be smaller than or equal to the smallest dimenion in X: 11
+#' .check_ncomp(NULL, X = mtcars, default = 3)
+#' #> 3
+#' }
+#' 
+.check_ncomp <- function(ncomp, X, default = 2)
+{
+    # TODO use this helper to check all ncomp in the package
+    
+    if ( is.null(ncomp) )
+        ncomp <- default
+    
+    if (mode(ncomp) != 'numeric' || ncomp%%1 != 0)
+        stop("'ncomp' must be a positive integer")
+    ## ------- X matrix ------- ##
+    if (!is.null(dim(X)))
+    {
+        X <- list(X)
+    } 
+    min.dim <- min(sapply(X, function(z) min(dim(z))))
+    if (ncomp > min.dim)
+        stop("'ncomp' must be smaller than or equal to the smallest dimenion in X: ", min.dim)
+    
+    return(ncomp)
+}
+
+## ----------------------------- %=% ----------------------------- ##
+## check if LHS and RHS contain exactly the same elements without caring about order
+## TODO use this throughout for col.per.group etc.
+#'@noRd
+#'@examples
+#' letters %=% rev(letters)
+#' #> TRUE
+'%=%' <- function(LHS, RHS)
+{
+    diffs <- c(setdiff(LHS, RHS), setdiff(RHS, LHS))
+    if (length(diffs))
+    {
+        return(FALSE)
+    }
+    return(TRUE)
+}
+## NOT '%=%'
+#' @noRd
+#' @examples
+#' letters %!=% rev(letters)
+#' #> FALSE
+#' letters %!=% LETTERS
+#' #> TRUE
+'%!=%' <- function(LHS, RHS)
+{
+    ! (LHS %=% RHS)
+}
+
+## ---------------------------- .create_design ---------------------------- ##
+#' create design matrix for block.pls(da)
+#'
+#' @param X Named list of datasets. When
+#' type = 'null', for non-DA analyses the first one is 
+#' taken to be the response matrix which is fully connected to others.
+#' @param design Character, one of c('full', 'null'). If 'full' all blocks will
+#'   be connected, otherwise only the first block is connected. Alternatively, a
+#'   numeric between 0 and 1 which specifies all off-diagonal elements of a
+#'   fully connected matrix. Default is 'full'.
+#' @param indY Integer, index of Y dataset. It could also be NUL/missing.
+#' @return A matrix whose both dimension names match the names of \code{X} while
+#' after adding a placeholder 'Y' to it.
+#' @noRd
+#' @examples
+#' \dontrun{
+#' .create_design(list(rna = cars, met = mtcars, acc = faithful), design = 'full')
+#' .create_design(list(rna = cars, met = mtcars, acc = faithful), design = 'null')
+#' .create_design(list(rna = cars, met = mtcars, acc = faithful), design = 'null', indY = 2)
+#' .create_design(list(rna = cars, met = mtcars, acc = faithful), design = 0.3)
+#' .create_design(list(rna = cars, met = mtcars, acc = faithful), design = 0.3, indY = 2)
+#' 
+#' data("breast.TCGA")
+#' data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
+#'             protein = breast.TCGA$data.train$protein)
+#' diag(design) =  0
+#' ncomp = c(2)
+#' list.keepX = list(mrna = rep(20, 2), mirna = rep(10,2), protein = rep(10, 2))
+#' 
+#' block.splsda(X = data, Y = breast.TCGA$data.train$subtype, ncomp = ncomp, keepX = list.keepX, design = 'null')$design
+#' block.splsda(X = data, Y = breast.TCGA$data.train$subtype, ncomp = ncomp, keepX = list.keepX, design = 'full')$design
+#' block.splsda(X = data, Y = breast.TCGA$data.train$subtype, ncomp = ncomp, keepX = list.keepX, design = 0.1)$design
+#' block.spls(X = data, Y = data$mrna, ncomp = ncomp, keepX = list.keepX, design = 'null')$design
+#' block.spls(X = data, Y = data$protein, ncomp = ncomp, keepX = list.keepX, design = 'full')$design
+#' block.spls(X = data, Y = data$protein, ncomp = ncomp, keepX = list.keepX, design = 0.1)$design
+#'}
+.create_design <- function(X, design = 'full', indY = NULL) {
+    if (!all(is.list(X) && length(unique(names(X))) == length(X)))
+        stop("'X' must be a named list. See documentation.", call. = FALSE)
+    
+    if ((missing(indY) || is.null(indY)) ) {
+        indY <- length(X) + 1
+        X <- c(X, list(Y = matrix())) ## just so we have Y in X for design
+    }
+    
+    blocks <- names(X)
+    ## diag will be 0, specify off-diags
+    off_diag <- 1
+    if (is.character(design))
+    {
+        design <- match.arg(tolower(design), choices = c('full', 'null'))
+        if (design == 'null')
+            off_diag <- 0
+    } else if (isTRUE(tryCatch(design<= 1 & design >= 0)))
+    {
+        off_diag <- design
+    } else {
+        stop("'design' must be a matrix, or one of c('full', 'null'), or a numeric ",
+             "between 0 and 1. See documentation for details.")
+    }
+    
+    design <-  matrix(off_diag, nrow = length(blocks), ncol = length(blocks) ,dimnames = rep(list(blocks), 2))
+    
+    if (!(missing(indY) || is.null(indY)) ) {
+        if (isTRUE(tryCatch(is.integer(as.integer(indY)) && indY <= length(X))))
+        {
+            indY <- as.integer(indY)
+        } else 
+        {
+            stop("'indY' must be an integer from 1:length(X):", seq_along(X))
+        }
+        design[,indY] <-  design[indY,] <- 1
+    }
+    
+    diag(design) <- 0
+    return(design)
 }

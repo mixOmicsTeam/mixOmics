@@ -30,7 +30,7 @@
 #' @param keepX A vector of same length as X.  Each entry keepX[i] is the
 #' number of X[[i]]-variables kept in the model.
 #' @param scheme Either "horst", "factorial" or "centroid" (Default: "horst").
-#' @param scale boleean. If scale = TRUE, each block is standardized to zero
+#' @param scale Boolean. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
 #' @param init Mode of initialization use in the algorithm, either by Singular
 #' Value Decompostion of the product of each block of X with Y ("svd") or each

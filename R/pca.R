@@ -41,7 +41,8 @@
 #' @param center (Default=TRUE) Logical, whether the variables should be
 #' shifted to be zero centered. Alternatively, a vector of length equal the
 #' number of columns of \code{X} can be supplied. The value is passed to
-#' \code{\link{scale}}.
+#' \code{\link{scale}}. If the data contain missing values, columns should be
+#' centered for reliable results.
 #' @param scale (Default=FALSE) Logical indicating whether the variables should be
 #' scaled to have unit variance before the analysis takes place. The default is
 #' \code{FALSE} for consistency with \code{prcomp} function, but in general
@@ -255,6 +256,10 @@ pca <- function(X,
     #---------------------------------------------------------------------------#
     
     if (any(is.na(X))) {
+        if (isFALSE(center) && any(colMeans(X, na.rm = TRUE) != 0))
+            warning("Data are not column-centered and contain missing values which will be ",
+                    "set to zero for caluclations. Consider either using center = TRUE ",
+                    "to lessen the side-effects, or imputing the missing values.")
         res <- nipals(X, ncomp = ncomp, reconst = reconst, max.iter = max.iter, tol = tol)
         res$rotation <- res$p
         result <- c(result, res[c("ncomp", "sdev", "var.tot", "loadings", 
@@ -352,8 +357,9 @@ pca <- function(X,
     result$variates = list(X=result$x)
     
     # calculate explained variance
-    result$explained_variance = result$sdev^2 / result$var.tot
-    result$cum.var = cumsum(result$explained_variance)
+    explained_variance <- with(result, sdev^2 / var.tot)
+    result$cum.var = cumsum(explained_variance)
+    result$explained_variance = list(X = explained_variance)
     result$X <- NULL
     result
 }
