@@ -260,9 +260,11 @@ pca <- function(X,
     #---------------------------------------------------------------------------#
     
     if (any(is.na(X))) {
-        res <- nipals(X, ncomp = ncomp, reconst = reconst, 
+        res <- suppressMessages(
+            nipals(X, ncomp = ncomp, reconst = reconst, 
                       center = FALSE, scale = FALSE, ## already done
-                      max.iter = max.iter, tol = tol)
+                      max.iter = max.iter, tol = tol), 
+            classes = 'message')
         res$rotation <- res$p
         result <- c(result, res[c("ncomp", "sdev", "var.tot", "loadings", 
                                   "variates", "rotation", "x", "explained_variance", "cum.var")])
