@@ -72,18 +72,21 @@ loading vectors.}
 }
 }
 \description{
-Performs a sparse principal component analysis for variable
-selection using singular value decomposition and lasso penalisation on the loading vectors.
+Performs a sparse principal component analysis for variable selection using
+singular value decomposition and lasso penalisation on the loading vectors.
 }
 \details{
-\code{scale= TRUE} is highly recommended as it will help obtaining
-orthogonal sparse loading vectors.
+\code{scale= TRUE} is highly recommended as it will help obtaining orthogonal
+sparse loading vectors.
 
-\code{keepX} is the number of variables to select in each loading vector. 
-\code{keepX} refers to the number of variables with non zero coefficient in 
-each loading vector.
+\code{keepX} is the number of variables to select in each loading vector,
+i.e. the number of variables with non zero coefficient in each loading
+vector.
 
-Note that \code{spca} does not apply to the data matrix with missing values.
+Note that data can contain missing values only when \code{logratio = 'none'}
+is used. In this case, \code{center=TRUE} should be used to center the data
+in order to effectively ignore the missing values. This is the default
+behaviour in \code{spca}.
 
 According to Filzmoser et al., a ILR log ratio transformation is more
 appropriate for PCA with compositional data. Both CLR and ILR are valid.
