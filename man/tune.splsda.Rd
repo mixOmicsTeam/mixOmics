@@ -43,9 +43,9 @@ test from the \eqn{X} data set}
 indicating the number of variables to select from the \eqn{X} data set on
 the firsts components.}
 
-\item{validation}{character.  What kind of (internal) validation to use,
-matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
-\code{"Mfold"}.}
+\item{validation}{character. What kind of (internal) validation to use,
+matching one of \code{"Mfold"} or \code{"loo"} (short for 'leave-one-out').
+Default is \code{"Mfold"}.}
 
 \item{folds}{the folds in the Mfold cross-validation. See Details.}
 
@@ -147,7 +147,7 @@ For a sPLS-DA multilevel two-factor analysis, the correlation between
 components from the within-subject variation of X and the \code{cond} matrix
 is computed on the whole data set. The reason why we cannot obtain a
 cross-validation error rate as for the spls-DA one-factor analysis is
-because of the dififculty to decompose and predict the within matrices
+because of the difficulty to decompose and predict the within matrices
 within each fold.
 
 For a sPLS two-factor analysis a sPLS canonical mode is run, and the

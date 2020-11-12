@@ -8,6 +8,7 @@ tune.spca(
   X,
   ncomp = 2,
   nrepeat = 1,
+  validation = c("Mfold", "loo"),
   folds,
   test.keepX,
   center = TRUE,
@@ -27,6 +28,10 @@ NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
 ncol(X))}}
 
 \item{nrepeat}{Number of times the Cross-Validation process is repeated.}
+
+\item{validation}{character. What kind of (internal) validation to use,
+matching one of \code{"Mfold"} or \code{"loo"} (short for 'leave-one-out').
+Default is \code{"Mfold"}.}
 
 \item{folds}{the folds in the Mfold cross-validation. See Details.}
 

@@ -37,7 +37,7 @@
 #' components from the within-subject variation of X and the \code{cond} matrix
 #' is computed on the whole data set. The reason why we cannot obtain a
 #' cross-validation error rate as for the spls-DA one-factor analysis is
-#' because of the dififculty to decompose and predict the within matrices
+#' because of the difficulty to decompose and predict the within matrices
 #' within each fold.
 #' 
 #' For a sPLS two-factor analysis a sPLS canonical mode is run, and the
@@ -78,9 +78,9 @@
 #' @param already.tested.X Optional, if \code{ncomp > 1} A numeric vector
 #' indicating the number of variables to select from the \eqn{X} data set on
 #' the firsts components.
-#' @param validation character.  What kind of (internal) validation to use,
-#' matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
-#' \code{"Mfold"}.
+#' @param validation character. What kind of (internal) validation to use,
+#'   matching one of \code{"Mfold"} or \code{"loo"} (short for 'leave-one-out').
+#'   Default is \code{"Mfold"}.
 #' @param folds the folds in the Mfold cross-validation. See Details.
 #' @param dist distance metric to use for \code{splsda} to estimate the
 #' classification error rate, should be a subset of \code{"centroids.dist"},
