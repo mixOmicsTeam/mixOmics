@@ -4,11 +4,20 @@
 \alias{nipals}
 \title{Non-linear Iterative Partial Least Squares (NIPALS) algorithm}
 \usage{
-nipals(X, ncomp = 2, reconst = FALSE, max.iter = 500, tol = 1e-06)
+nipals(
+  X,
+  ncomp = 2,
+  center = TRUE,
+  scale = FALSE,
+  reconst = FALSE,
+  max.iter = 500,
+  tol = 1e-06
+)
 }
 \arguments{
-\item{X}{a numeric matrix (or data.frame) which is column-centered. It can
-contain missing values.}
+\item{X}{a numeric matrix (or data.frame) which will should be
+column-centered as required by the algorithm. It can contain missing
+values.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
@@ -16,6 +25,19 @@ algorithm and if the data has missing values, \code{ncomp} gives the number
 of components to keep to perform the reconstitution of the data using the
 NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
 ncol(X))}}
+
+\item{center}{(Default=TRUE) Logical, whether the variables should be
+shifted to be zero centered. Alternatively, a vector of length equal the
+number of columns of \code{X} can be supplied. The value is passed to
+\code{\link{scale}}. If the data contain missing values, columns should be
+centered for reliable results.}
+
+\item{scale}{(Default=FALSE) Logical indicating whether the variables should be
+scaled to have unit variance before the analysis takes place. The default is
+\code{FALSE} for consistency with \code{prcomp} function, but in general
+scaling is advisable. Alternatively, a vector of length equal the number of
+columns of \code{X} can be supplied. The value is passed to
+\code{\link{scale}}.}
 
 \item{reconst}{logical that specify if \code{nipals} must perform the
 reconstitution of the data using the \code{ncomp} components.}
@@ -26,7 +48,7 @@ algorithm.}
 \item{tol}{Positive real, the tolerance used in the NIPALS algorithm.}
 }
 \value{
-An object of class 'mixo_nipals' contaning slots: 
+An object of class 'mixo_nipals' containing slots: 
 \item{call}{The function call.}
 \item{eig}{Vector containing the pseudo-singular values of \code{X}, of length
 \code{ncomp}.}

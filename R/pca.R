@@ -31,7 +31,9 @@
 #' transformation and additional offset might be needed.
 #' 
 #' @param X a numeric matrix (or data frame) which provides the data for the
-#' principal components analysis. It can contain missing values.
+#'   principal components analysis. It can contain missing values in which case
+#'   \code{center = TRUE} is used as required by the
+#'   \code(\link[mixOmics]{nipals}) function.
 #' @param ncomp Integer, if data is complete \code{ncomp} decides the number of
 #' components and associated eigenvalues to display from the \code{pcasvd}
 #' algorithm and if the data has missing values, \code{ncomp} gives the number
@@ -241,7 +243,9 @@ pca <- function(X,
     sc = attr(X, "scaled:scale")
     
     if (any(sc == 0))
-        stop("cannot rescale a constant/zero column to unit variance.",
+        stop("Columns with zero variance: ",
+             paste(which(sc == 0), collapse = ','),
+             "Remove these columns before proceeding.",
              call. = FALSE)
     
     cl = match.call()
@@ -256,11 +260,9 @@ pca <- function(X,
     #---------------------------------------------------------------------------#
     
     if (any(is.na(X))) {
-        if (isFALSE(center) && any(colMeans(X, na.rm = TRUE) != 0))
-            warning("Data are not column-centered and contain missing values which will be ",
-                    "set to zero for caluclations. Consider either using center = TRUE ",
-                    "to lessen the side-effects, or imputing the missing values.")
-        res <- nipals(X, ncomp = ncomp, reconst = reconst, max.iter = max.iter, tol = tol)
+        res <- nipals(X, ncomp = ncomp, reconst = reconst, 
+                      center = FALSE, scale = FALSE, ## already done
+                      max.iter = max.iter, tol = tol)
         res$rotation <- res$p
         result <- c(result, res[c("ncomp", "sdev", "var.tot", "loadings", 
                                   "variates", "rotation", "x", "explained_variance", "cum.var")])

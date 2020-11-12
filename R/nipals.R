@@ -13,11 +13,12 @@
 #' delete the rows with missing data or to estimate the missing data.
 #' 
 #' @inheritParams pca
-#' @param X a numeric matrix (or data.frame) which is column-centered. It can
-#'   contain missing values.
+#' @param X a numeric matrix (or data.frame) which will should be
+#'   column-centered as required by the algorithm. It can contain missing
+#'   values.
 #' @param reconst logical that specify if \code{nipals} must perform the
 #' reconstitution of the data using the \code{ncomp} components.
-#' @return An object of class 'mixo_nipals' contaning slots: 
+#' @return An object of class 'mixo_nipals' containing slots: 
 #' \item{call}{The function call.}
 #' \item{eig}{Vector containing the pseudo-singular values of \code{X}, of length
 #' \code{ncomp}.}
@@ -78,6 +79,8 @@
 
 nipals <- function (X,
                     ncomp = 2,
+                    center = TRUE,
+                    scale = FALSE,
                     reconst = FALSE,
                     max.iter = 500,
                     tol = 1e-06)
@@ -92,6 +95,7 @@ nipals <- function (X,
     if (any(apply(X, 1, is.infinite)))
         stop("infinite values in 'X'.", call. = FALSE)
     
+    X <- scale(X, center = center, scale = scale)
     nc = ncol(X)
     nr = nrow(X)
     #-- put a names on the rows and columns of X --#
