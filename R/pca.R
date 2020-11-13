@@ -40,11 +40,11 @@
 #' of components to keep to perform the reconstitution of the data using the
 #' NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
 #' ncol(X))}
-#' @param center (Default=TRUE) Logical, whether the variables should be
-#' shifted to be zero centered. Alternatively, a vector of length equal the
-#' number of columns of \code{X} can be supplied. The value is passed to
-#' \code{\link{scale}}. If the data contain missing values, columns should be
-#' centered for reliable results.
+#' @param center (Default=TRUE) Logical, whether the variables should be shifted
+#'   to be zero centered. Only set to FALSE if data have already been centered.
+#'   Alternatively, a vector of length equal the number of columns of \code{X}
+#'   can be supplied. The value is passed to \code{\link{scale}}. If the data
+#'   contain missing values, columns should be centered for reliable results.
 #' @param scale (Default=FALSE) Logical indicating whether the variables should be
 #' scaled to have unit variance before the analysis takes place. The default is
 #' \code{FALSE} for consistency with \code{prcomp} function, but in general
@@ -70,6 +70,10 @@
 #' @return \code{pca} returns a list with class \code{"pca"} and \code{"prcomp"}
 #' containing the following components: 
 #' \item{call}{The function call.}
+#' \item{X}{The input data matrix, possibly scaled and centered.}
+#' \item{X.rec}{If data contains missing values and \code{reconst=TRUE}, the
+#' reconstituted data matrix that can be used for imputating the missing values.
+#' See examples.}
 #' \item{ncomp}{The number of principal components used.}
 #' \item{center}{The centering used.}
 #' \item{scale}{The scaling used.}
@@ -77,18 +81,17 @@
 #' \item{sdev}{The eigenvalues of the covariance/correlation matrix, though
 #' the calculation is actually done with the singular values of the data
 #' matrix or by using NIPALS.}
-#' \item{rotation}{The matrix of variable loadings (i.e., a matrix whose
-#' columns contain the eigenvectors).}
-#' \item{x}{The value of the rotated data (the centred (and scaled if
-#' requested) data multiplied by the rotation/loadings matrix), also called
-#' the principal components.}
+#' \item{loadings}{A length one list of matrix of variable loadings for X (i.e.,
+#' a matrix whose columns contain the eigenvectors).}
+#' \item{variates}{A length one matrix of the values computed using projecting
+#' the observations onto principal components. These are the dimension-reduced
+#' representation of observations/samples.}
 #' \item{var.tot}{Total variance in the data.}
-#' \item{loadings}{Same as 'rotation' to keep the mixOmics spirit}
-#' \item{variates}{Same as 'x' to keep the mixOmics spirit}
 #' \item{explained_variance}{Explained variance from the multivariate model,
 #'   used for plotIndiv}
 #' \item{cum.var}{The cumulative explained variance for components.}
-#' \item{X}{The input data matrix.}
+#' \item{Xw}{If multilevel, the data matrix with within-group-variation removed.}
+#' \item{design}{If multilevel, the provided design.}
 #' @author Florian Rohart, Kim-Anh Lê Cao, Ignacio González, Al J Abadi
 #' @seealso \code{\link{nipals}}, \code{\link{prcomp}}, \code{\link{biplot}},
 #' \code{\link{plotIndiv}}, \code{\link{plotVar}} and http://www.mixOmics.org
