@@ -666,3 +666,29 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
         stop(err_msg, call. = FALSE)
     X
 }
+
+## ----------------------- .check_zero_var_columns ------------------------ ##
+#' Check if scaling can be performed (no constant vectors)
+#' @noRd
+#' @examples
+#' \dontrun
+#' {
+#' .check_zero_var_columns(matrix(rep(c(1, 2, 3), 2), nrow=2, byrow=TRUE))
+#' }
+# TODO use this through package
+.check_zero_var_columns <- function(X, scale = TRUE, block_name = 'X')
+{
+    if (!isFALSE(scale))
+    {
+        zero_var_cols <- which(colVars(X, na.rm = TRUE) == 0)
+        #' @importFrom matrixStats colVars
+        if (length(zero_var_cols) > 0)
+            stop("columns with zero variance in '", 
+                 block_name, 
+                 "': ",
+                 paste(zero_var_cols, collapse = ','),
+                 ". Remove these columns before scaling.\n",
+                 call. = FALSE)
+    }
+    NULL
+}

@@ -239,15 +239,11 @@ pca <- function(X,
     #-- multilevel approach ----------------------------------------------------#
     #---------------------------------------------------------------------------#
     
-    X = scale(X, center = center, scale = scale)
-    cen = attr(X, "scaled:center")
-    sc = attr(X, "scaled:scale")
+    .check_zero_var_columns(X, scale = scale)
     
-    if (any(sc == 0))
-        stop("Columns with zero variance: ",
-             paste(which(sc == 0), collapse = ','),
-             "Remove these columns before proceeding.",
-             call. = FALSE)
+    X <- scale(X, center = center, scale = scale)
+    sc <- attr(X, 'scale::scale')
+    cen <- attr(X, 'scale::scale')
     
     cl = match.call()
     cl[[1]] = as.name('pca')
