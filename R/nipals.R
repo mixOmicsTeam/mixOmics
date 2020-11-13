@@ -159,8 +159,8 @@ nipals <- function (X,
     }
     
     if (isFALSE(reconst)) { ## replace NA with 0 with messages
-        message('\nreplacing missing values with 0 for calculation ',
-            'of components as `reconst=FALSE` used.')
+        # message('\nreplacing missing values with 0 for calculation ',
+        #     'of components as `reconst=FALSE` used.')
         X[is.na.X] <- 0
         rec <- NULL
     } else {

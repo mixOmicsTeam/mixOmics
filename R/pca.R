@@ -62,10 +62,11 @@
 #' @param V Matrix used in the logratio transformation if provided.
 #' @param multilevel sample information for multilevel decomposition for
 #' repeated measurements.
-#' @param reconst (Default=TRUE) Logical. If matrix includes missing values, whether
-#' \code{nipals} must perform the reconstitution of the data using the
-#' \code{ncomp} components. The components are calculated by imputing
-#' the missing values when set to TRUE, otherwise the missing values will be ignored.
+#' @param reconst (Default=TRUE) Logical. If matrix includes missing values,
+#'   whether \code{nipals} must perform the reconstitution of the data using the
+#'   \code{ncomp} components. The components are calculated by imputing the
+#'   missing values when set to TRUE, otherwise the missing values will be set
+#'   to zero which will overestimate the explained variance.
 #' @return \code{pca} returns a list with class \code{"pca"} and \code{"prcomp"}
 #' containing the following components: 
 #' \item{call}{The function call.}
