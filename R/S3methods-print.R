@@ -402,21 +402,16 @@ print.pca <- function(x, ...)
     cat("  Other available components: \n", "-------------------- \n")
     cat("  loading vectors: see object$rotation \n")
     
-    if (is(x, 'mixo_nipals')) {
-        cat("  Other functions: \n", "-------------------- \n")
-        cat("  plot (scree plot of explained variance)\n")
-    } else {
-        cat("  Other functions: \n", "-------------------- \n")
-        if (is(x, 'spca'))
-        {
-            cat("  tune.spca, plotIndiv, plot, plotVar, selectVar, biplot\n")
-        }
-        else
-        {
-            cat("  plotIndiv, plot, plotVar, selectVar, biplot\n")
-        }
+    cat("  Other functions: \n", "-------------------- \n")
+    if (is(x, 'spca'))
+    {
+        cat("  tune.spca, plotIndiv, plot, plotVar, selectVar, biplot\n")
     }
-
+    else
+    {
+        cat("  plotIndiv, plot, plotVar, selectVar, biplot\n")
+    }
+    
 }
 
 # ------------------------ print for ipca -------------------------

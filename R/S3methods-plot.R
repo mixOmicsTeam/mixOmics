@@ -18,11 +18,7 @@ plot.pca  <- function(x,
     #-- checking general input parameters --------------------------------------#
     #---------------------------------------------------------------------------#
     #-- ncomp check
-    if (inherits(x, 'mixo_nipals')) {
-        ncomp <- .check_ncomp(ncomp, X = x$x, default = x$ncomp)
-    } else {
-        ncomp <- .check_ncomp(ncomp, X = x$X, default = x$ncomp)
-    }
+    ncomp <- .check_ncomp(ncomp, X = x$X, default = x$ncomp)
     ## end check - begin screeplot
     expl_vars = (x$explained_variance$X)[seq_len(ncomp)] # relative variance
     ylab = "Explained Variance"
