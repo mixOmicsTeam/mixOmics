@@ -73,9 +73,11 @@ nipals <- function (X,
     #---------------------------------------------------------------------------#
 
     #-- initialisation --#
-    p <- matrix(nrow = nc, ncol = ncomp)
-    t.mat <- matrix(nrow = nr, ncol = ncomp)
+    comp_names <- paste0('PC', seq_len(ncomp))
+    p <- matrix(nrow = nc, ncol = ncomp, dimnames = list(colnames(X), comp_names))
+    t.mat <- matrix(nrow = nr, ncol = ncomp, dimnames = list(rownames(X), comp_names))
     eig <- vector("numeric", length = ncomp)
+    names(eig) <- comp_names
     nc.ones <- rep(1, nc)
     nr.ones <- rep(1, nr)
     is.na.X <- is.na(X)
@@ -149,9 +151,9 @@ nipals <- function (X,
     
     if (reconst)
     {
-        if (ncomp < 5)
-            message("\nconsider high 'ncomp' for more accurate ",
-                    "imputation of the missing values.\n")
+        if (ncomp < min(5, min(dim(X))))
+            message("consider high 'ncomp' for more accurate ",
+                    "imputation of the missing values.")
         X.hat <- t.mat %*% diag(eig) %*% t(p)
         
         colnames(X.hat) <- colnames(X)
