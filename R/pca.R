@@ -62,18 +62,10 @@
 #' @param V Matrix used in the logratio transformation if provided.
 #' @param multilevel sample information for multilevel decomposition for
 #' repeated measurements.
-#' @param reconst (Default=TRUE) Logical. If matrix includes missing values,
-#'   whether \code{nipals} must perform the reconstitution of the data using the
-#'   \code{ncomp} components. The components are calculated by imputing the
-#'   missing values when set to TRUE, otherwise the missing values will be set
-#'   to zero which will overestimate the explained variance.
 #' @return \code{pca} returns a list with class \code{"pca"} and \code{"prcomp"}
 #' containing the following components: 
 #' \item{call}{The function call.}
 #' \item{X}{The input data matrix, possibly scaled and centered.}
-#' \item{X.rec}{If data contains missing values and \code{reconst=TRUE}, the
-#' reconstituted data matrix that can be used for imputating the missing values.
-#' See examples.}
 #' \item{ncomp}{The number of principal components used.}
 #' \item{center}{The centering used.}
 #' \item{scale}{The scaling used.}
@@ -119,8 +111,7 @@ pca <- function(X,
                 logratio = c('none','CLR','ILR'),
                 ilr.offset = 0.001,
                 V = NULL,
-                multilevel = NULL,
-                reconst = FALSE)
+                multilevel = NULL)
 {
     
     #-- checking general input parameters --------------------------------------#
@@ -235,10 +226,9 @@ pca <- function(X,
     #-- End: multilevel approach ----------------------------------------------------#
     
     .check_zero_var_columns(X, scale = scale)
-    
     X <- scale(X, center = center, scale = scale)
-    sc <- attr(X, 'scale::scale')
-    cen <- attr(X, 'scale::scale')
+    sc <- attr(X, 'scaled:scale')
+    cen <- attr(X, 'scaled:center')
     result <- list(call = match.call(), 
                    X = X, 
                    ncomp = ncomp,
@@ -251,12 +241,10 @@ pca <- function(X,
     variates <- NULL ## only changed in ILR case, otherwise calculated using X and loadings
     if (any(is.na(X))) {
         res <- 
-            nipals(X, ncomp = ncomp, reconst = reconst, 
+            nipals(X, ncomp = ncomp, reconst = FALSE, 
                    max.iter = max.iter, tol = tol)
         sdev <- res$eig
         loadings <- res$p
-        
-        result$X.rec <- res$rec
     } else {
         
         if (logratio %in% c('CLR', 'none')) {
@@ -287,13 +275,11 @@ pca <- function(X,
             loadings = loadings,
             variates = variates
         )
-    ## add variance stats
-    result <- .add_var_stats(result)
-    expected_output_names <- c("call", "X", "X.rec", "ncomp", "center", "scale", "names", 
+    ## add explained/cum/total variance
+    result <- c(result, .get_var_stats(X = X, sdev = sdev))
+    expected_output_names <- c("call", "X", "ncomp", "center", "scale", "names", 
                          "sdev", "loadings", "variates", "explained_variance", "var.tot",
                          "cum.var")
-    if (is.null(result$X.rec))
-        result <- c(result, list(X.rec=NULL))
     if (names(result) %!=% expected_output_names)
     {
         stop("Unexpected error. Please submit an issue at\n",
@@ -350,19 +336,23 @@ pca <- function(X,
 
 #' Add cumulative and per-component explained variance 
 #'
-#' @param result A list, output of \code{\link{.add_sdev_loadings_and_variates}}
+#' @param X Numeric matrix
+#' @param sdev Numeric sd vector
+#' 
 #'
-#' @return A list. Modifies input list by adding total variance, loadings and
-#' variates (only for consistency of mixOmics outputs), and per-component and
+#' @return A list including total variance, loadings and
+#' variates, as well as per-component and
 #' cumulative explained variance.
 #' @noRd
-.add_var_stats <- function(result) {
-    result$var.tot=sum(result$X^2, na.rm = TRUE) / max(1, nrow(result$X) - 1)# same as all res$d, or variance after nipals replacement of the missing values
+.get_var_stats <- function(X, sdev) {
+    var.tot=sum(X^2, na.rm = TRUE) / max(1, nrow(X) - 1)
     
     # calculate explained variance
-    expl_var <- result$sdev^2 / result$var.tot
-    result$cum.var = cumsum(expl_var)
-    result$explained_variance = list(X = expl_var)
-    result
+    expl_var <- sdev^2 / var.tot
+    cum.var = cumsum(expl_var)
+    explained_variance = list(X = expl_var)
+    list(explained_variance = explained_variance,
+         var.tot = var.tot, 
+         cum.var = cum.var)
 }
 

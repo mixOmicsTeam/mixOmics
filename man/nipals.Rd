@@ -4,12 +4,13 @@
 \alias{nipals}
 \title{Non-linear Iterative Partial Least Squares (NIPALS) algorithm}
 \usage{
-nipals(X, ncomp = 2, reconst = FALSE, max.iter = 500, tol = 1e-06)
+nipals(X, ncomp = 2, reconst = TRUE, max.iter = 500, tol = 1e-06)
 }
 \arguments{
-\item{X}{a numeric matrix (or data.frame) which must be
-column-centered as required by the algorithm. It may contain missing
-values.}
+\item{X}{a numeric matrix (or data frame) which provides the data for the
+principal components analysis. It can contain missing values in which case
+\code{center = TRUE} is used as required by the
+\code{\link[mixOmics]{nipals}} function.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
@@ -18,8 +19,11 @@ of components to keep to perform the reconstitution of the data using the
 NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
 ncol(X))}}
 
-\item{reconst}{logical that specify if \code{nipals} must perform the
-reconstitution of the data using the \code{ncomp} components.}
+\item{reconst}{(Default=TRUE) Logical. If matrix includes missing values,
+whether \code{nipals} must perform the reconstitution of the data using the
+\code{ncomp} components. The components are calculated by imputing the
+missing values when set to TRUE, otherwise the missing values will be set
+to zero.}
 
 \item{max.iter}{Integer, the maximum number of iterations in the NIPALS
 algorithm.}
@@ -30,7 +34,6 @@ algorithm.}
 An object of class 'mixo_nipals' containing slots: 
 \item{eig}{Vector containing the pseudo-singular values of \code{X}, of length
 \code{ncomp}.}
-\item{loadings}{Matrix whose columns contain the right singular vectors of \code{X}.}
 \item{t}{Matrix whose columns contain the left singular vectors of \code{X}.
 Note that for a complete data matrix X, the return values \code{eig},
 \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
@@ -58,8 +61,8 @@ hilbert <- function(n) { i <- 1:n; 1 / outer(i - 1, i, "+") }
 X.na <- X <- hilbert(9)[, 1:6]
 
 ## Hilbert matrix with missing data
-idx.na <- matrix(sample(c(0, 1, 1, 1, 1), 36, replace = TRUE), ncol = 6)
-X.na[idx.na == 0] <- NA
+idx.na <- sample(seq_along(X), 10)
+X.na[idx.na] <- NA
 X.rec <- nipals(X.na, reconst = TRUE)$rec
 round(X, 2)
 round(X.rec, 2)

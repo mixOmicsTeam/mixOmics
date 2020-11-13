@@ -13,21 +13,19 @@
 #' delete the rows with missing data or to estimate the missing data.
 #' 
 #' @inheritParams pca
-#' @param X a numeric matrix (or data.frame) which must be
-#'   column-centered as required by the algorithm. It may contain missing
-#'   values.
-#' @param reconst logical that specify if \code{nipals} must perform the
-#' reconstitution of the data using the \code{ncomp} components.
+#' @param reconst (Default=TRUE) Logical. If matrix includes missing values,
+#'   whether \code{nipals} must perform the reconstitution of the data using the
+#'   \code{ncomp} components. The components are calculated by imputing the
+#'   missing values when set to TRUE, otherwise the missing values will be set
+#'   to zero.
 #' @return An object of class 'mixo_nipals' containing slots: 
 #' \item{eig}{Vector containing the pseudo-singular values of \code{X}, of length
 #' \code{ncomp}.}
-#' \item{loadings}{Matrix whose columns contain the right singular vectors of \code{X}.}
 #' \item{t}{Matrix whose columns contain the left singular vectors of \code{X}.
 #' Note that for a complete data matrix X, the return values \code{eig},
 #' \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
 #' \item{rec}{If \code{reonst=TRUE}, matrix obtained by the reconstitution of
 #' the data using the \code{ncomp} components.}
-#'  
 #' @author Sébastien Déjean, Ignacio González, Kim-Anh Le Cao, Al J Abadi
 #' @seealso \code{\link{svd}}, \code{\link{princomp}}, \code{\link{prcomp}},
 #' \code{\link{eigen}} and http://www.mixOmics.org for more details.
@@ -51,21 +49,23 @@
 #' X.na <- X <- hilbert(9)[, 1:6]
 #' 
 #' ## Hilbert matrix with missing data
-#' idx.na <- matrix(sample(c(0, 1, 1, 1, 1), 36, replace = TRUE), ncol = 6)
-#' X.na[idx.na == 0] <- NA
+#' idx.na <- sample(seq_along(X), 10)
+#' X.na[idx.na] <- NA
 #' X.rec <- nipals(X.na, reconst = TRUE)$rec
 #' round(X, 2)
 #' round(X.rec, 2)
 # TODO look into print/plot methods
 nipals <- function (X,
                     ncomp = 2,
-                    reconst = FALSE,
+                    reconst = TRUE,
                     max.iter = 500,
                     tol = 1e-06)
 {
     #-- X matrix
     X <- .check_numeric_matrix(X)
-    
+    if (any(colSums(!is.na(X)) == 0) | any(rowSums(!is.na(X)) == 0 ))
+        stop("some rows or columns are entirely missing. ", 
+             "Remove those before running pca.", call. = FALSE)
     nc = ncol(X)
     nr = nrow(X)
 
@@ -172,6 +172,8 @@ nipals <- function (X,
     }
     
     res <- list(eig = eig, p = p, t = t.mat, rec = rec)
+    ## add explained/cum/total variance
+    # res <- c(res, .get_var_stats(X = X, sdev = eig))
     class(res) <- c('mixo_nipals')
     res
     return(invisible(res))
