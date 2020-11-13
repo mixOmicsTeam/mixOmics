@@ -27,11 +27,11 @@ of components to keep to perform the reconstitution of the data using the
 NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
 ncol(X))}}
 
-\item{center}{(Default=TRUE) Logical, whether the variables should be
-shifted to be zero centered. Alternatively, a vector of length equal the
-number of columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}. If the data contain missing values, columns should be
-centered for reliable results.}
+\item{center}{(Default=TRUE) Logical, whether the variables should be shifted
+to be zero centered. Only set to FALSE if data have already been centered.
+Alternatively, a vector of length equal the number of columns of \code{X}
+can be supplied. The value is passed to \code{\link{scale}}. If the data
+contain missing values, columns should be centered for reliable results.}
 
 \item{scale}{(Default=TRUE) Logical indicating whether the variables should be
 scaled to have unit variance before the analysis takes place.}

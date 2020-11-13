@@ -4,19 +4,11 @@
 \alias{nipals}
 \title{Non-linear Iterative Partial Least Squares (NIPALS) algorithm}
 \usage{
-nipals(
-  X,
-  ncomp = 2,
-  center = TRUE,
-  scale = FALSE,
-  reconst = FALSE,
-  max.iter = 500,
-  tol = 1e-06
-)
+nipals(X, ncomp = 2, reconst = FALSE, max.iter = 500, tol = 1e-06)
 }
 \arguments{
-\item{X}{a numeric matrix (or data.frame) which will should be
-column-centered as required by the algorithm. It can contain missing
+\item{X}{a numeric matrix (or data.frame) which must be
+column-centered as required by the algorithm. It may contain missing
 values.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
@@ -25,19 +17,6 @@ algorithm and if the data has missing values, \code{ncomp} gives the number
 of components to keep to perform the reconstitution of the data using the
 NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
 ncol(X))}}
-
-\item{center}{(Default=TRUE) Logical, whether the variables should be
-shifted to be zero centered. Alternatively, a vector of length equal the
-number of columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}. If the data contain missing values, columns should be
-centered for reliable results.}
-
-\item{scale}{(Default=FALSE) Logical indicating whether the variables should be
-scaled to have unit variance before the analysis takes place. The default is
-\code{FALSE} for consistency with \code{prcomp} function, but in general
-scaling is advisable. Alternatively, a vector of length equal the number of
-columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}.}
 
 \item{reconst}{logical that specify if \code{nipals} must perform the
 reconstitution of the data using the \code{ncomp} components.}
@@ -49,25 +28,14 @@ algorithm.}
 }
 \value{
 An object of class 'mixo_nipals' containing slots: 
-\item{call}{The function call.}
 \item{eig}{Vector containing the pseudo-singular values of \code{X}, of length
 \code{ncomp}.}
-\item{p}{Matrix whose columns contain the right singular vectors of \code{X}.}
+\item{loadings}{Matrix whose columns contain the right singular vectors of \code{X}.}
 \item{t}{Matrix whose columns contain the left singular vectors of \code{X}.
 Note that for a complete data matrix X, the return values \code{eig},
 \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
-\item{ncomp}{The number of principal components used.}
 \item{rec}{If \code{reonst=TRUE}, matrix obtained by the reconstitution of
 the data using the \code{ncomp} components.}
-\item{sdev}{Same as 'eig' - for mixOmics consistency.}
-\item{var.tot}{Total variance in the data.}
-\item{loadings}{ame as 'p' to keep the mixOmics spirit}
-\item{x}{the value of the rotated data (the centred (and scaled if
-requested) data multiplied by the rotation/loadings matrix), also called
-the principal components.}
-\item{variates}{Same as 'x' to keep the mixOmics spirit}
-\item{explained_variance}{explained variance of each component.}
-\item{cum.var}{The cumulative explained variance for components.}
 }
 \description{
 This function performs NIPALS algorithm, i.e. the singular-value
@@ -95,15 +63,6 @@ X.na[idx.na == 0] <- NA
 X.rec <- nipals(X.na, reconst = TRUE)$rec
 round(X, 2)
 round(X.rec, 2)
-## nutrimouse lipid data
-data("nutrimouse")
-lipid <- nutrimouse$lipid
-## center data
-lipid <- scale(lipid, center = TRUE, scale = FALSE)
-## nipals
-res <- nipals(scale(nutrimouse$lipid, center = TRUE, scale = FALSE), ncomp = 10)
-res
-plot(res)
 }
 \references{
 Tenenhaus, M. (1998). \emph{La regression PLS: theorie et

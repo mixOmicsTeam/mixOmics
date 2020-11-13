@@ -38,11 +38,11 @@ Default is \code{"Mfold"}.}
 \item{test.keepX}{numeric vector for the different number of variables to
 test from the \eqn{X} data set}
 
-\item{center}{(Default=TRUE) Logical, whether the variables should be
-shifted to be zero centered. Alternatively, a vector of length equal the
-number of columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}. If the data contain missing values, columns should be
-centered for reliable results.}
+\item{center}{(Default=TRUE) Logical, whether the variables should be shifted
+to be zero centered. Only set to FALSE if data have already been centered.
+Alternatively, a vector of length equal the number of columns of \code{X}
+can be supplied. The value is passed to \code{\link{scale}}. If the data
+contain missing values, columns should be centered for reliable results.}
 
 \item{scale}{(Default=TRUE) Logical indicating whether the variables should be
 scaled to have unit variance before the analysis takes place.}
