@@ -648,3 +648,21 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     diag(design) <- 0
     return(design)
 }
+
+## ------------------------ .check_numeric_matrix  ------------------------ ##
+#' check if x is a valid numeric matrix -- possibly including NAs
+## TODO use this throughout
+#' Coerces to numeric matrix if necessary and ensures only numeric (including
+#' NA) values are present.
+#'@noRd
+#'@examples
+#' .check_numeric_matrix(mtcars)
+.check_numeric_matrix <- function(X, block_name = 'X')
+{
+    err_msg <- sprintf("'%s' must be a numeric matrix (possibly including NA's) with finite values", block_name)
+    X <- tryCatch(data.matrix(X, rownames.force = TRUE), 
+                  error = function(e) stop(err_msg, call. = FALSE))
+    if (!all(is.finite(X) | is.na(X)))
+        stop(err_msg, call. = FALSE)
+    X
+}
