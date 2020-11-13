@@ -14,9 +14,7 @@ pca(
   logratio = c("none", "CLR", "ILR"),
   ilr.offset = 0.001,
   V = NULL,
-  multilevel = NULL,
-  impute = FALSE,
-  impute.ncomp = 10
+  multilevel = NULL
 )
 }
 \arguments{
@@ -61,12 +59,6 @@ avoid infinite value after the logratio transform.}
 
 \item{multilevel}{sample information for multilevel decomposition for
 repeated measurements.}
-
-\item{impute}{Logical,if \code{X} contains missing values indicating whether
-an imputation should be performed. SVD will then be used to extract the PCs.}
-
-\item{impute.ncomp}{Integer, if \code{impute=TRUE} the number of components
-used by nipals function to use for imputing the missing values.}
 }
 \value{
 \code{pca} returns a list with class \code{"pca"} and \code{"prcomp"}
@@ -89,8 +81,6 @@ representation of observations/samples.}
 \item{explained_variance}{Explained variance from the multivariate model,
   used for plotIndiv}
 \item{cum.var}{The cumulative explained variance for components.}
-\item{X.impute}{If impute=TRUE, the data matrix for which missing values are
-replaced by imputed values from nipals function.}
 \item{Xw}{If multilevel, the data matrix with within-group-variation removed.}
 \item{design}{If multilevel, the provided design.}
 }
@@ -142,21 +132,6 @@ plotIndiv(pca.res, ind.names = multidrug$cell.line$Class,
 
 # variable representation
 plotVar(pca.res, var.names = TRUE, cutoff = 0.4, pch = 16)
-
-# run pca and impute the missing values
-# --------------------------------
-data("nutrimouse")
-X <- data.matrix(nutrimouse$lipid)
-## add missing values to X to impute and compare to actual values
-set.seed(42)
-na.ind <- sample(seq_along(X), size = 10)
-true.values <- X[na.ind]
-X[na.ind] <- NA
-pca.impute <- pca(X, ncomp = 2, scale = TRUE, center = TRUE, impute = TRUE, impute.ncomp = 10)
-X.impute <- pca.impute$X.impute
-## compare
-round(X.impute[na.ind], 2)
-true.values
 
 \dontrun{
 plotIndiv(pca.res, cex = 0.2,
