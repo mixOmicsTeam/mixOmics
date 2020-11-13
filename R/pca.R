@@ -117,7 +117,7 @@ pca <- function(X,
                 ilr.offset = 0.001,
                 V = NULL,
                 multilevel = NULL,
-                reconst = TRUE)
+                reconst = FALSE)
 {
     
     #-- checking general input parameters --------------------------------------#
@@ -134,14 +134,7 @@ pca <- function(X,
         stop(err[[1]], ".", call. = FALSE)
     
     #-- X matrix
-    if (is.data.frame(X))
-        X = as.matrix(X)
-    
-    if (!is.matrix(X) || is.character(X))
-        stop("'X' must be a numeric matrix.", call. = FALSE)
-    
-    if (any(apply(X, 1, is.infinite)))
-        stop("infinite values in 'X'.", call. = FALSE)
+    X <- .check_numeric_matrix(X)
     
     #-- put a names on the rows and columns of X --#
     X.names = colnames(X)
@@ -218,7 +211,7 @@ pca <- function(X,
     #-----------------------------#
     
     #---------------------------------------------------------------------------#
-    #-- multilevel approach ----------------------------------------------------#
+    #-- Start: multilevel approach ----------------------------------------------------#
     
     if (!is.null(multilevel))
     {
@@ -236,132 +229,137 @@ pca <- function(X,
         Xw = withinVariation(X, design = multilevel)
         X = Xw
     }
-    #-- multilevel approach ----------------------------------------------------#
-    #---------------------------------------------------------------------------#
+    #-- End: multilevel approach ----------------------------------------------------#
     
     .check_zero_var_columns(X, scale = scale)
     
     X <- scale(X, center = center, scale = scale)
     sc <- attr(X, 'scale::scale')
     cen <- attr(X, 'scale::scale')
+    result <- list(call = match.call(), 
+                   X = X, 
+                   ncomp = ncomp,
+                   scale = if (is.null(sc)) FALSE else sc,
+                   center = if (is.null(cen)) FALSE else cen,
+                   names = list(X = X.names, sample = ind.names))
     
-    cl = match.call()
-    cl[[1]] = as.name('pca')
-    result = list(call = cl, X = X, ncomp = ncomp,
-                  center = if (is.null(cen)) {FALSE} else {cen},
-                  scale = if (is.null(sc)) {FALSE} else {sc},
-                  names = list(X = X.names, sample = ind.names))
-    
-
     #-- pca approach -----------------------------------------------------------#
     #---------------------------------------------------------------------------#
-    
+    variates <- NULL ## only changed in ILR case, otherwise calculated using X and loadings
     if (any(is.na(X))) {
-        res <- suppressMessages(
+        res <- 
             nipals(X, ncomp = ncomp, reconst = reconst, 
-                      center = FALSE, scale = FALSE, ## already done
-                      max.iter = max.iter, tol = tol), 
-            classes = 'message')
-        res$rotation <- res$p
-        result <- c(result, res[c("ncomp", "sdev", "var.tot", "loadings", 
-                                  "variates", "rotation", "x", "explained_variance", "cum.var")])
-        rm(res)
+                   max.iter = max.iter, tol = tol)
+        sdev <- res$eig
+        loadings <- res$p
+        
+        result$X.rec <- res$rec
     } else {
+        
         if (logratio %in% c('CLR', 'none')) {
             #-- if data is complete use singular value decomposition
             #-- borrowed from 'prcomp' function
             res = svd(X, nu = 0)
-            result <-
-                .add_sdev_rotation_and_comps(
-                    result = result,
-                    X = X,
-                    ncomp = ncomp,
-                    sdev = res$d,
-                    rotation = res$v,
-                    row_names = ind.names,
-                    col_names = X.names
-                )
+            sdev <- res$d
+            loadings <- res$v
         } else {
             # if 'ILR', transform data and then back transform in clr space (from RobCompositions package)
             # data have been transformed above
             res = svd(X, nu = max(1, nrow(X) - 1))
-            result$sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))  # Note: what differs with RobCompo is that they use: cumsum(eigen(cov(X))$values)/sum(eigen(cov(X))$values)
+            sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))  # Note: what differs with RobCompo is that they use: cumsum(eigen(cov(X))$values)/sum(eigen(cov(X))$values)
             # calculate loadings using back transformation to clr-space
-            result$rotation = V %*% res$v[, 1:ncomp, drop = FALSE]
+            loadings = V %*% res$v[, 1:ncomp, drop = FALSE]
             # extract component score from the svd, multiply matrix by vector using diag, NB: this differ from our mixOmics PCA calculations
             # NB: this differ also from Filmoser paper, but ok from their code: scores are unchanged
-            result$x = res$u[, 1:ncomp, drop = FALSE] %*% diag(res$d[1:ncomp, drop = FALSE])
-            names(result$sdev) = paste("PC", 1:length(result$sdev), sep = "")
-            dimnames(result$rotation) = list(X.names, paste("PC", 1:ncol(result$rotation), sep = ""))
-            dimnames(result$x) = list(ind.names, paste("PC", 1:ncol(result$x), sep = ""))
-            
+            variates = res$u[, 1:ncomp, drop = FALSE] %*% diag(res$d[1:ncomp, drop = FALSE])
         }
-        ## add variance stats
-        result <- .add_var_stats(result)
-        result$X <- X
+        
     }
+    rm(res)
     
+    result <-
+        .add_sdev_loadings_and_variates(
+            result = result,
+            sdev = sdev,
+            loadings = loadings,
+            variates = variates
+        )
+    ## add variance stats
+    result <- .add_var_stats(result)
+    expected_output_names <- c("call", "X", "X.rec", "ncomp", "center", "scale", "names", 
+                         "sdev", "loadings", "variates", "explained_variance", "var.tot",
+                         "cum.var")
+    if (is.null(result$X.rec))
+        result <- c(result, list(X.rec=NULL))
+    if (names(result) %!=% expected_output_names)
+    {
+        stop("Unexpected error. Please submit an issue at\n",
+             "https://github.com/mixOmicsTeam/mixOmics/issues/new/choose", call. = FALSE)
+    }
+    result <- result[expected_output_names]
     # output multilevel if needed
-    if(!is.null(multilevel))
+    if(!is.null(multilevel)) # TODO include in docs returns
         result=c(result, list(Xw = Xw, design = multilevel))
     
-    class(result) = c("pca","prcomp") 
+    class(result) = c("pca") 
     if(!is.null(multilevel))
         class(result)=c("mlpca",class(result))
     
     return(invisible(result))
 }
 
-#' Add sdev, rotation and components to result
+#' Add sdev, loadings and components to result
 #'
-#' @param result Result list. $sdev, $rotation and $x will be added to it.
+#' @param result Result list. $sdev, $loadings and $variates will be added to it.
 #' @param X A numeric matrix.
 #' @param ncomp Integer, number of components.
 #' @param sdev numeric vector - sqrt(eig) from different analyses
-#' @param rotation Numeric matrix of rotation from different analyses
+#' @param loadings Numeric matrix of loadings from different analyses
+#' @param variates Numeric matrix of variates from ILR case, or NULL.
 #' @param row_names Vector of sample names
 #' @param col_names Vector of feature names
 #' @noRd
 #' @return A modified list
-.add_sdev_rotation_and_comps <-
+.add_sdev_loadings_and_variates <-
     function(result,
-             X,
-             ncomp,
              sdev,
-             rotation,
-             row_names,
-             col_names) {
-        result$sdev = sdev[seq_len(ncomp)] / sqrt(max(1, nrow(X) - 1))
-        names(result$sdev) = paste("PC", seq_along(result$sdev), sep = "")
-        result$rotation = rotation[, seq_len(ncomp), drop = FALSE]
-        dimnames(result$rotation) = list(col_names, paste("PC", seq_len(ncomp), sep = ""))
-        result$x = X %*% result$rotation
-        dimnames(result$x) = list(row_names, paste("PC", seq_len(ncol(result$x)), sep = ""))
-        result$X <- X
+             loadings,
+             variates = NULL) {
+        ncomp <- length(sdev)
+        pc_names <- paste("PC", seq_len(ncomp), sep = "")
+        
+        X <- result$X
+        X[is.na(X)] <- 0 ## if any
+        
+        sdev = sdev[seq_len(ncomp)] / sqrt(max(1, nrow(X) - 1))
+        loadings = loadings[, seq_len(ncomp), drop = FALSE]
+        if (is.null(variates))
+            variates = X %*% loadings
+        
+        names(sdev) = pc_names
+        dimnames(loadings) = list(colnames(X), pc_names)
+        dimnames(variates) = list(rownames(X), pc_names)
+        
+        result[c('sdev', 'loadings', 'variates')] <- list(sdev, list(X=loadings), list(X=variates))
         result
     }
 
 
 #' Add cumulative and per-component explained variance 
 #'
-#' @param result A list, output of \code{\link{.add_sdev_rotation_and_comps}}
+#' @param result A list, output of \code{\link{.add_sdev_loadings_and_variates}}
 #'
 #' @return A list. Modifies input list by adding total variance, loadings and
 #' variates (only for consistency of mixOmics outputs), and per-component and
 #' cumulative explained variance.
 #' @noRd
 .add_var_stats <- function(result) {
-    result$var.tot=sum(result$X^2) / max(1, nrow(result$X) - 1)# same as all res$d, or variance after nipals replacement of the missing values
-    
-    # to be similar to other methods, add loadings and variates as outputs
-    result$loadings = list(X=result$rotation)
-    result$variates = list(X=result$x)
+    result$var.tot=sum(result$X^2, na.rm = TRUE) / max(1, nrow(result$X) - 1)# same as all res$d, or variance after nipals replacement of the missing values
     
     # calculate explained variance
-    explained_variance <- with(result, sdev^2 / var.tot)
-    result$cum.var = cumsum(explained_variance)
-    result$explained_variance = list(X = explained_variance)
-    result$X <- NULL
+    expl_var <- result$sdev^2 / result$var.tot
+    result$cum.var = cumsum(expl_var)
+    result$explained_variance = list(X = expl_var)
     result
 }
 
