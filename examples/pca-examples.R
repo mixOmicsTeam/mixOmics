@@ -14,6 +14,21 @@ plotIndiv(pca.res, ind.names = multidrug$cell.line$Class,
 # variable representation
 plotVar(pca.res, var.names = TRUE, cutoff = 0.4, pch = 16)
 
+# run pca and impute the missing values
+# --------------------------------
+data("nutrimouse")
+X <- data.matrix(nutrimouse$lipid)
+## add missing values to X to impute and compare to actual values
+set.seed(42)
+na.ind <- sample(seq_along(X), size = 10)
+true.values <- X[na.ind]
+X[na.ind] <- NA
+pca.impute <- pca(X, ncomp = 2, scale = TRUE, center = TRUE, impute = TRUE, impute.ncomp = 10)
+X.impute <- pca.impute$X.impute
+## compare
+round(X.impute[na.ind], 2)
+true.values
+
 \dontrun{
 plotIndiv(pca.res, cex = 0.2,
     col = as.numeric(as.factor(multidrug$cell.line$Class)),style="3d")

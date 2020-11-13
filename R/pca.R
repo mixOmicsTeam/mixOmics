@@ -62,6 +62,10 @@
 #' @param V Matrix used in the logratio transformation if provided.
 #' @param multilevel sample information for multilevel decomposition for
 #' repeated measurements.
+#' @param impute Logical,if \code{X} contains missing values indicating whether
+#'   an imputation should be performed. SVD will then be used to extract the PCs.
+#' @param impute.ncomp Integer, if \code{impute=TRUE} the number of components
+#'   used by nipals function to use for imputing the missing values.
 #' @return \code{pca} returns a list with class \code{"pca"} and \code{"prcomp"}
 #' containing the following components: 
 #' \item{call}{The function call.}
@@ -82,6 +86,8 @@
 #' \item{explained_variance}{Explained variance from the multivariate model,
 #'   used for plotIndiv}
 #' \item{cum.var}{The cumulative explained variance for components.}
+#' \item{X.impute}{If impute=TRUE, the data matrix for which missing values are
+#' replaced by imputed values from nipals function.}
 #' \item{Xw}{If multilevel, the data matrix with within-group-variation removed.}
 #' \item{design}{If multilevel, the provided design.}
 #' @author Florian Rohart, Kim-Anh Lê Cao, Ignacio González, Al J Abadi
@@ -111,7 +117,9 @@ pca <- function(X,
                 logratio = c('none','CLR','ILR'),
                 ilr.offset = 0.001,
                 V = NULL,
-                multilevel = NULL)
+                multilevel = NULL,
+                impute = FALSE,
+                impute.ncomp = 10)
 {
     
     #-- checking general input parameters --------------------------------------#
@@ -226,6 +234,24 @@ pca <- function(X,
     #-- End: multilevel approach ----------------------------------------------------#
     
     .check_zero_var_columns(X, scale = scale)
+    
+    if (isTRUE(impute) & any(is.na(X)))
+    {
+        if (impute.ncomp > min(dim(X)))
+        {
+            message('\'impute.ncomp\' too large.\n',
+                    'using min(dim(X)): ', min(dim(X)), ' instead.')
+            impute.ncomp <- min(dim(X))
+        }
+        X.rec <- nipals(X = X, ncomp = impute.ncomp, reconst = TRUE, 
+                           max.iter = max.iter, tol = tol)$rec
+        X.impute <- X
+        X.impute[is.na(X)] <- X.rec[is.na(X)]
+        rm(X.rec)
+        X <- X.impute
+    } else {
+        X.impute <- NULL
+    }
     X <- scale(X, center = center, scale = scale)
     sc <- attr(X, 'scaled:scale')
     cen <- attr(X, 'scaled:center')
@@ -276,7 +302,7 @@ pca <- function(X,
             variates = variates
         )
     ## add explained/cum/total variance
-    result <- c(result, .get_var_stats(X = X, sdev = sdev))
+    result <- c(result, .get_var_stats(X = result$X, sdev = result$sdev))
     expected_output_names <- c("call", "X", "ncomp", "center", "scale", "names", 
                          "sdev", "loadings", "variates", "explained_variance", "var.tot",
                          "cum.var")
@@ -286,6 +312,7 @@ pca <- function(X,
              "https://github.com/mixOmicsTeam/mixOmics/issues/new/choose", call. = FALSE)
     }
     result <- result[expected_output_names]
+    result$X.impute <- X.impute ## could be NULL
     # output multilevel if needed
     if(!is.null(multilevel)) # TODO include in docs returns
         result=c(result, list(Xw = Xw, design = multilevel))
