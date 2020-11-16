@@ -61,6 +61,8 @@
 #' variates in \eqn{X} and \eqn{Y}.} \item{variates}{list containing the
 #' canonical variates.} \item{names}{list containing the names to be used for
 #' individuals and variables.}
+#' \item{explained_variance}{Proportion of the explained variance of derived
+#' components, after setting possible missing values to zero.}
 #' @author Sébastien Déjean, Ignacio González, Francois Bartolo, Kim-Anh Lê Cao, 
 #' Florian Rohart, Al J Abadi
 #' @seealso \code{\link{summary}}, \code{\link{tune.rcc}},

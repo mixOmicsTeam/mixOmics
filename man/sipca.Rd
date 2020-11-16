@@ -53,8 +53,11 @@ following components: \item{ncomp}{the number of principal components used.}
 \item{mixing}{the mixing matrix of size (ncomp x ncomp} \item{X}{the
 centered data matrix} \item{x}{the principal components (with sparse
 independent loadings)} \item{loadings}{the sparse independent loading
-vectors} \item{kurtosis}{the kurtosis measure of the independent loading
+vectors} 
+\item{kurtosis}{the kurtosis measure of the independent loading
 vectors}
+\item{explained_variance}{Proportion of the explained variance of derived
+components, after setting possible missing values to zero.}
 }
 \description{
 Performs sparse independent principal component analysis on the given data

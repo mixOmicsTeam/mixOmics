@@ -43,6 +43,8 @@ containing the estimated coefficients used to calculate the canonical
 variates in \eqn{X} and \eqn{Y}.} \item{variates}{list containing the
 canonical variates.} \item{names}{list containing the names to be used for
 individuals and variables.}
+\item{explained_variance}{Proportion of the explained variance of derived
+components, after setting possible missing values to zero.}
 }
 \description{
 The function performs the regularized extension of the Canonical Correlation

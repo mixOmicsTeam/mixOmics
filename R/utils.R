@@ -553,7 +553,7 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
 '%=%' <- function(LHS, RHS)
 {
     diffs <- c(setdiff(LHS, RHS), setdiff(RHS, LHS))
-    if (length(diffs))
+    if (length(diffs) | (length(LHS) != length(RHS)))
     {
         return(FALSE)
     }

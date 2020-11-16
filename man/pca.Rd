@@ -78,8 +78,7 @@ a matrix whose columns contain the eigenvectors).}
 the observations onto principal components. These are the dimension-reduced
 representation of observations/samples.}
 \item{var.tot}{Total variance in the data.}
-\item{explained_variance}{Explained variance from the multivariate model,
-  used for plotIndiv}
+\item{explained_variance}{Proportion of the explained variance of derived components}
 \item{cum.var}{The cumulative explained variance for components.}
 \item{Xw}{If multilevel, the data matrix with within-group-variation removed.}
 \item{design}{If multilevel, the provided design.}

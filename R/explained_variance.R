@@ -49,7 +49,7 @@ explained_variance <- function(data, variates, ncomp)
   
   if (anyNA(data))
   {
-    warning("NA values are set to zero to estimate the amount of explained variance")
+    # warning("NA values are set to zero to estimate the amount of explained variance")
     isna = is.na(data)
     data[isna] = 0
   }
