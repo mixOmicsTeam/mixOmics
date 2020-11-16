@@ -276,7 +276,7 @@ pca <- function(X,
             variates = variates
         )
     ## add explained/cum/total variance
-    result <- c(result, .get_var_stats(X = X, sdev = sdev))
+    result <- c(result, .get_var_stats(X = result$X, sdev = result$sdev))
     expected_output_names <- c("call", "X", "ncomp", "center", "scale", "names", 
                          "sdev", "loadings", "variates", "explained_variance", "var.tot",
                          "cum.var")
@@ -314,7 +314,7 @@ pca <- function(X,
              sdev,
              loadings,
              variates = NULL) {
-        ncomp <- length(sdev)
+        ncomp <- result$ncomp
         pc_names <- paste("PC", seq_len(ncomp), sep = "")
         
         X <- result$X
