@@ -241,7 +241,7 @@ pca <- function(X,
     variates <- NULL ## only changed in ILR case, otherwise calculated using X and loadings
     if (any(is.na(X))) {
         res <- 
-            nipals(X, ncomp = ncomp, reconst = FALSE, 
+            nipals(X, ncomp = ncomp,
                    max.iter = max.iter, tol = tol)
         sdev <- res$eig
         loadings <- res$p

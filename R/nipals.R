@@ -13,23 +13,16 @@
 #' delete the rows with missing data or to estimate the missing data.
 #' 
 #' @inheritParams pca
-#' @param reconst (Default=TRUE) Logical. If matrix includes missing values,
-#'   whether \code{nipals} must perform the reconstitution of the data using the
-#'   \code{ncomp} components. The components are calculated by imputing the
-#'   missing values when set to TRUE, otherwise the missing values will be set
-#'   to zero.
 #' @return An object of class 'mixo_nipals' containing slots: 
 #' \item{eig}{Vector containing the pseudo-singular values of \code{X}, of length
 #' \code{ncomp}.}
 #' \item{t}{Matrix whose columns contain the left singular vectors of \code{X}.
 #' Note that for a complete data matrix X, the return values \code{eig},
 #' \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
-#' \item{X}{ The input data matrix. If \code{reconst=TRUE}, any possible missing
-#' values are replaced by values from the matrix reconstituted using the
-#' \code{ncomp} components.}
 #' @author Sébastien Déjean, Ignacio González, Kim-Anh Le Cao, Al J Abadi
-#' @seealso \code{\link{svd}}, \code{\link{princomp}}, \code{\link{prcomp}},
-#' \code{\link{eigen}} and http://www.mixOmics.org for more details.
+#' @seealso \code{\link{nipals.impute}}, \code{\link{svd}},
+#'   \code{\link{princomp}}, \code{\link{prcomp}}, \code{\link{eigen}} and
+#'   http://www.mixOmics.org for more details.
 #' @references Tenenhaus, M. (1998). \emph{La regression PLS: theorie et
 #' pratique}. Paris: Editions Technic.
 #' 
@@ -43,22 +36,8 @@
 #' Press, N.Y., 307-357.
 #' @keywords algebra multivariate
 #' @export
-#' @examples
-#' 
-#' ## Hilbert matrix
-#' hilbert <- function(n) { i <- 1:n; 1 / outer(i - 1, i, "+") }
-#' X.na <- X <- hilbert(9)[, 1:6]
-#' 
-#' ## Hilbert matrix with missing data
-#' idx.na <- sample(seq_along(X), 10)
-#' X.na[idx.na] <- NA
-#' X.rec <- nipals(X.na, reconst = TRUE)$rec
-#' round(X, 2)
-#' round(X.rec, 2)
-# TODO look into print/plot methods
 nipals <- function (X,
                     ncomp = 2,
-                    reconst = TRUE,
                     max.iter = 500,
                     tol = 1e-06)
 {
@@ -150,26 +129,7 @@ nipals <- function (X,
     t.mat <- scale(t.mat, center = FALSE, scale = eig)
     attr(t.mat, "scaled:scale") <- NULL
     
-    if (reconst)
-    {
-        if (ncomp < min(5, min(dim(X))))
-            message("consider high 'ncomp' for more accurate ",
-                    "imputation of the missing values.")
-        X.hat <- t.mat %*% diag(eig) %*% t(p)
-        
-        colnames(X.hat) <- colnames(X)
-        rownames(X.hat) <- rownames(X)
-    }
-    
-    if (isFALSE(reconst)) { ## replace NA with 0 with messages
-        # message('\nreplacing missing values with 0 for calculation ',
-        #     'of components as `reconst=FALSE` used.')
-    } else {
-        X[is.na.X] <- X.hat[is.na.X]
-        rm(X.hat)
-    }
-    
-    res <- list(eig = eig, p = p, t = t.mat, X = X)
+    res <- list(eig = eig, p = p, t = t.mat)
 
     class(res) <- c('mixo_nipals')
     res

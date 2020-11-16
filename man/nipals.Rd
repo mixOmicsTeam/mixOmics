@@ -4,7 +4,7 @@
 \alias{nipals}
 \title{Non-linear Iterative Partial Least Squares (NIPALS) algorithm}
 \usage{
-nipals(X, ncomp = 2, reconst = TRUE, max.iter = 500, tol = 1e-06)
+nipals(X, ncomp = 2, max.iter = 500, tol = 1e-06)
 }
 \arguments{
 \item{X}{a numeric matrix (or data frame) which provides the data for the
@@ -19,12 +19,6 @@ of components to keep to perform the reconstitution of the data using the
 NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
 ncol(X))}}
 
-\item{reconst}{(Default=TRUE) Logical. If matrix includes missing values,
-whether \code{nipals} must perform the reconstitution of the data using the
-\code{ncomp} components. The components are calculated by imputing the
-missing values when set to TRUE, otherwise the missing values will be set
-to zero.}
-
 \item{max.iter}{Integer, the maximum number of iterations in the NIPALS
 algorithm.}
 
@@ -37,9 +31,6 @@ An object of class 'mixo_nipals' containing slots:
 \item{t}{Matrix whose columns contain the left singular vectors of \code{X}.
 Note that for a complete data matrix X, the return values \code{eig},
 \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
-\item{X}{ The input data matrix. If \code{reconst=TRUE}, any possible missing
-values are replaced by values from the matrix reconstituted using the
-\code{ncomp} components.}
 }
 \description{
 This function performs NIPALS algorithm, i.e. the singular-value
@@ -55,19 +46,6 @@ covariance matrix, but is slower to calculate.
 This algorithm allows to realize SVD with missing data, without having to
 delete the rows with missing data or to estimate the missing data.
 }
-\examples{
-
-## Hilbert matrix
-hilbert <- function(n) { i <- 1:n; 1 / outer(i - 1, i, "+") }
-X.na <- X <- hilbert(9)[, 1:6]
-
-## Hilbert matrix with missing data
-idx.na <- sample(seq_along(X), 10)
-X.na[idx.na] <- NA
-X.rec <- nipals(X.na, reconst = TRUE)$rec
-round(X, 2)
-round(X.rec, 2)
-}
 \references{
 Tenenhaus, M. (1998). \emph{La regression PLS: theorie et
 pratique}. Paris: Editions Technic.
@@ -82,8 +60,9 @@ perspectives on mathematical and statistical model building}. Academic
 Press, N.Y., 307-357.
 }
 \seealso{
-\code{\link{svd}}, \code{\link{princomp}}, \code{\link{prcomp}},
-\code{\link{eigen}} and http://www.mixOmics.org for more details.
+\code{\link{nipals.impute}}, \code{\link{svd}},
+  \code{\link{princomp}}, \code{\link{prcomp}}, \code{\link{eigen}} and
+  http://www.mixOmics.org for more details.
 }
 \author{
 Sébastien Déjean, Ignacio González, Kim-Anh Le Cao, Al J Abadi
