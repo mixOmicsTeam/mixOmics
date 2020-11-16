@@ -22,9 +22,26 @@ plotIndiv(pca.res, cex = 0.2,
 plotVar(pca.res, rad.in = 0.5, cex = 0.5, style="3d")
 }
 
-# example with multilevel decomposition and CLR log ratio transformation (ILR longer to run)
+# example with imputing the missing values using NIPALS
+# --------------------------------
+data("nutrimouse")
+X <- data.matrix(nutrimouse$lipid)
+## add missing values to X to impute and compare to actual values
+set.seed(42)
+na.ind <- sample(seq_along(X), size = 10)
+true.values <- X[na.ind]
+X[na.ind] <- NA
+nipals.impute <- nipals(X, ncomp = 10, reconst = TRUE)
+X.impute <- nipals.impute$X
+## compare
+round(X.impute[na.ind], 2)
+true.values
+## run pca using imputed matrix
+pca.res <- pca(X.impute, ncomp = 2)
+plotIndiv(pca.res, group = nutrimouse$diet, pch = 16)
+# example with multilevel decomposition and CLR log ratio transformation 
+# (ILR takes longer to run)
 # ----------------
-
 data("diverse.16S")
 pca.res = pca(X = diverse.16S$data.TSS, ncomp = 3,
     logratio = 'CLR', multilevel = diverse.16S$sample)

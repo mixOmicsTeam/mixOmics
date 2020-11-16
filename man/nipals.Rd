@@ -37,8 +37,9 @@ An object of class 'mixo_nipals' containing slots:
 \item{t}{Matrix whose columns contain the left singular vectors of \code{X}.
 Note that for a complete data matrix X, the return values \code{eig},
 \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
-\item{rec}{If \code{reonst=TRUE}, matrix obtained by the reconstitution of
-the data using the \code{ncomp} components.}
+\item{X}{ The input data matrix. If \code{reconst=TRUE}, any possible missing
+values are replaced by values from the matrix reconstituted using the
+\code{ncomp} components.}
 }
 \description{
 This function performs NIPALS algorithm, i.e. the singular-value

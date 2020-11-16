@@ -24,8 +24,9 @@
 #' \item{t}{Matrix whose columns contain the left singular vectors of \code{X}.
 #' Note that for a complete data matrix X, the return values \code{eig},
 #' \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
-#' \item{rec}{If \code{reonst=TRUE}, matrix obtained by the reconstitution of
-#' the data using the \code{ncomp} components.}
+#' \item{X}{ The input data matrix. If \code{reconst=TRUE}, any possible missing
+#' values are replaced by values from the matrix reconstituted using the
+#' \code{ncomp} components.}
 #' @author Sébastien Déjean, Ignacio González, Kim-Anh Le Cao, Al J Abadi
 #' @seealso \code{\link{svd}}, \code{\link{princomp}}, \code{\link{prcomp}},
 #' \code{\link{eigen}} and http://www.mixOmics.org for more details.
@@ -163,17 +164,13 @@ nipals <- function (X,
     if (isFALSE(reconst)) { ## replace NA with 0 with messages
         # message('\nreplacing missing values with 0 for calculation ',
         #     'of components as `reconst=FALSE` used.')
-        X[is.na.X] <- 0
-        rec <- NULL
     } else {
         X[is.na.X] <- X.hat[is.na.X]
-        rec <- X.hat
         rm(X.hat)
     }
     
-    res <- list(eig = eig, p = p, t = t.mat, rec = rec)
-    ## add explained/cum/total variance
-    # res <- c(res, .get_var_stats(X = X, sdev = eig))
+    res <- list(eig = eig, p = p, t = t.mat, X = X)
+
     class(res) <- c('mixo_nipals')
     res
     return(invisible(res))
