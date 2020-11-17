@@ -30,7 +30,7 @@ plotVar(
   font,
   cutoff = 0,
   rad.in = 0.5,
-  title = "Correlation Circle Plots",
+  title = "Correlation Circle Plot",
   legend = FALSE,
   legend.title = "Block",
   style = "ggplot2",
