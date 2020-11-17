@@ -73,10 +73,10 @@ containing the following components:
 the calculation is actually done with the singular values of the data
 matrix or by using NIPALS.}
 \item{loadings}{A length one list of matrix of variable loadings for X (i.e.,
-a matrix whose columns contain the eigenvectors).}
-\item{variates}{A length one matrix of the values computed using projecting
-the observations onto principal components. These are the dimension-reduced
-representation of observations/samples.}
+a matrix whose columns contain the eigenvectors).} 
+\item{variates}{Matrix containing the coordinate values corresponding to the
+projection of the samples in the space spanned by the principal components.
+These are the dimension-reduced representation of observations/samples.}
 \item{var.tot}{Total variance in the data.}
 \item{explained_variance}{Proportion of the explained variance of derived components}
 \item{cum.var}{The cumulative explained variance for components.}

@@ -9,7 +9,9 @@ impute.nipals(X, ncomp, ...)
 \arguments{
 \item{X}{A numeric matrix containing missing values}
 
-\item{ncomp}{Positive integer}
+\item{ncomp}{Positive integer, the number of components to derive from
+\code{X} using the \code{\link[mixOmics]{nipals}} function and reconstitute
+the original matrix}
 
 \item{...}{Optional arguments passed to \code{\link[mixOmics]{nipals}}}
 }
@@ -17,7 +19,14 @@ impute.nipals(X, ncomp, ...)
 A numeric matrix with missing values imputed.
 }
 \description{
-Impute missing values using NIPALS algorithm
+This function uses \code{\link[mixOmics]{nipals}} function to decompose
+\code{X} into a set of components (\code{t}), (pseudo-) singular-values
+(\code{eig}), and feature loadings (\code{p}). The original matrix is then
+approximated/reconstituted using the following equation:
+\deqn{\hat{X} = t * diag(eig) * t(p)} 
+The missing values from \code{X} are then approximated from this matrix. It
+is best to ensure enough number of components are used in order to best
+impute the missing values.
 }
 \examples{
 data("nutrimouse")
@@ -31,6 +40,9 @@ X.impute <- impute.nipals(X = X, ncomp = 5)
 ## compare
 round(X.impute[na.ind], 2)
 true.values
+}
+\seealso{
+\code{\link{impute}}, \code{\link{pca}}
 }
 \author{
 Al J Abadi

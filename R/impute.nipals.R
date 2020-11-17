@@ -1,11 +1,22 @@
 #' Impute missing values using NIPALS algorithm
 #'
-#' @inheritParams nipals
+#' This function uses \code{\link[mixOmics]{nipals}} function to decompose
+#' \code{X} into a set of components (\code{t}), (pseudo-) singular-values
+#' (\code{eig}), and feature loadings (\code{p}). The original matrix is then
+#' approximated/reconstituted using the following equation:
+#' \deqn{\hat{X} = t * diag(eig) * t(p)} 
+#' The missing values from \code{X} are then approximated from this matrix. It
+#' is best to ensure enough number of components are used in order to best
+#' impute the missing values.
+#' 
 #' @param X A numeric matrix containing missing values
-#' @param ncomp Positive integer
+#' @param ncomp Positive integer, the number of components to derive from
+#'   \code{X} using the \code{\link[mixOmics]{nipals}} function and reconstitute
+#'   the original matrix
 #' @param ... Optional arguments passed to \code{\link[mixOmics]{nipals}}
 #'
 #' @return A numeric matrix with missing values imputed.
+#' @seealso \code{\link{impute}}, \code{\link{pca}}
 #' @author Al J Abadi
 #' @examples
 #' data("nutrimouse")

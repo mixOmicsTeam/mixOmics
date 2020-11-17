@@ -538,7 +538,7 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     } 
     min.dim <- min(sapply(X, function(z) min(dim(z))))
     if (ncomp > min.dim)
-        stop("'ncomp' must be smaller than or equal to the smallest dimenion in X: ", min.dim)
+        stop("'ncomp' must be smaller than or equal to the smallest dimenion in X: ", min.dim, call. = FALSE)
     
     return(ncomp)
 }

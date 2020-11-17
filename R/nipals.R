@@ -20,7 +20,7 @@
 #' Note that for a complete data matrix X, the return values \code{eig},
 #' \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
 #' @author Sébastien Déjean, Ignacio González, Kim-Anh Le Cao, Al J Abadi
-#' @seealso \code{\link{nipals.impute}}, \code{\link{svd}},
+#' @seealso \code{\link{impute.impute}}, \code{\link{svd}},
 #'   \code{\link{princomp}}, \code{\link{prcomp}}, \code{\link{eigen}} and
 #'   http://www.mixOmics.org for more details.
 #' @references Tenenhaus, M. (1998). \emph{La regression PLS: theorie et
@@ -43,6 +43,7 @@ nipals <- function (X,
 {
     #-- X matrix
     X <- .check_numeric_matrix(X)
+    ncomp <- .check_ncomp(ncomp = ncomp, X = X, default = 2)
     if (any(colSums(!is.na(X)) == 0) | any(rowSums(!is.na(X)) == 0 ))
         stop("some rows or columns are entirely missing. ", 
              "Remove those before running pca.", call. = FALSE)
