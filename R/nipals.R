@@ -122,6 +122,17 @@ nipals <- function (X,
         
         X.iter <- X.iter - th %*% t(ph.new)
         p[, h] <- ph.new
+        if (h > 1)
+        {
+            max.comp.cor <-  max(abs(cor(th, t.mat[,seq_len(h-1),drop=FALSE])))
+            if (max.comp.cor > 0.01)
+            {
+                message(sprintf("Component is correlated and thus not orthogonal to previous ones: comp_%s. (cor = %s)",
+                                h, 
+                                round(max.comp.cor, 3)))
+            }
+           
+        }
         t.mat[, h] <- th
         eig[h] <- sum(th * th, na.rm = TRUE)
     }
