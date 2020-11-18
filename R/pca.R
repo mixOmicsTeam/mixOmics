@@ -352,9 +352,9 @@ pca <- function(X,
     var.tot=sum(X^2, na.rm = TRUE) / max(1, nrow(X) - 1)
     
     # calculate explained variance
-    expl_var <- sdev^2 / var.tot
-    cum.var = cumsum(expl_var)
-    prop_expl_var = list(X = expl_var)
+    prop_expl_var <- sdev^2 / var.tot
+    cum.var = cumsum(prop_expl_var)
+    prop_expl_var = list(X = prop_expl_var)
     list(prop_expl_var = prop_expl_var,
          var.tot = var.tot, 
          cum.var = cum.var)
