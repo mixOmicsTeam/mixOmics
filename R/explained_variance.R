@@ -49,36 +49,22 @@ explained_variance <- function(data, variates, ncomp)
   check = Check.entry.single(data, ncomp)
   data = check$X
   ncomp = check$ncomp
+  ## pre-allocate output
+  expl_var <- vector(mode = 'numeric', length = ncomp)
+  names(expl_var) <- paste0('comp', seq_len(ncomp))
   
-  if (anyNA(data))
+  
   {
-    # warning("NA values are set to zero to estimate the amount of explained variance")
-    isna = is.na(data)
-    data[isna] = 0
   }
-  nor2x <- sum((data)^2) # total variance in the data
+  data[is.na(data)] <- 0 ## if there is any -- no warning as explained in docs
+  norm2.X <- norm(data, type='F')^2 # total variance in the data
   
-  exp.varX = NULL
   for (h in 1:ncomp)
   {
-    a <- t(variates[, h, drop=FALSE]) %*% data
-    ta = t(a)
+    a <- crossprod(variates[, h, drop=FALSE], data)
     # this is equivalent to calculate the redundancy as detailed in the help file
-    exp_var_new <- a%*%ta / c(crossprod(variates[, h],variates[, h])) / nor2x
-    
-    if (anyNA(data))
-    {
-        warning("\nNA values set to zero for explained variance calculations")
-        isna = is.na(data)
-        data[isna] = 0
-    }
-    nor2x <- sum((data)^2) # total variance in the data
-    
-    exp.varX = append(exp.varX, exp_var_new)
-    
+    expl_var[h] <- tcrossprod(a) / c(crossprod(variates[, h])) / norm2.X
   }
-  names(exp.varX) = paste("comp", 1:ncomp)
   
-  # result: vector of length ncomp with the explained variance per component
-  exp.varX
+  return(expl_var)
 }
