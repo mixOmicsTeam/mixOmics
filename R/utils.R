@@ -291,7 +291,7 @@ stratified.subsampling <- function(Y, folds = 10)
         }
         block_object$names$blocks <- c(block_object$names$blocks, consensus_block)
         block_object$ncomp[consensus_block] <- block_object$ncomp[1]
-        block_object$explained_variance[consensus_block] <- 0
+        block_object$prop_expl_var[consensus_block] <- 0
         
     }
     

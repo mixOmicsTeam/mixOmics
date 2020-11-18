@@ -134,11 +134,10 @@ LOGOCV <- function(X,
             if (progressBar ==  TRUE)
                 setTxtProgressBar(pb, (study_i-1)/M + (i-1)/length(test.keepX)/M)
             
-            object.res = suppressWarnings(mint.splsda(X.train, Y.train,
+            object.res = mint.splsda(X.train, Y.train,
                                                       study = study.learn.CV, ncomp = ncomp, keepX =
                                                           c(choice.keepX, test.keepX[i]),
-                                                      scale = scale, max.iter = max.iter))
-            # suppress NA warnings from explained_variance
+                                                      scale = scale, max.iter = max.iter)
             
             # record selected features
             if (length(test.keepX) ==  1)

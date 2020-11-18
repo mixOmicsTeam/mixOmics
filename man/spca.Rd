@@ -58,7 +58,7 @@ following components:
 \describe{
 \item{ncomp}{the number of components to keep in the
 calculation.} 
-\item{explained_variance}{the adjusted percentage of variance
+\item{prop_expl_var}{the adjusted percentage of variance
 explained for each component.} 
 \item{cum.var}{the adjusted cumulative percentage of variances
 explained.}

@@ -79,7 +79,11 @@
 #' projection of the samples in the space spanned by the principal components.
 #' These are the dimension-reduced representation of observations/samples.}
 #' \item{var.tot}{Total variance in the data.}
-#' \item{explained_variance}{Proportion of the explained variance of derived components}
+#' \item{prop_expl_var}{Proportion of variance explained per
+#' component after setting possible missing values in the data to zero (note
+#' that contrary to PCA, this amount may not decrease as the aim of the method
+#' is not to maximise the variance, but the covariance between X and the
+#' dummy matrix Y).}
 #' \item{cum.var}{The cumulative explained variance for components.}
 #' \item{Xw}{If multilevel, the data matrix with within-group-variation removed.}
 #' \item{design}{If multilevel, the provided design.}
@@ -277,7 +281,7 @@ pca <- function(X,
     ## add explained/cum/total variance
     result <- c(result, .get_var_stats(X = result$X, sdev = result$sdev))
     expected_output_names <- c("call", "X", "ncomp", "center", "scale", "names", 
-                         "sdev", "loadings", "variates", "explained_variance", "var.tot",
+                         "sdev", "loadings", "variates", "prop_expl_var", "var.tot",
                          "cum.var")
     if (names(result) %!=% expected_output_names)
     {
@@ -349,8 +353,8 @@ pca <- function(X,
     # calculate explained variance
     expl_var <- sdev^2 / var.tot
     cum.var = cumsum(expl_var)
-    explained_variance = list(X = expl_var)
-    list(explained_variance = explained_variance,
+    prop_expl_var = list(X = expl_var)
+    list(prop_expl_var = prop_expl_var,
          var.tot = var.tot, 
          cum.var = cum.var)
 }

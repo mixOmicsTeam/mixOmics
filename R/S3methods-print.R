@@ -379,7 +379,7 @@ print.pca <- function(x, ...)
         cat("  \n") 
     }
 
-    per.var = x$explained_variance$X
+    per.var = x$prop_expl_var$X
     cum.var = x$cum.var
 
     names(per.var) = paste("PC", 1:length(per.var), sep = "")
@@ -388,7 +388,7 @@ print.pca <- function(x, ...)
     var.type <- ifelse(is(x, 'spca'), 'adjusted', '')
     
     cat("  Proportion of", var.type, "explained variance for the first", ind.show,
-        "principal components, see object$explained_variance:", "\n")
+        "principal components, see object$prop_expl_var:", "\n")
     print(per.var[1:ind.show], print.gap = 6)
     cat("  \n")
     
@@ -818,7 +818,7 @@ print.perf.sgccda.mthd = function(x, ...)
 print.tune.pca = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    cat(" for all principal components, see object$sdev, object$explained_variance and object$cum.var\n")
+    cat(" for all principal components, see object$sdev, object$prop_expl_var and object$cum.var\n")
 }
 
 #' @name print

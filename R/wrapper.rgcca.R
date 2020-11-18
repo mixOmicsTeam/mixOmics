@@ -160,7 +160,7 @@ wrapper.rgcca <-
             scale = result.rgcca$scale,
             design = result.rgcca$design,
             scheme = result.rgcca$scheme,
-            explained_variance = result.rgcca$explained_variance
+            prop_expl_var = result.rgcca$prop_expl_var
         )
         
         class(out) = c("sparse.rgcca","rgcca")

@@ -51,8 +51,8 @@ measurements).}
 containing the following components: \item{sdev}{the square root of the
 eigenvalues of the covariance/correlation matrix, though the calculation is
 actually done with the singular values of the data matrix).}
-\item{explained_variance}{the proportion of explained variance accounted for
-by each principal component is calculated using the eigenvalues}
+\item{prop_expl_var}{The proportion of explained variance accounted for
+by each principal component.}
 \item{cum.var}{the cumulative proportion of explained variance accounted for
 by the sequential accumulation of principal components is calculated using
 the sum of the proportion of explained variance}

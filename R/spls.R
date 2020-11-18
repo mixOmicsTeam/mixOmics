@@ -56,7 +56,7 @@
 #' predictors information.} \item{scale}{whether scaling was applied per
 #' predictor.} \item{logratio}{whether log ratio transformation for relative
 #' proportion data was applied, and if so, which type of transformation.}
-#' \item{explained_variance}{amount of variance explained per component (note
+#' \item{prop_expl_var}{Proportion of variance explained per component (note
 #' that contrary to PCA, this amount may not decrease as the aim of the method
 #' is not to maximise the variance, but the covariance between data sets).}
 #' \item{input.X}{numeric matrix of predictors in X that was input, before any
@@ -161,7 +161,7 @@ spls <- function(X,
         nzv = result$nzv,
         scale = scale,
         logratio = logratio,
-        explained_variance = result$explained_variance,
+        prop_expl_var = result$prop_expl_var,
         input.X = result$input.X,
         mat.c = result$mat.c
     )

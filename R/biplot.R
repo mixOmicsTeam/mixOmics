@@ -63,7 +63,7 @@ NULL
         scaler <- max(variates, na.rm = TRUE)/max(loadings, na.rm = TRUE)
         
         PCs <- paste0('component_', comp)
-        expl_vars <- round(object$explained_variance[[block]]*100)[comp]
+        expl_vars <- round(object$prop_expl_var[[block]]*100)[comp]
         axes.titles <- sprintf("%s   (%s%%)", PCs, expl_vars)
         ind.names <- .get.character.vector(ind.names, vec = rownames(variates))
         

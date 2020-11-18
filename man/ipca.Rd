@@ -51,7 +51,7 @@ ncomp)} \item{mixing}{the mixing matrix of size (ncomp x ncomp)}
 \item{X}{the centered data matrix} \item{x}{the independent principal
 components} \item{loadings}{the independent loading vectors}
 \item{kurtosis}{the kurtosis measure of the independent loading vectors}
-\item{explained_variance}{Proportion of the explained variance of derived
+\item{prop_expl_var}{Proportion of the explained variance of derived
 components, after setting possible missing values to zero.}
 }
 \description{

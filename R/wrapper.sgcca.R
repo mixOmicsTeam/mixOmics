@@ -172,7 +172,7 @@ wrapper.sgcca <-
             scale = result.sgcca$scale,
             design = result.sgcca$design,
             scheme = result.sgcca$scheme,
-            explained_variance = result.sgcca$explained_variance
+            prop_expl_var = result.sgcca$prop_expl_var
         )
         
         class(out) = 'sgcca'

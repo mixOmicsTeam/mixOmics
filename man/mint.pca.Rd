@@ -38,8 +38,8 @@ eigenvectors).} \item{loadings}{same as 'rotation' to keep the mixOmics
 spirit} \item{x}{the value of the rotated data (the centred (and scaled if
 requested) data multiplied by the rotation/loadings matrix), also called the
 principal components.} \item{variates}{same as 'x' to keep the mixOmics
-spirit} \item{explained_variance}{Proportion of the explained variance from the multivariate
-model, used for plotIndiv} \item{names}{list containing the names to be used
+spirit} \item{prop_expl_var}{Proportion of the explained variance from the multivariate
+model after setting possible missing values to zero in the data.} \item{names}{list containing the names to be used
 for individuals and variables.}
 }
 \description{

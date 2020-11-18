@@ -51,7 +51,7 @@
 #' \describe{
 #' \item{ncomp}{the number of components to keep in the
 #' calculation.} 
-#' \item{explained_variance}{the adjusted percentage of variance
+#' \item{prop_expl_var}{the adjusted percentage of variance
 #' explained for each component.} 
 #' \item{cum.var}{the adjusted cumulative percentage of variances
 #' explained.}
@@ -337,7 +337,7 @@ spca <-
         cum.var <- vect.varX/var.tot
         ## calculate per-component explained variance from cum.var,
         # the variance is adjusted to account for potential correlation between PCs:                
-        explained_variance <- c(cum.var[1], diff(cum.var))
+        prop_expl_var <- c(cum.var[1], diff(cum.var))
         
         ## return missing values for output
         X[is.na.X] <- NA_real_
@@ -346,7 +346,7 @@ spca <-
                        #sdev = sdev,  # KA: to add if biplot function (but to be fixed!)
                        #center = center, # KA: to add if biplot function (but to be fixed!)
                        #scale = scale,   # KA: to add if biplot function (but to be fixed!)
-                       explained_variance = list(X=explained_variance),
+                       prop_expl_var = list(X=prop_expl_var),
                        cum.var = cum.var,
                        keepX = vect.keepX,
                        iter = vect.iter,

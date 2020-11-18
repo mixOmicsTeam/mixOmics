@@ -78,7 +78,11 @@ a matrix whose columns contain the eigenvectors).}
 projection of the samples in the space spanned by the principal components.
 These are the dimension-reduced representation of observations/samples.}
 \item{var.tot}{Total variance in the data.}
-\item{explained_variance}{Proportion of the explained variance of derived components}
+\item{prop_expl_var}{Proportion of variance explained per
+component after setting possible missing values in the data to zero (note
+that contrary to PCA, this amount may not decrease as the aim of the method
+is not to maximise the variance, but the covariance between X and the
+dummy matrix Y).}
 \item{cum.var}{The cumulative explained variance for components.}
 \item{Xw}{If multilevel, the data matrix with within-group-variation removed.}
 \item{design}{If multilevel, the provided design.}

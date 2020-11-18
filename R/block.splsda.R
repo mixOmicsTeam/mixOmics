@@ -50,7 +50,7 @@
 #' the zero- or near-zero predictors information.} \item{iter}{Number of
 #' iterations of the algorthm for each component} \item{weights}{Correlation
 #' between the variate of each block and the variate of the outcome. Used to
-#' weight predictions.} \item{explained_variance}{Percentage of explained
+#' weight predictions.} \item{prop_expl_var}{Percentage of explained
 #' variance for each component and each block}
 #' @author Florian Rohart, Benoit Gautier, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{plotIndiv}}, \code{\link{plotArrow}},
@@ -187,7 +187,7 @@ block.splsda <- function(X,
         scheme = result$scheme,
         indY = result$indY,
         weights = weights,
-        explained_variance = result$explained_variance
+        prop_expl_var = result$prop_expl_var
     )#[-result$indY])
     
     # give a class

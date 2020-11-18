@@ -333,7 +333,7 @@ summary.pca <-
     function (object, ...)
     {
         chkDots(...)
-        vars <- object$explained_variance
+        vars <- object$prop_expl_var
         importance <- rbind(`Standard deviation` = object$sdev, `Proportion of Variance` = round(vars,
                                                                                                  5), `Cumulative Proportion` = round(cumsum(vars), 5))
         k <- ncol(object$rotation)

@@ -19,7 +19,7 @@
 #' vectors} 
 #' \item{kurtosis}{the kurtosis measure of the independent loading
 #' vectors}
-#' \item{explained_variance}{Proportion of the explained variance of derived
+#' \item{prop_expl_var}{Proportion of the explained variance of derived
 #' components, after setting possible missing values to zero.}
 #' @author Fangzhou Yao, Jeff Coquery, Francois Bartolo, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{ipca}}, \code{\link{pca}}, \code{\link{plotIndiv}},
@@ -167,7 +167,7 @@ sipca <-
         
         #calcul explained variance
         explX=explained_variance(X,result$variates$X,ncomp)
-        result$explained_variance = list(X = explX)
+        result$prop_expl_var = list(X = explX)
         
         
         

@@ -91,13 +91,14 @@
 #' information.} \item{scale}{whether scaling was applied per predictor.}
 #' \item{logratio}{whether log ratio transformation for relative proportion
 #' data was applied, and if so, which type of transformation.}
-#' \item{explained_variance}{The amount of the variance explained by each
-#' variate / component divided by the total variance in \code{data} using the
-#' definition of 'redundancy'. Note that contrary to \code{PCA}, this
-#' amount may not decrease in the following components as the aim of the method
-#' is not to maximise the variance, but the covariance between data sets
-#' (including the dummy matrix representation of the outcome variable in case of
-#' the supervised approaches).}
+#' \item{prop_expl_var}{The proportion of the variance explained by each
+#' variate / component divided by the total variance in the \code{data} (after
+#' removing the possible missing values) using the definition of 'redundancy'.
+#' Note that contrary to \code{PCA}, this amount may not decrease in the
+#' following components as the aim of the method is not to maximise the
+#' variance, but the covariance between data sets (including the dummy matrix
+#' representation of the outcome variable in case of the supervised
+#' approaches).}
 #' \item{input.X}{numeric matrix of predictors in X that was input, before any
 #' scaling / logratio / multilevel transformation.} \item{mat.c}{matrix of
 #' coefficients from the regression of X / residual matrices X on the
@@ -179,7 +180,7 @@ pls <- function(X,
         nzv = result$nzv,
         scale = scale,
         logratio = logratio,
-        explained_variance = result$explained_variance,
+        prop_expl_var = result$prop_expl_var,
         input.X = result$input.X,
         mat.c = result$mat.c#,
         #defl.matrix = result$defl.matrix

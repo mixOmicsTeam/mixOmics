@@ -15,20 +15,23 @@ explained_variance(data, variates, ncomp)
 columns of \code{variates}}
 }
 \value{
-\code{explained_variance} returns the explained variance for
-each variate.
+\code{explained_variance} returns a named numeric vector containing
+  the proportion of explained variance for each variate after setting all
+  missing values in the data to zero.
 }
 \description{
 This function calculates the variance explained by their own variates (components) based on redundancy.
 }
 \details{
-\code{explained_variance} calculates the variance explained by each variate / component and 
-divides by the total variance in \code{data} using the definition of 'redundancy'. This applies to 
-any component-based approaches.
+\code{explained_variance} calculates the variance explained by each variate /
+component and divides by the total variance in \code{data} (after removing
+all missing values by setting them) using the definition of 'redundancy'. This applies to any
+component-based approaches.
 
-Variance explained by component \eqn{t_h} in \eqn{X} for dimension \eqn{h}:
-\deqn{Rd(X, t_h) = \frac{1}{p} \sum_{j = 1}^p \mbox{cor}^2(X^j, t_h)}
-where \eqn{X^j} is the variable centered and scaled, \eqn{p} is the total number of variables.
+Variance explained by component \eqn{t_h} in \eqn{X} for dimension
+  \eqn{h}: \deqn{Rd(X, t_h) = \frac{1}{p} \sum_{j = 1}^p \mbox{cor}^2(X^j,
+  t_h)} where \eqn{X^j} is the variable centered and scaled, \eqn{p} is the
+  total number of variables.
 }
 \examples{
 
@@ -41,7 +44,7 @@ toxicity.spls <- spls(X, Y, ncomp = 2, keepX = c(50, 50), keepY = c(10, 10))
 ex = explained_variance(toxicity.spls$X, toxicity.spls$variates$X, ncomp =2)
 
 # ex should be the same as
-toxicity.spls$explained_variance$X
+toxicity.spls$prop_expl_var$X
 
 }
 \references{

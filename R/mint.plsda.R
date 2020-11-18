@@ -50,10 +50,11 @@
 #' \item{names}{list containing the names to be used for individuals and
 #' variables.} \item{nzv}{list containing the zero- or near-zero predictors
 #' information.} \item{iter}{Number of iterations of the algorthm for each
-#' component} \item{explained_variance}{Percentage of explained variance for
-#' each component and each study (note that contrary to PCA, this amount may
-#' not decrease as the aim of the method is not to maximise the variance, but
-#' the covariance between X and the dummy matrix Y).}
+#' component} \item{prop_expl_var}{Percentage of explained variance for
+#' each component and each study after setting possible missing values to zero
+#' (note that contrary to PCA, this amount may not decrease as the aim of the
+#' method is not to maximise the variance, but the covariance between X and the
+#' dummy matrix Y).}
 #' @author Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{spls}}, \code{\link{summary}}, \code{\link{plotIndiv}},
 #' \code{\link{plotVar}}, \code{\link{predict}}, \code{\link{perf}},
@@ -165,7 +166,7 @@ mint.plsda <- function(X,
         max.iter = result$max.iter,
         nzv = result$nzv,
         scale = result$scale,
-        explained_variance = result$explained_variance
+        prop_expl_var = result$prop_expl_var
     )
     
     class(out) <- c("mint.plsda", "mixo_plsda", "mixo_pls", "DA")

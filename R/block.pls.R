@@ -67,7 +67,7 @@
 #' names to be used for individuals and variables.} \item{nzv}{list containing
 #' the zero- or near-zero predictors information.} \item{iter}{Number of
 #' iterations of the algorthm for each component}
-#' \item{explained_variance}{Percentage of explained variance for each
+#' \item{prop_expl_var}{Percentage of explained variance for each
 #' component and each block}
 #' @author Florian Rohart, Benoit Gautier, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{plotIndiv}}, \code{\link{plotArrow}},
@@ -130,7 +130,7 @@ block.pls <- function(X,
              design = result$design,
              scheme = result$scheme,
              weights = weights,
-             explained_variance = result$explained_variance)
+             prop_expl_var = result$prop_expl_var)
     
     # give a class
     class(out) = c("block.pls","sgcca")

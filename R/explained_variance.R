@@ -7,19 +7,22 @@
 #' This function calculates the variance explained by their own variates (components) based on redundancy.
 #' 
 #' 
-#' \code{explained_variance} calculates the variance explained by each variate / component and 
-#' divides by the total variance in \code{data} using the definition of 'redundancy'. This applies to 
-#' any component-based approaches.
+#' \code{explained_variance} calculates the variance explained by each variate /
+#' component and divides by the total variance in \code{data} (after removing
+#' all missing values by setting them) using the definition of 'redundancy'. This applies to any
+#' component-based approaches.
 #' 
 #' @param data numeric matrix of predictors
 #' @param variates variates as obtained from a \code{pls} object for instance
 #' @param ncomp number of components. Should be lower than the number of
 #' columns of \code{variates}
-#' @return \code{explained_variance} returns the explained variance for
-#' each variate.
-#' @details Variance explained by component \eqn{t_h} in \eqn{X} for dimension \eqn{h}:
-#' \deqn{Rd(X, t_h) = \frac{1}{p} \sum_{j = 1}^p \mbox{cor}^2(X^j, t_h)}
-#' where \eqn{X^j} is the variable centered and scaled, \eqn{p} is the total number of variables.
+#' @return \code{explained_variance} returns a named numeric vector containing
+#'   the proportion of explained variance for each variate after setting all
+#'   missing values in the data to zero.
+#' @details Variance explained by component \eqn{t_h} in \eqn{X} for dimension
+#'   \eqn{h}: \deqn{Rd(X, t_h) = \frac{1}{p} \sum_{j = 1}^p \mbox{cor}^2(X^j,
+#'   t_h)} where \eqn{X^j} is the variable centered and scaled, \eqn{p} is the
+#'   total number of variables.
 #' @references
 #' Tenenhaus, M.,  La Régression PLS théorie et pratique (1998). Technip, Paris, chap2.
 #' @author Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
@@ -37,7 +40,7 @@
 #' ex = explained_variance(toxicity.spls$X, toxicity.spls$variates$X, ncomp =2)
 #' 
 #' # ex should be the same as
-#' toxicity.spls$explained_variance$X
+#' toxicity.spls$prop_expl_var$X
 #' 
 #' @export
 explained_variance <- function(data, variates, ncomp)
