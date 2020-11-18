@@ -80,9 +80,9 @@ edge labels (defaults to \code{FALSE}).}
 
 \item{cex.edge.label}{the font size for the edge labels.}
 
-\item{show.color.key}{boolean. If \code{TRUE} a color key should be plotted.}
+\item{show.color.key}{Logical. If \code{TRUE} a color key should be plotted.}
 
-\item{symkey}{boolean indicating whether the color key should be made
+\item{symkey}{Logical indicating whether the color key should be made
 symmetric about 0. Defaults to \code{TRUE}.}
 
 \item{keysize}{numeric value indicating the size of the color key.}

@@ -64,7 +64,7 @@
 #' performance of the model.
 #' @param progressBar by default set to \code{TRUE} to output the progress bar
 #' of the computation.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
+#' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
 #' function (should be set to TRUE in particular for data with many zero
 #' values). Default value is FALSE
 #' @param logratio one of ('none','CLR'). Default to 'none'

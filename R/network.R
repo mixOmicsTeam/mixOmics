@@ -110,8 +110,8 @@
 #' Details).
 #' @param show.edge.labels logical. If \code{TRUE}, plot association values as
 #' edge labels (defaults to \code{FALSE}).
-#' @param show.color.key boolean. If \code{TRUE} a color key should be plotted.
-#' @param symkey boolean indicating whether the color key should be made
+#' @param show.color.key Logical. If \code{TRUE} a color key should be plotted.
+#' @param symkey Logical indicating whether the color key should be made
 #' symmetric about 0. Defaults to \code{TRUE}.
 #' @param keysize numeric value indicating the size of the color key.
 #' @param keysize.label vector of length 1, indicating the size of the labels

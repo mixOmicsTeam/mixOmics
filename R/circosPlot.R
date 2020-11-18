@@ -26,7 +26,7 @@
 #' @param ncol.legend number of columns for the legend
 #' @param size.variables size of the variable labels
 #' @param size.labels size of the block labels
-#' @param legend boolean. Whether the legend should be added. Default is TRUE.
+#' @param legend Logical. Whether the legend should be added. Default is TRUE.
 #' @param ... Advanced plot parameters:
 #' \itemize{
 #'  \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 

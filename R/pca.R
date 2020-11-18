@@ -10,14 +10,15 @@
 #' using the NIPALS algorithm if there is data missing. Unlike
 #' \code{\link{princomp}}, the print method for these objects prints the
 #' results in a nice format and the \code{plot} method produces a bar plot of
-#' the percentage of variance explaned by the principal components (PCs).
+#' the percentage of variance explained by the principal components (PCs).
 #' 
 #' When using NIPALS (missing values), we make the assumption that the first
 #' (\code{min(ncol(X),} \code{nrow(X)}) principal components will account for
 #' 100 \% of the explained variance.
 #' 
-#' Note that \code{scale= TRUE} cannot be used if there are zero or constant
-#' (for \code{center = TRUE}) variables.
+#' Note that \code{scale = TRUE} will throw an error if there are constant
+#' variables in the data, in which case it's best to filter these variables
+#' in advance.
 #' 
 #' According to Filzmoser et al., a ILR log ratio transformation is more
 #' appropriate for PCA with compositional data. Both CLR and ILR are valid.

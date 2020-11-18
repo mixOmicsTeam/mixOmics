@@ -21,7 +21,7 @@
 #' @param x object of class inheriting from \code{"block.splsda"}.
 #' @param ncomp Which component to plot calculated from each data set. Has to
 #' be lower than the minimum of \code{object$ncomp}
-#' @param legend boolean. Whether the legend should be added. Default is TRUE.
+#' @param legend Logical. Whether the legend should be added. Default is TRUE.
 #' @param legend.ncol Number of columns for the legend. Default to
 #' \code{min(5,nlevels(x$Y))}
 #' @param \dots not used

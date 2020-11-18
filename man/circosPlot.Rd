@@ -56,7 +56,7 @@ see examples.}
 
 \item{size.labels}{size of the block labels}
 
-\item{legend}{boolean. Whether the legend should be added. Default is TRUE.}
+\item{legend}{Logical. Whether the legend should be added. Default is TRUE.}
 
 \item{...}{Advanced plot parameters:
 \itemize{

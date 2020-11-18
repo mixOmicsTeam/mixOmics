@@ -15,7 +15,7 @@ plotDiablo(x, ncomp = 1, legend = TRUE, legend.ncol, ...)
 \item{ncomp}{Which component to plot calculated from each data set. Has to
 be lower than the minimum of \code{object$ncomp}}
 
-\item{legend}{boolean. Whether the legend should be added. Default is TRUE.}
+\item{legend}{Logical. Whether the legend should be added. Default is TRUE.}
 
 \item{legend.ncol}{Number of columns for the legend. Default to
 \code{min(5,nlevels(x$Y))}}

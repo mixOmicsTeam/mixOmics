@@ -66,7 +66,7 @@ and Strimmer (2005) analytical formula.}
 matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 or \code{"classic"}. See Details.}
 
-\item{scale}{Boolean. If scale = TRUE, each block is standardized to zero
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
 \item{init}{Mode of initialization use in the algorithm, either by Singular
@@ -77,7 +77,7 @@ block independently ("svd.single") . Default to "svd".}
 
 \item{max.iter}{integer, the maximum number of iterations.}
 
-\item{near.zero.var}{boolean, see the internal \code{\link{nearZeroVar}}
+\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Setting this argument to FALSE (when appropriate) will speed up the
 computations. Default value is FALSE}

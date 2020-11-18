@@ -77,7 +77,7 @@
 #' \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
 #' Default set to 'ggplot2'. See details. \code{3d} is not available for MINT
 #' objects.
-#' @param ellipse boolean indicating if ellipse plots should be plotted. In the
+#' @param ellipse Logical indicating if ellipse plots should be plotted. In the
 #' non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
 #' sGCCA} ellipse plot is only be plotted if the argument \code{group} is
 #' provided. In the \code{PLS-DA, SPLS-DA,sGCCDA} supervised object, by default
@@ -85,13 +85,13 @@
 #' @param ellipse.level Numerical value indicating the confidence level of
 #' ellipse being plotted when \code{ellipse =TRUE} (i.e. the size of the
 #' ellipse). The default is set to 0.95, for a 95\% region.
-#' @param centroid boolean indicating whether centroid points should be
+#' @param centroid Logical indicating whether centroid points should be
 #' plotted. In the non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS,
 #' sPLS, rCC, rGCCA, sGCCA} the centroid will only be plotted if the argument
 #' \code{group} is provided. The centroid will be calculated based on the group
 #' categories. In the supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the
 #' centroid will be calculated according to the outcome \code{Y}.
-#' @param star boolean indicating whether a star plot should be plotted, with
+#' @param star Logical indicating whether a star plot should be plotted, with
 #' arrows starting from the centroid (see argument \code{centroid}, and ending
 #' for each sample belonging to each group or outcome. In the non supervised
 #' objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA} star
@@ -101,7 +101,7 @@
 #' @param title set of characters indicating the title plot.
 #' @param subtitle subtitle for each plot, only used when several \code{block}
 #' or \code{study} are plotted.
-#' @param legend boolean. Whether the legend should be added. Default is FALSE.
+#' @param legend Logical. Whether the legend should be added. Default is FALSE.
 #' @param X.label x axis titles.
 #' @param Y.label y axis titles.
 #' @param Z.label z axis titles (when style = '3d').
@@ -340,7 +340,7 @@ check.input.plotIndiv <-
     if (length(ind.names) > 1)
     {
       if (length(ind.names) !=  length(object$names$sample))
-        stop("'ind.names' must be a character vector of length ", length(object$names$sample), " or a boolean atomic vector.")
+        stop("'ind.names' must be a character vector of length ", length(object$names$sample), " or a Logical atomic vector.")
     }
     
     

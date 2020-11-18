@@ -74,13 +74,13 @@
 #' @param rad.in numeric between 0 and 1, the radius of the inner circle.
 #' Defaults to \code{0.5}.
 #' @param title character indicating the title plot.
-#' @param legend boolean when more than 3 blocks. Can be a character vector
+#' @param legend Logical when more than 3 blocks. Can be a character vector
 #' when one or 2 blocks to customize the legend. See examples. Default is
 #' FALSE.
 #' @param legend.title title of the legend
 #' @param style argument to be set to either \code{'graphics'},
 #' \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
-#' @param overlap boolean. Whether the variables should be plotted in one
+#' @param overlap Logical. Whether the variables should be plotted in one
 #' single figure. Default is TRUE.
 #' @param axes.box for style '3d', argument to be set to either \code{'axes'},
 #' \code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.

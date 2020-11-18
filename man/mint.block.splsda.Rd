@@ -92,7 +92,7 @@ containing the names to be used for individuals and variables.}
 \item{tol}{the tolerance used in the iterative algorithm, used for
 subsequent S3 methods} \item{max.iter}{the maximum number of iterations,
 used for subsequent S3 methods} \item{iter}{Number of iterations of the
-algorthm for each component}
+algorithm for each component}
 }
 \description{
 Function to integrate data sets measured on the same samples (N-integration)

@@ -30,18 +30,18 @@
 #' @param keepX A vector of same length as X.  Each entry keepX[i] is the
 #' number of X[[i]]-variables kept in the model.
 #' @param scheme Either "horst", "factorial" or "centroid" (Default: "horst").
-#' @param scale Boolean. If scale = TRUE, each block is standardized to zero
+#' @param scale Logical. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
 #' @param init Mode of initialization use in the algorithm, either by Singular
 #' Value Decompostion of the product of each block of X with Y ("svd") or each
 #' block independently ("svd.single") . Default to "svd.single".
 #' @param tol Convergence stopping value.
 #' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
+#' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
 #' function (should be set to TRUE in particular for data with many zero
 #' values). Setting this argument to FALSE (when appropriate) will speed up the
 #' computations. Default value is FALSE
-#' @param all.outputs boolean. Computation can be faster when some specific
+#' @param all.outputs Logical. Computation can be faster when some specific
 #' (and non-essential) outputs are not calculated. Default = \code{TRUE}.
 #' @return \code{wrapper.rgcca} returns an object of class \code{"rgcca"}, a
 #' list that contains the following components:

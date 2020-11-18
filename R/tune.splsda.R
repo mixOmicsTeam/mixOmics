@@ -88,7 +88,7 @@
 #' @param measure Three misclassification measure are available: overall
 #' misclassification error \code{overall}, the Balanced Error Rate \code{BER}
 #' or the Area Under the Curve \code{AUC}
-#' @param scale Boolean. If scale = TRUE, each block is standardized to zero
+#' @param scale Logical. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
 #' @param auc if \code{TRUE} calculate the Area Under the Curve (AUC)
 #' performance of the model based on the optimisation measure \code{measure}.
@@ -96,7 +96,7 @@
 #' of the computation.
 #' @param tol Convergence stopping value.
 #' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
+#' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
 #' function (should be set to TRUE in particular for data with many zero
 #' values). Default value is FALSE
 #' @param nrepeat Number of times the Cross-Validation process is repeated.

@@ -67,11 +67,11 @@ individuals and variables.} \item{nzv}{list containing the zero- or
 near-zero predictors information.} \item{tol}{the tolerance used in the
 iterative algorithm, used for subsequent S3 methods} \item{iter}{Number of
 iterations of the algorithm for each component} \item{max.iter}{the maximum
-number of iterations, used for subsequent S3 methods} \item{scale}{boolean
+number of iterations, used for subsequent S3 methods} \item{scale}{Logical
 indicating whether the data were scaled in MINT S3 methods}
 \item{logratio}{whether logratio transformations were used for compositional
 data} \item{prop_expl_var}{Proportion of variance explained per
-component after setting possible missing values in the data to zero. (note
+component after setting possible missing values in the data to zero (note
 that contrary to PCA, this amount may not decrease as the aim of the method
 is not to maximise the variance, but the covariance between X and the
 dummy matrix Y).} \item{mat.c}{matrix of coefficients from the regression of

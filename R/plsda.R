@@ -39,7 +39,7 @@
 #' near-zero predictors information.} \item{tol}{the tolerance used in the
 #' iterative algorithm, used for subsequent S3 methods} \item{max.iter}{the
 #' maximum number of iterations, used for subsequent S3 methods}
-#' \item{iter}{Number of iterations of the algorthm for each component}
+#' \item{iter}{Number of iterations of the algorithm for each component}
 #' \item{prop_expl_var}{The proportion of the variance explained by each
 #' variate / component divided by the total variance in the \code{data} (after
 #' removing the possible missing values) using the definition of 'redundancy'.

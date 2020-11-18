@@ -89,13 +89,13 @@
 #' \code{MAPE} (average of the absolute errors,
 #'  as a percentage of the actual values) or \code{R2}. 
 #'  Default to \code{MSE}. See details.
-#' @param scale Boolean. If scale = TRUE, each block is standardized to zero
+#' @param scale Logical. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
 #' @param progressBar by default set to \code{TRUE} to output the progress bar
 #' of the computation.
 #' @param tol Convergence stopping value.
 #' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
+#' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
 #' function (should be set to TRUE in particular for data with many zero
 #' values). Default value is FALSE
 #' @param nrepeat Number of times the Cross-Validation process is repeated.

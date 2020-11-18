@@ -46,10 +46,10 @@
 #' object.
 #' @param col color used in the barplot, only for object from non Discriminant
 #' analysis
-#' @param plot Boolean indicating of the plot should be output. If set to FALSE
+#' @param plot Logical indicating of the plot should be output. If set to FALSE
 #' the user can extract the contribution matrix, see example. Default value is
 #' TRUE.
-#' @param show.ties Boolean. If TRUE then tie groups appear in the color set by
+#' @param show.ties Logical. If TRUE then tie groups appear in the color set by
 #' \code{col.ties}, which will appear in the legend. Ties can happen when
 #' dealing with count data type. By default set to TRUE.
 #' @param col.ties Color corresponding to ties, only used if
@@ -64,7 +64,7 @@
 #' @param name.var A character vector indicating the names of the variables.
 #' The names of the vector should match the names of the input data, see
 #' example.
-#' @param name.var.complete Boolean. If \code{name.var} is supplied with some
+#' @param name.var.complete Logical. If \code{name.var} is supplied with some
 #' empty names, \code{name.var.complete} allows you to use the initial variable
 #' names to complete the graph (from colnames(X)). Defaut to FALSE.
 #' @param title A set of characters to indicate the title of the plot. Default
@@ -73,7 +73,7 @@
 #' or \code{study} are plotted.
 #' @param size.title size of the title
 #' @param size.subtitle size of the subtitle
-#' @param legend Boolean indicating if the legend indicating the group outcomes
+#' @param legend Logical indicating if the legend indicating the group outcomes
 #' should be added to the plot. Default value is TRUE.
 #' @param legend.color A color vector of length the number of group outcomes.
 #' See examples.

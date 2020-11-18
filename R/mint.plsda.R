@@ -49,7 +49,7 @@
 #' estimated loadings for the partial variates - partial loadings.}
 #' \item{names}{list containing the names to be used for individuals and
 #' variables.} \item{nzv}{list containing the zero- or near-zero predictors
-#' information.} \item{iter}{Number of iterations of the algorthm for each
+#' information.} \item{iter}{Number of iterations of the algorithm for each
 #' component} \item{prop_expl_var}{Percentage of explained variance for
 #' each component and each study after setting possible missing values to zero
 #' (note that contrary to PCA, this amount may not decrease as the aim of the

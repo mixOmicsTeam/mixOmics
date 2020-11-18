@@ -36,7 +36,7 @@
 #' \code{c("all"}, \code{"summarised"}, \code{"communalities"},
 #' \code{"redundancy"}, \code{"VIP"}). \code{"VIP"} is only available for
 #' (s)PLS. See Details.
-#' @param keep.var boolean. If \code{TRUE} only the variables with loadings not
+#' @param keep.var Logical. If \code{TRUE} only the variables with loadings not
 #' zero (as selected by \code{spls}) are showed. Defaults to \code{FALSE}.
 #' @param ... not used currently.
 #' @return The function \code{summary} returns a list with components:

@@ -46,7 +46,7 @@
 \item{digits}{integer, the number of significant digits to use when
 printing. Defaults to \code{4}.}
 
-\item{keep.var}{boolean. If \code{TRUE} only the variables with loadings not
+\item{keep.var}{Logical. If \code{TRUE} only the variables with loadings not
 zero (as selected by \code{spls}) are showed. Defaults to \code{FALSE}.}
 
 \item{...}{not used currently.}

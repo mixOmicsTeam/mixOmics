@@ -330,7 +330,7 @@ variable name text should be magnified or reduced relative to the default.}
 The names of the vector should match the names of the input data, see
 example.}
 
-\item{name.var.complete}{Boolean. If \code{name.var} is supplied with some
+\item{name.var.complete}{Logical. If \code{name.var} is supplied with some
 empty names, \code{name.var.complete} allows you to use the initial variable
 names to complete the graph (from colnames(X)). Defaut to FALSE.}
 
@@ -363,11 +363,11 @@ expression levels / abundance.}
 to assess the contribution. We recommend using median in the case of count
 or skewed data.}
 
-\item{plot}{Boolean indicating of the plot should be output. If set to FALSE
+\item{plot}{Logical indicating of the plot should be output. If set to FALSE
 the user can extract the contribution matrix, see example. Default value is
 TRUE.}
 
-\item{show.ties}{Boolean. If TRUE then tie groups appear in the color set by
+\item{show.ties}{Logical. If TRUE then tie groups appear in the color set by
 \code{col.ties}, which will appear in the legend. Ties can happen when
 dealing with count data type. By default set to TRUE.}
 
@@ -377,7 +377,7 @@ dealing with count data type. By default set to TRUE.}
 \item{size.legend}{A numerical value giving the amount by which plotting the
 legend text should be magnified or reduced relative to the default.}
 
-\item{legend}{Boolean indicating if the legend indicating the group outcomes
+\item{legend}{Logical indicating if the legend indicating the group outcomes
 should be added to the plot. Default value is TRUE.}
 
 \item{legend.color}{A color vector of length the number of group outcomes.
