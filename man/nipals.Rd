@@ -10,7 +10,7 @@ nipals(X, ncomp = 2, max.iter = 500, tol = 1e-06)
 \item{X}{a numeric matrix (or data frame) which provides the data for the
 principal components analysis. It can contain missing values in which case
 \code{center = TRUE} is used as required by the
-\code{\link[mixOmics]{nipals}} function.}
+\code{\link{nipals}} function.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}

@@ -22,8 +22,8 @@
 #' \code{X} can contain missing values. Missing values are handled by being
 #' disregarded during the cross product computations in the algorithm
 #' \code{mint.plsda} without having to delete rows with missing data.
-#' Alternatively, missing data can be imputed prior using the \code{nipals}
-#' function.
+#' Alternatively, missing data can be imputed prior using the
+#' \code{impute.nipals} function.
 #' 
 #' The type of deflation used is \code{'regression'} for discriminant algorithms.
 #' i.e. no deflation is performed on Y.

@@ -1,6 +1,6 @@
 #' Impute missing values using NIPALS algorithm
 #'
-#' This function uses \code{\link[mixOmics]{nipals}} function to decompose
+#' This function uses \code{\link{nipals}} function to decompose
 #' \code{X} into a set of components (\code{t}), (pseudo-) singular-values
 #' (\code{eig}), and feature loadings (\code{p}). The original matrix is then
 #' approximated/reconstituted using the following equation:
@@ -11,9 +11,9 @@
 #' 
 #' @param X A numeric matrix containing missing values
 #' @param ncomp Positive integer, the number of components to derive from
-#'   \code{X} using the \code{\link[mixOmics]{nipals}} function and reconstitute
+#'   \code{X} using the \code{\link{nipals}} function and reconstitute
 #'   the original matrix
-#' @param ... Optional arguments passed to \code{\link[mixOmics]{nipals}}
+#' @param ... Optional arguments passed to \code{\link{nipals}}
 #'
 #' @return A numeric matrix with missing values imputed.
 #' @seealso \code{\link{impute}}, \code{\link{pca}}

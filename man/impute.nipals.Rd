@@ -10,16 +10,16 @@ impute.nipals(X, ncomp, ...)
 \item{X}{A numeric matrix containing missing values}
 
 \item{ncomp}{Positive integer, the number of components to derive from
-\code{X} using the \code{\link[mixOmics]{nipals}} function and reconstitute
+\code{X} using the \code{\link{nipals}} function and reconstitute
 the original matrix}
 
-\item{...}{Optional arguments passed to \code{\link[mixOmics]{nipals}}}
+\item{...}{Optional arguments passed to \code{\link{nipals}}}
 }
 \value{
 A numeric matrix with missing values imputed.
 }
 \description{
-This function uses \code{\link[mixOmics]{nipals}} function to decompose
+This function uses \code{\link{nipals}} function to decompose
 \code{X} into a set of components (\code{t}), (pseudo-) singular-values
 (\code{eig}), and feature loadings (\code{p}). The original matrix is then
 approximated/reconstituted using the following equation:
