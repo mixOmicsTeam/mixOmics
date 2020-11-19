@@ -22,23 +22,25 @@ plotIndiv(pca.res, cex = 0.2,
 plotVar(pca.res, rad.in = 0.5, cex = 0.5, style="3d")
 }
 
-# example with imputing the missing values using NIPALS
+# example with imputing the missing values using impute.nipals()
 # --------------------------------
 data("nutrimouse")
 X <- data.matrix(nutrimouse$lipid)
+X <- scale(X, center = TRUE, scale = TRUE)
 ## add missing values to X to impute and compare to actual values
 set.seed(42)
-na.ind <- sample(seq_along(X), size = 10)
+na.ind <- sample(seq_along(X), size = 20)
 true.values <- X[na.ind]
 X[na.ind] <- NA
-nipals.impute <- nipals(X, ncomp = 10, reconst = TRUE)
-X.impute <- nipals.impute$X
+pca.no.impute <- pca(X, ncomp = 2)
+plotIndiv(pca.no.impute, group = nutrimouse$diet, pch = 16)
+X.impute <- impute.nipals(X, ncomp = 10)
 ## compare
-round(X.impute[na.ind], 2)
-true.values
+cbind('imputed' = round(X.impute[na.ind], 2), 
+      'actual' = round(true.values, 2))
 ## run pca using imputed matrix
-pca.res <- pca(X.impute, ncomp = 2)
-plotIndiv(pca.res, group = nutrimouse$diet, pch = 16)
+pca.impute <- pca(X.impute, ncomp = 2)
+plotIndiv(pca.impute, group = nutrimouse$diet, pch = 16)
 # example with multilevel decomposition and CLR log ratio transformation 
 # (ILR takes longer to run)
 # ----------------

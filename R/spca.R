@@ -218,7 +218,7 @@ spca <-
             warning("data contain missing values which will be ",
                     "set to zero for calculations. Consider using center = TRUE ",
                     "for better performance, or impute missing values using ",
-                    "mixOmics::nipals() function with reconst = TRUE.")
+                    "'impute.nipals' function.")
         }
         is.na.X <- is.na(X)
         X[is.na.X] <- 0
