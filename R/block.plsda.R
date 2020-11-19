@@ -22,7 +22,7 @@
 #' disregarded during the cross product computations in the algorithm
 #' \code{block.pls} without having to delete rows with missing data.
 #' Alternatively, missing data can be imputed prior using the
-#' \link{\code{impute.nipals}} function.
+#' \code{\link{impute.nipals}} function.
 #' 
 #' The type of algorithm to use is specified with the \code{mode} argument.
 #' Four PLS algorithms are available: PLS regression \code{("regression")}, PLS

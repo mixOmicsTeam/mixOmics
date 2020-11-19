@@ -60,7 +60,7 @@ perspectives on mathematical and statistical model building}. Academic
 Press, N.Y., 307-357.
 }
 \seealso{
-\code{\link{impute.impute}}, \code{\link{svd}},
+\code{\link{impute.nipals}}, \code{\link{svd}},
   \code{\link{princomp}}, \code{\link{prcomp}}, \code{\link{eigen}} and
   http://www.mixOmics.org for more details.
 }

@@ -285,7 +285,7 @@ NULL
 #' @param pch.legend Character, the legend title if \code{pch} is a factor.
 #' @param pch.legend.title Character, the legend title if \code{pch} is a factor.
 #' @param cex Numeric scalar indicating the desired magnification of plot texts.
-#'   \code{\link[ggplot]{theme}} function may be used with the output object if
+#'   \code{\link[ggplot2]{theme}} function may be used with the output object if
 #'   further customisation is required.
 #' @param ... Not currently used.
 #' @details 

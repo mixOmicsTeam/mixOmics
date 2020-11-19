@@ -16,7 +16,7 @@
 #' @param ... Optional arguments passed to \code{\link{nipals}}
 #'
 #' @return A numeric matrix with missing values imputed.
-#' @seealso \code{\link{impute}}, \code{\link{pca}}
+#' @seealso \code{\link{impute.nipals}}, \code{\link{pca}}
 #' @author Al J Abadi
 #' @examples
 #' data("nutrimouse")

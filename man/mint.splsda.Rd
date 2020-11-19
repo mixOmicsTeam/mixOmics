@@ -90,7 +90,7 @@ represented.
 disregarded during the cross product computations in the algorithm
 \code{mint.splsda} without having to delete rows with missing data.
 Alternatively, missing data can be imputed prior using the
-\link{\code{impute.nipals}} function.
+\code{\link{impute.nipals}} function.
 
 The type of deflation used is \code{'regression'} for discriminant algorithms.
 i.e. no deflation is performed on Y.

@@ -42,7 +42,7 @@ round(X.impute[na.ind], 2)
 true.values
 }
 \seealso{
-\code{\link{impute}}, \code{\link{pca}}
+\code{\link{impute.nipals}}, \code{\link{pca}}
 }
 \author{
 Al J Abadi
