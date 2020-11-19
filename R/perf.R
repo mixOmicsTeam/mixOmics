@@ -54,7 +54,7 @@
 #' either for all samples or for study-specific samples (for mint models).
 #' Therefore we minimise the risk of overfitting. For block.splsda model, the
 #' calculated AUC is simply the blocks-combined AUC for each component
-#' calulcated using \code{auroc.sgccda}.  See \code{\link{auroc}} for more
+#' calculated using \code{auroc.sgccda}.  See \code{\link{auroc}} for more
 #' details. Our multivariate supervised methods already use a prediction
 #' threshold based on distances (see \code{predict}) that optimally determine
 #' class membership of the samples tested. As such AUC and ROC are not needed
@@ -75,6 +75,10 @@
 #' it calculates the average proportion of wrongly classified samples in each
 #' class, weighted by the number of samples in each class. BER is less biased
 #' towards majority classes during the performance assessment.
+#' 
+#' For \code{sgccda} objects, we provide weighted measures (e.g. error rate) in
+#' which the weights are simply the correlation of the derived components of a
+#' given block with the outcome variable Y.
 #' 
 #' More details about the PLS modes in \code{?pls}.
 #'
@@ -157,13 +161,14 @@
 #' \code{AveragedPredict.class} output)} \item{WeightedPredict.class}{if more
 #' than one block, returns the weighted predicted class over the blocks
 #' (weighted average of the \code{Predict} output and prediction using the
-#' \code{max.dist} distance)} \item{WeightedPredict.error.rate}{if more than
-#' one block, returns the weighted average predicted error rate over the blocks
-#' (using the \code{WeightedPredict.class} output)} \item{MajorityVote}{if more
-#' than one block, returns the majority class over the blocks. NA for a sample
-#' means that there is no consensus on the predicted class for this particular
-#' sample over the blocks.} \item{MajorityVote.error.rate}{if more than one
-#' block, returns the error rate of the \code{MajorityVote} output}
+#' \code{max.dist} distance). See details for more info on weights.}
+#' \item{WeightedPredict.error.rate}{if more than one block, returns the
+#' weighted average predicted error rate over the blocks (using the
+#' \code{WeightedPredict.class} output.)} \item{MajorityVote}{if more than one
+#' block, returns the majority class over the blocks. NA for a sample means that
+#' there is no consensus on the predicted class for this particular sample over
+#' the blocks.} \item{MajorityVote.error.rate}{if more than one block, returns
+#' the error rate of the \code{MajorityVote} output}
 #' \item{WeightedVote}{if more than one block, returns the weighted majority
 #' class over the blocks. NA for a sample means that there is no consensus on
 #' the predicted class for this particular sample over the blocks.}
