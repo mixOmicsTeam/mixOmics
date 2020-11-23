@@ -5,6 +5,8 @@ Y <- liver.toxicity$clinic
 
 ## Not run: 
 set.seed(42)
+tune.cor = tune.spls(X, Y, ncomp=2, test.keepX = c(2,4),test.keepY = c(5,10), measure.tune = "cor",
+                     nrepeat=3, progressBar = TRUE, folds =3)
 tune.cor = tune.spls(X, Y, ncomp=2, test.keepX = c(2,4),test.keepY = c(5,10), measure.tune = "cor", method = 'spls',
                      nrepeat=10, progressBar = TRUE, folds =10, BPPARAM = BiocParallel::MulticoreParam(workers = 4, RNGseed = 23))
 # tune.cor = tune.spls(X, Y, ncomp=2, test.keepX = c(2,4,8,12),test.keepY = c(5,6,7,8,9), measure.tune = "cor", method = 'spls',

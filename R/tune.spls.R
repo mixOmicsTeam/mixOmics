@@ -170,14 +170,13 @@
 tune.spls <- 
     function(X,
              Y,
-             method = c('pls', 'spls'),
              test.keepX = NULL,
              test.keepY = NULL,
              ncomp,
              nrepeat,
              folds = 10,
              mode = c('regression', 'canonical', 'classic'),
-             measure.tune = if (method == 'pls') NULL else c('cor', 'RSS'),
+             measure.tune = c('cor', 'RSS'), ## only if spls model
              BPPARAM = BiocParallel::SerialParam(),
              progressBar = FALSE
              ) {
@@ -186,8 +185,7 @@ tune.spls <-
         out = list()
         mode <- match.arg(mode)
         
-        method <- match.arg(method)
-        spls.model <- (method == 'spls')
+        spls.model <- !is.null(test.keepX) | !is.null(test.keepY)
         
         test.keepX <- .change_if_null(arg = test.keepX, default = ncol(X))
         test.keepY <- .change_if_null(arg = test.keepY, default = ncol(Y))
@@ -209,7 +207,7 @@ tune.spls <-
                       dimnames = list(paste0('keepX_', test.keepX),
                                       paste0('keepY_', test.keepY),
                                       paste0('repeat_', seq_len(nrepeat))))
-        }else{
+        } else {
             if ((test.keepX != ncol(X)) | (test.keepY != ncol(Y)))
                 stop("'test.keepX' and 'test.keepY' can only be provided with method = 'spls'", call. = FALSE)
             comps <- ncomp
