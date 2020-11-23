@@ -42,15 +42,10 @@ NULL
 #' @rdname plot.tune
 #' @export
 plot.tune.spls <-
-    function(x, optimal = TRUE, sd = TRUE, measure = NULL, block = NULL, interactive = FALSE, pch = 16, pch.size = 2 , cex = 1.2,...)
+    function(x, measure = NULL, pch = 16, cex = 1.2,...)
     {
-        # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
-        # y = Comp = lwr = upr = NULL
         ncomp <- x$call$ncomp
-        if (!is.logical(optimal))
-            stop("'optimal' must be logical.", call. = FALSE)
-        
-        block <- match.arg(block, choices = c('X', 'Y'))
+
         ## if measure not given, use object's 'measure.tune' for spls
         if (is.null(measure) & is(x, 'tune.spls') )
         {
@@ -79,112 +74,36 @@ plot.tune.spls <-
             
             df <- Reduce(f = rbind, df.list)
             text.size = as.integer(cex*10)
-            p <- ggplot(df, aes(keepX, mean, col = factor(keepY))) + 
-                geom_point(shape = pch, size = pch.size) + geom_line(show.legend = FALSE) + theme_bw() + geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.04, show.legend = FALSE) +
-                labs(title = title) +
-                geom_point(data = df[df$keepX == x$choice.keepX & df$keepY == x$choice.keepY,], 
-                           mapping = aes(keepX, mean, col = factor(keepY)), shape = 18, size = as.integer(pch.size*2))
-            ## y limits for cor and RSS with and without sd
-            if (sd == TRUE) {
-                ymin <- min(0, df$mean - df$sd)
-                if (measure == 'cor')
-                {
-                    ymax <- max(1, df$mean + df$sd)
-                } else {
-                    ymax <- max(df$mean + df$sd)
-                }
-            } else {
+            p <- ggplot(df, aes(factor(keepX), factor(keepY), size = mean, col = sd)) + 
+                geom_point(shape = pch) + 
+                scale_color_gradient(low = color.mixo(4), high = 'red') + 
+                theme(panel.border = element_blank(),
+                      panel.grid.major = element_blank(),
+                      panel.grid.minor = element_blank(),
+                      axis.line = element_line(size = 0.5, linetype = "solid",
+                                               colour = "black"),
+                      
+                      panel.background = element_rect(fill='grey95'),
+                      
+                      axis.text = element_text( size = text.size ),
+                        axis.text.x = element_text( size = text.size ),
+                        axis.title = element_text( size = text.size),
+                        legend.text = element_text( size = text.size ),
+                        legend.title =  element_text( size = text.size),
+                        # subtitles
+                        strip.text = element_text(size = 1.3*text.size, face = 'bold')
+                      
+                      ) +
                 
-                ymin <- 0
-                if (measure == 'cor')
-                {
-                    ymax <- 1
-                } else {
-                    ymax <- max(df$mean)
-                }
-                
-            }
-            p <- p +  ylim(c(ymin, ymax))
-            
-            p <-  p +  
-                facet_wrap(.~V) +
-                labs(col = 'keepY',
-                     y = ifelse(measure == 'cor', 'Correlation', 'RSS')
-                     ) +
-                scale_x_log10(breaks = as.integer(unique(df$keepX))) +
-                guides(col = guide_legend(override.aes = list(shape = pch, size = pch.size))) + 
-                theme( axis.text = element_text( size = text.size ),
-                       axis.text.x = element_text( size = text.size ),
-                       axis.title = element_text( size = text.size, face = "bold" ),
-                       legend.text = element_text( size = text.size ),
-                       legend.title =  element_text( size = text.size, face = "bold"),
-                       # subtitles
-                       strip.text = element_text(size = text.size, face = 'bold'))
+                labs(x = 'keepX', y = 'keepY', size = measure) +
+                facet_wrap(.~V)
+        
             list(gg.plot = p, df= df)
         }
         
         res <- ggplot_measure(x=x, measure = measure)
         
-        if (interactive && interactive())
-        {
-            comp <- x$call$ncomp
-            df <- res$df
-            loadNamespace("shiny")
-            loadNamespace("shinyWidgets")
-            
-            keepY <- unique(df$keepY)
-            choice.keepY <- x$choice.keepY
-            ind.choice.keepY <- which(keepY == choice.keepY[comp])
-            ## show those closest to optimum keepY only by default
-            ind.selected <- which(abs(seq_along(keepY) -ind.choice.keepY) <=2)
-            keepY.selected <- x$call$test.keepY[ind.selected]
-            
-            
-            ui <- fluidPage(
-                titlePanel(title=h4("tune model performance", align="left")),
-                hr(),
-                fluidRow(
-                    column(3,
-                           selectInput(inputId = 'block', label = h4('Block:'), choices = c('X', 'Y'), selected = 'Y')
-                    ),
-                    column(3,
-                           shinyWidgets::sliderTextInput(inputId = "keepY", 
-                                                         label = h4("KeepY range:"), 
-                                                         choices = x$call$test.keepY,
-                                                         selected = keepY.selected)
-                    ),
-                ),
-                
-                hr(),
-                
-                fluidRow(column(10, align="center",
-                                plotOutput("ggp")
-                ))
-            )
-            
-            server <- function(input,output){
-                
-                dat <- reactive({
-                    a <- ifelse(input$block == 'X', 't', 'u')
-                    test <- df[df$V == a,]
-                    test <- test[test$keepY >= input$keepY[1] & test$keepY <= input$keepY[2],]
-                    test$keepY <- factor(test$keepY)
-                    test
-                })
-                
-                output$ggp<-renderPlot({
-                    ggplot(dat(),aes(x=keepX,y=mean, col = keepY)) + 
-                        theme_bw()+
-                        geom_point(colour='red', shape = 18) +
-                        geom_line()
-                })}
-            return(shinyApp(ui, server))
-            
-        } else {
-         return(res$gg.plot)    
-        }
-        
-        
+        res$gg.plot
     }
 
 #' @rdname plot.tune
