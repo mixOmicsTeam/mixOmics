@@ -142,7 +142,10 @@ cimDiablo = function(object,
     # color
     if (missing(color.Y))
     {
-        color.Y = color.mixo(1:nlevels(object$Y))
+        if (nlevels(object$Y) <= 10)
+            color.Y = color.mixo(1:nlevels(object$Y))
+        else
+            color.Y <- color.jet(nlevels(object$Y))
     } else {
         if (length(color.Y) != nlevels(object$Y))
             stop("'color.Y' needs to be of length ", nlevels(object$Y))
@@ -185,7 +188,7 @@ cimDiablo = function(object,
     XDat[which(XDat < -2)] = -2
     
     #dark = brewer.pal(n = 12, name = 'Paired')[seq(2, 12, by = 2)]
-    VarLabels = factor(rep(names(X), lapply(keepA[-length(keepA)], sum)),
+    VarLabels = factor(rep(names(keepA[-length(keepA)]), lapply(keepA[-length(keepA)], sum)),
                        levels = names(X))#[order(names(X))])
     
     ## Plot heatmap
