@@ -431,7 +431,7 @@ print.ipca <-
             "-------------------- \n")
         
         cat(" unmixing matrix: see object$unmixing \n")
-        cat(" independent principal components: see object$x \n")
+        cat(" independent principal components: see object$variates$X \n")
         cat(" mixing matrix: see object$mixing \n")
         cat(" kurtosis: see object$kurtosis \n")
         cat(" variable names: see object$names \n")
@@ -457,7 +457,7 @@ print.sipca <-
             "-------------------- \n")
         
         cat(" unmixing matrix: see object$unmixing \n")
-        cat(" independent principal components: see object$x \n")
+        cat(" independent principal components: see object$variates$X \n")
         cat(" mxing matrix: see object$mixing \n")
         cat(" kurtosis: see object$kurtosis \n")
         cat(" variable names: see object$names \n")

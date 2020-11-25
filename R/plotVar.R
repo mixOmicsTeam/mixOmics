@@ -352,7 +352,7 @@ plotVar <-
                 if (any(class.object %in%  c("sipca", "spca"))){
                     
                     cord.X[[1]] = cor(object$X[, colnames(object$X) %in% unique(unlist(lapply(c(comp1, comp2, comp3), function(x){selectVar(object, comp = x)$name})))],
-                                      object$x[, c(comp1, comp2, comp3)], use = "pairwise")
+                                      object$variates$X[, c(comp1, comp2, comp3)], use = "pairwise")
                     ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
                     if (!is.null(comp.select)) {
                         cord.X[[1]] = cord.X[[1]][row.names(cord.X[[1]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, comp = x)$name}))), ,drop = FALSE]
@@ -360,7 +360,7 @@ plotVar <-
                     ind.var.sel[[1]] = which(colnames(object$X) %in% rownames(cord.X[[1]]))
                 } else {
                     
-                    cord.X[[1]] = cor(object$X, object$x[, c(comp1, comp2, comp3)], use = "pairwise")
+                    cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2, comp3)], use = "pairwise")
                     ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
                 }
             }
@@ -428,7 +428,7 @@ plotVar <-
                 if (any(class.object %in%  c("sipca", "spca"))){
                     
                     cord.X[[1]] = cor(object$X[, colnames(object$X) %in% unique(unlist(lapply(comp.select, function(x){selectVar(object, comp = x)$name}))), drop = FALSE],
-                                      object$x[, c(comp1, comp2)], use = "pairwise")
+                                      object$variates$X[, c(comp1, comp2)], use = "pairwise")
                     #ind.var.sel[[1]] =
                     sample.X[[1]] = seq_len(length(colnames(object$X)))
                     #if (!is.null(comp.select)) {
@@ -436,7 +436,7 @@ plotVar <-
                     #}
                     ind.var.sel[[1]] = which(colnames(object$X) %in% rownames(cord.X[[1]]))
                 } else {
-                    cord.X[[1]] = cor(object$X, object$x[, c(comp1, comp2)], use = "pairwise")
+                    cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2)], use = "pairwise")
                     ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
                 }
             }}
