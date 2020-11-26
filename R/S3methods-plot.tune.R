@@ -74,8 +74,8 @@ plot.tune.spls <-
             
             df <- Reduce(f = rbind, df.list)
             text.size = as.integer(cex*10)
-            p <- ggplot(df, aes(factor(keepX), factor(keepY), size = mean, col = sd)) + 
-                geom_point(shape = pch) + 
+            p <- ggplot(df, aes(factor(keepX), factor(keepY))) + 
+                geom_point(aes_string(size = 'mean', col = 'sd'), shape = pch) + 
                 scale_color_gradient(low = color.mixo(4), high = 'red') + 
                 theme(panel.border = element_blank(),
                       panel.grid.major = element_blank(),
