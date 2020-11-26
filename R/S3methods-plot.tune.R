@@ -90,12 +90,14 @@ plot.tune.spls <-
                         axis.title = element_text( size = text.size),
                         legend.text = element_text( size = text.size ),
                         legend.title =  element_text( size = text.size),
+                        plot.title = element_text(hjust = 0.5),
                         # subtitles
                         strip.text = element_text(size = 1.3*text.size, face = 'bold')
                       
                       ) +
                 
-                labs(x = 'keepX', y = 'keepY', size = measure) +
+                labs(x = 'keepX', y = 'keepY', size = 'mean', col = 'SD', 
+                     title = sprintf("measure = '%s'", measure)) +
                 facet_wrap(.~V)
         
             list(gg.plot = p, df= df)
