@@ -99,7 +99,11 @@ plot.tune.spls <-
                 labs(x = 'keepX', y = 'keepY', size = 'mean', col = 'SD', 
                      title = sprintf("measure = '%s'", measure)) +
                 facet_wrap(.~V)
-        
+            
+            if (measure == 'RSS')
+            {
+                p <- p + scale_size_continuous(range = c(6,1))
+            }
             list(gg.plot = p, df= df)
         }
         
