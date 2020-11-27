@@ -30,7 +30,7 @@ plotVar(
   font,
   cutoff = 0,
   rad.in = 0.5,
-  title = "Correlation Circle Plots",
+  title = "Correlation Circle Plot",
   legend = FALSE,
   legend.title = "Block",
   style = "ggplot2",
@@ -95,7 +95,7 @@ Defaults to \code{0.5}.}
 
 \item{title}{character indicating the title plot.}
 
-\item{legend}{boolean when more than 3 blocks. Can be a character vector
+\item{legend}{Logical when more than 3 blocks. Can be a character vector
 when one or 2 blocks to customize the legend. See examples. Default is
 FALSE.}
 
@@ -104,7 +104,7 @@ FALSE.}
 \item{style}{argument to be set to either \code{'graphics'},
 \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.}
 
-\item{overlap}{boolean. Whether the variables should be plotted in one
+\item{overlap}{Logical. Whether the variables should be plotted in one
 single figure. Default is TRUE.}
 
 \item{axes.box}{for style '3d', argument to be set to either \code{'axes'},

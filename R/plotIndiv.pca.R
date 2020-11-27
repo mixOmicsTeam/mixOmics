@@ -96,19 +96,19 @@ plotIndiv.pca <-
         
         #-- Get variates
         x = y = z = list()
-        x[[1]] = object$x[, comp[1]]
-        y[[1]] = object$x[, comp[2]]
-        if(style == "3d") z[[1]] = object$x[, comp[3]]
+        x[[1]] = object$variates$X[, comp[1]]
+        y[[1]] = object$variates$X[, comp[2]]
+        if(style == "3d") z[[1]] = object$variates$X[, comp[3]]
         
         
         #-- Variance explained on X, Y and Z labels
         
         if (style ==  "3d")
         {
-            inf = object$explained_variance$X[c(comp[1], comp[2], comp[3])]
+            inf = object$prop_expl_var$X[c(comp[1], comp[2], comp[3])]
             inf = round(inf, 2)
         } else {
-            inf = object$explained_variance$X[c(comp[1], comp[2])]
+            inf = object$prop_expl_var$X[c(comp[1], comp[2])]
             inf = round(inf, 2)}
         
         

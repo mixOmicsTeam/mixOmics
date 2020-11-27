@@ -14,13 +14,14 @@ pca(
   logratio = c("none", "CLR", "ILR"),
   ilr.offset = 0.001,
   V = NULL,
-  multilevel = NULL,
-  reconst = TRUE
+  multilevel = NULL
 )
 }
 \arguments{
 \item{X}{a numeric matrix (or data frame) which provides the data for the
-principal components analysis. It can contain missing values.}
+principal components analysis. It can contain missing values in which case
+\code{center = TRUE} is used as required by the
+\code{\link{nipals}} function.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
@@ -29,11 +30,11 @@ of components to keep to perform the reconstitution of the data using the
 NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
 ncol(X))}}
 
-\item{center}{(Default=TRUE) Logical, whether the variables should be
-shifted to be zero centered. Alternatively, a vector of length equal the
-number of columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}. If the data contain missing values, columns should be
-centered for reliable results.}
+\item{center}{(Default=TRUE) Logical, whether the variables should be shifted
+to be zero centered. Only set to FALSE if data have already been centered.
+Alternatively, a vector of length equal the number of columns of \code{X}
+can be supplied. The value is passed to \code{\link{scale}}. If the data
+contain missing values, columns should be centered for reliable results.}
 
 \item{scale}{(Default=FALSE) Logical indicating whether the variables should be
 scaled to have unit variance before the analysis takes place. The default is
@@ -58,16 +59,12 @@ avoid infinite value after the logratio transform.}
 
 \item{multilevel}{sample information for multilevel decomposition for
 repeated measurements.}
-
-\item{reconst}{(Default=TRUE) Logical. If matrix includes missing values, whether
-\code{nipals} must perform the reconstitution of the data using the
-\code{ncomp} components. The components are calculated by imputing
-the missing values when set to TRUE, otherwise the missing values will be ignored.}
 }
 \value{
 \code{pca} returns a list with class \code{"pca"} and \code{"prcomp"}
 containing the following components: 
 \item{call}{The function call.}
+\item{X}{The input data matrix, possibly scaled and centered.}
 \item{ncomp}{The number of principal components used.}
 \item{center}{The centering used.}
 \item{scale}{The scaling used.}
@@ -75,18 +72,20 @@ containing the following components:
 \item{sdev}{The eigenvalues of the covariance/correlation matrix, though
 the calculation is actually done with the singular values of the data
 matrix or by using NIPALS.}
-\item{rotation}{The matrix of variable loadings (i.e., a matrix whose
-columns contain the eigenvectors).}
-\item{x}{The value of the rotated data (the centred (and scaled if
-requested) data multiplied by the rotation/loadings matrix), also called
-the principal components.}
+\item{loadings}{A length one list of matrix of variable loadings for X (i.e.,
+a matrix whose columns contain the eigenvectors).} 
+\item{variates}{Matrix containing the coordinate values corresponding to the
+projection of the samples in the space spanned by the principal components.
+These are the dimension-reduced representation of observations/samples.}
 \item{var.tot}{Total variance in the data.}
-\item{loadings}{Same as 'rotation' to keep the mixOmics spirit}
-\item{variates}{Same as 'x' to keep the mixOmics spirit}
-\item{explained_variance}{Explained variance from the multivariate model,
-  used for plotIndiv}
+\item{prop_expl_var}{Proportion of variance explained per
+component after setting possible missing values in the data to zero (note
+that contrary to PCA, this amount may not decrease as the aim of the method
+is not to maximise the variance, but the covariance between X and the
+dummy matrix Y).}
 \item{cum.var}{The cumulative explained variance for components.}
-\item{X}{The input data matrix.}
+\item{Xw}{If multilevel, the data matrix with within-group-variation removed.}
+\item{design}{If multilevel, the provided design.}
 }
 \description{
 Performs a principal components analysis on the given data matrix that can
@@ -100,14 +99,15 @@ The calculation is done either by a singular value decomposition of the
 using the NIPALS algorithm if there is data missing. Unlike
 \code{\link{princomp}}, the print method for these objects prints the
 results in a nice format and the \code{plot} method produces a bar plot of
-the percentage of variance explaned by the principal components (PCs).
+the percentage of variance explained by the principal components (PCs).
 
 When using NIPALS (missing values), we make the assumption that the first
 (\code{min(ncol(X),} \code{nrow(X)}) principal components will account for
 100 \% of the explained variance.
 
-Note that \code{scale= TRUE} cannot be used if there are zero or constant
-(for \code{center = TRUE}) variables.
+Note that \code{scale = TRUE} will throw an error if there are constant
+variables in the data, in which case it's best to filter these variables
+in advance.
 
 According to Filzmoser et al., a ILR log ratio transformation is more
 appropriate for PCA with compositional data. Both CLR and ILR are valid.
@@ -124,34 +124,58 @@ transformation and additional offset might be needed.
 # example with missing values where NIPALS is applied
 # --------------------------------
 data(multidrug)
-pca.res <- pca(multidrug$ABC.trans, ncomp = 4, scale = TRUE)
+X <- multidrug$ABC.trans
+pca.res <- pca(X, ncomp = 4, scale = TRUE)
 plot(pca.res)
 print(pca.res)
 biplot(pca.res, group = multidrug$cell.line$Class, legend.title = 'Class')
 
 # samples representation
 plotIndiv(pca.res, ind.names = multidrug$cell.line$Class,
-group = as.numeric(as.factor(multidrug$cell.line$Class)))
+    group = as.numeric(as.factor(multidrug$cell.line$Class)))
 
 # variable representation
-plotVar(pca.res, cutoff = 0.7, pch = 16)
+plotVar(pca.res, var.names = TRUE, cutoff = 0.4, pch = 16)
 
 \dontrun{
 plotIndiv(pca.res, cex = 0.2,
-col = as.numeric(as.factor(multidrug$cell.line$Class)),style="3d")
+    col = as.numeric(as.factor(multidrug$cell.line$Class)),style="3d")
 
 
-plotVar(pca.res, rad.in = 0.5, cex = 0.5,style="3d")
+plotVar(pca.res, rad.in = 0.5, cex = 0.5, style="3d")
 }
-# example with multilevel decomposition and CLR log ratio transformation (ILR longer to run)
-# ----------------
 
+# example with imputing the missing values using impute.nipals()
+# --------------------------------
+data("nutrimouse")
+X <- data.matrix(nutrimouse$lipid)
+X <- scale(X, center = TRUE, scale = TRUE)
+## add missing values to X to impute and compare to actual values
+set.seed(42)
+na.ind <- sample(seq_along(X), size = 20)
+true.values <- X[na.ind]
+X[na.ind] <- NA
+pca.no.impute <- pca(X, ncomp = 2)
+plotIndiv(pca.no.impute, group = nutrimouse$diet, pch = 16)
+X.impute <- impute.nipals(X, ncomp = 10)
+## compare
+cbind('imputed' = round(X.impute[na.ind], 2), 
+      'actual' = round(true.values, 2))
+## run pca using imputed matrix
+pca.impute <- pca(X.impute, ncomp = 2)
+plotIndiv(pca.impute, group = nutrimouse$diet, pch = 16)
+# example with multilevel decomposition and CLR log ratio transformation 
+# (ILR takes longer to run)
+# ----------------
 data("diverse.16S")
 pca.res = pca(X = diverse.16S$data.TSS, ncomp = 3,
-logratio = 'CLR', multilevel = diverse.16S$sample)
+    logratio = 'CLR', multilevel = diverse.16S$sample)
 plot(pca.res)
-plotIndiv(pca.res, ind.names = FALSE, group = diverse.16S$bodysite, title = '16S diverse data',
-legend = TRUE, legend.title = 'Bodysite')
+plotIndiv(pca.res, ind.names = FALSE, 
+          group = diverse.16S$bodysite, 
+          title = '16S diverse data',
+          legend = TRUE, 
+          legend.title = 'Bodysite')
 }
 \references{
 On log ratio transformations: Filzmoser, P., Hron, K., Reimann,

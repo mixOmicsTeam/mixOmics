@@ -17,12 +17,12 @@
 #' a specified number of components per block). A factor indicating the
 #' discrete outcome needs to be provided, either by \code{Y} or by its position
 #' \code{indY} in the list of blocks \code{X}.
-#' 
+#'
 #' \code{X} can contain missing values. Missing values are handled by being
 #' disregarded during the cross product computations in the algorithm
 #' \code{block.pls} without having to delete rows with missing data.
-#' Alternatively, missing data can be imputed prior using the \code{nipals}
-#' function.
+#' Alternatively, missing data can be imputed prior using the
+#' \code{\link{impute.nipals}} function.
 #' 
 #' The type of algorithm to use is specified with the \code{mode} argument.
 #' Four PLS algorithms are available: PLS regression \code{("regression")}, PLS
@@ -48,8 +48,8 @@
 #' the estimated loadings for the variates.} \item{names}{list containing the
 #' names to be used for individuals and variables.} \item{nzv}{list containing
 #' the zero- or near-zero predictors information.} \item{iter}{Number of
-#' iterations of the algorthm for each component}
-#' \item{explained_variance}{Percentage of explained variance for each
+#' iterations of the algorithm for each component}
+#' \item{prop_expl_var}{Percentage of explained variance for each
 #' component and each block}
 #' @author Florian Rohart, Benoit Gautier, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{plotIndiv}}, \code{\link{plotArrow}},
@@ -183,7 +183,7 @@ block.plsda <- function(X,
         scheme = result$scheme,
         indY = result$indY,
         weights = weights,
-        explained_variance = result$explained_variance
+        prop_expl_var = result$prop_expl_var
     )#[-result$indY])
     
     # give a class

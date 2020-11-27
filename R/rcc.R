@@ -61,6 +61,8 @@
 #' variates in \eqn{X} and \eqn{Y}.} \item{variates}{list containing the
 #' canonical variates.} \item{names}{list containing the names to be used for
 #' individuals and variables.}
+#' \item{prop_expl_var}{Proportion of the explained variance of derived
+#' components, after setting possible missing values to zero.}
 #' @author Sébastien Déjean, Ignacio González, Francois Bartolo, Kim-Anh Lê Cao, 
 #' Florian Rohart, Al J Abadi
 #' @seealso \code{\link{summary}}, \code{\link{tune.rcc}},
@@ -300,7 +302,7 @@ rcc <-
     #calcul explained variance
     explX=explained_variance(result$X,result$variates$X,ncomp)
     explY=explained_variance(result$Y,result$variates$Y,ncomp)
-    result$explained_variance=list(X=explX,Y=explY)
+    result$prop_expl_var=list(X=explX,Y=explY)
     
     
     class(result) = "rcc"

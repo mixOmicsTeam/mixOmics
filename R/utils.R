@@ -291,7 +291,7 @@ stratified.subsampling <- function(Y, folds = 10)
         }
         block_object$names$blocks <- c(block_object$names$blocks, consensus_block)
         block_object$ncomp[consensus_block] <- block_object$ncomp[1]
-        block_object$explained_variance[consensus_block] <- 0
+        block_object$prop_expl_var[consensus_block] <- 0
         
     }
     
@@ -538,13 +538,13 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     } 
     min.dim <- min(sapply(X, function(z) min(dim(z))))
     if (ncomp > min.dim)
-        stop("'ncomp' must be smaller than or equal to the smallest dimenion in X: ", min.dim)
+        stop("'ncomp' must be smaller than or equal to the smallest dimenion in X: ", min.dim, call. = FALSE)
     
     return(ncomp)
 }
 
 ## ----------------------------- %=% ----------------------------- ##
-## check if LHS and RHS contain exactly the same elemnts without caring about order
+## check if LHS and RHS contain exactly the same elements without caring about order
 ## TODO use this throughout for col.per.group etc.
 #'@noRd
 #'@examples
@@ -553,7 +553,7 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
 '%=%' <- function(LHS, RHS)
 {
     diffs <- c(setdiff(LHS, RHS), setdiff(RHS, LHS))
-    if (length(diffs))
+    if (length(diffs) | (length(LHS) != length(RHS)))
     {
         return(FALSE)
     }

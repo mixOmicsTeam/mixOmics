@@ -36,7 +36,7 @@
 #' \code{c("all"}, \code{"summarised"}, \code{"communalities"},
 #' \code{"redundancy"}, \code{"VIP"}). \code{"VIP"} is only available for
 #' (s)PLS. See Details.
-#' @param keep.var boolean. If \code{TRUE} only the variables with loadings not
+#' @param keep.var Logical. If \code{TRUE} only the variables with loadings not
 #' zero (as selected by \code{spls}) are showed. Defaults to \code{FALSE}.
 #' @param ... not used currently.
 #' @return The function \code{summary} returns a list with components:
@@ -333,7 +333,7 @@ summary.pca <-
     function (object, ...)
     {
         chkDots(...)
-        vars <- object$explained_variance
+        vars <- object$prop_expl_var
         importance <- rbind(`Standard deviation` = object$sdev, `Proportion of Variance` = round(vars,
                                                                                                  5), `Cumulative Proportion` = round(cumsum(vars), 5))
         k <- ncol(object$rotation)

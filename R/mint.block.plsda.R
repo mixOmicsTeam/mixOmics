@@ -46,8 +46,8 @@
 #' \code{X} can contain missing values. Missing values are handled by being
 #' disregarded during the cross product computations in the algorithm
 #' \code{block.pls} without having to delete rows with missing data.
-#' Alternatively, missing data can be imputed prior using the \code{nipals}
-#' function.
+#' Alternatively, missing data can be imputed prior using the
+#' \code{\link{impute.nipals}} function.
 #' 
 #' The type of algorithm to use is specified with the \code{mode} argument.
 #' Four PLS algorithms are available: PLS regression \code{("regression")}, PLS
@@ -75,7 +75,7 @@
 #' \item{tol}{the tolerance used in the iterative algorithm, used for
 #' subsequent S3 methods} \item{max.iter}{the maximum number of iterations,
 #' used for subsequent S3 methods} \item{iter}{Number of iterations of the
-#' algorthm for each component}
+#' algorithm for each component}
 #' @author Florian Rohart, Benoit Gautier, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{spls}}, \code{\link{summary}}, \code{\link{plotIndiv}},
 #' \code{\link{plotVar}}, \code{\link{predict}}, \code{\link{perf}},

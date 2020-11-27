@@ -1,17 +1,19 @@
 #' Sparse Principal Components Analysis
 #' 
-#' Performs a sparse principal component analysis for variable
-#' selection using singular value decomposition and lasso penalisation on the loading vectors.
+#' Performs a sparse principal component analysis for variable selection using
+#' singular value decomposition and lasso penalisation on the loading vectors.
 #' 
+#' \code{scale= TRUE} is highly recommended as it will help obtaining orthogonal
+#' sparse loading vectors.
 #' 
-#' \code{scale= TRUE} is highly recommended as it will help obtaining
-#' orthogonal sparse loading vectors.
+#' \code{keepX} is the number of variables to select in each loading vector,
+#' i.e. the number of variables with non zero coefficient in each loading
+#' vector.
 #' 
-#' \code{keepX} is the number of variables to select in each loading vector. 
-#' \code{keepX} refers to the number of variables with non zero coefficient in 
-#' each loading vector.
-#' 
-#' Note that \code{spca} does not apply to the data matrix with missing values.
+#' Note that data can contain missing values only when \code{logratio = 'none'}
+#' is used. In this case, \code{center=TRUE} should be used to center the data
+#' in order to effectively ignore the missing values. This is the default
+#' behaviour in \code{spca}.
 #' 
 #' According to Filzmoser et al., a ILR log ratio transformation is more
 #' appropriate for PCA with compositional data. Both CLR and ILR are valid.
@@ -49,7 +51,7 @@
 #' \describe{
 #' \item{ncomp}{the number of components to keep in the
 #' calculation.} 
-#' \item{explained_variance}{the adjusted percentage of variance
+#' \item{prop_expl_var}{the adjusted percentage of variance
 #' explained for each component.} 
 #' \item{cum.var}{the adjusted cumulative percentage of variances
 #' explained.}
@@ -127,10 +129,22 @@ spca <-
         logratio = choices[pmatch(logratio, choices)]
         logratio <- match.arg(logratio)
         
-        if (logratio != "none" && any(X < 0))
-            stop("'X' contains negative values, you can not log-transform your data")
-        
-        
+        if (logratio != "none")
+        {
+            ## ensure data do not contain NA or negative values
+            if (any(is.na(X)))
+            {
+                stop("data must not contain any missing or negative values when using logratio ",
+                     "transformation. Consider imputing the missing values using ",
+                     "mixOmics::nipals(..., reconst = TRUE)", call. = FALSE)
+            } else if (any(X < 0))
+            {
+                stop("'X' must contain nonnegative values for log-transformation. ",
+                     "See details.", call. = FALSE)
+            }
+        }
+
+                
         #-- cheking center and scale
         if (!is.logical(center))
         {
@@ -198,14 +212,17 @@ spca <-
         
         
         #--initialization--#
-        X=as.matrix(X)
-        X.temp=as.matrix(X)
+        X <- as.matrix(X)
+
         if (isFALSE(center) && any(colMeans(X, na.rm = TRUE) != 0)) {
-            warning("Data are not column-centered and contain missing values which will be ",
-                    "set to zero for caluclations. Consider either using center = TRUE ",
-                    "to lessen the side-effects, or imputing the missing values.")
+            warning("data contain missing values which will be ",
+                    "set to zero for calculations. Consider using center = TRUE ",
+                    "for better performance, or impute missing values using ",
+                    "'impute.nipals' function.")
         }
-        X.temp[is.na(X.temp)] <- 0
+        is.na.X <- is.na(X)
+        X[is.na.X] <- 0
+        X.temp <- X
         n=nrow(X)
         p=ncol(X)
         
@@ -320,15 +337,16 @@ spca <-
         cum.var <- vect.varX/var.tot
         ## calculate per-component explained variance from cum.var,
         # the variance is adjusted to account for potential correlation between PCs:                
-        explained_variance <- c(cum.var[1], diff(cum.var))
+        prop_expl_var <- c(cum.var[1], diff(cum.var))
         
-        
+        ## return missing values for output
+        X[is.na.X] <- NA_real_
         result = (list(call = cl, X = X,
                        ncomp = ncomp,	
                        #sdev = sdev,  # KA: to add if biplot function (but to be fixed!)
                        #center = center, # KA: to add if biplot function (but to be fixed!)
                        #scale = scale,   # KA: to add if biplot function (but to be fixed!)
-                       explained_variance = list(X=explained_variance),
+                       prop_expl_var = list(X=prop_expl_var),
                        cum.var = cum.var,
                        keepX = vect.keepX,
                        iter = vect.iter,

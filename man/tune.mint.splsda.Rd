@@ -57,14 +57,14 @@ performance of the model.}
 \item{progressBar}{by default set to \code{TRUE} to output the progress bar
 of the computation.}
 
-\item{scale}{Boolean. If scale = TRUE, each block is standardized to zero
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
 \item{tol}{Convergence stopping value.}
 
 \item{max.iter}{integer, the maximum number of iterations.}
 
-\item{near.zero.var}{boolean, see the internal \code{\link{nearZeroVar}}
+\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Default value is FALSE}
 

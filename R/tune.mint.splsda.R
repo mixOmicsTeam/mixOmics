@@ -56,11 +56,11 @@
 #' performance of the model.
 #' @param progressBar by default set to \code{TRUE} to output the progress bar
 #' of the computation.
-#' @param scale Boolean. If scale = TRUE, each block is standardized to zero
+#' @param scale Logical. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
 #' @param tol Convergence stopping value.
 #' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
+#' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
 #' function (should be set to TRUE in particular for data with many zero
 #' values). Default value is FALSE
 #' @param light.output if set to FALSE, the prediction/classification of each

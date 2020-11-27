@@ -30,8 +30,9 @@
 #'
 #' @example ./examples/tune.spca-examples.R
 tune.spca <- function(X, 
-                      ncomp=2, 
-                      nrepeat=1, 
+                      ncomp = 2,
+                      nrepeat = 1, 
+                      validation = c('Mfold', 'loo'),
                       folds, 
                       test.keepX, 
                       center = TRUE, 
@@ -48,6 +49,16 @@ tune.spca <- function(X,
     ## a list of cor.df for each component
     cor.df.list <- rep(list(NA), ncomp)
     names(cor.df.list) <- paste0('comp', seq_len(ncomp))
+    
+    validation <- match.arg(validation)
+    
+    if (validation == 'loo')
+    {
+        if (nrepeat != 1)
+            warning("Leave-One-Out validation does not need to be repeated: 'nrepeat' is set to '1'.")
+        nrepeat <- 1
+        folds <- nrow(X)
+    }
     
     if (folds > nrow(X)) {
         stop("'folds' must be an integer smaller than or equal to nrow(X) = ", 

@@ -89,7 +89,7 @@ these are clustered.}
 \item{transpose}{logical indicating if the matrix should be transposed for
 plotting. Defaults to \code{FALSE}.}
 
-\item{symkey}{boolean indicating whether the color key should be made
+\item{symkey}{Logical indicating whether the color key should be made
 symmetric about 0. Defaults to \code{TRUE}.}
 
 \item{keysize}{vector of length two, indicating the size of the color key.}

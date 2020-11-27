@@ -53,10 +53,10 @@
 #   Default to "svd"
 # tol: Convergence stopping value.
 # max.iter: integer, the maximum number of iterations.
-# near.zero.var: boolean, see the internal \code{\link{nearZeroVar}} function
+# near.zero.var: Logical, see the internal \code{\link{nearZeroVar}} function
 #   (should be set to TRUE in particular for data with many zero values).
 # progressBar: show progress,
-# scale: Boolean. If scale = TRUE, each block is standardized to zero means and
+# scale: Logical. If scale = TRUE, each block is standardized to zero means and
 #   unit variances (default: TRUE).
 # misdata: optional. any missing values in the data? list,
 #   misdata[[q]] for each data set

@@ -4,11 +4,13 @@
 \alias{nipals}
 \title{Non-linear Iterative Partial Least Squares (NIPALS) algorithm}
 \usage{
-nipals(X, ncomp = 2, reconst = FALSE, max.iter = 500, tol = 1e-06)
+nipals(X, ncomp = 2, max.iter = 500, tol = 1e-06)
 }
 \arguments{
-\item{X}{a numeric matrix (or data.frame) which is column-centered. It can
-contain missing values.}
+\item{X}{a numeric matrix (or data frame) which provides the data for the
+principal components analysis. It can contain missing values in which case
+\code{center = TRUE} is used as required by the
+\code{\link{nipals}} function.}
 
 \item{ncomp}{Integer, if data is complete \code{ncomp} decides the number of
 components and associated eigenvalues to display from the \code{pcasvd}
@@ -17,35 +19,18 @@ of components to keep to perform the reconstitution of the data using the
 NIPALS algorithm. If \code{NULL}, function sets \code{ncomp = min(nrow(X),
 ncol(X))}}
 
-\item{reconst}{logical that specify if \code{nipals} must perform the
-reconstitution of the data using the \code{ncomp} components.}
-
 \item{max.iter}{Integer, the maximum number of iterations in the NIPALS
 algorithm.}
 
 \item{tol}{Positive real, the tolerance used in the NIPALS algorithm.}
 }
 \value{
-An object of class 'mixo_nipals' contaning slots: 
-\item{call}{The function call.}
+An object of class 'mixo_nipals' containing slots: 
 \item{eig}{Vector containing the pseudo-singular values of \code{X}, of length
 \code{ncomp}.}
-\item{p}{Matrix whose columns contain the right singular vectors of \code{X}.}
 \item{t}{Matrix whose columns contain the left singular vectors of \code{X}.
 Note that for a complete data matrix X, the return values \code{eig},
 \code{t} and \code{p} such that \code{X = t * diag(eig) * t(p)}.}
-\item{ncomp}{The number of principal components used.}
-\item{rec}{If \code{reonst=TRUE}, matrix obtained by the reconstitution of
-the data using the \code{ncomp} components.}
-\item{sdev}{Same as 'eig' - for mixOmics consistency.}
-\item{var.tot}{Total variance in the data.}
-\item{loadings}{ame as 'p' to keep the mixOmics spirit}
-\item{x}{the value of the rotated data (the centred (and scaled if
-requested) data multiplied by the rotation/loadings matrix), also called
-the principal components.}
-\item{variates}{Same as 'x' to keep the mixOmics spirit}
-\item{explained_variance}{explained variance of each component.}
-\item{cum.var}{The cumulative explained variance for components.}
 }
 \description{
 This function performs NIPALS algorithm, i.e. the singular-value
@@ -61,28 +46,6 @@ covariance matrix, but is slower to calculate.
 This algorithm allows to realize SVD with missing data, without having to
 delete the rows with missing data or to estimate the missing data.
 }
-\examples{
-
-## Hilbert matrix
-hilbert <- function(n) { i <- 1:n; 1 / outer(i - 1, i, "+") }
-X.na <- X <- hilbert(9)[, 1:6]
-
-## Hilbert matrix with missing data
-idx.na <- matrix(sample(c(0, 1, 1, 1, 1), 36, replace = TRUE), ncol = 6)
-X.na[idx.na == 0] <- NA
-X.rec <- nipals(X.na, reconst = TRUE)$rec
-round(X, 2)
-round(X.rec, 2)
-## nutrimouse lipid data
-data("nutrimouse")
-lipid <- nutrimouse$lipid
-## center data
-lipid <- scale(lipid, center = TRUE, scale = FALSE)
-## nipals
-res <- nipals(scale(nutrimouse$lipid, center = TRUE, scale = FALSE), ncomp = 10)
-res
-plot(res)
-}
 \references{
 Tenenhaus, M. (1998). \emph{La regression PLS: theorie et
 pratique}. Paris: Editions Technic.
@@ -97,8 +60,9 @@ perspectives on mathematical and statistical model building}. Academic
 Press, N.Y., 307-357.
 }
 \seealso{
-\code{\link{svd}}, \code{\link{princomp}}, \code{\link{prcomp}},
-\code{\link{eigen}} and http://www.mixOmics.org for more details.
+\code{\link{impute.nipals}}, \code{\link{svd}},
+  \code{\link{princomp}}, \code{\link{prcomp}}, \code{\link{eigen}} and
+  http://www.mixOmics.org for more details.
 }
 \author{
 Sébastien Déjean, Ignacio González, Kim-Anh Le Cao, Al J Abadi

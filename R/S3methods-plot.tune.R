@@ -2,7 +2,6 @@
 ###                               plot.tune                                ###
 ## ------------------------------------------------------------------------ ##
 #' Plot model performance
-#' 
 #' Function to plot performance criteria, such as classification error rate or
 #' balanced error rate for different models.
 #' 
@@ -80,6 +79,7 @@ plot.tune.spls <-
         })
             
             df <- Reduce(f = rbind, df_comps)
+
             text.size = as.integer(cex*10)
             p <- ggplot(df, aes(factor(keepX), factor(keepY))) + 
                 geom_point(aes_string(size = 'mean', col = 'sd'), shape = pch) + 

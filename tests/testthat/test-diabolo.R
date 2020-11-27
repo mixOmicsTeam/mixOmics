@@ -24,7 +24,7 @@ test_that("block.splsda works", {
                c("call", "X", "Y", "ind.mat", "ncomp", "mode", "keepX", "keepY",
                  "variates", "loadings", "crit", "AVE", "names", "init", "tol",
                  "iter", "max.iter", "nzv", "scale", "design", "scheme", "indY",
-                 "weights", "explained_variance"))
+                 "weights", "prop_expl_var"))
 
   expect_is(nutrimouse.sgccda$X, "list")
   expect_is(nutrimouse.sgccda$design, "matrix")
@@ -62,9 +62,9 @@ test_that("block.splsda works", {
   expect_equal(rowMeans(nutrimouse.sgccda$weights),
                c(gene = 0.694506104274723, lipid = 0.915845972615744))
 
-  expect_length(nutrimouse.sgccda$explained_variance, 3L)
-  expect_is(nutrimouse.sgccda$explained_variance, "list")
-  expect_equal(names(nutrimouse.sgccda$explained_variance), colnames(design))
+  expect_length(nutrimouse.sgccda$prop_expl_var, 3L)
+  expect_is(nutrimouse.sgccda$prop_expl_var, "list")
+  expect_equal(names(nutrimouse.sgccda$prop_expl_var), colnames(design))
 
   expect_length(nutrimouse.sgccda$AVE, 3L)
   expect_equal(names(nutrimouse.sgccda$AVE),

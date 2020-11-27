@@ -40,9 +40,9 @@
 # keepY: number of \eqn{Y} variables kept in the model on the last components.
 # mode: input mode, one of "canonical", "classic", "invariant" or "regression".
 #   Default to "regression"
-# scale: Boolean. If scale = TRUE, each block is standardized to zero means and
+# scale: Logical. If scale = TRUE, each block is standardized to zero means and
 #   unit variances (default: TRUE).
-# near.zero.var: boolean, see the internal \code{\link{nearZeroVar}} function
+# near.zero.var: Logical, see the internal \code{\link{nearZeroVar}} function
 #   (should be set to TRUE in particular for data with many zero values).
 # max.iter: integer, the maximum number of iterations.
 # tol: Convergence stopping value.

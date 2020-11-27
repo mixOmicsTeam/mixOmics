@@ -45,7 +45,7 @@ number of X[[i]]-variables kept in the model.}
 
 \item{scheme}{Either "horst", "factorial" or "centroid" (Default: "horst").}
 
-\item{scale}{Boolean. If scale = TRUE, each block is standardized to zero
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
 \item{init}{Mode of initialization use in the algorithm, either by Singular
@@ -56,12 +56,12 @@ block independently ("svd.single") . Default to "svd.single".}
 
 \item{max.iter}{integer, the maximum number of iterations.}
 
-\item{near.zero.var}{boolean, see the internal \code{\link{nearZeroVar}}
+\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Setting this argument to FALSE (when appropriate) will speed up the
 computations. Default value is FALSE}
 
-\item{all.outputs}{boolean. Computation can be faster when some specific
+\item{all.outputs}{Logical. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
 }
 \value{

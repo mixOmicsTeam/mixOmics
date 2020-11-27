@@ -45,14 +45,14 @@
 #' @param sideColors character vector of length two. The color name for
 #' horizontal and vertical side bars that may be used to annotate the \eqn{X}
 #' and \eqn{Y} correlation matrices.
-#' @param interactive.dev boolean. The current graphics device that will be
+#' @param interactive.dev Logical. The current graphics device that will be
 #' opened is interactive?
 #' @param title logical, should the main titles be shown?
 #' @param color,xlab,ylab arguments passed to \code{cim}.
 #' @param row.cex,col.cex positive numbers, used as \code{cex.axis} in for the
 #' row or column axis labeling. The defaults currently only use number of rows
 #' or columns, respectively.
-#' @param symkey boolean indicating whether the color key should be made
+#' @param symkey Logical indicating whether the color key should be made
 #' symmetric about 0. Defaults to \code{TRUE}.
 #' @param keysize positive numeric value indicating the size of the color key.
 #' @param margins numeric vector of length two containing the margins (see

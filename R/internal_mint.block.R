@@ -432,13 +432,13 @@ internal_mint.block <-
                 expl.A=lapply(1:length(A),function(x){
                     if (nlevels(study) == 1)
                     {
-                        temp = suppressWarnings(explained_variance(A[[x]],
-                                                                   variates = variates.A[[x]], ncomp = ncomp[[x]]))
-                    }else{
+                        temp = explained_variance(A[[x]],
+                                                  variates = variates.A[[x]], ncomp = ncomp[[x]])
+                    } else {
                         temp = lapply(1:nlevels(study), function(y){
-                            suppressWarnings(explained_variance(A_split[[x]][[y]],
-                                                                variates = variates.partial.A[[x]][[y]],
-                                                                ncomp = ncomp[[x]]))})
+                            explained_variance(A_split[[x]][[y]],
+                                               variates = variates.partial.A[[x]][[y]],
+                                               ncomp = ncomp[[x]])})
                         temp[[length(temp)+1]] = explained_variance(A[[x]],
                                                                     variates = variates.A[[x]], ncomp = ncomp[[x]])
                         names(temp) = c(levels(study), "all data")
@@ -506,7 +506,7 @@ internal_mint.block <-
                    #defl.matrix = defl.matrix,
                    init = init,
                    scale = scale, tau = if(!is.null(tau)) tau.rgcca, study = study,
-                   explained_variance = expl.A)
+                   prop_expl_var = expl.A)
         ### End: Output
         
         return(out)

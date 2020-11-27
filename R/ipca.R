@@ -51,9 +51,11 @@
 #' following components: \item{ncomp}{the number of independent principal
 #' components used.} \item{unmixing}{the unmixing matrix of size (ncomp x
 #' ncomp)} \item{mixing}{the mixing matrix of size (ncomp x ncomp)}
-#' \item{X}{the centered data matrix} \item{x}{the indepenent principal
+#' \item{X}{the centered data matrix} \item{x}{the independent principal
 #' components} \item{loadings}{the independent loading vectors}
 #' \item{kurtosis}{the kurtosis measure of the independent loading vectors}
+#' \item{prop_expl_var}{Proportion of the explained variance of derived
+#' components, after setting possible missing values to zero.}
 #' @author Fangzhou Yao, Jeff Coquery, Kim-Anh Lê Cao, Florian Rohart, Al J Abadi
 #' @seealso \code{\link{sipca}}, \code{\link{pca}}, \code{\link{plotIndiv}},
 #' \code{\link{plotVar}}, and http://www.mixOmics.org for more details.
@@ -267,7 +269,7 @@ ipca <- function (X,
     
     #calcul explained variance
     explX=explained_variance(X,result$variates$X,ncomp)
-    result$explained_variance = list(X=explX)
+    result$prop_expl_var = list(X=explX)
     
     return(invisible(result))
 }

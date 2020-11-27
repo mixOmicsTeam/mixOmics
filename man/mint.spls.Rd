@@ -76,10 +76,14 @@ variates of X relative to each study - partial variates.}
 partial variates - partial loadings.} \item{names}{list containing the names
 to be used for individuals and variables.} \item{nzv}{list containing the
 zero- or near-zero predictors information.} \item{iter}{Number of iterations
-of the algorthm for each component} \item{explained_variance}{Percentage of
-explained variance for each component and each study (note that contrary to
-PCA, this amount may not decrease as the aim of the method is not to
-maximise the variance, but the covariance between data sets).}
+of the algorithm for each component} #' \item{prop_expl_var}{The amount
+of the variance explained by each variate / component divided by the total
+variance in the \code{data} for each study (after removing the possible
+missing values) using the definition of 'redundancy'. Note that contrary to
+\code{PCA}, this amount may not decrease in the following components as the
+aim of the method is not to maximise the variance, but the covariance between
+data sets (including the dummy matrix representation of the outcome variable
+in case of the supervised approaches).}
 }
 \description{
 Function to integrate and combine multiple independent studies measured on

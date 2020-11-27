@@ -63,8 +63,9 @@
 #' estimated loadings for the variates.} \item{names}{list containing the names
 #' to be used for individuals and variables.} \item{nzv}{list containing the
 #' zero- or near-zero predictors information.} \item{iter}{Number of iterations
-#' of the algorthm for each component} \item{explained_variance}{Percentage of
-#' explained variance for each component and each block}
+#' of the algorithm for each component} \item{prop_expl_var}{Percentage of
+#' explained variance for each component and each block after setting possible
+#' missing values in the centered data to zero}
 #' @author Florian Rohart, Benoit Gautier, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{plotIndiv}}, \code{\link{plotArrow}},
 #' \code{\link{plotLoadings}}, \code{\link{plotVar}}, \code{\link{predict}},
@@ -148,7 +149,7 @@ block.spls = function(X,
         design = result$design,
         scheme = result$scheme,
         weights = weights,
-        explained_variance = result$explained_variance
+        prop_expl_var = result$prop_expl_var
     )
     
     # give a class

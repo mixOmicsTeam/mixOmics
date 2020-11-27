@@ -55,7 +55,7 @@
 #' partial variates - partial loadings.} \item{names}{list containing the names
 #' to be used for individuals and variables.} \item{nzv}{list containing the
 #' zero- or near-zero predictors information.} \item{iter}{Number of iterations
-#' of the algorthm for each component} \item{explained_variance}{Percentage of
+#' of the algorithm for each component} \item{prop_expl_var}{Percentage of
 #' explained variance for each component and each study (note that contrary to
 #' PCA, this amount may not decrease as the aim of the method is not to
 #' maximise the variance, but the covariance between data sets).}
@@ -136,7 +136,7 @@ mint.pls <- function(X,
         max.iter = result$max.iter,
         nzv = result$nzv,
         scale = result$scale,
-        explained_variance = result$explained_variance
+        prop_expl_var = result$prop_expl_var
     )
     
     class(out) = c("mint.pls","mixo_pls")

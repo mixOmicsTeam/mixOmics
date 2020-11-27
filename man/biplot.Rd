@@ -34,6 +34,7 @@
   legend = if (is.null(group)) FALSE else TRUE,
   legend.title = NULL,
   pch.legend.title = NULL,
+  cex = 1.05,
   ...
 )
 
@@ -65,6 +66,7 @@
   legend = if (is.null(group)) FALSE else TRUE,
   legend.title = NULL,
   pch.legend.title = NULL,
+  cex = 1.05,
   ...
 )
 }
@@ -134,6 +136,10 @@ are shown.}
 \item{legend.title}{Character, the legend title if \code{group != NULL}.}
 
 \item{pch.legend.title}{Character, the legend title if \code{pch} is a factor.}
+
+\item{cex}{Numeric scalar indicating the desired magnification of plot texts.
+\code{\link[ggplot2]{theme}} function may be used with the output object if
+further customisation is required.}
 
 \item{...}{Not currently used.}
 

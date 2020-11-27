@@ -39,11 +39,15 @@
 #' near-zero predictors information.} \item{tol}{the tolerance used in the
 #' iterative algorithm, used for subsequent S3 methods} \item{max.iter}{the
 #' maximum number of iterations, used for subsequent S3 methods}
-#' \item{iter}{Number of iterations of the algorthm for each component}
-#' \item{explained_variance}{amount of variance explained per component (note
-#' that contrary to PCA, this amount may not decrease as the aim of the method
-#' is not to maximise the variance, but the covariance between X and the dummy
-#' matrix Y).} \item{mat.c}{matrix of coefficients from the regression of X /
+#' \item{iter}{Number of iterations of the algorithm for each component}
+#' \item{prop_expl_var}{The proportion of the variance explained by each
+#' variate / component divided by the total variance in the \code{data} (after
+#' removing the possible missing values) using the definition of 'redundancy'.
+#' Note that contrary to \code{PCA}, this amount may not decrease in the
+#' following components as the aim of the method is not to maximise the
+#' variance, but the covariance between data sets (including the dummy matrix
+#' representation of the outcome variable in case of the supervised
+#' approaches).}\item{mat.c}{matrix of coefficients from the regression of X /
 #' residual matrices X on the X-variates, to be used internally by
 #' \code{predict}.} \item{defl.matrix}{residual matrices X for each dimension.}
 #' @author Ignacio González, Kim-Anh Lê Cao, Florian Rohart, Al J Abadi
@@ -163,7 +167,7 @@ plsda <- function(X,
         nzv = result$nzv,
         scale = scale,
         logratio = logratio,
-        explained_variance = result$explained_variance,
+        prop_expl_var = result$prop_expl_var,
         input.X = result$input.X,
         mat.c = result$mat.c
     )

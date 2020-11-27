@@ -45,7 +45,7 @@ and/or \code{object$names$Y} are used. Possible character vector with
 horizontal and vertical side bars that may be used to annotate the \eqn{X}
 and \eqn{Y} correlation matrices.}
 
-\item{interactive.dev}{boolean. The current graphics device that will be
+\item{interactive.dev}{Logical. The current graphics device that will be
 opened is interactive?}
 
 \item{title}{logical, should the main titles be shown?}
@@ -56,7 +56,7 @@ opened is interactive?}
 row or column axis labeling. The defaults currently only use number of rows
 or columns, respectively.}
 
-\item{symkey}{boolean indicating whether the color key should be made
+\item{symkey}{Logical indicating whether the color key should be made
 symmetric about 0. Defaults to \code{TRUE}.}
 
 \item{keysize}{positive numeric value indicating the size of the color key.}

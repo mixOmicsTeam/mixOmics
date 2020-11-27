@@ -31,6 +31,7 @@ NULL
              legend = if (is.null(group)) FALSE else TRUE,
              legend.title = NULL,
              pch.legend.title = NULL,
+             cex = 1.05,
              ...
     )
     {
@@ -62,7 +63,7 @@ NULL
         scaler <- max(variates, na.rm = TRUE)/max(loadings, na.rm = TRUE)
         
         PCs <- paste0('component_', comp)
-        expl_vars <- round(object$explained_variance[[block]]*100)[comp]
+        expl_vars <- round(object$prop_expl_var[[block]]*100)[comp]
         axes.titles <- sprintf("%s   (%s%%)", PCs, expl_vars)
         ind.names <- .get.character.vector(ind.names, vec = rownames(variates))
         
@@ -120,7 +121,6 @@ NULL
                 {
                     legend.title <- ifelse(is(object, 'DA'), yes = 'Y', no = as.character(as.list(match.call())['group']))
                 }
-                
                 gg_biplot <- gg_biplot + 
                     geom_point(aes(x = variates[, comp[1]], 
                                    y = variates[, comp[2]],
@@ -128,10 +128,14 @@ NULL
                                    shape = pch),
                                fill = fill,
                                alpha = alpha,
-                               size = pch.size) + 
-                    scale_shape_manual(values = pch.levels,
-                                       guide = if (isTRUE(pch.legend)) guide_legend(title = pch.legend.title) else NULL)
+                               size = pch.size)
                 
+                pch_legend <- NULL
+                if (isTRUE(pch.legend)) {
+                    pch_legend <- guide_legend(title = pch.legend.title, override.aes = list(size = 5))
+                }
+                gg_biplot <- gg_biplot + 
+                    scale_shape_manual(values = pch.levels, guide = pch_legend)
             }
             else
             {
@@ -160,9 +164,23 @@ NULL
                 }
                 
             }
+            col_legend <- NULL
+            if (isTRUE(legend)) {
+                col_legend <- guide_legend(title = legend.title, override.aes = list(size = 5))
+            }
+                
             gg_biplot <- gg_biplot + 
-                scale_color_manual(values = col.per.group,
-                                   guide = if (isTRUE(legend)) guide_legend(title = legend.title) else NULL)
+                scale_color_manual(values = col.per.group, guide = col_legend)
+            
+            gg_biplot <-
+                gg_biplot +
+                theme(
+                    legend.text = element_text(size = rel(cex)),
+                    legend.title = element_text(size = rel(cex)),
+                    axis.title =  element_text(size = rel(cex)),
+                    axis.text =  element_text(size = rel(cex))
+                )
+
         }
         
         ## ------------- vars
@@ -266,6 +284,9 @@ NULL
 #' @param legend.title Character, the legend title if \code{group != NULL}.
 #' @param pch.legend Character, the legend title if \code{pch} is a factor.
 #' @param pch.legend.title Character, the legend title if \code{pch} is a factor.
+#' @param cex Numeric scalar indicating the desired magnification of plot texts.
+#'   \code{\link[ggplot2]{theme}} function may be used with the output object if
+#'   further customisation is required.
 #' @param ... Not currently used.
 #' @details 
 #' \code{biplot} unifies the reduced representation of both the

@@ -48,9 +48,11 @@ matrix is considered to have converged, see fastICA package.}
 following components: \item{ncomp}{the number of independent principal
 components used.} \item{unmixing}{the unmixing matrix of size (ncomp x
 ncomp)} \item{mixing}{the mixing matrix of size (ncomp x ncomp)}
-\item{X}{the centered data matrix} \item{x}{the indepenent principal
+\item{X}{the centered data matrix} \item{x}{the independent principal
 components} \item{loadings}{the independent loading vectors}
 \item{kurtosis}{the kurtosis measure of the independent loading vectors}
+\item{prop_expl_var}{Proportion of the explained variance of derived
+components, after setting possible missing values to zero.}
 }
 \description{
 Performs independent principal component analysis on the given data matrix,

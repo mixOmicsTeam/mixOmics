@@ -379,7 +379,7 @@ print.pca <- function(x, ...)
         cat("  \n") 
     }
 
-    per.var = x$explained_variance$X
+    per.var = x$prop_expl_var$X
     cum.var = x$cum.var
 
     names(per.var) = paste("PC", 1:length(per.var), sep = "")
@@ -388,7 +388,7 @@ print.pca <- function(x, ...)
     var.type <- ifelse(is(x, 'spca'), 'adjusted', '')
     
     cat("  Proportion of", var.type, "explained variance for the first", ind.show,
-        "principal components, see object$explained_variance:", "\n")
+        "principal components, see object$prop_expl_var:", "\n")
     print(per.var[1:ind.show], print.gap = 6)
     cat("  \n")
     
@@ -402,21 +402,16 @@ print.pca <- function(x, ...)
     cat("  Other available components: \n", "-------------------- \n")
     cat("  loading vectors: see object$rotation \n")
     
-    if (is(x, 'mixo_nipals')) {
-        cat("  Other functions: \n", "-------------------- \n")
-        cat("  plot (scree plot of explained variance)\n")
-    } else {
-        cat("  Other functions: \n", "-------------------- \n")
-        if (is(x, 'spca'))
-        {
-            cat("  tune.spca, plotIndiv, plot, plotVar, selectVar, biplot\n")
-        }
-        else
-        {
-            cat("  plotIndiv, plot, plotVar, selectVar, biplot\n")
-        }
+    cat("  Other functions: \n", "-------------------- \n")
+    if (is(x, 'spca'))
+    {
+        cat("  tune.spca, plotIndiv, plot, plotVar, selectVar, biplot\n")
     }
-
+    else
+    {
+        cat("  plotIndiv, plot, plotVar, selectVar, biplot\n")
+    }
+    
 }
 
 # ------------------------ print for ipca -------------------------
@@ -436,7 +431,7 @@ print.ipca <-
             "-------------------- \n")
         
         cat(" unmixing matrix: see object$unmixing \n")
-        cat(" independent principal components: see object$x \n")
+        cat(" independent principal components: see object$variates$X \n")
         cat(" mixing matrix: see object$mixing \n")
         cat(" kurtosis: see object$kurtosis \n")
         cat(" variable names: see object$names \n")
@@ -462,7 +457,7 @@ print.sipca <-
             "-------------------- \n")
         
         cat(" unmixing matrix: see object$unmixing \n")
-        cat(" independent principal components: see object$x \n")
+        cat(" independent principal components: see object$variates$X \n")
         cat(" mxing matrix: see object$mixing \n")
         cat(" kurtosis: see object$kurtosis \n")
         cat(" variable names: see object$names \n")
@@ -823,7 +818,7 @@ print.perf.sgccda.mthd = function(x, ...)
 print.tune.pca = function(x, ...)
 {
     cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    cat(" for all principal components, see object$sdev, object$explained_variance and object$cum.var\n")
+    cat(" for all principal components, see object$sdev, object$prop_expl_var and object$cum.var\n")
 }
 
 #' @name print

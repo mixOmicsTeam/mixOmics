@@ -22,8 +22,8 @@
 #' \code{X} can contain missing values. Missing values are handled by being
 #' disregarded during the cross product computations in the algorithm
 #' \code{mint.splsda} without having to delete rows with missing data.
-#' Alternatively, missing data can be imputed prior using the \code{nipals}
-#' function.
+#' Alternatively, missing data can be imputed prior using the
+#' \code{\link{impute.nipals}} function.
 #' 
 #' The type of deflation used is \code{'regression'} for discriminant algorithms.
 #' i.e. no deflation is performed on Y.
@@ -53,7 +53,7 @@
 #' partial variates - partial loadings.} \item{names}{list containing the names
 #' to be used for individuals and variables.} \item{nzv}{list containing the
 #' zero- or near-zero predictors information.} \item{iter}{Number of iterations
-#' of the algorthm for each component} \item{explained_variance}{Percentage of
+#' of the algorithm for each component} \item{prop_expl_var}{Percentage of
 #' explained variance for each component and each study (note that contrary to
 #' PCA, this amount may not decrease as the aim of the method is not to
 #' maximise the variance, but the covariance between X and the dummy matrix
@@ -174,7 +174,7 @@ mint.splsda <- function(X,
         max.iter = result$max.iter,
         nzv = result$nzv,
         scale = result$scale,
-        explained_variance = result$explained_variance
+        prop_expl_var = result$prop_expl_var
     )
     
     class(out) <- c("mint.splsda", "mixo_splsda", "mixo_spls", "DA")

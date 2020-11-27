@@ -95,8 +95,9 @@ the variates of each block of X.} \item{loadings}{list containing the
 estimated loadings for the variates.} \item{names}{list containing the names
 to be used for individuals and variables.} \item{nzv}{list containing the
 zero- or near-zero predictors information.} \item{iter}{Number of iterations
-of the algorthm for each component} \item{explained_variance}{Percentage of
-explained variance for each component and each block}
+of the algorithm for each component} \item{prop_expl_var}{Percentage of
+explained variance for each component and each block after setting possible
+missing values in the centered data to zero}
 }
 \description{
 Integration of multiple data sets measured on the same samples or

@@ -74,13 +74,13 @@
 #' @param rad.in numeric between 0 and 1, the radius of the inner circle.
 #' Defaults to \code{0.5}.
 #' @param title character indicating the title plot.
-#' @param legend boolean when more than 3 blocks. Can be a character vector
+#' @param legend Logical when more than 3 blocks. Can be a character vector
 #' when one or 2 blocks to customize the legend. See examples. Default is
 #' FALSE.
 #' @param legend.title title of the legend
 #' @param style argument to be set to either \code{'graphics'},
 #' \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
-#' @param overlap boolean. Whether the variables should be plotted in one
+#' @param overlap Logical. Whether the variables should be plotted in one
 #' single figure. Default is TRUE.
 #' @param axes.box for style '3d', argument to be set to either \code{'axes'},
 #' \code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.
@@ -121,7 +121,7 @@ plotVar <-
              font,
              cutoff = 0,
              rad.in = 0.5,
-             title = "Correlation Circle Plots",
+             title = "Correlation Circle Plot",
              legend = FALSE,
              legend.title = "Block",
              style = "ggplot2",
@@ -352,7 +352,7 @@ plotVar <-
                 if (any(class.object %in%  c("sipca", "spca"))){
                     
                     cord.X[[1]] = cor(object$X[, colnames(object$X) %in% unique(unlist(lapply(c(comp1, comp2, comp3), function(x){selectVar(object, comp = x)$name})))],
-                                      object$x[, c(comp1, comp2, comp3)], use = "pairwise")
+                                      object$variates$X[, c(comp1, comp2, comp3)], use = "pairwise")
                     ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
                     if (!is.null(comp.select)) {
                         cord.X[[1]] = cord.X[[1]][row.names(cord.X[[1]]) %in% unique(unlist(lapply(comp.select, function(x) {selectVar(object, comp = x)$name}))), ,drop = FALSE]
@@ -360,7 +360,7 @@ plotVar <-
                     ind.var.sel[[1]] = which(colnames(object$X) %in% rownames(cord.X[[1]]))
                 } else {
                     
-                    cord.X[[1]] = cor(object$X, object$x[, c(comp1, comp2, comp3)], use = "pairwise")
+                    cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2, comp3)], use = "pairwise")
                     ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
                 }
             }
@@ -428,7 +428,7 @@ plotVar <-
                 if (any(class.object %in%  c("sipca", "spca"))){
                     
                     cord.X[[1]] = cor(object$X[, colnames(object$X) %in% unique(unlist(lapply(comp.select, function(x){selectVar(object, comp = x)$name}))), drop = FALSE],
-                                      object$x[, c(comp1, comp2)], use = "pairwise")
+                                      object$variates$X[, c(comp1, comp2)], use = "pairwise")
                     #ind.var.sel[[1]] =
                     sample.X[[1]] = seq_len(length(colnames(object$X)))
                     #if (!is.null(comp.select)) {
@@ -436,7 +436,7 @@ plotVar <-
                     #}
                     ind.var.sel[[1]] = which(colnames(object$X) %in% rownames(cord.X[[1]]))
                 } else {
-                    cord.X[[1]] = cor(object$X, object$x[, c(comp1, comp2)], use = "pairwise")
+                    cord.X[[1]] = cor(object$X, object$variates$X[, c(comp1, comp2)], use = "pairwise")
                     ind.var.sel[[1]] = sample.X[[1]] = seq_len(length(colnames(object$X)))
                 }
             }}

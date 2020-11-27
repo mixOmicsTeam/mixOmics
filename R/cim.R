@@ -107,7 +107,7 @@
 #' @param cutoff numeric between 0 and 1. Variables with correlations below
 #' this threshold in absolute value are not plotted. To use only when mapping
 #' is "XY".
-#' @param symkey boolean indicating whether the color key should be made
+#' @param symkey Logical indicating whether the color key should be made
 #' symmetric about 0. Defaults to \code{TRUE}.
 #' @param keysize vector of length two, indicating the size of the color key.
 #' @param keysize.label vector of length 1, indicating the size of the labels

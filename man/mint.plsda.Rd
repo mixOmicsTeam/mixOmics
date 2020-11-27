@@ -60,11 +60,12 @@ study - partial variates.} \item{loadings.partial}{list containing the
 estimated loadings for the partial variates - partial loadings.}
 \item{names}{list containing the names to be used for individuals and
 variables.} \item{nzv}{list containing the zero- or near-zero predictors
-information.} \item{iter}{Number of iterations of the algorthm for each
-component} \item{explained_variance}{Percentage of explained variance for
-each component and each study (note that contrary to PCA, this amount may
-not decrease as the aim of the method is not to maximise the variance, but
-the covariance between X and the dummy matrix Y).}
+information.} \item{iter}{Number of iterations of the algorithm for each
+component} \item{prop_expl_var}{Percentage of explained variance for
+each component and each study after setting possible missing values to zero
+(note that contrary to PCA, this amount may not decrease as the aim of the
+method is not to maximise the variance, but the covariance between X and the
+dummy matrix Y).}
 }
 \description{
 Function to combine multiple independent studies measured on the same
@@ -83,8 +84,8 @@ categories are represented.
 \code{X} can contain missing values. Missing values are handled by being
 disregarded during the cross product computations in the algorithm
 \code{mint.plsda} without having to delete rows with missing data.
-Alternatively, missing data can be imputed prior using the \code{nipals}
-function.
+Alternatively, missing data can be imputed prior using the
+\code{impute.nipals} function.
 
 The type of deflation used is \code{'regression'} for discriminant algorithms.
 i.e. no deflation is performed on Y.

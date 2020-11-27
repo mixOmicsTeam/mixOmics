@@ -364,7 +364,7 @@ defined. Vector of the same length as the number of groups.}
 Default set to 'ggplot2'. See details. \code{3d} is not available for MINT
 objects.}
 
-\item{ellipse}{boolean indicating if ellipse plots should be plotted. In the
+\item{ellipse}{Logical indicating if ellipse plots should be plotted. In the
 non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
 sGCCA} ellipse plot is only be plotted if the argument \code{group} is
 provided. In the \code{PLS-DA, SPLS-DA,sGCCDA} supervised object, by default
@@ -374,14 +374,14 @@ the ellipse will be plotted accoding to the outcome \code{Y}.}
 ellipse being plotted when \code{ellipse =TRUE} (i.e. the size of the
 ellipse). The default is set to 0.95, for a 95\% region.}
 
-\item{centroid}{boolean indicating whether centroid points should be
+\item{centroid}{Logical indicating whether centroid points should be
 plotted. In the non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS,
 sPLS, rCC, rGCCA, sGCCA} the centroid will only be plotted if the argument
 \code{group} is provided. The centroid will be calculated based on the group
 categories. In the supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the
 centroid will be calculated according to the outcome \code{Y}.}
 
-\item{star}{boolean indicating whether a star plot should be plotted, with
+\item{star}{Logical indicating whether a star plot should be plotted, with
 arrows starting from the centroid (see argument \code{centroid}, and ending
 for each sample belonging to each group or outcome. In the non supervised
 objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA} star
@@ -394,7 +394,7 @@ according to the outcome \code{Y}.}
 \item{subtitle}{subtitle for each plot, only used when several \code{block}
 or \code{study} are plotted.}
 
-\item{legend}{boolean. Whether the legend should be added. Default is FALSE.}
+\item{legend}{Logical. Whether the legend should be added. Default is FALSE.}
 
 \item{X.label}{x axis titles.}
 
