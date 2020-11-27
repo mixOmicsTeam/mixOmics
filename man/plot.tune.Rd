@@ -8,9 +8,9 @@
 \alias{plot.tune.spca}
 \title{Plot model performance}
 \usage{
-\method{plot}{tune.spls}(x, optimal = TRUE, sd = TRUE, col, ...)
+\method{plot}{tune.spls}(x, measure = NULL, pch = 16, cex = 1.2, ...)
 
-\method{plot}{tune.splsda}(x, optimal = TRUE, sd = TRUE, col, ...)
+\method{plot}{tune.splsda}(x, measure = NULL, pch = 16, cex = 1.2, ...)
 
 \method{plot}{tune.block.splsda}(x, sd = TRUE, col, ...)
 
@@ -19,7 +19,8 @@
 \arguments{
 \item{x}{an \code{tune.*} object. See details for supported objects.}
 
-\item{optimal}{If TRUE, highlights the optimal keepX per component}
+\item{\dots}{Further arguments sent to \code{\link{xyplot}} function.
+Not currently used for \code{tune.spca}.}
 
 \item{sd}{If \eqn{nrepeat >= 3} was used in the call, error bar
 shows the standard deviation if sd=TRUE. Note that the values might exceeed
@@ -28,8 +29,7 @@ the valid performance measures (such as [0, 1] for accuracy)}
 \item{col}{character (or symbol) color to be used, possibly vector. One
 colour per component.}
 
-\item{\dots}{Further arguments sent to \code{\link{xyplot}} function.
-Not currently used for \code{tune.spca}.}
+\item{optimal}{If TRUE, highlights the optimal keepX per component}
 }
 \value{
 none
