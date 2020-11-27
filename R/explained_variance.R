@@ -54,15 +54,7 @@ explained_variance <- function(data, variates, ncomp)
   ## pre-allocate output
   expl_var <- vector(mode = 'numeric', length = ncomp)
   names(expl_var) <- paste0('comp', seq_len(ncomp))
-  
-  ## orthogonality
-  cor.v <- abs(cor(variates))
-  cor.v <- cor.v[upper.tri(cor.v)]
-  
-  if (any(cor.v > 0.01))
-  {
-    message('some components are not orthogonal to the others.')
-  }
+
   data[is.na(data)] <- 0 ## if there is any -- no warning as explained in docs
   norm2.X <- norm(data, type='F')^2 # total variance in the data
   
