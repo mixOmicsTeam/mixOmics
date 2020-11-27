@@ -318,7 +318,16 @@ tune.spls <-
                 RSS.pred$t[[paste0('comp_', comp)]] = .get_mean_and_sd(RSS.tpred)
                 
                 t.test.arr <- function(arr, is_cor) {
-                    
+                    if (dim(arr)[3] < 3) ## low nrepeat, no t.test
+                    {
+                        extremum <- ifelse(is_cor, max, min)
+                        ind.opt <- which(arr == extremum(arr), arr.ind = TRUE)
+                        
+                        return(c(ind.choice.keepX = ind.opt[1], 
+                                 ind.choice.keepY = ind.opt[2]))
+                        
+                    }
+                        
                     .atanh.transform <- function(x) {
                         out <- atanh(x)
                         out[out > atanh(0.99)] <-
