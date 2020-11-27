@@ -127,7 +127,7 @@ nipals <- function (X,
             max.comp.cor <-  max(abs(cor(th, t.mat[,seq_len(h-1),drop=FALSE])))
             if (max.comp.cor >= 0.05)
             {
-                message(sprintf("Component is correlated and thus not orthogonal to previous ones: comp_%s. (cor = %s)",
+                message(sprintf("Component %s is not orthogonal to previous ones. (cor = %s)",
                                 h, 
                                 round(max.comp.cor, 3)))
             }
