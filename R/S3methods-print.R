@@ -863,6 +863,32 @@ print.tune.splsda = function(x, ...)
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
 }
+
+#' @method print tune.pls
+#' @rdname S3methods-print
+#' @export
+print.tune.pls = function(x, ...)
+{
+    cat("Call:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+    cat("\n  Main numerical outputs: \n",
+        "-------------------- \n")
+    
+    if (is(x, 'tune.spls') & x$call$nrepeat > 3)
+    {
+        cat(sprintf("\n  Optimal keep%s for each component based on the provided tune measure, see object$choice.keep%s", c('X', 'Y'), c('X', 'Y')))
+    }
+    # cat(" Optimal number of components: see object$choice.ncomp \n") # TODO 
+    cat(sprintf("\n  %s of predicted vs actual components, see object$%s",
+                c("Correlations", "RSS"),
+                c("cor.pred", "RSS.red")
+                ))
+    
+    cat("\n  Other outputs are available, and details on those outputs in ?tune.spls.\n")
+    
+    cat("\n  Visualisation Functions: \n", "--------------------")
+    cat("\n  plot \n")
+}
+
 #' @name print
 #' @rdname S3methods-print
 #' @export
