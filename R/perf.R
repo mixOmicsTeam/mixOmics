@@ -243,7 +243,7 @@ perf <- function(object, ...)
 ## -------------------------------- (s)PLS -------------------------------- ##
 #' @rdname perf
 #' @export
-.perf.mixo_pls_folds <- function(object,
+perf.mixo_pls <- function(object,
                           validation = c("Mfold", "loo"),
                           folds = 10,
                           progressBar = FALSE,
