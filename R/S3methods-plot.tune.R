@@ -104,6 +104,10 @@ plot.tune.spls <-
             {
                 p <- p + scale_size_continuous(range = c(6,1))
             }
+            
+            p <- p + guides(colour = guide_legend(order=2, override.aes = list(size=2)),
+                            size = guide_legend(order=1))
+            
             list(gg.plot = p, df= df)
         }
         
