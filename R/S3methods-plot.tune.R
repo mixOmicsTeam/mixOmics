@@ -83,7 +83,7 @@ plot.tune.spls <-
                       axis.line = element_line(size = 0.5, linetype = "solid",
                                                colour = "black"),
                       
-                      panel.background = element_rect(fill='grey95'),
+                      panel.background = element_rect(fill='grey97'),
                       
                       axis.text = element_text( size = text.size ),
                         axis.text.x = element_text( size = text.size ),
