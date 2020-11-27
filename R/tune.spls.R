@@ -276,8 +276,8 @@ tune.spls <-
                             {
                                 # extract the predicted components: 
                                 # if(measure.tune == 'cor' ){
-                                    cor.tpred[keepX, keepY, k] = cor(t.pred.cv[, comp], X.variates[, comp])
-                                    cor.upred[keepX, keepY,k] = cor(u.pred.cv[, comp], Y.variates[, comp])
+                                    cor.tpred[keepX, keepY, k] = abs(cor(t.pred.cv[, comp], X.variates[, comp]))
+                                    cor.upred[keepX, keepY,k] = abs(cor(u.pred.cv[, comp], Y.variates[, comp]))
                                 # }
                                 # if(measure.tune == 'RSS'){
                                     # RSS: no abs values here
