@@ -89,13 +89,13 @@
 #' \code{MAPE} (average of the absolute errors,
 #'  as a percentage of the actual values) or \code{R2}. 
 #'  Default to \code{MSE}. See details.
-#' @param scale Boolean. If scale = TRUE, each block is standardized to zero
+#' @param scale Logical. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
 #' @param progressBar by default set to \code{TRUE} to output the progress bar
 #' of the computation.
 #' @param tol Convergence stopping value.
 #' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var boolean, see the internal \code{\link{nearZeroVar}}
+#' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
 #' function (should be set to TRUE in particular for data with many zero
 #' values). Default value is FALSE
 #' @param nrepeat Number of times the Cross-Validation process is repeated.
@@ -180,8 +180,6 @@ tune.spls <-
              BPPARAM = BiocParallel::SerialParam(),
              progressBar = FALSE
              ) {
-        
-        
         out = list()
         mode <- match.arg(mode)
         
@@ -407,6 +405,6 @@ tune.spls <-
         ## replace function, X and Y with unevaluated call
         mc <- as.call(c(as.list(match.call())[1:3], mc))
         out <- c(list(call = mc), out)
-        class(out) <- if (spls.model) c('tune.spls', 'tune.pls') else c('tune.pls')
+        class(out) <- if (spls.model) c('tune.pls', 'tune.spls') else c('tune.pls')
         return(out)
     } 
