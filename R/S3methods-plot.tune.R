@@ -54,13 +54,15 @@ plot.tune.spls <-
             measure <- match.arg(measure, c('cor', 'RSS'))    
         }
         
-        ggplot_measure <- function(x, v = c('u', 't'), title = NULL, measure = 'cor') {
+        ggplot_measure <- function(x, v = c('u', 't'), title = NULL, measure = 'cor', ncomp) {
             
             pred <- ifelse(measure == 'cor', 'cor.pred', 'RSS.pred')
             
+            df_comps <- lapply(seq_len(ncomp), function(comp)
+            {
             ut <- lapply(c(u='u', t='t'), function(o){
-                mean = x[[pred]][[o]][[ncomp]]$mean
-                sd = x[[pred]][[o]][[ncomp]]$sd
+                mean = x[[pred]][[o]][[comp]]$mean
+                sd = x[[pred]][[o]][[comp]]$sd
                 list(mean = round(mean, 2), sd = round(sd, 3))
             })
             
@@ -73,6 +75,11 @@ plot.tune.spls <-
             })
             
             df <- Reduce(f = rbind, df.list)
+            df$comp <- paste0('comp_', comp)
+            df
+        })
+            
+            df <- Reduce(f = rbind, df_comps)
             text.size = as.integer(cex*10)
             p <- ggplot(df, aes(factor(keepX), factor(keepY))) + 
                 geom_point(aes_string(size = 'mean', col = 'sd'), shape = pch) + 
@@ -98,7 +105,7 @@ plot.tune.spls <-
                 
                 labs(x = 'keepX', y = 'keepY', size = 'mean', col = 'SD', 
                      title = sprintf("measure = '%s'", measure)) +
-                facet_wrap(.~V)
+                facet_grid(V~comp)
             
             if (measure == 'RSS')
             {
@@ -111,7 +118,7 @@ plot.tune.spls <-
             list(gg.plot = p, df= df)
         }
         
-        res <- ggplot_measure(x=x, measure = measure)
+        res <- ggplot_measure(x=x, measure = measure, ncomp = ncomp)
         
         res$gg.plot
     }

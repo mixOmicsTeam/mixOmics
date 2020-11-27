@@ -20,6 +20,7 @@ perf(object, ...)
   validation = c("Mfold", "loo"),
   folds = 10,
   progressBar = FALSE,
+  nrepeat = 1,
   ...
 )
 
@@ -28,6 +29,7 @@ perf(object, ...)
   validation = c("Mfold", "loo"),
   folds = 10,
   progressBar = FALSE,
+  nrepeat = 1,
   ...
 )
 
@@ -120,15 +122,15 @@ matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
 \item{progressBar}{by default set to \code{FALSE} to output the progress bar
 of the computation.}
 
+\item{nrepeat}{Number of times the Cross-Validation process is repeated.
+This is an important argument to ensure the estimation of the performance to
+be as accurate as possible.}
+
 \item{dist}{only applies to an object inheriting from \code{"plsda"},
 \code{"splsda"} or \code{"mint.splsda"} to evaluate the classification
 performance of the model. Should be a subset of \code{"max.dist"},
 \code{"centroids.dist"}, \code{"mahalanobis.dist"}. Default is \code{"all"}.
 See \code{\link{predict}}.}
-
-\item{nrepeat}{Number of times the Cross-Validation process is repeated.
-This is an important argument to ensure the estimation of the performance to
-be as accurate as possible.}
 
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)
 performance of the model.}

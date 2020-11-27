@@ -3,31 +3,25 @@ data(liver.toxicity)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
 
-## Not run: 
 set.seed(42)
-tune.cor = tune.spls(X, Y, ncomp=2, test.keepX = c(2,4),test.keepY = c(5,10), measure.tune = "cor",
+## -----  measure = 'cor'
+tune.cor = tune.spls(X, Y, ncomp=2, test.keepX = c(2,4),test.keepY = c(5,10),measure.tune = 'cor',
                      nrepeat=3, progressBar = TRUE, folds =3)
-tune.cor = tune.spls(X, Y, ncomp=2, test.keepX = c(2,4),test.keepY = c(5,10), measure.tune = "cor", method = 'spls',
-                     nrepeat=10, progressBar = TRUE, folds =10, BPPARAM = BiocParallel::MulticoreParam(workers = 4, RNGseed = 23))
-# tune.cor = tune.spls(X, Y, ncomp=2, test.keepX = c(2,4,8,12),test.keepY = c(5,6,7,8,9), measure.tune = "cor", method = 'spls',
-#                  nrepeat=3, progressBar = TRUE, folds =3, BPPARAM = BiocParallel::MulticoreParam(workers = 4, RNGseed = 23))
+## outputs
+names(tune.cor)
+# print
 tune.cor
-plot.tune.spls(tune.cor)
-plot.tune.spls(tune.cor, measure = 'RSS')
-plot.tune.spls(tune.cor, pch.size = 3, cex = 1.8)
-plot.tune.spls(tune.cor, measure = 'RSS')
-plot.tune.spls(tune.cor, interactive = TRUE)
+## plot
+plot(tune.cor, measure = 'cor')
+plot(tune.cor, measure = 'RSS')
+tune.cor$choice.keepX
+tune.cor$choice.keepY
 
-data("nutrimouse")
-X <- nutrimouse$gene
-Y <- nutrimouse$lipid
+## -----  measure = 'RSS'
 
-
-set.seed(42)
-tune.nutri = tune.spls(X, Y, ncomp=2, test.keepX = c(2, 20, 40, 80),test.keepY = c(1, 5, 20), measure.tune = "cor", method = 'spls',
-                     nrepeat=3, progressBar = TRUE, folds =3, BPPARAM = BiocParallel::MulticoreParam(workers = 4, RNGseed = 23))
-tune.nutri
-plot.tune.spls(tune.nutri)
-plot.tune.spls(tune.nutri, pch.size = 3, cex = 1.8)
-plot.tune.spls(tune.nutri, measure = 'RSS')
-plot.tune.spls(tune.nutri, interactive = TRUE)
+tune.RSS = tune.spls(X, Y, ncomp=2, test.keepX = c(2,4),test.keepY = c(5,10),measure.tune = 'RSS',
+                     nrepeat=3, progressBar = TRUE, folds =3)
+## automatically detects measure
+plot(tune.RSS)
+tune.RSS$choice.keepX
+tune.RSS$choice.keepY

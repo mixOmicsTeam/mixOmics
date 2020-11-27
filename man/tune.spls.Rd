@@ -7,21 +7,15 @@
 tune.spls(
   X,
   Y,
-  ncomp = 1,
-  test.keepX = c(5, 10, 15),
-  already.tested.X,
-  validation = "Mfold",
+  test.keepX = NULL,
+  test.keepY = NULL,
+  ncomp,
+  nrepeat,
   folds = 10,
-  measure = "MSE",
-  scale = TRUE,
-  progressBar = FALSE,
-  tol = 1e-06,
-  max.iter = 100,
-  near.zero.var = FALSE,
-  nrepeat = 1,
-  multilevel = NULL,
-  light.output = TRUE,
-  cpus = 1
+  mode = c("regression", "canonical", "classic"),
+  measure.tune = c("cor", "RSS"),
+  BPPARAM = BiocParallel::SerialParam(),
+  progressBar = FALSE
 )
 }
 \arguments{
@@ -30,10 +24,17 @@ tune.spls(
 \item{Y}{\code{if(method = 'spls')} numeric vector or matrix of continuous
 responses (for multi-response models) \code{NA}s are allowed.}
 
-\item{ncomp}{the number of components to include in the model.}
-
 \item{test.keepX}{numeric vector for the different number of variables to
 test from the \eqn{X} data set}
+
+\item{ncomp}{the number of components to include in the model.}
+
+\item{nrepeat}{Number of times the Cross-Validation process is repeated.}
+
+\item{folds}{the folds in the Mfold cross-validation. See Details.}
+
+\item{progressBar}{by default set to \code{TRUE} to output the progress bar
+of the computation.}
 
 \item{already.tested.X}{Optional, if \code{ncomp > 1} A numeric vector
 indicating the number of variables to select from the \eqn{X} data set on
@@ -43,8 +44,6 @@ the firsts components.}
 matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
 \code{"Mfold"}.}
 
-\item{folds}{the folds in the Mfold cross-validation. See Details.}
-
 \item{measure}{One of \code{MSE} (Mean Squared Error), 
 \code{MAE} (Mean Absolute Error: MSE without the square), 
 \code{Bias} (average of the differences), 
@@ -52,21 +51,16 @@ matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
  as a percentage of the actual values) or \code{R2}. 
  Default to \code{MSE}. See details.}
 
-\item{scale}{Boolean. If scale = TRUE, each block is standardized to zero
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
-
-\item{progressBar}{by default set to \code{TRUE} to output the progress bar
-of the computation.}
 
 \item{tol}{Convergence stopping value.}
 
 \item{max.iter}{integer, the maximum number of iterations.}
 
-\item{near.zero.var}{boolean, see the internal \code{\link{nearZeroVar}}
+\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Default value is FALSE}
-
-\item{nrepeat}{Number of times the Cross-Validation process is repeated.}
 
 \item{multilevel}{Design matrix for multilevel analysis (for repeated
 measurements) that indicates the repeated measures on each individual, i.e.

@@ -648,6 +648,49 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     diag(design) <- 0
     return(design)
 }
+## ------------------------ .check_numeric_matrix  ------------------------ ##
+#' check if x is a valid numeric matrix -- possibly including NAs
+## TODO use this throughout
+#' Coerces to numeric matrix if necessary and ensures only numeric (including
+#' NA) values are present.
+#'@noRd
+#'@examples
+#' .check_numeric_matrix(mtcars)
+.check_numeric_matrix <- function(X, block_name = 'X')
+{
+    err_msg <- sprintf("'%s' must be a numeric matrix (possibly including NA's) with finite values", block_name)
+    X <- tryCatch(data.matrix(X, rownames.force = TRUE), 
+                  error = function(e) stop(err_msg, call. = FALSE))
+    if (!all(is.finite(X) | is.na(X)))
+        stop(err_msg, call. = FALSE)
+    X
+}
+
+## ----------------------- .check_zero_var_columns ------------------------ ##
+#' Check if scaling can be performed (no constant vectors)
+#' @noRd
+#' @examples
+#' \dontrun
+#' {
+#' .check_zero_var_columns(matrix(rep(c(1, 2, 3), 2), nrow=2, byrow=TRUE))
+#' }
+# TODO use this through package
+.check_zero_var_columns <- function(X, scale = TRUE, block_name = 'X')
+{
+    if (!isFALSE(scale))
+    {
+        zero_var_cols <- which(colVars(X, na.rm = TRUE) == 0)
+        #' @importFrom matrixStats colVars
+        if (length(zero_var_cols) > 0)
+            stop("columns with zero variance in '", 
+                 block_name, 
+                 "': ",
+                 paste(zero_var_cols, collapse = ','),
+                 ". Remove these columns before scaling.\n",
+                 call. = FALSE)
+    }
+    NULL
+}
 ## ---------------------------- .check_logical ---------------------------- ##
 #' Check logical arguments
 #'
