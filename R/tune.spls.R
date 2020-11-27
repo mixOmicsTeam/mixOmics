@@ -327,20 +327,6 @@ tune.spls <-
                                  ind.choice.keepY = ind.opt[2]))
                         
                     }
-                        
-                    .atanh.transform <- function(x) {
-                        out <- atanh(x)
-                        out[out > atanh(0.99)] <-
-                            atanh(0.99) + runif(n = length(x),
-                                                min = 1e-4,
-                                                max = 1e-3) ## to avoid t.test error for fixed x and y
-                        out
-                    }
-                    if (is_cor) {
-                        arr <- .atanh.transform(arr)
-                    } else {
-                        arr <- -arr
-                    }
                     choice.keepX_i <- 1
                     choice.keepY_j <- 1
                     for (keepX_i in seq_len(dim(arr)[1])[-1]) {
@@ -348,19 +334,14 @@ tune.spls <-
                         {
                             x <- arr[choice.keepX_i, choice.keepY_j, ]
                             y <- arr[keepX_i, keepY_j, ]
-                            if (is_cor &
-                                mean(x) < atanh(0.98))
-                                ## how can we skip if already too well?
+                            t.test.res <- t.test(x,
+                                                 y,
+                                                 alternative = ifelse(is_cor, 'less', 'greater'),
+                                                 paired = FALSE)
+                            if (t.test.res$p.value < 0.05)
                             {
-                                t.test.res <- t.test(x,
-                                                     y,
-                                                     alternative = 'less',
-                                                     paired = FALSE)
-                                if (t.test.res$p.value < 0.05)
-                                {
-                                    choice.keepX_i <- keepX_i
-                                    choice.keepY_j <- keepY_j
-                                }
+                                choice.keepX_i <- keepX_i
+                                choice.keepY_j <- keepY_j
                             }
                             
                         }
