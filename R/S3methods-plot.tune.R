@@ -76,7 +76,7 @@ plot.tune.spls <-
             text.size = as.integer(cex*10)
             p <- ggplot(df, aes(factor(keepX), factor(keepY))) + 
                 geom_point(aes_string(size = 'mean', col = 'sd'), shape = pch) + 
-                scale_color_gradient(low = color.mixo(4), high = 'red') + 
+                scale_color_gradient(low = 'blue', high = 'red', na.value = color.mixo(1)) + 
                 theme(panel.border = element_blank(),
                       panel.grid.major = element_blank(),
                       panel.grid.minor = element_blank(),
