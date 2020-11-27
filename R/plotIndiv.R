@@ -37,11 +37,10 @@
 #' 2D representation in a meaningful way. For more details, see
 #' \code{\link{background.predict}}
 #' 
-#' For block analyses, \code{block = 'consensus'} simply averages the
-#' components from all blocks into a single one, and
-#' \code{block='weighted.consensus'} uses the average of components weighted by
-#' correlation of each component in each dataset with the corresponding
-#' component from the dummy from of the \code{Y} matrix.
+#' The argument \code{block = 'consensus'} averages the components from all
+#' blocks to produce a consensus plot. The argument
+#' \code{block='weighted.consensus'} is a weighted average of the components
+#' according to their correlation with the outcome \code{Y}
 #' 
 #' For customized plots (i.e. adding points, text), use the style = 'graphics'
 #' (default is ggplot2).

@@ -2,6 +2,7 @@
 ###                               plot.tune                                ###
 ## ------------------------------------------------------------------------ ##
 #' Plot model performance
+#' 
 #' Function to plot performance criteria, such as classification error rate or
 #' balanced error rate for different models.
 #' 
