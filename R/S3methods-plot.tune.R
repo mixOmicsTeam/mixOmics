@@ -94,7 +94,7 @@ plot.tune.spls <-
                       panel.background = element_rect(fill='grey97'),
                       
                       axis.text = element_text( size = text.size ),
-                        axis.text.x = element_text( size = text.size ),
+                        axis.text.x = element_text( size = text.size, angle = 90, hjust = 1),
                         axis.title = element_text( size = text.size),
                         legend.text = element_text( size = text.size ),
                         legend.title =  element_text( size = text.size),
