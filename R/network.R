@@ -100,6 +100,8 @@
 #' \eqn{Y} nodes (see Details).
 #' @param shape.node character vector of length two, the shape of the \eqn{X}
 #' and \eqn{Y} nodes (see Details).
+#' @param alpha.node Numeric between 0 and 1 which determines the opacity of nodes.
+#' Only used in block objects.
 #' @param color.edge vector of colors or character string specifying the colors
 #' function to using to color the edges, set to default to
 #' \code{color.GreenRed(100)} but other palettes can be chosen (see Details and
@@ -178,6 +180,7 @@ network <- function(mat,
                     block.var.names = TRUE,
                     color.node = NULL,
                     shape.node = NULL,
+                    alpha.node = 0.85,
                     cex.node.name = 1,
                     color.edge = color.GreenRed(100),
                     lty.edge = "solid",
@@ -637,8 +640,13 @@ network <- function(mat,
     {
         if (is.null(color.node))
         {
-            color.node = c("#FBB4AE", "#B3CDE3", "#CCEBC5", "#DECBE4", "#FED9A6",
-                           "#FFFFCC", "#E5D8BD", "#FDDAEC", "#F2F2F2")[1:length(blocks)]
+            ## see circosPlot
+            color.blocks = brewer.pal(n = 12, name = 'Paired') #why 12?? ANS: bc max allowed n is 12 for this function
+            if (length(blocks) > 6) {
+                color.blocks <- colorRampPalette(color.blocks)(2*length(object$X))
+            }
+            color.node = color.blocks[seq(from = 2, to = 2*length(blocks), by = 2)]
+            color.node = adjustcolor(color.node, alpha.f = alpha.node)
             names(color.node) = blocks
         } else {
             if (!is.vector(color.node) || length(color.node) != length(blocks))

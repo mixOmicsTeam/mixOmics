@@ -18,6 +18,7 @@ network(
   block.var.names = TRUE,
   color.node = NULL,
   shape.node = NULL,
+  alpha.node = 0.85,
   cex.node.name = 1,
   color.edge = color.GreenRed(100),
   lty.edge = "solid",
@@ -61,6 +62,9 @@ blocks are used as names.}
 
 \item{shape.node}{character vector of length two, the shape of the \eqn{X}
 and \eqn{Y} nodes (see Details).}
+
+\item{alpha.node}{Numeric between 0 and 1 which determines the opacity of nodes.
+Only used in block objects.}
 
 \item{cex.node.name}{the font size for the node labels.}
 
