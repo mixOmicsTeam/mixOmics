@@ -173,8 +173,9 @@ tune.spls <-
              test.keepX = NULL,
              test.keepY = NULL,
              ncomp,
-             nrepeat,
-             folds = 10,
+             validation = c('Mfold', 'loo'),
+             nrepeat = 1,
+             folds,
              mode = c('regression', 'canonical', 'classic'),
              measure.tune = c('cor', 'RSS'), ## only if spls model
              BPPARAM = BiocParallel::SerialParam(),
@@ -182,6 +183,15 @@ tune.spls <-
              ) {
         out = list()
         mode <- match.arg(mode)
+        
+        X <- .check_numeric_matrix(X, block_name = 'X')
+        Y <- .check_numeric_matrix(Y, block_name = 'Y')
+        check_cv <- .check_cv_args(validation = validation, 
+                                   nrepeat = nrepeat, folds = folds, 
+                                   N = nrow(X))
+        validation <- check_cv$validation
+        nrepeat <- check_cv$nrepeat
+        folds <- check_cv$folds
         
         spls.model <- !is.null(test.keepX) | !is.null(test.keepY)
         

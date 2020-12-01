@@ -10,8 +10,9 @@ tune.spls(
   test.keepX = NULL,
   test.keepY = NULL,
   ncomp,
-  nrepeat,
-  folds = 10,
+  validation = c("Mfold", "loo"),
+  nrepeat = 1,
+  folds,
   mode = c("regression", "canonical", "classic"),
   measure.tune = c("cor", "RSS"),
   BPPARAM = BiocParallel::SerialParam(),
@@ -29,6 +30,10 @@ test from the \eqn{X} data set}
 
 \item{ncomp}{the number of components to include in the model.}
 
+\item{validation}{character.  What kind of (internal) validation to use,
+matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
+\code{"Mfold"}.}
+
 \item{nrepeat}{Number of times the Cross-Validation process is repeated.}
 
 \item{folds}{the folds in the Mfold cross-validation. See Details.}
@@ -39,10 +44,6 @@ of the computation.}
 \item{already.tested.X}{Optional, if \code{ncomp > 1} A numeric vector
 indicating the number of variables to select from the \eqn{X} data set on
 the firsts components.}
-
-\item{validation}{character.  What kind of (internal) validation to use,
-matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
-\code{"Mfold"}.}
 
 \item{measure}{One of \code{MSE} (Mean Squared Error), 
 \code{MAE} (Mean Absolute Error: MSE without the square), 
