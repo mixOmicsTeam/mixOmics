@@ -14,46 +14,6 @@
              })
 }
 
-## ----------------------------- .check_cpus ------------------------------ ##
-#' Check cpus argument
-#'
-#' @param cpus Integer, the number of cpus for parallel processing.
-#'
-#' @return The number of cpus available/applicable, or condition.
-#' @author Al J Abadi
-#'
-#' @noRd
-.check_cpus <- function(cpus) {
-    if (!is.numeric(cpus) || cpus <= 0)
-        stop("Number of CPUs should be a positive integer.", call. = FALSE)
-    
-    if (cpus < 0 || is.null(cpus))
-        cpus <- 1
-    
-    if (cpus > parallel::detectCores())
-        message(sprintf("\nOnly %s CPUs available for parallel processing.\n", parallel::detectCores()))
-    return(cpus)
-    
-}
-
-## ----------------------------- .check_alpha ----------------------------- ##
-#' Check significance threshold sanity
-#'
-#' @param alpha numeric, significance threshold for t.test
-#'
-#' @return NULL if acceptable value, otherwise condition
-#' @author Al J Abadi
-#'
-#' @noRd
-.check_alpha <- function(alpha=NULL) {
-    if (is.null(alpha))
-        alpha <- 0.01
-    
-    if (!is.numeric(alpha) || alpha < 0 || alpha > 1)
-        stop("invalid 'signif.threshold'. Use 0.01 or 0.05.", call. = FALSE)
-    alpha
-}
-
 ## --------------------------- .unexpected_err ---------------------------- ##
 #' Unexpected error handler for the package
 #'
@@ -443,105 +403,6 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     return(out)
 }
 
-## -------------------------- .check_test.keepX --------------------------- ##
-#' Check test.keepX
-#'
-#' Check test.keepX is valid when X is either matrix or list
-#' @param test.keepX test.keepX
-#' @param X X input from mixOmics tune models
-#' @param indY indY
-#' @param already.tested.X already.tested.X
-#'
-#' @return test.keepX, possibly re-ordered by names for list X
-#' @rdname Internals
-#' @keywords Internal
-#' @examples
-#' 
-.check_test.keepX <- function(test.keepX, 
-                              X,
-                              indY = NULL, # TODO
-                              already.tested.X = NULL # TODO
-)
-{
-    # TODO use this helper to check all test.keepX in the package
-    ## -- checker for a pair of test.keepX and X
-    .check_test.keepX_helper <- function(test.keepX_, X_)
-    {
-        if (is.data.frame(X_))
-        {
-            X_ <- as.matrix(X_)
-        }
-        
-        if (mode(test.keepX_) != 'numeric' || !all(test.keepX_ %in% seq_len(ncol(X_))))
-        {
-            stop( "'test.keepX' values should be positive whole numbers < ncol(X) = ", 
-                  ncol(X_), call. = FALSE)
-        }
-        invisible(NULL)
-    }
-    
-    ## ------- X matrix ------- ##
-    if (!is.null(dim(X)))
-    {
-        .check_test.keepX_helper(test.keepX, X)
-    } 
-    ## -------- X list -------- ##
-    else
-    {
-        ## names
-        if (! (is.list(test.keepX) && setequal(names(test.keepX), names(X)) ) )
-        {
-            stop("'test.keepX' must be a named list with names: names(X) = ", names(X))
-        }
-        else
-        {
-            test.keepX <- test.keepX[names(X)]
-            mapply(z = test.keepX, w = X, FUN = function(z, w) .check_test.keepX_helper(z, w)) 
-        }
-        
-    }
-    invisible(test.keepX)
-}
-## ----------------------------- .check_ncomp ----------------------------- ##
-
-#' Check ncomp
-#'
-#' Check that ncomp is positive integer <= smallest dim in the data
-#' @param ncomp ncomp arg
-#' @param X A matrix or a list of matrices with \code{dim} method
-#' @param default Integer, default value if \code{ncomp} is \code{NULL}
-#'
-#' @return Integer, or a condition
-#' @rdname Internals
-#' @examples
-#' \dontrun{
-#' .check_ncomp(300, X = mtcars)
-#' #> Error in .check_ncomp(300, X = mtcars) : 
-#' #>     'ncomp' must be smaller than or equal to the smallest dimenion in X: 11
-#' .check_ncomp(NULL, X = mtcars, default = 3)
-#' #> 3
-#' }
-#' 
-.check_ncomp <- function(ncomp, X, default = 2)
-{
-    # TODO use this helper to check all ncomp in the package
-    
-    if ( is.null(ncomp) )
-        ncomp <- default
-    
-    if (mode(ncomp) != 'numeric' || ncomp%%1 != 0)
-        stop("'ncomp' must be a positive integer")
-    ## ------- X matrix ------- ##
-    if (!is.null(dim(X)))
-    {
-        X <- list(X)
-    } 
-    min.dim <- min(sapply(X, function(z) min(dim(z))))
-    if (ncomp > min.dim)
-        stop("'ncomp' must be smaller than or equal to the smallest dimenion in X: ", min.dim, call. = FALSE)
-    
-    return(ncomp)
-}
 
 ## ----------------------------- %=% ----------------------------- ##
 ## check if LHS and RHS contain exactly the same elements without caring about order
@@ -648,23 +509,6 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     diag(design) <- 0
     return(design)
 }
-## ------------------------ .check_numeric_matrix  ------------------------ ##
-#' check if x is a valid numeric matrix -- possibly including NAs
-## TODO use this throughout
-#' Coerces to numeric matrix if necessary and ensures only numeric (including
-#' NA) values are present.
-#'@noRd
-#'@examples
-#' .check_numeric_matrix(mtcars)
-.check_numeric_matrix <- function(X, block_name = 'X')
-{
-    err_msg <- sprintf("'%s' must be a numeric matrix (possibly including NA's) with finite values", block_name)
-    X <- tryCatch(data.matrix(X, rownames.force = TRUE), 
-                  error = function(e) stop(err_msg, call. = FALSE))
-    if (!all(is.finite(X) | is.na(X)))
-        stop(err_msg, call. = FALSE)
-    X
-}
 
 ## ----------------------- .check_zero_var_columns ------------------------ ##
 #' Check if scaling can be performed (no constant vectors)
@@ -690,28 +534,4 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
                  call. = FALSE)
     }
     NULL
-}
-## ---------------------------- .check_logical ---------------------------- ##
-#' Check logical arguments
-#'
-#' @param arg A function argument provided as name
-#'
-#' @return arg or condition, invisibly
-#'
-#' @noRd
-#' @keywords Internal
-#' @examples
-#' \dontrun{
-#' foo <- function(a=TRUE) .check_logical(a)
-#' foo(a = 1)
-#' #> Error: ‘a’ must be a class logical (TRUE or FALSE).
-#' }
-.check_logical <- function(arg)
-{
-    # TODO use this throughout the package
-    if (!is.logical(arg))
-    {
-        stop(sQuote(deparse(substitute(arg))), " must be a class logical (TRUE or FALSE).", call. = FALSE)
-    }
-    invisible(arg)
 }
