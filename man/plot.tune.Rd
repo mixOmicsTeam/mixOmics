@@ -10,17 +10,27 @@
 \usage{
 \method{plot}{tune.spls}(x, measure = NULL, pch = 16, cex = 1.2, ...)
 
-\method{plot}{tune.splsda}(x, measure = NULL, pch = 16, cex = 1.2, ...)
+\method{plot}{tune.splsda}(x, optimal = TRUE, sd = TRUE, col, ...)
 
 \method{plot}{tune.block.splsda}(x, sd = TRUE, col, ...)
 
 \method{plot}{tune.spca}(x, optimal = TRUE, sd = NULL, col = NULL, ...)
 }
 \arguments{
-\item{x}{an \code{tune.*} object. See details for supported objects.}
+\item{x}{a \code{tune} object. See details for supported objects.}
+
+\item{measure}{Character. Measure used for plotting a \code{tune.spls} object.
+One of c('cor', 'RSS').}
+
+\item{pch}{plot character. A character string or a vector of single
+characters or integers. See \code{\link{points}} for all alternatives.}
+
+\item{cex}{numeric character (or symbol) expansion, possibly vector.}
 
 \item{\dots}{Further arguments sent to \code{\link{xyplot}} function.
 Not currently used for \code{tune.spca}.}
+
+\item{optimal}{If TRUE, highlights the optimal keepX per component}
 
 \item{sd}{If \eqn{nrepeat >= 3} was used in the call, error bar
 shows the standard deviation if sd=TRUE. Note that the values might exceeed
@@ -28,15 +38,13 @@ the valid performance measures (such as [0, 1] for accuracy)}
 
 \item{col}{character (or symbol) color to be used, possibly vector. One
 colour per component.}
-
-\item{optimal}{If TRUE, highlights the optimal keepX per component}
 }
 \value{
 none
 }
 \description{
 Function to plot performance criteria, such as classification error rate or
-balanced error rate for different models.
+correlation of cross-validated components for different models.
 }
 \details{
 \code{plot.tune.splsda} plots the classification error rate or the balanced
@@ -48,6 +56,12 @@ balanced error rate from x$error.rate, for each component of the model. The
 error rate is ordered by increasing value, the yaxis shows the optimal
 combination of keepX at the top (e.g. `keepX on block 1'_`keepX on block
 2'_`keepX on block 3')
+
+\code{plot.tune.spls} plots either the correlation of cross-validated
+components or the Residual Sum of Square (RSS) values for these components
+against those from the full model for both \code{t} (X components) and
+\code{u} (Y components). The optimal number of features chosen are indicated
+by squares.
 
 \code{plot.tune.spca} plots  the correlation of cross-validated components from
 the \code{tune.spca} function with respect to the full model.
