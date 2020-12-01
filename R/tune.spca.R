@@ -7,7 +7,9 @@
 #' variables to select (\code{keepX}), a number of repeats and folds, data are
 #' split to train and test and the extracted components are compared against
 #' those from a spca model with all the data to ascertain the optimal
-#' \code{keepX}.
+#' \code{keepX}. In order to keep at least 3 samples in each test set for
+#' reliable scaling of the test data for comparison, \code{folds} must be <=
+#' \code{floor(nrow(X)/3)}
 #'
 #' The number of selected variables for the following components will then be
 #' sequentially optimised. If the number of observations are small (e.g. < 30),
@@ -15,6 +17,7 @@
 #' achieved by setting \code{folds = nrow(X)}.
 #' @inheritParams spca
 #' @inheritParams tune.splsda
+#' @param folds Number of folds in 'Mfold' cross-validation. See details.
 #' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
 #'   of parallelisation. See examples.
 #' @importFrom BiocParallel SerialParam bplapply
@@ -30,9 +33,8 @@
 #'
 #' @example ./examples/tune.spca-examples.R
 tune.spca <- function(X, 
-                      ncomp = 2,
+                      ncomp = 2, 
                       nrepeat = 1, 
-                      validation = c('Mfold', 'loo'),
                       folds, 
                       test.keepX, 
                       center = TRUE, 
@@ -41,29 +43,22 @@ tune.spca <- function(X,
 {
     ## evaluate all args
     mget(names(formals()), sys.frame(sys.nframe()))
-    X <- as.matrix(X)
-    ncomp <- .check_ncomp(ncomp = ncomp, X = X)
+    X <- data.matrix(X, rownames.force = TRUE)
+    ncomp <-      .check_ncomp(ncomp = ncomp, X = X)
     test.keepX <- .check_test.keepX(test.keepX = test.keepX, X = X)
+    ## check cv args
+    if (!(is.numeric(folds) && (folds > 2 & folds <= floor(nrow(X)/3))))
+        stop("'folds' must be an integer > 2 and <= floor(nrow(X)/3)=", floor(nrow(X)/3))
+    
+    if (!(is.numeric(nrepeat) && (nrepeat > 0)))
+        stop("'nrepeat' must be a positive integer")
+    
     ## optimal keepX for all components
     keepX.opt <- NULL
     ## a list of cor.df for each component
     cor.df.list <- rep(list(NA), ncomp)
     names(cor.df.list) <- paste0('comp', seq_len(ncomp))
     
-    validation <- match.arg(validation)
-    
-    if (validation == 'loo')
-    {
-        if (nrepeat != 1)
-            warning("Leave-One-Out validation does not need to be repeated: 'nrepeat' is set to '1'.")
-        nrepeat <- 1
-        folds <- nrow(X)
-    }
-    
-    if (folds > nrow(X)) {
-        stop("'folds' must be an integer smaller than or equal to nrow(X) = ", 
-             nrow(X), call. = FALSE)
-    }
     all.keepX <- test.keepX
     names(all.keepX) <- paste0('keepX_', all.keepX)
     ## ------ component loop
@@ -102,7 +97,6 @@ tune.spca <- function(X,
                             t.comp.sub = X.test %*% spca.train$loadings$X[,k]
                         }
                     }
-                    
                     # calculate predicted component and compare with component from sPCA on full data on the left out set
                     # cor with the component on the full data, abs value
                     cor.comp = abs(cor(t.comp.sub, spca.full$variates$X[,ncomp][test.fold.inds], use = 'pairwise.complete.obs'))

@@ -8,7 +8,6 @@ tune.spca(
   X,
   ncomp = 2,
   nrepeat = 1,
-  validation = c("Mfold", "loo"),
   folds,
   test.keepX,
   center = TRUE,
@@ -29,11 +28,7 @@ ncol(X))}}
 
 \item{nrepeat}{Number of times the Cross-Validation process is repeated.}
 
-\item{validation}{character. What kind of (internal) validation to use,
-matching one of \code{"Mfold"} or \code{"loo"} (short for 'leave-one-out').
-Default is \code{"Mfold"}.}
-
-\item{folds}{the folds in the Mfold cross-validation. See Details.}
+\item{folds}{Number of folds in 'Mfold' cross-validation. See details.}
 
 \item{test.keepX}{numeric vector for the different number of variables to
 test from the \eqn{X} data set}
@@ -69,7 +64,9 @@ Essentially, for the first component, and for a grid of the number of
 variables to select (\code{keepX}), a number of repeats and folds, data are
 split to train and test and the extracted components are compared against
 those from a spca model with all the data to ascertain the optimal
-\code{keepX}.
+\code{keepX}. In order to keep at least 3 samples in each test set for
+reliable scaling of the test data for comparison, \code{folds} must be <=
+\code{floor(nrow(X)/3)}
 
 The number of selected variables for the following components will then be
 sequentially optimised. If the number of observations are small (e.g. < 30),
