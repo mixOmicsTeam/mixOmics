@@ -535,3 +535,42 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     }
     NULL
 }
+## ----------- .stop ----------- 
+## custom stop to define specific error classes for testthat
+.stop <- function(message, .subclass = NULL,  call = NULL, ...) {
+    formals(stop)$call. <- FALSE
+    msg <- structure(
+        list(
+            message = message,
+            call = call,
+            ...
+        ),
+        class = c(.subclass, "error", "condition")
+    )
+    stop(msg)
+}
+
+## ----------- .warning ----------- 
+## custom warning to define specific warning classes for testthat and custom suppression
+.warning <- function(message, .subclass = NULL) {
+    formals(warning)$call. <- FALSE
+    msg <- structure(
+        list(
+            message = message
+        ),
+        class = c(.subclass, "character")
+    )
+    warning(msg)
+}
+
+## ----------- .message ----------- 
+## custom message to define specific message classes for testthat and custom suppression
+.message <- function(message, .subclass = NULL) {
+    msg <- structure(
+        list(
+            message = message
+        ),
+        class = c(.subclass)
+    )
+    message(msg)
+}
