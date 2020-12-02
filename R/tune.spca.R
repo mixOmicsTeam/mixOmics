@@ -44,6 +44,7 @@ tune.spca <- function(X,
     ## evaluate all args
     mget(names(formals()), sys.frame(sys.nframe()))
     X <- data.matrix(X, rownames.force = TRUE)
+    X <- scale(X, center = center, scale = scale)
     ncomp <-      .check_ncomp(ncomp = ncomp, X = X)
     test.keepX <- .check_test.keepX(test.keepX = test.keepX, X = X)
     ## check cv args
@@ -64,44 +65,41 @@ tune.spca <- function(X,
     ## ------ component loop
     for(ncomp in seq_len(ncomp)) {
         iter_keepX <- function(keepX.value) {
+            # full data
+            spca.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = FALSE)
             ## ------ repeated cv
             repeat_cv_j <- function(j) {
                 repeat.j.folds <- suppressWarnings(split(sample(seq_len(nrow(X))),seq_len(folds)))
                 ## ------ mean cor for CV
                 cor.pred = sapply(repeat.j.folds, function(test.fold.inds){
+                    t.comp.actual <- spca.full$variates$X[,ncomp][test.fold.inds]
                     ## split data to train/test
                     X.train = X[-test.fold.inds,,drop=FALSE]
                     X.test = X[test.fold.inds,,drop=FALSE]
-                    X.test = scale(X.test, center = center, scale = scale)
-                    
                     # ---- run sPCA 
-                    # suppressWarnings({
                     ## train
-                    spca.train = mixOmics::spca(X.train, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = scale)
-                    # full data
-                    spca.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = scale)
-                    # })
+                    spca.train = mixOmics::spca(X.train, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = FALSE)
                     # ---- deflation on X with only the fold left out
                     for(k in seq_len(ncomp)){ 
                         # loop to calculate deflated matrix and predicted comp
                         # calculate the predicted comp on the fold left out
                         # calculate reg coeff, then deflate
                         if(k == 1){
-                            t.comp.sub = X.test %*% spca.train$loadings$X[,k]
+                            t.comp.pred = X.test %*% spca.train$loadings$X[,k]
                         } else{
                             # calculate deflation beyond comp 1
                             # recalculate the loading vector (here c.sub) on the test set (perhaps we could do this instead on the training set by extracting from spca.train$loadings$X[,k]?)
-                            c.sub = crossprod(X.test, t.comp.sub) / drop(crossprod(t.comp.sub)) 
-                            X.test = X.test - t.comp.sub %*% t(c.sub) 
+                            c.sub = crossprod(X.test, t.comp.pred) / drop(crossprod(t.comp.pred)) 
+                            X.test = X.test - t.comp.pred %*% t(c.sub) 
                             # update predicted comp based on deflated matrix
-                            t.comp.sub = X.test %*% spca.train$loadings$X[,k]
+                            t.comp.pred = X.test %*% spca.train$loadings$X[,k]
                         }
                     }
                     # calculate predicted component and compare with component from sPCA on full data on the left out set
                     # cor with the component on the full data, abs value
-                    cor.comp = abs(cor(t.comp.sub, spca.full$variates$X[,ncomp][test.fold.inds], use = 'pairwise.complete.obs'))
+                    cor.comp = abs(cor(t.comp.pred, t.comp.actual, use = 'pairwise.complete.obs'))
                     # need to flip the sign in one of the comp to calculate the RSS
-                    #RSS.comp = sum((c(sign(cor.comp))*(t.comp.sub) - spca.full$variates$X[,comp][i])^2)
+                    #RSS.comp = sum((c(sign(cor.comp))*(t.comp.pred) - spca.full$variates$X[,comp][i])^2)
                     # also look at correlation between loading vectors
                     # cor.loading = abs(cor(spca.full$loadings$X[,comp], spca.train$loadings$X[,comp]))
                     # get the cor(pred component, comp) per fold for a given comp
