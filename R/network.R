@@ -645,7 +645,7 @@ network <- function(mat,
             if (length(blocks) > 6) {
                 color.blocks <- colorRampPalette(color.blocks)(2*length(object$X))
             }
-            color.node = color.blocks[seq(from = 2, to = 2*length(blocks), by = 2)]
+            color.node = color.blocks[seq(from = 1, to = 2*length(blocks), by = 2)]
             color.node = adjustcolor(color.node, alpha.f = alpha.node)
             names(color.node) = blocks
         } else {
