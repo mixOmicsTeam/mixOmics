@@ -226,3 +226,40 @@
         stop("invalid 'signif.threshold'. Use 0.01 or 0.05.", call. = FALSE)
     alpha
 }
+
+## ----------------------------- .check_comp ----------------------------- ##
+#' Check comp 
+#'
+#' Check comp is an integer of length (or 3)
+#' @param comp comp arg
+#' @param ncomp maximum comp allowed
+#' @param style character, one of c('2d', '3d')
+#'
+#' @return Integer vector, or a condition
+#' @keywords Internal
+#' @noRd
+#' @examples
+#' \dontrun{
+#' .check_comp(c(1,2), ncomp = 4)
+#' .check_comp(c(1,5), ncomp = 4)
+#' .check_comp(c(1,3,4), ncomp = 4)
+#' .check_comp(c(1,3,4), ncomp = 4, style = '3d')
+#' }
+.check_comp <- function(comp, ncomp, style = c('2d', '3d'))
+{
+    formals(stop)$call. <- FALSE
+    style <- match.arg(style)
+    
+    if (style == '2d')
+        len <- 2
+    else
+        len <- 3
+    
+    err_msg <- paste0("'comp' must be a positive integer of length ", len,
+                      " with values > 1 and <= ", ncomp, "\n")
+    
+    if (mode(comp) != 'numeric' || length(comp) != len | any(comp%%1 != 0) | any(comp < 1) | any(comp > ncomp))
+        stop(err_msg)
+
+    return(comp)
+}
