@@ -39,10 +39,11 @@ NULL
         rm(x)
         ## for implicit support of non-pca objects - experimental
         block <- .change_if_null(block, 'X')
+        comp <- .check_comp(comp, ncomp = object$ncomp)
         block <- match.arg(block, choices = names(object$variates))
         hide <- 'none'
         selection <- rowSums(object$loadings[[block]][, comp]) != 0 
-        loadings <- object$loadings[[block]][selection, comp]
+        loadings <- object$loadings[[block]][selection, ]
         loadings <- data.frame(loadings)
         
         ## scale check
@@ -57,7 +58,7 @@ NULL
         above.cutoff <- apply(cors, 1, function(x) any(abs(x) >= cutoff))
         loadings <- loadings[above.cutoff,]
         
-        variates <- object$variates[[block]][, comp]
+        variates <- object$variates[[block]]
         variates <- data.frame(variates)
         ## scaler of var vs sample coordinates
         scaler <- max(variates, na.rm = TRUE)/max(loadings, na.rm = TRUE)

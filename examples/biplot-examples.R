@@ -1,6 +1,6 @@
 data("nutrimouse")
 ## --------- pca ---------- ##
-pca.lipid <- pca(nutrimouse$lipid, ncomp = 2, scale = TRUE)
+pca.lipid <- pca(nutrimouse$lipid, ncomp = 3, scale = TRUE)
 # seed for reproducible geom_text_repel
 set.seed(42)
 biplot(pca.lipid)
@@ -8,6 +8,8 @@ biplot(pca.lipid)
 biplot(pca.lipid, cutoff = c(0.8))
 ## tailor threshold for each component
 biplot(pca.lipid, cutoff = c(0.8, 0.7))
+## customise components
+biplot(pca.lipid, cutoff = c(0.8), comp = c(1,3))
 
 ## customise ggplot in an arbitrary way
 biplot(pca.lipid) + theme_linedraw() + 
