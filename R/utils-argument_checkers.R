@@ -134,7 +134,7 @@
 #'
 #' @return Integer, or a condition
 #' @keywords Internal
-##' @noRd
+#' @noRd
 #' @examples
 #' \dontrun{
 #' .check_ncomp(300, X = mtcars)
@@ -146,20 +146,16 @@
 #' 
 .check_ncomp <- function(ncomp, X, default = 2)
 {
+    formals(stop)$call. <- FALSE
+    if (!is.null(dim(X))) X <- list(X)
+    min.dim <- min(sapply(X, function(z) min(dim(z))))
+    err_msg <- paste0("'ncomp' must be a positive integer smaller than ",
+                      "or equal to the smallest dimenion in X: ", min.dim, "\n")
     if ( is.null(ncomp) )
         ncomp <- default
-    
-    if (mode(ncomp) != 'numeric' || ncomp%%1 != 0)
-        stop("'ncomp' must be a positive integer")
-    ## ------- X matrix ------- ##
-    if (!is.null(dim(X)))
-    {
-        X <- list(X)
-    } 
-    min.dim <- min(sapply(X, function(z) min(dim(z))))
-    if (ncomp > min.dim)
-        stop("'ncomp' must be smaller than or equal to the smallest dimenion in X: ", min.dim)
-    
+    if (mode(ncomp) != 'numeric' || ncomp%%1 != 0 | ncomp < 1 | ncomp > min.dim)
+        stop(err_msg)
+
     return(ncomp)
 }
 
