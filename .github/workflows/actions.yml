@@ -112,7 +112,7 @@ jobs:
         if: github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics'
         env:
           _R_CHECK_CRAN_INCOMING_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check/asCRAN")
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran", "--ignore-vignettes"), error_on = "warning", check_dir = "check/asCRAN", buil_args = c("--no-build-vignettes"))
         shell: Rscript {0}
       - name: BiocCheck 🧬 ✅
         run: |
