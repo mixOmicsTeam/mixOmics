@@ -259,13 +259,12 @@ tune.spls <-
                 if (use_progressBar) {
                     msg <- if (spls.model) sprintf("\ntuning component: %s\n", comp) else sprintf("\ntuning pls model ...\n")
                     cat(msg)
-                    pb <- txtProgressBar(min = 0, max = nrepeat, style = 3)
                 }
                 
                 cv.repeat.res <- bplapply(seq_len(nrepeat), 
                                         FUN = function(k){ 
                                             if (use_progressBar) {
-                                                setTxtProgressBar(pb = pb, value = k)
+                                                .progressBar(k/nrepeat)
                                             }
                                             .tune.spls.repeat(test.keepX = test.keepX, test.keepY = test.keepY, X = X, Y = Y, 
                                                               choice.keepX = choice.keepX, choice.keepY = choice.keepY, comp = comp, 
