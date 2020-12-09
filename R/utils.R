@@ -535,6 +535,7 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     }
     NULL
 }
+
 ## ----------- .stop ----------- 
 ## custom stop to define specific error classes for testthat
 .stop <- function(message, .subclass = NULL,  call = NULL, ...) {
@@ -574,3 +575,27 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     )
     message(msg)
 }
+
+## ----------------------- .progressBar ------------------------ ##
+#' Nice progress bar
+#' @noRd
+#' @examples
+#' \dontrun
+#' {
+#' for (i in 1:30)
+#' {
+#'     Sys.sleep(0.02)
+#'     progress(i, max = 30)
+#' }
+#' }
+# TODO use this through package
+.progressBar <- function (x, max = 1) {
+    percent <- x / max * 100
+    cat(sprintf('\033[33m\r[%-50s] %d%%\033[39m',
+                paste(rep('=', percent / 2), collapse = ''),
+                floor(percent)))
+    if (x == max)
+        cat('\n')
+    invisible(NULL)
+}
+
