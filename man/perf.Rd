@@ -18,7 +18,7 @@ perf(object, ...)
 \method{perf}{mixo_pls}(
   object,
   validation = c("Mfold", "loo"),
-  folds = 10,
+  folds,
   progressBar = FALSE,
   nrepeat = 1,
   ...
@@ -27,7 +27,7 @@ perf(object, ...)
 \method{perf}{mixo_spls}(
   object,
   validation = c("Mfold", "loo"),
-  folds = 10,
+  folds,
   progressBar = FALSE,
   nrepeat = 1,
   ...

@@ -241,7 +241,7 @@ tune.spls <-
                                    keepY = c(choice.keepY, test.keepY[keepY]), 
                                    ncomp = comp, mode = mode)
                     # fold CV
-                    res.perf <- .perf.mixo_pls_folds(pls.res, validation = 'Mfold', folds = folds)
+                    res.perf <- .perf.mixo_pls_cv(pls.res, validation = 'Mfold', folds = folds)
                     out[[paste0('keepX_', keepX)]][[paste0('keepY_', keepY)]] <- list(
                         t.pred.cv = res.perf$t.pred.cv,
                         u.pred.cv = res.perf$u.pred.cv,

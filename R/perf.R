@@ -270,7 +270,7 @@ perf.mixo_pls <- function(object,
         if (progressBar == TRUE) # TODO drop for parallel
             .progressBar(i/nrepeat)
         ## CV
-        .perf.mixo_pls_folds(object, validation = validation, folds = folds)
+        .perf.mixo_pls_cv(object, validation = validation, folds = folds)
     })
     for(k in 1:nrepeat){
         res.perf <- repeat_perf[[k]]
@@ -306,7 +306,7 @@ perf.mixo_spls  <- perf.mixo_pls
 
 #' @noRd
 #' @keywords Internal
-.perf.mixo_pls_folds <- function(object,
+.perf.mixo_pls_cv <- function(object,
                                  validation = c("Mfold", "loo"),
                                  folds,
                                  ...)

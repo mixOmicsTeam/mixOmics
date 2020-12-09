@@ -50,7 +50,7 @@
 # DA: indicate whether it's a DA analysis, only used for the multilvel approach
 #   with withinVariation
 # multilevel: multilevel is passed to multilevel(design=) in withinVariation.
-#   Y is ommited and should be included in multilevel design
+#   Y is omitted and should be included in multilevel design
 
 internal_wrapper.mint <- 
   function(X,
