@@ -321,11 +321,9 @@ perf.mixo_spls  <- perf.mixo_pls
 #' @keywords Internal
 .perf.mixo_pls_folds <- function(object,
                                  validation = c("Mfold", "loo"),
-                                 folds = 10,
-                                 progressBar = FALSE,
+                                 folds,
                                  ...)
 {
-    # TODO proper progressBar
     # changes to bypass the loop for the Q2
     
     ## -------- checks -------- ##
@@ -333,7 +331,6 @@ perf.mixo_spls  <- perf.mixo_pls
         stop("'perf' is only available for (s)pls with modes: 'regression', 'canonical' or 'classic'.  Object has mode 'invariant'", call. = FALSE)
     
     validation = match.arg(validation)
-    progressBar <- .check_logical(progressBar)
     
     ## ---------- CV ---------- ##
     ## ------------- initialise
@@ -399,14 +396,7 @@ perf.mixo_spls  <- perf.mixo_pls
         folds = split(1:n, rep(1:n, length = n))
         M = n
     }
-    
-    #-- set up a progress bar --#
-    if (progressBar == TRUE)
-    {
-        pb = txtProgressBar(style = 3)
-        nBar = 1
-    }
-    
+
     #-- initialize new objects --#
     if (mode == 'canonical'){
         RSS = rbind(rep(n - 1, p), matrix(nrow = ncomp, ncol = p))
@@ -480,12 +470,6 @@ perf.mixo_spls  <- perf.mixo_pls
     # ======== loop on i for cross validation ===================#
     for (i in 1:M)
     {
-        if (progressBar == TRUE)
-        {
-            setTxtProgressBar(pb, nBar/(ncomp * M))
-            nBar = nBar + 1
-        }
-        
         # initialise the train / test datasets
         omit = folds[[i]]
         X.train = object$X[-omit, , drop = FALSE]
@@ -599,10 +583,6 @@ perf.mixo_spls  <- perf.mixo_pls
             R2[h, ] = (diag(cor(object$Y, Ypred[, , h])))^2
         } # if mode == canonical, do not output
     }
-    
-    
-    if (progressBar == TRUE) cat('\n')
-    
     
     #-- output -----------------------------------------------------------------#
     #---------------------------------------------------------------------------#
