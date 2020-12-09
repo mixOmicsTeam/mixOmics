@@ -8,7 +8,7 @@
 \alias{plot.tune.spca}
 \title{Plot model performance}
 \usage{
-\method{plot}{tune.spls}(x, measure = NULL, pch = 16, cex = 1.2, ...)
+\method{plot}{tune.spls}(x, measure = NULL, comp = c(1, 2), pch = 16, cex = 1.2, title = NULL, ...)
 
 \method{plot}{tune.splsda}(x, optimal = TRUE, sd = TRUE, col, ...)
 
@@ -22,13 +22,16 @@
 \item{measure}{Character. Measure used for plotting a \code{tune.spls} object.
 One of c('cor', 'RSS').}
 
+\item{comp}{Integer of length 2 denoting the components to plot.}
+
 \item{pch}{plot character. A character string or a vector of single
 characters or integers. See \code{\link{points}} for all alternatives.}
 
 \item{cex}{numeric character (or symbol) expansion, possibly vector.}
 
-\item{\dots}{Further arguments sent to \code{\link{xyplot}} function.
-Not currently used for \code{tune.spca}.}
+\item{title}{Plot title.}
+
+\item{...}{Not used.}
 
 \item{optimal}{If TRUE, highlights the optimal keepX per component}
 
@@ -38,6 +41,9 @@ the valid performance measures (such as [0, 1] for accuracy)}
 
 \item{col}{character (or symbol) color to be used, possibly vector. One
 colour per component.}
+
+\item{\dots}{Further arguments sent to \code{\link{xyplot}} function.
+Not currently used for \code{tune.spca}.}
 }
 \value{
 none
@@ -63,7 +69,13 @@ against those from the full model for both \code{t} (X components) and
 \code{u} (Y components). The optimal number of features chosen are indicated
 by squares.
 
-\code{plot.tune.spca} plots  the correlation of cross-validated components from
+If neither of the \code{object$test.keepX} or \code{object$test.keepY} are
+fixed, a dot plot is produced where a larger size indicates the strength of
+the measure (higher correlation or lower RSS). Otherwise, the measures are
+plotted against the number of features selected. In both cases, the colour
+shows the dispersion of the values across repeated cross validations.
+
+\code{plot.tune.spca} plots the correlation of cross-validated components from
 the \code{tune.spca} function with respect to the full model.
 }
 \examples{

@@ -22,10 +22,17 @@
 #' \code{u} (Y components). The optimal number of features chosen are indicated
 #' by squares.
 #' 
-#' \code{plot.tune.spca} plots  the correlation of cross-validated components from
+#' If neither of the \code{object$test.keepX} or \code{object$test.keepY} are
+#' fixed, a dot plot is produced where a larger size indicates the strength of
+#' the measure (higher correlation or lower RSS). Otherwise, the measures are
+#' plotted against the number of features selected. In both cases, the colour
+#' shows the dispersion of the values across repeated cross validations.
+#' 
+#' \code{plot.tune.spca} plots the correlation of cross-validated components from
 #' the \code{tune.spca} function with respect to the full model.
 #' @inheritParams plotIndiv
 #' @param x a \code{tune} object. See details for supported objects.
+#' @param comp Integer of length 2 denoting the components to plot.
 #' @param measure Character. Measure used for plotting a \code{tune.spls} object.
 #' One of c('cor', 'RSS').
 #' @param optimal If TRUE, highlights the optimal keepX per component
@@ -34,6 +41,8 @@
 #' the valid performance measures (such as [0, 1] for accuracy)
 #' @param col character (or symbol) color to be used, possibly vector. One
 #' colour per component.
+#' @param title Plot title.
+#' @param ... Not used.
 #' @param \dots Further arguments sent to \code{\link{xyplot}} function.
 #' Not currently used for \code{tune.spca}.
 #' @return none
@@ -50,9 +59,8 @@ NULL
 #' @rdname plot.tune
 #' @export
 plot.tune.spls <-
-    function(x, measure = NULL, pch = 16, cex = 1.2,...)
+    function(x, measure = NULL, comp = c(1,2), pch = 16, cex = 1.2, title = NULL,...)
     {
-        ncomp <- x$call$ncomp
 
         ## if measure not given, use object's 'measure.tune' for spls
         if (is.null(measure) & is(x, 'tune.spls') )
@@ -62,56 +70,45 @@ plot.tune.spls <-
             measure <- match.arg(measure, c('cor', 'RSS'))    
         }
         
-        ggplot_measure <- function(x, v = c('u', 't'), title = NULL, measure = 'cor', ncomp) {
-            
+        ## function to extract measure stats into tidy data.frame for ggplot
+        .get_ut_df <- function(x, v = c('u', 't'), measure = 'cor', comp) {
             pred <- ifelse(measure == 'cor', 'cor.pred', 'RSS.pred')
             
-            df_comps <- lapply(seq_len(ncomp), function(comp)
+            df_comps <- lapply(comp, function(comp_i)
             {
-            ut <- lapply(c(u='u', t='t'), function(o){
-                mean = x[[pred]][[o]][[comp]]$mean
-                sd = x[[pred]][[o]][[comp]]$sd
-                list(mean = round(mean, 2), sd = round(sd, 3))
-            })
-            
-            df.list <- lapply(v, function(V) {
-                df <- expand.grid(keepX = x$call$test.keepX, keepY = x$call$test.keepY)
-                df$V <- V
-                df$mean <- as.vector(ut[[V]]$mean)
-                df$sd <- as.vector(ut[[V]]$sd)
+                ut <- lapply(c(u='u', t='t'), function(o){
+                    mean = x[[pred]][[o]][[comp_i]]$mean
+                    sd = x[[pred]][[o]][[comp_i]]$sd
+                    list(mean = round(mean, 2), sd = round(sd, 3))
+                })
+                
+                df.list <- lapply(v, function(V) {
+                    df <- expand.grid(keepX = x$call$test.keepX, keepY = x$call$test.keepY)
+                    df$V <- V
+                    df$mean <- as.vector(ut[[V]]$mean)
+                    df$sd <- as.vector(ut[[V]]$sd)
+                    df
+                })
+                
+                df <- Reduce(f = rbind, df.list)
+                df$comp <- paste0('comp_', comp_i)
                 df
             })
-            
-            df <- Reduce(f = rbind, df.list)
-            df$comp <- paste0('comp_', comp)
-            df
-        })
             df <- Reduce(f = rbind, df_comps)
+            df$optimal <-              df$comp == paste0('comp_', comp[1]) & df$keepX == x$choice.keepX[comp[1]] & df$keepY == x$choice.keepY[comp[1]]
+            df$optimal <- df$optimal | df$comp == paste0('comp_', comp[2]) & df$keepX == x$choice.keepX[comp[2]] & df$keepY == x$choice.keepY[comp[1]]
+            df
+        }
+        
+        df <- .get_ut_df(x = x, v = c('u', 't'), measure = measure, comp = comp)
+        
+        
+        ggplot_pls2 <- function(df, title = NULL) {
+            
             ## optimal keepX/keepY
-            df$optimal <-              df$comp == 'comp_1' & df$keepX == x$choice.keepX[1] & df$keepY == x$choice.keepY[1]
-            df$optimal <- df$optimal | df$comp == 'comp_2' & df$keepX == x$choice.keepX[2] & df$keepY == x$choice.keepY[2]
-            text.size = as.integer(cex*10)
             p <- ggplot(df, aes(factor(keepX), factor(keepY))) + 
                 geom_point(aes_string(size = 'mean', col = 'sd'), shape = pch) + 
-                scale_color_gradient(low = 'blue', high = 'red', na.value = color.mixo(1)) + 
-                theme(panel.border = element_blank(),
-                      panel.grid.major = element_blank(),
-                      panel.grid.minor = element_blank(),
-                      axis.line = element_line(size = 0.5, linetype = "solid",
-                                               colour = "black"),
-                      
-                      panel.background = element_rect(fill='grey97'),
-                      
-                      axis.text = element_text( size = text.size ),
-                        axis.text.x = element_text( size = text.size, angle = 90, hjust = 1),
-                        axis.title = element_text( size = text.size),
-                        legend.text = element_text( size = text.size ),
-                        legend.title =  element_text( size = text.size),
-                        plot.title = element_text(hjust = 0.5),
-                        # subtitles
-                        strip.text = element_text(size = 1.3*text.size, face = 'bold')
-                      
-                      )
+                scale_color_gradient(low = 'blue', high = 'red', na.value = color.mixo(1))
                 
             ## optimal keepX/keepY
                 p <- p + geom_point(data = df[df$optimal,], 
@@ -120,8 +117,7 @@ plot.tune.spls <-
                                     col = 'green', 
                                     show.legend = FALSE) +
                 
-                labs(x = 'keepX', y = 'keepY', size = 'mean', col = 'SD', 
-                     title = sprintf("measure = '%s'", measure)) +
+                labs(x = 'keepX', y = 'keepY', size = 'mean', col = 'SD') +
                 facet_grid(V~comp)
             
             if (measure == 'RSS')
@@ -135,7 +131,69 @@ plot.tune.spls <-
             list(gg.plot = p, df= df)
         }
         
-        res <- ggplot_measure(x=x, measure = measure, ncomp = ncomp)
+        ggplot_pls1 <- function(df, ## from .get_ut_df
+                                title = NULL, ## title
+                                keepA = 'keepX',
+                                cex) ## which keepA is not fixed?
+            {
+            ## keepX or keepY must be removed before running this
+            p <- ggplot(df, aes_string(x = keepA, y = 'mean', col = 'sd')) + 
+                geom_point(shape = pch, size = cex) +
+                scale_color_gradient(low = 'blue', high = 'red', na.value = color.mixo(1)) + 
+                labs(x = keepA, y = measure, col = 'SD') +
+                facet_grid(.~comp, scales = 'free')
+            
+            ## optimal
+            df_opt <- df[df$optimal,]
+            p <- p + geom_point(data = df_opt, 
+                                aes_string(x = keepA, y = 'mean'), 
+                                size = cex*1.2,
+                                shape = 0,
+                                col = 'green',
+                                show.legend = FALSE)
+                
+            p <- p + guides(fill = guide_legend(order=2, override.aes = list(size=2)))
+            
+            list(gg.plot = p, df= df)
+        }
+        
+        if ( length(unique(df$keepY)) > 1 & length(unique(df$keepX)) > 1)
+            res <- ggplot_pls2(df, title = title)
+        else if ( length(unique(df$keepY)) == 1 & length(unique(df$keepX)) > 1)
+        {
+            df <- df[df$V == 't',]
+            res <- ggplot_pls1(df, title = title, keepA = 'keepX', cex = 2*cex)
+        }
+           
+        else if ( length(unique(df$keepY)) > 1 & length(unique(df$keepX)) == 1)
+        {
+            df <- df[df$V == 'u',]
+            res <- ggplot_pls1(df, title = title, keepA = 'keepY', cex = 2*cex)
+        }
+        else
+            .stop('Unexpected error. Inavlid keepX and/or keepY.')
+        
+        text.size = as.integer(cex*10)
+        
+        res$gg.plot <- res$gg.plot + theme(panel.border = element_blank(),
+                                         panel.grid.major = element_blank(),
+                                         panel.grid.minor = element_blank(),
+                                         axis.line = element_line(size = 0.5, linetype = "solid",
+                                                                  colour = "black"),
+                                         
+                                         panel.background = element_rect(fill='grey97'),
+                                         
+                                         axis.text = element_text( size = text.size ),
+                                         axis.text.x = element_text( size = text.size, angle = 90, hjust = 1),
+                                         axis.title = element_text( size = text.size),
+                                         legend.text = element_text( size = text.size ),
+                                         legend.title =  element_text( size = text.size),
+                                         plot.title = element_text(hjust = 0.5),
+                                         # subtitles
+                                         strip.text = element_text(size = 1.3*text.size, face = 'bold')
+                                         
+        ) +
+            labs(title = ifelse(!is.null(title), title, sprintf("measure = '%s'", measure)))
         
         res$gg.plot
     }
