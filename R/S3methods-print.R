@@ -706,12 +706,19 @@ print.summary <-
 #' @name print
 #' @rdname S3methods-print
 #' @export
-print.perf.pls.mthd = function(x, ...)
+print.perf.pls.mthd <- function(x, ...)
 {
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+    cat("\n")
+    cat("Call:\n", deparse(x$call, width.cutoff = 500))
+    cat("\n\n")
     cat(" Main numerical outputs: \n",
         "-------------------- \n")
-    cat(" MSEP, R2, Q2, Q2.total, RSS, PRESS. See the help file ?perf \n\n")
+    cat(" cor.tpred, cor.upred, RSS.tpred, RSS.upred\n")
+    cat(" MSEP, R2, Q2, Q2.total, RSS, PRESS. See the help file ?perf \n")
+    if (is (x, 'perf.spls.mthd'))
+    {
+        cat(" Stable features of X and Y on each component: see object$features \n\n")
+    }
     
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
@@ -720,19 +727,7 @@ print.perf.pls.mthd = function(x, ...)
 #' @name print
 #' @rdname S3methods-print
 #' @export
-print.perf.spls.mthd = function(x, ...)
-{
-    cat("\nCall:\n", deparse(x$call, width.cutoff = 500), "\n\n")
-    cat(" Main numerical outputs: \n",
-        "-------------------- \n")
-    cat(" MSEP, R2, Q2, Q2.total, RSS, PRESS. See the help file ?perf \n")
-    cat(" Stable features of X on each component: see object$features$stable.X \n")
-    cat(" Stable features of Y on each component: see object$features$stable.Y \n\n")
-    
-    cat(" Visualisation Functions: \n", "-------------------- \n")
-    cat(" plot \n")
-    
-}
+print.perf.spls.mthd <- print.perf.pls.mthd
 
 #' @name print
 #' @rdname S3methods-print
