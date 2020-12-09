@@ -107,12 +107,13 @@
 #' @param cpus Number of cpus to use when running the code in parallel.
 #' @param ... not used
 #' @return For PLS and sPLS models, \code{perf} produces a list with the
-#' following components: \item{MSEP}{Mean Square Error Prediction for each
-#' \eqn{Y} variable, only applies to object inherited from \code{"pls"}, and
+#' following components for every repeat: \item{MSEP}{Mean Square Error
+#' Prediction for each \eqn{Y} variable, only applies to object inherited from
+#' \code{"pls"}, and
 #' \code{"spls"}.} \item{R2}{a matrix of \eqn{R^2} values of the
 #' \eqn{Y}-variables for models with \eqn{1, \ldots ,}\code{ncomp} components,
 #' only applies to object inherited from \code{"pls"}, and \code{"spls"}.}
-#' \item{Q2}{if \eqn{Y} containts one variable, a vector of \eqn{Q^2} values
+#' \item{Q2}{if \eqn{Y} contains one variable, a vector of \eqn{Q^2} values
 #' else a list with a matrix of \eqn{Q^2} values for each \eqn{Y}-variable.
 #' Note that in the specific case of an sPLS model, it is better to have a look
 #' at the Q2.total criterion, only applies to object inherited from
@@ -121,7 +122,10 @@
 #' applies to object inherited from \code{"pls"}, and \code{"spls"}}
 #' \item{features}{a list of features selected across the folds
 #' (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
-#' \code{keepY} parameters from the input object.} \item{error.rate}{ For
+#' \code{keepY} parameters from the input object.} \iterm{cor.tpred,
+#' cor.upred}{Correlation between the predicted and actual components for X (t)
+#' and Y (u)} \iterm{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
+#' predicted and actual components for X (t) and Y (u)} \item{error.rate}{ For
 #' PLS-DA and sPLS-DA models, \code{perf} produces a matrix of classification
 #' error rate estimation. The dimensions correspond to the components in the
 #' model and to the prediction method used, respectively. Note that error rates
@@ -264,39 +268,32 @@ perf.mixo_pls <- function(object,
     progressBar <- .check_logical(progressBar)
     
     # TODO add BPPARAM to args and use bplapply
-    repeat_perf <- lapply(X = paste0('repeat_', seq_len(nrepeat)), FUN = function(repeat_i) {
-        i <- as.numeric(gsub(pattern = 'repeat_', replacement = '', x = repeat_i))
+    repeat_names <- .name_list(char = seq_len(nrepeat), names = paste0('repeat_', seq_len(nrepeat)))
+    result <- lapply(X = repeat_names, FUN = function(repeat_i) {
         ## progress bar
         if (progressBar == TRUE) # TODO drop for parallel
-            .progressBar(i/nrepeat)
+            .progressBar(repeat_i/nrepeat)
         ## CV
         .perf.mixo_pls_cv(object, validation = validation, folds = folds)
     })
-    for(k in 1:nrepeat){
-        res.perf <- repeat_perf[[k]]
-        
-        # extract Q2.total, we could extract other outputs such as R2, MSEP etc (only valid for regression)
-        Q2.tot.ave[, k] = res.perf$Q2.total 
-        
-        # extract the predicted components per dimension, take abs value
-        cor.tpred[, k] = diag(abs(cor(res.perf$t.pred.cv, object$variates$X)))
-        cor.upred[, k] = diag(abs(cor(res.perf$u.pred.cv, object$variates$Y)))
-        
-        # RSS: no abs values here
-        RSS.tpred[, k] = apply((res.perf$t.pred.cv - object$variates$X)^2, 2, sum)/(nrow(X) -1)
-        RSS.upred[, k] = apply((res.perf$u.pred.cv - object$variates$Y)^2, 2, sum)/(nrow(X) -1)
-    } #end repeat       
     
-    # # calculate mean across repeats
-    cor.pred$u = apply(cor.upred, 1, mean) 
-    cor.pred$t = apply(cor.tpred, 1, mean)
-    RSS.pred$u = apply(RSS.upred, 1, mean)
-    RSS.pred$t = apply(RSS.tpred, 1, mean)
+    ## change list hierarchy from entry within repeat to repeat within entry
+    result <- .relist(result)
     
-    out$cor.pred = cor.pred
-    out$RSS.pred = RSS.pred
-    out$Q2.tot.ave = apply(Q2.tot.ave, 1, mean)
-    return(out)
+    #--- class
+    if (is(object,"mixo_spls"))
+    {
+        method = "spls.mthd"
+        result$features <- .relist(result$features)
+    } else if (is(object, "mixo_pls")) {
+        method = "pls.mthd"
+    } else {
+        warning("Something went wrong. Please contact us.")
+    }
+    class(result) = c("perf",paste(c("perf", method), collapse ="."))
+    result$call <- match.call()
+    
+    return(result)
     
 }
     
@@ -307,9 +304,9 @@ perf.mixo_spls  <- perf.mixo_pls
 #' @noRd
 #' @keywords Internal
 .perf.mixo_pls_cv <- function(object,
-                                 validation = c("Mfold", "loo"),
-                                 folds,
-                                 ...)
+                              validation = c("Mfold", "loo"),
+                              folds,
+                              ...)
 {
     # changes to bypass the loop for the Q2
     
@@ -605,6 +602,17 @@ perf.mixo_spls  <- perf.mixo_pls
     result$t.pred.cv = t.pred.cv  # needed for tuning
     result$u.pred.cv = u.pred.cv  # needed for tuning
     
+    # extract the predicted components per dimension, take abs value
+    result$cor.tpred = diag(abs(cor(t.pred.cv, object$variates$X)))
+    result$cor.tpred = t(data.matrix(result$cor.tpred, rownames.force = TRUE))
+    result$cor.upred = diag(abs(cor(u.pred.cv, object$variates$Y)))
+    result$cor.upred = t(data.matrix(result$cor.upred, rownames.force = TRUE))
+    
+    # RSS: no abs values here
+    result$RSS.tpred = apply((t.pred.cv - object$variates$X)^2, 2, sum)/(nrow(X) -1)
+    result$RSS.tpred  = t(data.matrix(result$RSS.tpred, rownames.force = TRUE))
+    result$RSS.upred = apply((u.pred.cv - object$variates$Y)^2, 2, sum)/(nrow(X) -1)
+    result$RSS.upred  = t(data.matrix(result$RSS.upred, rownames.force = TRUE))
     
     #---- extract stability of features -----#
     if (is(object, "mixo_spls"))
@@ -628,18 +636,6 @@ perf.mixo_spls  <- perf.mixo_pls
         result$features$stable.X = list.features.X
         result$features$stable.Y = list.features.Y
     }
-    
-    #--- class
-    if (is(object,"mixo_spls"))
-    {
-        method = "spls.mthd"
-    } else if (is(object, "mixo_pls")) {
-        method = "pls.mthd"
-    } else {
-        warning("Something went wrong. Please contact us.")
-    }
-    class(result) = c("perf",paste(c("perf", method), collapse ="."))
-    result$call = match.call()
     
     return(invisible(result))
 }

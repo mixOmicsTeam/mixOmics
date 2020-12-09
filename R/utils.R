@@ -599,3 +599,23 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     invisible(NULL)
 }
 
+## ----------------------- .relist ------------------------ ##
+#' Swap list hierarchy
+#'
+#' For a nested list of say indices within categories, swap the hierarchy
+#' to categories within indices. Used to processs CV results. See examples.
+#' @param lst 
+#'
+#' @return A re-ordered list
+#' @noRd
+#' @keywords Internal
+#' @examples
+#' .relist(list(cat1 = list('1' = 11, '2' =  12),
+#'                           cat2 = list('1' = 21, '2' = 22)))
+#' #> list('1' = list(cat1 = 11, cat2 = 21), '2' = list(cat1 = 12, 
+#' #>                                                   cat2 = 22))
+.relist <- function(lst) {
+    lapply(.name_list(names(lst[[1]])), function(entry) {
+        lapply(.name_list(names(lst)), function(x) lst[[x]][[entry]])
+    })
+}

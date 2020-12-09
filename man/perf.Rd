@@ -143,12 +143,13 @@ to 0.01.}
 }
 \value{
 For PLS and sPLS models, \code{perf} produces a list with the
-following components: \item{MSEP}{Mean Square Error Prediction for each
-\eqn{Y} variable, only applies to object inherited from \code{"pls"}, and
+following components for every repeat: \item{MSEP}{Mean Square Error
+Prediction for each \eqn{Y} variable, only applies to object inherited from
+\code{"pls"}, and
 \code{"spls"}.} \item{R2}{a matrix of \eqn{R^2} values of the
 \eqn{Y}-variables for models with \eqn{1, \ldots ,}\code{ncomp} components,
 only applies to object inherited from \code{"pls"}, and \code{"spls"}.}
-\item{Q2}{if \eqn{Y} containts one variable, a vector of \eqn{Q^2} values
+\item{Q2}{if \eqn{Y} contains one variable, a vector of \eqn{Q^2} values
 else a list with a matrix of \eqn{Q^2} values for each \eqn{Y}-variable.
 Note that in the specific case of an sPLS model, it is better to have a look
 at the Q2.total criterion, only applies to object inherited from
@@ -157,7 +158,10 @@ values for models with \eqn{1, \ldots ,}\code{ncomp} components, only
 applies to object inherited from \code{"pls"}, and \code{"spls"}}
 \item{features}{a list of features selected across the folds
 (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
-\code{keepY} parameters from the input object.} \item{error.rate}{ For
+\code{keepY} parameters from the input object.} \iterm{cor.tpred,
+cor.upred}{Correlation between the predicted and actual components for X (t)
+and Y (u)} \iterm{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
+predicted and actual components for X (t) and Y (u)} \item{error.rate}{ For
 PLS-DA and sPLS-DA models, \code{perf} produces a matrix of classification
 error rate estimation. The dimensions correspond to the components in the
 model and to the prediction method used, respectively. Note that error rates
