@@ -66,8 +66,7 @@ NULL
 #' @export
 plot.perf.pls.mthd <-
     function (x,
-              criterion = "MSEP",
-              #c("MSEP", "RMSEP", "R2", "Q2"),
+              criterion = "Q2",
               xlab = "number of components",
               ylab = NULL,
               LimQ2 = 0.0975,
@@ -79,10 +78,13 @@ plot.perf.pls.mthd <-
     {
         
         
-        if (!any(criterion %in% c("MSEP", "RMSEP", "R2", "Q2")) || length(criterion) > 1)
-            stop("Choose one validation criterion among MSEP, RMSEP, R2 or Q2.")
-        
-        y = switch(criterion, MSEP = x$MSEP, RMSEP = sqrt(x$MSEP), R2 = x$R2, Q2 = x$Q2)
+        criterion <- match.arg(criterion, choices = c("MSEP", "RMSEP", "R2", "Q2", "cor.upred",
+                                                      "cor.tpred", "RSS.upred", "RSS.tpred"))
+        ## add RSMP
+        x$RMSEP <- lapply(x$MSEP, sqrt)
+        y <- x[[criterion]]
+        ## average across repeats
+        y <- Reduce('+', y) / length(y) 
         
         Q2.total = NULL
         if ((criterion == "Q2") & is.list(y)) {
@@ -91,9 +93,15 @@ plot.perf.pls.mthd <-
         }
         
         if (is.null(ylab))
-            ylab = switch(criterion, MSEP = "MSEP", RMSEP = "RMSEP",
-                          R2 = expression(R^~2), Q2 = expression(Q^~2))
-        
+        {
+            if (criterion == 'R2')
+                ylab <- expression(R^~2)
+            else if (criterion == 'Q2')
+                ylab <- expression(Q^~2)
+            else
+                ylab <- criterion
+        }
+
         nResp = nrow(y)  # Number of response variables
         nComp = ncol(y)  # Number of components
         

@@ -13,7 +13,7 @@
 \usage{
 \method{plot}{perf.pls.mthd}(
   x,
-  criterion = "MSEP",
+  criterion = "Q2",
   xlab = "number of components",
   ylab = NULL,
   LimQ2 = 0.0975,
@@ -25,7 +25,7 @@
 
 \method{plot}{perf.spls.mthd}(
   x,
-  criterion = "MSEP",
+  criterion = "Q2",
   xlab = "number of components",
   ylab = NULL,
   LimQ2 = 0.0975,
