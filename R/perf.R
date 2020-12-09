@@ -261,10 +261,19 @@ perf.mixo_pls <- function(object,
     
     cor.pred = RSS.pred = list()
     
+    progressBar <- .check_logical(progressBar)
+    
+    # TODO add BPPARAM to args and use bplapply
+    repeat_perf <- lapply(X = paste0('repeat_', seq_len(nrepeat)), FUN = function(repeat_i) {
+        i <- as.numeric(gsub(pattern = 'repeat_', replacement = '', x = repeat_i))
+        ## progress bar
+        if (progressBar == TRUE) # TODO drop for parallel
+            .progressBar(i/nrepeat)
+        ## CV
+        .perf.mixo_pls_folds(object, validation = validation, folds = folds)
+    })
     for(k in 1:nrepeat){
-        cat('repeat', k, '\n')
-        # fold CV
-        res.perf = .perf.mixo_pls_folds(object, validation = validation, folds = folds)
+        res.perf <- repeat_perf[[k]]
         
         # extract Q2.total, we could extract other outputs such as R2, MSEP etc (only valid for regression)
         Q2.tot.ave[, k] = res.perf$Q2.total 
