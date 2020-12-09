@@ -245,37 +245,15 @@ perf <- function(object, ...)
 #' @export
 perf.mixo_pls <- function(object,
                           validation = c("Mfold", "loo"),
-                          folds = 10,
+                          folds,
                           progressBar = FALSE,
                           nrepeat = 1,
                           ...)
 {
-    #-- initialising arguments --#
-    # these are the centered and scaled matrices output from pls, we remove $nzv if needed
-    if (length(object$nzv$Position)>0)
-    {
-        X = object$X[, -object$nzv$Position]
-    } else {
-        X = object$X
-    }
-    Y = object$Y
-    
-    scale = object$scale
-    tol = object$tol
-    max.iter = object$max.iter
-    mode = object$mode
     ncomp = object$ncomp
-    n = nrow(X)
-    p = ncol(X)
-    q = ncol(Y)
-    
-    keepX = object$keepX
-    keepY = object$keepY
-    
-    
+
     out = list()
     
-    measure = NULL
     cor.tpred = cor.upred = RSS.tpred = RSS.upred = matrix(nrow = ncomp, ncol = nrepeat, 
                                                            dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
     Q2.tot.ave = matrix(nrow = ncomp, ncol = nrepeat,
