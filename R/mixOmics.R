@@ -390,7 +390,7 @@ mixOmics <- function(X,
                         scale = TRUE
                     
                     message("a Partial Least Squares - Discriminant Analysis is being performed (PLS-DA)")
-                    res = mixOmics::plsda(X = X, Y = Y, ncomp = ncomp, 
+                    res = plsda(X = X, Y = Y, ncomp = ncomp, 
                                           max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
                     
                 } else {# mint
@@ -410,7 +410,7 @@ mixOmics <- function(X,
                         scale = TRUE
                     
                     message("a sparse Partial Least Squares - Discriminant Analysis is being performed (sPLS-DA)")
-                    res = mixOmics::splsda(X = X, Y = Y, ncomp = ncomp, keepX = keepX, max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
+                    res = splsda(X = X, Y = Y, ncomp = ncomp, keepX = keepX, max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
                     
                 } else {# mint
                     if (missing(scale))
@@ -436,7 +436,7 @@ mixOmics <- function(X,
                         scale = TRUE
                     
                     message("a Partial Least Squares is being performed (PLS)")
-                    res = mixOmics::pls(X = X, Y = Y, ncomp = ncomp, mode = mode,
+                    res = pls(X = X, Y = Y, ncomp = ncomp, mode = mode,
                                         max.iter = max.iter, tol = tol, near.zero.var = near.zero.var,scale = scale)
                     
                 } else { # mint
@@ -455,7 +455,7 @@ mixOmics <- function(X,
                         scale = TRUE
                     
                     message("a sparse Partial Least Squares is being performed (sPLS)")
-                    res = mixOmics::spls(X = X, Y = Y, ncomp = ncomp, mode = mode, keepX = keepX,keepY = keepY,
+                    res = spls(X = X, Y = Y, ncomp = ncomp, mode = mode, keepX = keepX,keepY = keepY,
                                          max.iter = max.iter, tol = tol,
                                          near.zero.var = near.zero.var,scale = scale)
                 } else {

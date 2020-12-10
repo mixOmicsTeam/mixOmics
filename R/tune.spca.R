@@ -66,7 +66,7 @@ tune.spca <- function(X,
     for(ncomp in seq_len(ncomp)) {
         iter_keepX <- function(keepX.value) {
             # full data
-            spca.full = mixOmics::spca(X, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = FALSE)
+            spca.full = spca(X, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = FALSE)
             ## ------ repeated cv
             repeat_cv_j <- function(j) {
                 repeat.j.folds <- suppressWarnings(split(sample(seq_len(nrow(X))),seq_len(folds)))
@@ -78,7 +78,7 @@ tune.spca <- function(X,
                     X.test = X[test.fold.inds,,drop=FALSE]
                     # ---- run sPCA 
                     ## train
-                    spca.train = mixOmics::spca(X.train, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = FALSE)
+                    spca.train = spca(X.train, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = FALSE)
                     # ---- deflation on X with only the fold left out
                     for(k in seq_len(ncomp)){ 
                         # loop to calculate deflated matrix and predicted comp

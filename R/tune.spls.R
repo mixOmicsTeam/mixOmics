@@ -178,7 +178,7 @@ tune.spls <-
              folds,
              mode = c('regression', 'canonical', 'classic'),
              measure.tune = c('cor', 'RSS'), ## only if spls model
-             BPPARAM = BiocParallel::SerialParam(),
+             BPPARAM = SerialParam(),
              progressBar = FALSE
              ) {
         out = list()

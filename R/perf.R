@@ -122,9 +122,9 @@
 #' applies to object inherited from \code{"pls"}, and \code{"spls"}}
 #' \item{features}{a list of features selected across the folds
 #' (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
-#' \code{keepY} parameters from the input object.} \iterm{cor.tpred,
+#' \code{keepY} parameters from the input object.} \item{cor.tpred,
 #' cor.upred}{Correlation between the predicted and actual components for X (t)
-#' and Y (u)} \iterm{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
+#' and Y (u)} \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
 #' predicted and actual components for X (t) and Y (u)} \item{error.rate}{ For
 #' PLS-DA and sPLS-DA models, \code{perf} produces a matrix of classification
 #' error rate estimation. The dimensions correspond to the components in the
@@ -477,9 +477,9 @@ perf.mixo_spls  <- perf.mixo_pls
                 keepX.temp[which(keepX.temp>sum(nzv))] = sum(nzv)
             
             # here h = 1 because we deflate at each step then extract the vectors for each h comp
-            spls.res = mixOmics::spls(X.train[,nzv], Y.train, ncomp = 1, mode = mode, max.iter = max.iter, tol = tol, 
+            spls.res = spls(X.train[,nzv], Y.train, ncomp = 1, mode = mode, max.iter = max.iter, tol = tol, 
                                       keepX = keepX.temp, keepY = keepY, near.zero.var = FALSE, scale = scale)
-            Y.hat = mixOmics:::predict.mixo_spls(spls.res, X.test[,nzv, drop = FALSE])$predict
+            Y.hat = predict.mixo_spls(spls.res, X.test[,nzv, drop = FALSE])$predict
             
             # added the stop msg
             if(sum(is.na(Y.hat))>0) stop('Predicted Y values include NA')  

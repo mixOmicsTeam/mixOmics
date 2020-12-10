@@ -15,7 +15,7 @@ tune.spls(
   folds,
   mode = c("regression", "canonical", "classic"),
   measure.tune = c("cor", "RSS"),
-  BPPARAM = BiocParallel::SerialParam(),
+  BPPARAM = SerialParam(),
   progressBar = FALSE
 )
 }

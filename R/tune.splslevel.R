@@ -111,12 +111,12 @@ tune.splslevel <-
             {
                 if (ncomp == 1)
                 {
-                    spls.train = mixOmics::spls(Xw, Yw, ncomp = ncomp,
+                    spls.train = spls(Xw, Yw, ncomp = ncomp,
                                                 keepX = test.keepX[i],
                                                 keepY = test.keepY[j],
                                                 mode = mode)
                 } else {
-                    spls.train = mixOmics::spls(Xw, Yw, ncomp = ncomp,
+                    spls.train = spls(Xw, Yw, ncomp = ncomp,
                                                 keepX = c(already.tested.X, test.keepX[i]),
                                                 keepY = c(already.tested.Y, test.keepY[j]),
                                                 mode = mode)

@@ -158,9 +158,9 @@ values for models with \eqn{1, \ldots ,}\code{ncomp} components, only
 applies to object inherited from \code{"pls"}, and \code{"spls"}}
 \item{features}{a list of features selected across the folds
 (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
-\code{keepY} parameters from the input object.} \iterm{cor.tpred,
+\code{keepY} parameters from the input object.} \item{cor.tpred,
 cor.upred}{Correlation between the predicted and actual components for X (t)
-and Y (u)} \iterm{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
+and Y (u)} \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
 predicted and actual components for X (t) and Y (u)} \item{error.rate}{ For
 PLS-DA and sPLS-DA models, \code{perf} produces a matrix of classification
 error rate estimation. The dimensions correspond to the components in the
