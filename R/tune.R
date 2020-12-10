@@ -2,20 +2,14 @@
 # tun: chose the optimal number of parameters per component on a "method"
 # ========================================================================================================
 
-#' Generic function to choose the parameters in the different methods in
-#' mixOmics
+#' Wrapper function to tune pls-derived methods.
 #' 
-#' Wrapper of all tuning functions.
+#' @template description/tune
 #' 
-#' The \code{tune} function called the function \code{predict}. more details
-#' about most arguments are detailed in \code{?predict}.
-#' 
-#' Also see the help file corresponding to your \code{method}, e.g.
-#' \code{tune.splsda}. Note that only the arguments used in the tune function
-#' corresponding to \code{method} are passed on.
-#' 
-#' Some details on the use of the nrepeat argument are provided in
-#' \code{?perf}.
+#' @details
+#' See the help file corresponding to the corresponding \code{method}, e.g.
+#' \code{tune.splsda} for further details. Note that only the arguments used in
+#' the tune function corresponding to \code{method} are passed on.
 #' 
 #' More details about the prediction distances in \code{?predict} and the
 #' supplemental material of the mixOmics article (Rohart et al. 2017). More
@@ -23,12 +17,12 @@
 #' 
 #' @param method This parameter is used to pass all other argument to the
 #' suitable function. \code{method} has to be one of the following: "spls",
-#' "splsda", "mint.splsda", "rcc", "pca", "spca".
+#' "splsda", "mint.splsda", "rcc", "pca", "spca" or "pls".
 #' @param X numeric matrix of predictors. \code{NA}s are allowed.
 #' @param Y Either a factor or a class vector for the discrete outcome, or a
 #' numeric vector or matrix of continuous responses (for multi-response
 #' models).
-#' @param multilevel Design matrix for multilevel anaylis (for repeated
+#' @param multilevel Design matrix for multilevel analysis (for repeated
 #' measurements) that indicates the repeated measures on each individual, i.e.
 #' the individuals ID. See Details.
 #' @param ncomp the number of components to include in the model.
@@ -58,8 +52,7 @@
 #' @param dist distance metric to estimate the
 #' classification error rate, should be a subset of \code{"centroids.dist"},
 #' \code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).
-#' @param measure Two misclassification measure are available: overall
-#' misclassification error \code{overall} or the Balanced Error Rate \code{BER}
+#' @param measure The tuning measure used for different methods. See details.
 #' @param auc if \code{TRUE} calculate the Area Under the Curve (AUC)
 #' performance of the model.
 #' @param progressBar by default set to \code{TRUE} to output the progress bar

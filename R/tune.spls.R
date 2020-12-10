@@ -27,47 +27,19 @@
 
 
 # ========================================================================================================
-# tune.spls: chose the optimal number of parameters per component on a spls method, based on MSE
+# tune.spls: chose the optimal number of parameters per component on a spls method
 # ========================================================================================================
 
-# I start with no selection on Y. Otherwise we need to be able to tell which submodel of Y is better. I'm afraid a sum(MSE_Yi) is gonna lead to very sparse model (only 1Y), to test.
-
-#' Tuning functions for sPLS method
+#' Tuning functions for sPLS and PLS functions
 #' 
-#' Computes M-fold or Leave-One-Out Cross-Validation scores on a user-input
-#' grid to determine optimal values for the sparsity parameters in \code{spls}.
+#' @template description/tune
 #' 
+#' @template section/folds
+#' @template section/nrepeat
+#' @template section/measure-pls
+#' @template section/t-test-process
 #' 
-#' This tuning function should be used to tune the parameters in the
-#' \code{spls} function (number of components and the number of variables in
-#' \code{keepX} to select).
-#' 
-#' If \code{validation = "loo"}, leave-one-out cross-validation is performed.
-#' By default \code{folds} is set to the number of unique individuals. If
-#' \code{validation = "Mfold"}, M-fold cross-validation is performed. How many
-#' folds to generate is selected by specifying the number of folds in
-#' \code{folds}.
-#' 
-#' Four measures of accuracy are available: Mean Absolute Error (\code{MAE}),
-#' Mean Square Error(\code{MSE}), \code{Bias} and \code{R2}. Both MAE and MSE
-#' average the model prediction error. MAE measures the average magnitude of
-#' the errors without considering their direction. It is the average over the
-#' fold test samples of the absolute differences between the Y predictions and
-#' the actual Y observations. The MSE also measures the average magnitude of
-#' the error. Since the errors are squared before they are averaged, the MSE
-#' tends to give a relatively high weight to large errors. The Bias is the
-#' average of the differences between the Y predictions and the actual Y
-#' observations and the R2 is the correlation between the predictions and the
-#' observations. All those measures are averaged across all Y variables in the
-#' PLS2 case. We are still improving the function to tune an sPLS2 model,
-#' contact us for more details and examples.
-#' 
-#' The function outputs the optimal number of components that achieve the best
-#' performance based on the chosen measure of accuracy. The assessment is
-#' data-driven and similar to the process detailed in (Rohart et al., 2016),
-#' where one-sided t-tests assess whether there is a gain in performance when
-#' adding a component to the model.
-#' 
+#' @section more:
 #' See also \code{?perf} for more details.
 #' 
 #' @param X numeric matrix of predictors. \code{NA}s are allowed.

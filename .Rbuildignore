@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^examples$
+^man-roxygen
 
 ^\.travis\.yml$
 ^docs$

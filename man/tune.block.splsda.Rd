@@ -65,8 +65,7 @@ matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
 classification error rate, should be a subset of \code{"centroids.dist"},
 \code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
 
-\item{measure}{Two misclassification measure are available: overall
-misclassification error \code{overall} or the Balanced Error Rate \code{BER}}
+\item{measure}{The tuning measure used for different methods. See details.}
 
 \item{weighted}{tune using either the performance of the Majority vote or
 the Weighted vote.}

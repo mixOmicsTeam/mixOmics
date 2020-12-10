@@ -2,7 +2,7 @@
 % Please edit documentation in R/tune.spls.R
 \name{tune.spls}
 \alias{tune.spls}
-\title{Tuning functions for sPLS method}
+\title{Tuning functions for sPLS and PLS functions}
 \usage{
 tune.spls(
   X,
@@ -86,42 +86,58 @@ values for each sample, each \code{test.keepX,test.keepY}, each comp and
 each repeat. Only if light.output=FALSE}
 }
 \description{
-Computes M-fold or Leave-One-Out Cross-Validation scores on a user-input
-grid to determine optimal values for the sparsity parameters in \code{spls}.
+This function uses repeated cross-validation to tune hyperparameters such as
+the number of features to select and possibly the number of components to
+extract.
 }
-\details{
-This tuning function should be used to tune the parameters in the
-\code{spls} function (number of components and the number of variables in
-\code{keepX} to select).
+\section{folds}{
+ 
+During a cross-validation (CV), data are randomly split into \code{M}
+subgroups (folds). \code{M-1} subgroups are then used to train submodels
+which would be used to predict prediction accuracy statistics for the
+held-out (test) data. All subgroups are used as the test data exactly once.
+If \code{validation = "loo"}, leave-one-out CV is used where each group
+consists of exactly one sample and hence \code{M == N} where N is the number
+of samples.
+}
 
-If \code{validation = "loo"}, leave-one-out cross-validation is performed.
-By default \code{folds} is set to the number of unique individuals. If
-\code{validation = "Mfold"}, M-fold cross-validation is performed. How many
-folds to generate is selected by specifying the number of folds in
-\code{folds}.
+\section{nrepeat}{
+ 
+The cross-validation process is repeated \code{nrepeat} times and the
+accuracy measures are averaged across repeats. If \code{validation = "loo"},
+the process does not need to be repeated as there is only one way to split N
+samples into N groups and hence nrepeat is forced to be 1.
+}
 
-Four measures of accuracy are available: Mean Absolute Error (\code{MAE}),
-Mean Square Error(\code{MSE}), \code{Bias} and \code{R2}. Both MAE and MSE
-average the model prediction error. MAE measures the average magnitude of
-the errors without considering their direction. It is the average over the
-fold test samples of the absolute differences between the Y predictions and
-the actual Y observations. The MSE also measures the average magnitude of
-the error. Since the errors are squared before they are averaged, the MSE
-tends to give a relatively high weight to large errors. The Bias is the
-average of the differences between the Y predictions and the actual Y
-observations and the R2 is the correlation between the predictions and the
-observations. All those measures are averaged across all Y variables in the
-PLS2 case. We are still improving the function to tune an sPLS2 model,
-contact us for more details and examples.
+\section{measure-pls}{
+ 
+Two measures of accuracy are available: Correlation (\code{cor}), as well as
+the Residual Sum of Squares (\code{RSS}). For \code{cor}, the parameters
+which would maximise the correlation between the predicted and the actual
+components are chosen. The \code{RSS} measure tries to predict the held-out
+data by matrix reconstruction and seeks to minimise the error between actual
+and predicted values. For \code{mode='canonical'}, The X matrix is used to
+calculate the \code{RSS}, while for others modes the \code{Y} matrix is used.
+This measure gives more weight to any large errors and is thus sensitive to
+outliers. It also intrinsically selects less number of features on the
+\code{Y} block compared to \code{measure='cor'}.
+}
 
-The function outputs the optimal number of components that achieve the best
-performance based on the chosen measure of accuracy. The assessment is
-data-driven and similar to the process detailed in (Rohart et al., 2016),
-where one-sided t-tests assess whether there is a gain in performance when
-adding a component to the model.
+\section{t-test-process}{
+ 
+The optimisation process is data-driven and similar to the process detailed
+in (Rohart et al., 2016), where one-sided t-tests assess whether there is a
+gain in performance when incrementing the number of features or components in
+the model. However, it will assess all the provided grid through pair-wise
+comparisons as the performance criteria do not always change linearly with
+respect to the added number of features or components.
+}
+
+\section{more}{
 
 See also \code{?perf} for more details.
 }
+
 \examples{
 
 \dontrun{
