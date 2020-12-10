@@ -23,7 +23,7 @@ tune(
   validation = "Mfold",
   folds = 10,
   dist = "max.dist",
-  measure = ifelse(method == "spls", "MSE", "BER"),
+  measure = ifelse(method == "spls", "cor", "BER"),
   auc = FALSE,
   progressBar = FALSE,
   near.zero.var = FALSE,

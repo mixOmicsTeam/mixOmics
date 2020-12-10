@@ -124,17 +124,18 @@ See also \code{?perf} for more details.
 }
 \examples{
 
+\dontrun{
 data(liver.toxicity)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
-
-\dontrun{
-tune = tune.spls(X, Y, ncomp=4, test.keepX = c(5,10,15), measure = "MSE",
-nrepeat=3, progressBar = TRUE)
-
+set.seed(42)
+tune = tune.spls( X, Y, ncomp = 3, 
+                  test.keepX = c(5, 10, 15), 
+                  test.keepY = c(3, 6, 8), measure = "cor", 
+                  folds = 5, nrepeat = 3, progressBar = TRUE)
 tune$choice.ncomp
 tune$choice.keepX
-
+tune$choice.keepY
 # plot the results
 plot(tune)
 }

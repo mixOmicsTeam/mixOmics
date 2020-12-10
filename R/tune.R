@@ -190,7 +190,7 @@ tune <-
               # all but pca
               dist = "max.dist",
               # all but pca, rcc
-              measure = ifelse(method == "spls", "MSE", "BER"),
+              measure = ifelse(method == "spls", "cor", "BER"),
               # all but pca, rcc
               auc = FALSE,
               progressBar = FALSE,
@@ -306,12 +306,29 @@ tune <-
             {
                 message("Calling 'tune.spls'")
                 
-                result = tune.spls(X = X, Y = Y, ncomp = ncomp, test.keepX = test.keepX, 
-                                   already.tested.X = already.tested.X, validation = validation, 
-                                   folds = folds, measure = measure,scale = scale, 
-                                   progressBar = progressBar, tol = tol, max.iter = max.iter, 
-                                   near.zero.var = near.zero.var, nrepeat = nrepeat, 
-                                   light.output = light.output, cpus = cpus)
+                if (cpus > 1)
+                {
+                    if (.onUnix()) 
+                        BPPARAM <- MulticoreParam(workers = cpus) 
+                    else
+                        BPPARAM <- SnowParam(workers = cpus) 
+                } else 
+                {
+                        BPPARAM <- SerialParam()
+                }
+                result = tune.spls(X = X,
+                                   Y = Y,
+                                   test.keepX = test.keepY,
+                                   test.keepY = test.keepX,
+                                   ncomp = ncomp,
+                                   validation = validation,
+                                   nrepeat = nrepeat,
+                                   folds = folds,
+                                   mode = mode,
+                                   measure.tune = measure,
+                                   BPPARAM = BPPARAM,
+                                   progressBar = progressBar
+                )
             } else {
                 message("Calling 'tune.splslevel' with method = 'spls'")
                 
