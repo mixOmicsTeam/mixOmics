@@ -48,9 +48,8 @@ off-diagonal elements of a fully connected design (see examples in
 \item{scheme}{Character, one of 'horst', 'factorial' or 'centroid'. Default =
 \code{'horst'}, see reference.}
 
-\item{mode}{Character string. What type of algorithm to use, (partially)
-matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
-or \code{"classic"}. See Details.}
+\item{mode}{Character string indicating the type of PLS algorithm to use. One
+of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
 
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
@@ -59,9 +58,10 @@ means and unit variances (default: TRUE)}
 Value Decomposition of the product of each block of X with Y ('svd') or each
 block independently ('svd.single'). Default = \code{svd.single}.}
 
-\item{tol}{Numeric, convergence stopping value.}
+\item{tol}{Positive numeric used as convergence criteria/tolerance during the
+iterative process. Default to \code{1e-06}.}
 
-\item{max.iter}{Integer, the maximum number of iterations.}
+\item{max.iter}{Integer, the maximum number of iterations. Default to  100.}
 
 \item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero

@@ -13,28 +13,9 @@
 #' components. Multi-response models are fully supported. The \code{X} and
 #' \code{Y} datasets can contain missing values.
 #' 
-#' The type of algorithm to use is specified with the \code{mode} argument.
-#' Four PLS algorithms are available: PLS regression \code{("regression")}, PLS
-#' canonical analysis \code{("canonical")}, redundancy analysis
-#' \code{("invariant")} and the classical PLS algorithm \code{("classic")} (see
-#' References and \code{?pls} for more details).
-#' 
-#' The estimation of the missing values can be performed by the reconstitution
-#' of the data matrix using the \code{nipals} function. Otherwise, missing
-#' values are handled by casewise deletion in the \code{spls} function without
-#' having to delete the rows with missing data.
-#' 
-#' logratio transform and multilevel analysis are performed sequentially as
-#' internal pre-processing step, through \code{\link{logratio.transfo}} and
-#' \code{\link{withinVariation}} respectively.
-#' 
-#' Multilevel sPLS enables the integration of data measured on two different
-#' data sets on the same individuals. This approach differs from multilevel
-#' sPLS-DA as the aim is to select subsets of variables from both data sets
-#' that are highly positively or negatively correlated across samples. The
-#' approach is unsupervised, i.e. no prior knowledge about the sample groups is
-#' included.
-#' @inheritParams pls
+#' @inherit pls
+#' @templateVar multilevel.example .
+#' @template arg/multilevel
 #' @param keepX numeric vector of length \code{ncomp}, the number of variables
 #' to keep in \eqn{X}-loadings. By default all variables are kept in the model.
 #' @param keepY numeric vector of length \code{ncomp}, the number of variables

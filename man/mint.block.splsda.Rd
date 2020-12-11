@@ -62,9 +62,10 @@ means and unit variances (default: TRUE)}
 Value Decomposition of the product of each block of X with Y ('svd') or each
 block independently ('svd.single'). Default = \code{svd.single}.}
 
-\item{tol}{Numeric, convergence stopping value.}
+\item{tol}{Positive numeric used as convergence criteria/tolerance during the
+iterative process. Default to \code{1e-06}.}
 
-\item{max.iter}{Integer, the maximum number of iterations.}
+\item{max.iter}{Integer, the maximum number of iterations. Default to  100.}
 
 \item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero

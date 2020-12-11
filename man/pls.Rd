@@ -19,38 +19,41 @@ pls(
 )
 }
 \arguments{
-\item{X}{Numeric matrix of predictors. \code{NA}s are allowed.}
+\item{X}{numeric matrix of predictors with the rows as individual
+observations. missing values (\code{NA}s) are allowed.}
 
-\item{Y}{Numeric vector or matrix of responses (for multi-response models).
-\code{NA}s are allowed.}
+\item{Y}{numeric matrix of response(s) with the rows as individual
+observations matching \code{X}. missing values (\code{NA}s) are allowed.}
 
-\item{ncomp}{Integer, the number of components to include in the model. Default to 2.}
+\item{ncomp}{Positive Integer. The number of components to include in the
+model. Default to 2.}
 
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
-\item{mode}{Character string. What type of algorithm to use, (partially)
-matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
-or \code{"classic"}. See Details.}
+\item{mode}{Character string indicating the type of PLS algorithm to use. One
+of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
 
-\item{tol}{Numeric, convergence stopping value.}
+\item{tol}{Positive numeric used as convergence criteria/tolerance during the
+iterative process. Default to \code{1e-06}.}
 
-\item{max.iter}{Integer, the maximum number of iterations.}
+\item{max.iter}{Integer, the maximum number of iterations. Default to  100.}
 
 \item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Setting this argument to FALSE (when appropriate) will speed up the
 computations. Default value is FALSE.}
 
-\item{logratio}{Character, one of ('none','CLR') specifies the log ratio transformation
-to deal with compositional values that may arise from specific normalisation
-in sequencing data. Default to 'none'.}
+\item{logratio}{Character, one of ('none','CLR') specifies
+the log ratio transformation to deal with compositional values that may
+arise from specific normalisation in sequencing data. Default to 'none'.
+See \code{?logratio.transfo} for details.}
 
-\item{multilevel}{Numeric, design matrix for repeated measurement analysis, where
-multilevel decomposition is required. For a one factor decomposition, the
-repeated measures on each individual, i.e. the individuals ID is input as
-the first column. For a 2 level factor decomposition then 2nd AND 3rd
-columns indicate those factors. See examples in \code{?spls}).}
+\item{multilevel}{Numeric, design matrix for repeated measurement analysis,
+where multilevel decomposition is required. For a one factor decomposition,
+the repeated measures on each individual, i.e. the individuals ID is input
+as the first column. For a 2 level factor decomposition then 2nd AND 3rd
+columns indicate those factors. See examplesin \code{?spls}.}
 
 \item{all.outputs}{Logical. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
@@ -123,16 +126,31 @@ Tenenhaus (1998), Chap 9.
 
 Note that in all cases the results are the same on the first component as
 deflation only starts after component 1.
+}
+\section{missing values}{
+ 
+The estimation of the missing values can be performed using the
+\code{\link{impute.nipals}} function. Otherwise, missing values are handled
+by element-wise deletion in the \code{pls} function without having to delete
+the rows with missing data.
+}
 
-The estimation of the missing values can be performed by the reconstitution
-of the data matrix using the \code{nipals} function. Otherwise, missing
-values are handled by casewise deletion in the \code{pls} function without
-having to delete the rows with missing data.
+\section{multilevel}{
 
+Multilevel (s)PLS enables the integration of data measured on two different
+data sets on the same individuals. This approach differs from multilevel
+sPLS-DA as the aim is to select subsets of variables from both data sets that
+are highly positively or negatively correlated across samples. The approach
+is unsupervised, i.e. no prior knowledge about the sample groups is included.
+}
+
+\section{logratio and multilevel}{
+ 
 logratio transform and multilevel analysis are performed sequentially as
 internal pre-processing step, through \code{\link{logratio.transfo}} and
 \code{\link{withinVariation}} respectively.
 }
+
 \examples{
 data(linnerud)
 X <- linnerud$exercise

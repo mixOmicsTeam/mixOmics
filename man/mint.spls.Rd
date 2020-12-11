@@ -27,11 +27,11 @@ on the same set of predictors. \code{NA}s are allowed.}
 Data should be continuous variables (see \code{mint.splsda} for supervised
 classification and factor response)}
 
-\item{ncomp}{Integer, the number of components to include in the model. Default to 2.}
+\item{ncomp}{Positive Integer. The number of components to include in the
+model. Default to 2.}
 
-\item{mode}{Character string. What type of algorithm to use, (partially)
-matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
-or \code{"classic"}. See Details.}
+\item{mode}{Character string indicating the type of PLS algorithm to use. One
+of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
 
 \item{study}{Factor, indicating the membership of each sample to each of the
 studies being combined}
@@ -45,9 +45,10 @@ studies being combined}
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
-\item{tol}{Numeric, convergence stopping value.}
+\item{tol}{Positive numeric used as convergence criteria/tolerance during the
+iterative process. Default to \code{1e-06}.}
 
-\item{max.iter}{Integer, the maximum number of iterations.}
+\item{max.iter}{Integer, the maximum number of iterations. Default to  100.}
 
 \item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero

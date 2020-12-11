@@ -18,27 +18,31 @@ plsda(
 )
 }
 \arguments{
-\item{X}{Numeric matrix of predictors. \code{NA}s are allowed.}
+\item{X}{numeric matrix of predictors with the rows as individual
+observations. missing values (\code{NA}s) are allowed.}
 
 \item{Y}{a factor or a class vector for the discrete outcome.}
 
-\item{ncomp}{Integer, the number of components to include in the model. Default to 2.}
+\item{ncomp}{Positive Integer. The number of components to include in the
+model. Default to 2.}
 
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
-\item{tol}{Numeric, convergence stopping value.}
+\item{tol}{Positive numeric used as convergence criteria/tolerance during the
+iterative process. Default to \code{1e-06}.}
 
-\item{max.iter}{Integer, the maximum number of iterations.}
+\item{max.iter}{Integer, the maximum number of iterations. Default to  100.}
 
 \item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Setting this argument to FALSE (when appropriate) will speed up the
 computations. Default value is FALSE.}
 
-\item{logratio}{Character, one of ('none','CLR') specifies the log ratio transformation
-to deal with compositional values that may arise from specific normalisation
-in sequencing data. Default to 'none'.}
+\item{logratio}{Character, one of ('none','CLR') specifies
+the log ratio transformation to deal with compositional values that may
+arise from specific normalisation in sequencing data. Default to 'none'.
+See \code{?logratio.transfo} for details.}
 
 \item{multilevel}{sample information for multilevel decomposition for
 repeated measurements. A numeric matrix or data frame indicating the

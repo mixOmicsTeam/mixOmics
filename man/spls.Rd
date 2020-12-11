@@ -21,16 +21,17 @@ spls(
 )
 }
 \arguments{
-\item{X}{Numeric matrix of predictors. \code{NA}s are allowed.}
+\item{X}{numeric matrix of predictors with the rows as individual
+observations. missing values (\code{NA}s) are allowed.}
 
-\item{Y}{Numeric vector or matrix of responses (for multi-response models).
-\code{NA}s are allowed.}
+\item{Y}{numeric matrix of response(s) with the rows as individual
+observations matching \code{X}. missing values (\code{NA}s) are allowed.}
 
-\item{ncomp}{Integer, the number of components to include in the model. Default to 2.}
+\item{ncomp}{Positive Integer. The number of components to include in the
+model. Default to 2.}
 
-\item{mode}{Character string. What type of algorithm to use, (partially)
-matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
-or \code{"classic"}. See Details.}
+\item{mode}{Character string indicating the type of PLS algorithm to use. One
+of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
 
 \item{keepX}{numeric vector of length \code{ncomp}, the number of variables
 to keep in \eqn{X}-loadings. By default all variables are kept in the model.}
@@ -40,24 +41,26 @@ to keep in \eqn{X}-loadings. By default all variables are kept in the model.}
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
-\item{tol}{Numeric, convergence stopping value.}
+\item{tol}{Positive numeric used as convergence criteria/tolerance during the
+iterative process. Default to \code{1e-06}.}
 
-\item{max.iter}{Integer, the maximum number of iterations.}
+\item{max.iter}{Integer, the maximum number of iterations. Default to  100.}
 
 \item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Setting this argument to FALSE (when appropriate) will speed up the
 computations. Default value is FALSE.}
 
-\item{logratio}{Character, one of ('none','CLR') specifies the log ratio transformation
-to deal with compositional values that may arise from specific normalisation
-in sequencing data. Default to 'none'.}
+\item{logratio}{Character, one of ('none','CLR') specifies
+the log ratio transformation to deal with compositional values that may
+arise from specific normalisation in sequencing data. Default to 'none'.
+See \code{?logratio.transfo} for details.}
 
-\item{multilevel}{Numeric, design matrix for repeated measurement analysis, where
-multilevel decomposition is required. For a one factor decomposition, the
-repeated measures on each individual, i.e. the individuals ID is input as
-the first column. For a 2 level factor decomposition then 2nd AND 3rd
-columns indicate those factors. See examples in \code{?spls}).}
+\item{multilevel}{Numeric, design matrix for repeated measurement analysis,
+where multilevel decomposition is required. For a one factor decomposition,
+the repeated measures on each individual, i.e. the individuals ID is input
+as the first column. For a 2 level factor decomposition then 2nd AND 3rd
+columns indicate those factors. See examples.}
 
 \item{all.outputs}{Logical. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
@@ -99,29 +102,31 @@ sets in a one-step strategy.
 \code{spls} function fit sPLS models with \eqn{1, \ldots ,}\code{ncomp}
 components. Multi-response models are fully supported. The \code{X} and
 \code{Y} datasets can contain missing values.
+}
+\section{missing values}{
+ 
+The estimation of the missing values can be performed using the
+\code{\link{impute.nipals}} function. Otherwise, missing values are handled
+by element-wise deletion in the \code{pls} function without having to delete
+the rows with missing data.
+}
 
-The type of algorithm to use is specified with the \code{mode} argument.
-Four PLS algorithms are available: PLS regression \code{("regression")}, PLS
-canonical analysis \code{("canonical")}, redundancy analysis
-\code{("invariant")} and the classical PLS algorithm \code{("classic")} (see
-References and \code{?pls} for more details).
+\section{multilevel}{
 
-The estimation of the missing values can be performed by the reconstitution
-of the data matrix using the \code{nipals} function. Otherwise, missing
-values are handled by casewise deletion in the \code{spls} function without
-having to delete the rows with missing data.
+Multilevel (s)PLS enables the integration of data measured on two different
+data sets on the same individuals. This approach differs from multilevel
+sPLS-DA as the aim is to select subsets of variables from both data sets that
+are highly positively or negatively correlated across samples. The approach
+is unsupervised, i.e. no prior knowledge about the sample groups is included.
+}
 
+\section{logratio and multilevel}{
+ 
 logratio transform and multilevel analysis are performed sequentially as
 internal pre-processing step, through \code{\link{logratio.transfo}} and
 \code{\link{withinVariation}} respectively.
-
-Multilevel sPLS enables the integration of data measured on two different
-data sets on the same individuals. This approach differs from multilevel
-sPLS-DA as the aim is to select subsets of variables from both data sets
-that are highly positively or negatively correlated across samples. The
-approach is unsupervised, i.e. no prior knowledge about the sample groups is
-included.
 }
+
 \examples{
 data(liver.toxicity)
 X <- liver.toxicity$gene
