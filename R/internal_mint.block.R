@@ -679,8 +679,10 @@ sparse.mint.block_iteration = function (A, design, study = NULL, loadings.A,
             warning("The SGCCA algorithm did not converge", call. = FALSE)
         
         ### Start: Match algorithm with mixOmics algo (stopping point)
-        if (max(sapply(1:J, function(x){crossprod(loadings.A[[x]] -
-                                                  loadings.A_old[[x]])})) < tol | iter > max.iter)
+        diff.value <- max(sapply(1:J, function(x){crossprod(loadings.A[[x]] -
+                                                                loadings.A_old[[x]])}))
+        
+        if (diff.value < tol | iter > max.iter)
             break
         ### End: Match algorithm with mixOmics algo (stopping point)
         

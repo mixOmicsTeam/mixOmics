@@ -1,4 +1,4 @@
-#' Expect identical ignoreing $call slot
+#' Expect identical ignoring $call slot
 #'
 #' @param object an R object
 #' @param expected an R object
@@ -6,13 +6,12 @@
 #' @keywords internal
 #' @return Logical, TRUE if all elements expect $call are identical
 .almost_identical <- function(object, expected, ...) {
-    require(testthat)
     object$call <- expected$call <- NULL
     expect_identical(object, expected, ...)
 }
 
 
-#' Expect equal numerics after rounding
+#' Expect equal numeric after rounding
 #'
 #' @param numeric_value numeric, outcome of test
 #' @param expected numeric, reference to check

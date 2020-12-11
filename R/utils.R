@@ -589,12 +589,15 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
 #' }
 #' }
 # TODO use this through package
-.progressBar <- function (x, max = 1) {
+.progressBar <- function (x, max = 1, title = NULL, breakline = TRUE) {
     percent <- x / max * 100
+    if (!is.null(title))
+        cat(sprintf("\033[33m  %s\033[39m", title))
+        
     cat(sprintf('\033[33m\r[%-50s] %d%%\033[39m',
                 paste(rep('=', percent / 2), collapse = ''),
                 floor(percent)))
-    if (x == max)
+    if (x == max & breakline)
         cat('\n')
     invisible(NULL)
 }
