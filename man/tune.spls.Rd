@@ -20,70 +20,54 @@ tune.spls(
 )
 }
 \arguments{
-\item{X}{numeric matrix of predictors. \code{NA}s are allowed.}
+\item{X}{numeric matrix of predictors with the rows as individual
+observations. missing values (\code{NA}s) are allowed.}
 
-\item{Y}{\code{if(method = 'spls')} numeric vector or matrix of continuous
-responses (for multi-response models) \code{NA}s are allowed.}
+\item{Y}{numeric matrix of response(s) with the rows as individual
+observations matching \code{X}. missing values (\code{NA}s) are allowed.}
 
 \item{test.keepX}{numeric vector for the different number of variables to
-test from the \eqn{X} data set}
+test from the \eqn{X} data set.}
 
-\item{ncomp}{the number of components to include in the model.}
+\item{test.keepY}{numeric vector for the different number of variables to
+test from the \eqn{Y} data set. Default to \code{ncol(Y)}.}
+
+\item{ncomp}{Positive Integer. The number of components to include in the
+model. Default to 2.}
 
 \item{validation}{character.  What kind of (internal) validation to use,
-matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
+matching one of \code{"Mfold"} or \code{"loo"} (Leave-One-out). Default is
 \code{"Mfold"}.}
 
-\item{nrepeat}{Number of times the Cross-Validation process is repeated.}
+\item{nrepeat}{Positive integer. Number of times the Cross-Validation process
+should be repeated. \code{nrepeat > 2} is required for robust tuning. See
+details.}
 
-\item{folds}{the folds in the Mfold cross-validation. See Details.}
+\item{folds}{Positive Integer, The folds in the Mfold cross-validation.}
 
-\item{progressBar}{by default set to \code{TRUE} to output the progress bar
-of the computation.}
+\item{mode}{Character string indicating the type of PLS algorithm to use. One
+of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
 
-\item{already.tested.X}{Optional, if \code{ncomp > 1} A numeric vector
-indicating the number of variables to select from the \eqn{X} data set on
-the firsts components.}
+\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
+of parallelisation. See examples in \code{?tune.spca}.}
 
-\item{measure}{One of \code{MSE} (Mean Squared Error), 
-\code{MAE} (Mean Absolute Error: MSE without the square), 
-\code{Bias} (average of the differences), 
-\code{MAPE} (average of the absolute errors,
- as a percentage of the actual values) or \code{R2}. 
- Default to \code{MSE}. See details.}
+\item{progressBar}{Logical. If \code{TRUE} a progress bar is shown as the
+computation completes. Default to \code{FALSE}.}
 
-\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
-means and unit variances (default: TRUE)}
-
-\item{tol}{Convergence stopping value.}
-
-\item{max.iter}{integer, the maximum number of iterations.}
-
-\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
-function (should be set to TRUE in particular for data with many zero
-values). Default value is FALSE}
-
-\item{multilevel}{Design matrix for multilevel analysis (for repeated
-measurements) that indicates the repeated measures on each individual, i.e.
-the individuals ID. See Details.}
-
-\item{light.output}{if set to FALSE, the prediction/classification of each
-sample for each of \code{test.keepX} and each comp is returned.}
-
-\item{cpus}{Number of cpus to use. If greater than 1, the code is run in
-parallel.}
+\item{measure}{One of c('cor', 'RSS') indicating the tuning measure. See
+details.}
 }
 \value{
-A list that contains: \item{error.rate}{returns the prediction error
-for each \code{test.keepX} on each component, averaged across all repeats
-and subsampling folds. Standard deviation is also output. All error rates
-are also available as a list.} \item{choice.keepX}{returns the number of
-variables selected (optimal keepX) on each component.}
-\item{choice.ncomp}{returns the optimal number of components for the model
-fitted with \code{$choice.keepX} and \code{$choice.keepY} }
-\item{measure}{reminds which criterion was used} \item{predict}{Prediction
-values for each sample, each \code{test.keepX,test.keepY}, each comp and
-each repeat. Only if light.output=FALSE}
+A list that contains: \item{cor.pred}{The correlation of predicted vs
+  actual components from X (t) and Y (u) for each
+  component}\item{RSS.pred}{The Residual Sum of Squares of predicted vs
+  actual components from X (t) and Y (u) for each component}
+  \item{choice.keepX}{returns the number of variables selected for X (optimal
+  keepX) on each component.} \item{choice.keepY}{returns the number of
+  variables selected for Y (optimal keepY) on each component.}
+  \item{choice.ncomp}{returns the optimal number of components for the model
+  fitted with \code{$choice.keepX} and \code{$choice.keepY} } \item{call}{The
+  functioncal call including the parameteres used.}
 }
 \description{
 This function uses repeated cross-validation to tune hyperparameters such as
@@ -145,15 +129,15 @@ data(liver.toxicity)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
 set.seed(42)
-tune = tune.spls( X, Y, ncomp = 3, 
-                  test.keepX = c(5, 10, 15), 
-                  test.keepY = c(3, 6, 8), measure = "cor", 
+tune.res = tune.spls( X, Y, ncomp = 3,
+                  test.keepX = c(5, 10, 15),
+                  test.keepY = c(3, 6, 8), measure = "cor",
                   folds = 5, nrepeat = 3, progressBar = TRUE)
-tune$choice.ncomp
-tune$choice.keepX
-tune$choice.keepY
+tune.res$choice.ncomp
+tune.res$choice.keepX
+tune.res$choice.keepY
 # plot the results
-plot(tune)
+plot(tune.res)
 }
 }
 \references{
@@ -192,8 +176,8 @@ Patel J, Atkinson K, Khosrotehrani K, Fisk NM, Lê Cao K-A&, Wells CA&
 http://www.mixOmics.org for more details.
 }
 \author{
-Kim-Anh Lê Cao, Benoit Gautier, Francois Bartolo, Florian Rohart,
-Al J Abadi
+Kim-Anh Lê Cao, Al J Abadi, Benoit Gautier, Francois Bartolo,
+Florian Rohart,
 }
 \keyword{multivariate}
 \keyword{regression}

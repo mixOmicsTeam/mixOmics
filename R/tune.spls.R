@@ -29,7 +29,9 @@
 # ========================================================================================================
 # tune.spls: chose the optimal number of parameters per component on a spls method
 # ========================================================================================================
-
+# TODO details on nrepeat
+# TODO details on pls vs spls
+# TODO tidy outputs preferrably in an array
 #' Tuning functions for sPLS and PLS functions
 #' 
 #' @template description/tune
@@ -42,54 +44,28 @@
 #' @section more:
 #' See also \code{?perf} for more details.
 #' 
-#' @param X numeric matrix of predictors. \code{NA}s are allowed.
-#' @param Y \code{if(method = 'spls')} numeric vector or matrix of continuous
-#' responses (for multi-response models) \code{NA}s are allowed.
-#' @param ncomp the number of components to include in the model.
-#' @param test.keepX numeric vector for the different number of variables to
-#' test from the \eqn{X} data set
-#' @param already.tested.X Optional, if \code{ncomp > 1} A numeric vector
-#' indicating the number of variables to select from the \eqn{X} data set on
-#' the firsts components.
-#' @param validation character.  What kind of (internal) validation to use,
-#' matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
-#' \code{"Mfold"}.
-#' @param folds the folds in the Mfold cross-validation. See Details.
-#' @param measure One of \code{MSE} (Mean Squared Error), 
-#' \code{MAE} (Mean Absolute Error: MSE without the square), 
-#' \code{Bias} (average of the differences), 
-#' \code{MAPE} (average of the absolute errors,
-#'  as a percentage of the actual values) or \code{R2}. 
-#'  Default to \code{MSE}. See details.
-#' @param scale Logical. If scale = TRUE, each block is standardized to zero
-#' means and unit variances (default: TRUE)
-#' @param progressBar by default set to \code{TRUE} to output the progress bar
-#' of the computation.
-#' @param tol Convergence stopping value.
-#' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
-#' function (should be set to TRUE in particular for data with many zero
-#' values). Default value is FALSE
-#' @param nrepeat Number of times the Cross-Validation process is repeated.
-#' @param multilevel Design matrix for multilevel analysis (for repeated
-#' measurements) that indicates the repeated measures on each individual, i.e.
-#' the individuals ID. See Details.
-#' @param light.output if set to FALSE, the prediction/classification of each
-#' sample for each of \code{test.keepX} and each comp is returned.
-#' @param cpus Number of cpus to use. If greater than 1, the code is run in
-#' parallel.
-#' @return A list that contains: \item{error.rate}{returns the prediction error
-#' for each \code{test.keepX} on each component, averaged across all repeats
-#' and subsampling folds. Standard deviation is also output. All error rates
-#' are also available as a list.} \item{choice.keepX}{returns the number of
-#' variables selected (optimal keepX) on each component.}
-#' \item{choice.ncomp}{returns the optimal number of components for the model
-#' fitted with \code{$choice.keepX} and \code{$choice.keepY} }
-#' \item{measure}{reminds which criterion was used} \item{predict}{Prediction
-#' values for each sample, each \code{test.keepX,test.keepY}, each comp and
-#' each repeat. Only if light.output=FALSE}
-#' @author Kim-Anh Lê Cao, Benoit Gautier, Francois Bartolo, Florian Rohart,
-#' Al J Abadi
+#' @inheritParams spls
+#' @template arg/test.keepX-X.matrix
+#' @template arg/test.keepY
+#' @template arg/validation
+#' @template arg/folds
+#' @template arg/nrepeat
+#' @param measure One of c('cor', 'RSS') indicating the tuning measure. See
+#'   details.
+#' @template arg/progressBar
+#' @template arg/BPPARAM
+#' @return A list that contains: \item{cor.pred}{The correlation of predicted vs
+#'   actual components from X (t) and Y (u) for each
+#'   component}\item{RSS.pred}{The Residual Sum of Squares of predicted vs
+#'   actual components from X (t) and Y (u) for each component}
+#'   \item{choice.keepX}{returns the number of variables selected for X (optimal
+#'   keepX) on each component.} \item{choice.keepY}{returns the number of
+#'   variables selected for Y (optimal keepY) on each component.}
+#'   \item{choice.ncomp}{returns the optimal number of components for the model
+#'   fitted with \code{$choice.keepX} and \code{$choice.keepY} } \item{call}{The
+#'   functioncal call including the parameteres used.}
+#' @author Kim-Anh Lê Cao, Al J Abadi, Benoit Gautier, Francois Bartolo,
+#' Florian Rohart,
 #' @seealso \code{\link{splsda}}, \code{\link{predict.splsda}} and
 #' http://www.mixOmics.org for more details.
 #' @references mixOmics article:
@@ -130,15 +106,15 @@
 #' X <- liver.toxicity$gene
 #' Y <- liver.toxicity$clinic
 #' set.seed(42)
-#' tune = tune.spls( X, Y, ncomp = 3, 
-#'                   test.keepX = c(5, 10, 15), 
-#'                   test.keepY = c(3, 6, 8), measure = "cor", 
+#' tune.res = tune.spls( X, Y, ncomp = 3,
+#'                   test.keepX = c(5, 10, 15),
+#'                   test.keepY = c(3, 6, 8), measure = "cor",
 #'                   folds = 5, nrepeat = 3, progressBar = TRUE)
-#' tune$choice.ncomp
-#' tune$choice.keepX
-#' tune$choice.keepY
+#' tune.res$choice.ncomp
+#' tune.res$choice.keepX
+#' tune.res$choice.keepY
 #' # plot the results
-#' plot(tune)
+#' plot(tune.res)
 #' }
 tune.spls <- 
     function(X,
