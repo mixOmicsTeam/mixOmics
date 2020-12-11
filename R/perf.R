@@ -256,15 +256,6 @@ perf.mixo_pls <- function(object,
 {
     ncomp = object$ncomp
 
-    out = list()
-    
-    cor.tpred = cor.upred = RSS.tpred = RSS.upred = matrix(nrow = ncomp, ncol = nrepeat, 
-                                                           dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
-    Q2.tot.ave = matrix(nrow = ncomp, ncol = nrepeat,
-                        dimnames = list(paste0('comp', 1:ncomp), paste0('repeat', 1:nrepeat)))
-    
-    cor.pred = RSS.pred = list()
-    
     progressBar <- .check_logical(progressBar)
     
     # TODO add BPPARAM to args and use bplapply
@@ -572,13 +563,13 @@ perf.mixo_spls  <- perf.mixo_pls
     #---------------------------------------------------------------------------#
     Q2.total = matrix(1 - rowSums(PRESS.inside) / rowSums(RSS[-(ncomp+1), , drop = FALSE]),
                       nrow = 1, ncol = ncomp,
-                      dimnames = list("Q2.total", paste0(1:ncomp, " comp")))
+                      dimnames = list("Q2.total", paste0("comp", seq_len(ncomp))))
     
     # set up dimnames and outputs
     result = list()
     
     if(mode != 'canonical'){
-        rownames(MSEP) = rownames(R2) = rownames(Q2) = paste0(1:ncomp, " comp")
+        rownames(MSEP) = rownames(R2) = rownames(Q2) = paste0("comp", seq_len(ncomp))
         colnames(MSEP) = colnames(R2) = colnames(Q2) = object$names$colnames$Y
         
         result$MSEP = t(MSEP)
@@ -630,7 +621,7 @@ perf.mixo_spls  <- perf.mixo_pls
             list.features.Y[[k]] = sort(table(as.factor(featuresY[[k]][-remove.naY])) / M, decreasing = TRUE)
             
         }
-        names(list.features.X)  = names(list.features.Y) = paste0('comp', 1:ncomp)
+        names(list.features.X)  = names(list.features.Y) = paste0("comp", seq_len(ncomp))
         
         # features
         result$features$stable.X = list.features.X
@@ -913,7 +904,7 @@ perf.mixo_plsda <- function(object,
         }
     }
     
-    names(prediction.all) = paste0('comp', 1:ncomp)
+    names(prediction.all) = paste0("comp", seq_len(ncomp))
     
     # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
     ncomp_opt = matrix(NA, nrow = length(measure), ncol = length(dist),
@@ -938,16 +929,16 @@ perf.mixo_plsda <- function(object,
     
     if(auc)
     {
-        names(auc.mean) = c(paste0('comp', 1:ncomp))
+        names(auc.mean) = c(paste0("comp", seq_len(ncomp)))
         result$auc = auc.mean
         
-        names(auc.all) = c(paste0('comp', 1:ncomp))
+        names(auc.all) = c(paste0("comp", seq_len(ncomp)))
         result$auc.all =auc.all
     }
     
     if (is(object, "mixo_splsda"))
     {
-        names(list.features) = paste0('comp', 1:ncomp)
+        names(list.features) = paste0("comp", seq_len(ncomp))
         result$features$stable = list.features
     }
     

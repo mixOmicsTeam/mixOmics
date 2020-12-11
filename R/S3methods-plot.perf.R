@@ -78,19 +78,14 @@ plot.perf.pls.mthd <-
     {
         
         
-        criterion <- match.arg(criterion, choices = c("MSEP", "RMSEP", "R2", "Q2", "cor.upred",
+        criterion <- match.arg(criterion, choices = c("MSEP", "RMSEP", "R2", "Q2", "Q2.total", "cor.upred",
                                                       "cor.tpred", "RSS.upred", "RSS.tpred"))
+
         ## add RSMP
         x$RMSEP <- lapply(x$MSEP, sqrt)
         y <- x[[criterion]]
         ## average across repeats
         y <- Reduce('+', y) / length(y) 
-        
-        Q2.total = NULL
-        if ((criterion == "Q2") & is.list(y)) {
-            Q2.total = y$Q2.total
-            y = y$variables
-        }
         
         if (is.null(ylab))
         {
@@ -139,33 +134,20 @@ plot.perf.pls.mthd <-
         if (is.null(cTicks)) cTicks = 1:ncol(y)
         yList = list(relation = "free")
         
-        
         if (criterion == "Q2")
         {
-            plt = xyplot(val ~ comps | varName, data = df, xlab = xlab, ylab = ylab,
-                         scales = list(y = yList, x = list(at = cTicks)),
-                         as.table = TRUE, layout = layout,
-                         panel = function(x, y) {
-                             if (LimQ2.col != "none") panel.abline(h = LimQ2, col = LimQ2.col)
-                             panel.xyplot(x, y, ...)})
-            plot(plt)
-            
-            if (!is.null(Q2.total)) {
-                devAskNewPage(TRUE)
-                Q2.df = data.frame(Q2 = Q2.total, comps = 1:nComp, varName = rep("Total", nComp))
-                xyplot(Q2 ~ comps | varName, data = Q2.df, xlab = xlab, ylab = ylab,
-                       scales = list(y = yList, x = list(at = cTicks)), as.table = TRUE,
-                       panel = function(x, y) {
-                           if (LimQ2.col != "none") panel.abline(h = LimQ2, col = LimQ2.col)
-                           panel.xyplot(x, y, ...)})
-            }
-        } else {
-            plt = xyplot(val ~ comps | varName, data = df, xlab = xlab, ylab = ylab,
-                         scales = list(y = yList, x = list(at = cTicks)),
-                         as.table = TRUE, layout = layout, ...)
-            plot(plt)
-            
+            panel <- function(x, y) {
+                if (LimQ2.col != "none") panel.abline(h = LimQ2, col = LimQ2.col)
+                panel.xyplot(x, y, ...)}
+        } else
+        {
+            panel <- formals(lattice:::xyplot.formula)$panel
         }
+        plt = xyplot(val ~ comps | varName, data = df, xlab = xlab, ylab = ylab,
+                     scales = list(y = yList, x = list(at = cTicks)),
+                     as.table = TRUE, layout = layout, panel = panel, ...)
+        plot(plt)
+        
         
         if (nResp > 1) {
             if (nRows * nCols < nResp) devAskNewPage(FALSE)
