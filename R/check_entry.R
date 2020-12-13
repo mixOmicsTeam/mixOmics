@@ -334,9 +334,9 @@ Check.entry.pls = function(X, Y, ncomp, keepX, keepY, test.keepX, test.keepY,
         stop("each component of 'keepY' must be non negative ")
     
     if (any(keepX > ncol(X)))
-        stop("each component of 'keepX' must be lno greater than ", P, ".")
+        stop("each component of 'keepX' must be no greater than ", P, ".")
     if (any(keepY > ncol(Y)))
-        stop("each component of 'keepY' must be lno greater than ", Q, ".")
+        stop("each component of 'keepY' must be no greater than ", Q, ".")
     
     
     if (!is.logical(scale))

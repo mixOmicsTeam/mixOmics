@@ -134,7 +134,7 @@ plot.perf.pls.mthd <-
         if (is.null(cTicks)) cTicks = 1:ncol(y)
         yList = list(relation = "free")
         
-        if (criterion == "Q2")
+        if (criterion == "Q2" | criterion == "Q2.total")
         {
             panel <- function(x, y) {
                 if (LimQ2.col != "none") panel.abline(h = LimQ2, col = LimQ2.col)
