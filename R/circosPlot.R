@@ -329,7 +329,8 @@ circosPlot <- function(object,
             expr = merge(expr, chr, by.x="Features", by.y="name")
             expr$po = (as.numeric(expr$chromStart) +
                            as.numeric(expr$chromEnd)) / 2.0
-            expr = dplyr::rename(expr, seg.name = chrom, seg.po = po)
+            #' @importFrom dplyr rename
+            expr = rename(expr, seg.name = chrom, seg.po = po)
             
             # Reorder columns
             cOrder = c(c(grep("seg.name", colnames(expr)),
@@ -698,13 +699,15 @@ genLinks = function(chr, simMat, threshold)
     linkList = subset(linkList, abs(linkList$value) >= threshold) 
     
     #First merge
-    linkList = dplyr::rename(linkList, feat1=Var1, feat2=Var2)
+    #' @importFrom dplyr rename
+    linkList = rename(linkList, feat1=Var1, feat2=Var2)
     # CHANGED BY AMRIT
     linkList = merge(linkList, chr, by.x="feat1", by.y="name") 
     # Set the position in the middle of the band
     linkList$po1 = (as.numeric(linkList$chromStart)
                     + as.numeric(linkList$chromEnd)) / 2.0
-    linkList = dplyr::rename(linkList, chr1=chrom)   # CHANGED BY AMRIT
+    #' @importFrom dplyr rename
+    linkList = rename(linkList, chr1=chrom)   # CHANGED BY AMRIT
     keeps = c("feat1","feat2","value","chr1","po1") 
     linkList = linkList[keeps] 
     
@@ -712,7 +715,8 @@ genLinks = function(chr, simMat, threshold)
     linkList = merge(linkList, chr, by.x="feat2", by.y="name") 
     linkList$po2 = (as.numeric(linkList$chromStart)
                     + as.numeric(linkList$chromEnd)) / 2.0
-    linkList = dplyr::rename(linkList, chr2=chrom)   # CHANGED BY AMRIT
+    #' @importFrom dplyr rename
+    linkList = rename(linkList, chr2=chrom)   # CHANGED BY AMRIT
     keeps = c("chr1","po1","feat1","chr2","po2","feat2","value") 
     linkList = linkList[keeps] 
     

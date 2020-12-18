@@ -59,71 +59,45 @@ NULL
 #' @rdname plot.tune
 #' @export
 plot.tune.spls <-
-    function(x, measure = NULL, comp = c(1,2), pch = 16, cex = 1.2, title = NULL,...)
+    function(x, measure = NULL, comp = c(1,2), pch = 16, cex = 1.2, title = NULL, size.range = c(3,10),...)
     {
-
+        
         ## if measure not given, use object's 'measure.tune' for spls
         if (is.null(measure) & is(x, 'tune.spls') )
         {
-            measure <- x$call$measure.tune
+            measure <- x$call$measure
         } else {
             measure <- match.arg(measure, c('cor', 'RSS'))    
         }
-        
-        ## function to extract measure stats into tidy data.frame for ggplot
-        .get_ut_df <- function(x, v = c('u', 't'), measure = 'cor', comp) {
-            pred <- ifelse(measure == 'cor', 'cor.pred', 'RSS.pred')
-            
-            df_comps <- lapply(comp, function(comp_i)
-            {
-                ut <- lapply(c(u='u', t='t'), function(o){
-                    mean = x[[pred]][[o]][[comp_i]]$mean
-                    sd = x[[pred]][[o]][[comp_i]]$sd
-                    list(mean = round(mean, 2), sd = round(sd, 3))
-                })
-                
-                df.list <- lapply(v, function(V) {
-                    df <- expand.grid(keepX = x$call$test.keepX, keepY = x$call$test.keepY)
-                    df$V <- V
-                    df$mean <- as.vector(ut[[V]]$mean)
-                    df$sd <- as.vector(ut[[V]]$sd)
-                    df
-                })
-                
-                df <- Reduce(f = rbind, df.list)
-                df$comp <- paste0('comp_', comp_i)
-                df
-            })
-            df <- Reduce(f = rbind, df_comps)
-            df$optimal <-              df$comp == paste0('comp_', comp[1]) & df$keepX == x$choice.keepX[comp[1]] & df$keepY == x$choice.keepY[comp[1]]
-            df$optimal <- df$optimal | df$comp == paste0('comp_', comp[2]) & df$keepX == x$choice.keepX[comp[2]] & df$keepY == x$choice.keepY[comp[1]]
-            df
-        }
-        
-        df <- .get_ut_df(x = x, v = c('u', 't'), measure = measure, comp = comp)
-        
+        df <- x$measure.pred[x$measure.pred$measure == measure,]
+        values <- grepl('value', colnames(df))
+        df <- df[,!values]
+        df$comp <- paste0('comp ', df$comp)
+        na.opt <- is.na(df$optimum.keepA)
+        if (any(na.opt)) ## for plot
+            df$optimum.keepA[na.opt] <- FALSE
         
         ggplot_pls2 <- function(df, title = NULL) {
             
-            ## optimal keepX/keepY
             p <- ggplot(df, aes(factor(keepX), factor(keepY))) + 
                 geom_point(aes_string(size = 'mean', col = 'sd'), shape = pch) + 
                 scale_color_gradient(low = 'blue', high = 'red', na.value = color.mixo(1))
-                
+            
             ## optimal keepX/keepY
-                p <- p + geom_point(data = df[df$optimal,], 
-                                    aes(factor(keepX), factor(keepY), size = mean*1.3), 
+            # opt.size.coef <- ifelse(measure == 'cor', 2, 0.00001)
+            # df$mean <- df$mean * opt.size.coef #> we'll have cor > 1 in legend
+            if (any(!is.na(df$optimum.keepA))) ## to make it possible to plot the unused measure too
+                p <- p + geom_point(data = df[df$optimum.keepA,], 
+                                    aes(factor(keepX), factor(keepY), size = mean), 
                                     shape = 0, 
                                     col = 'green', 
-                                    show.legend = FALSE) +
-                
-                labs(x = 'keepX', y = 'keepY', size = 'mean', col = 'SD') +
+                                    stroke = 1.3,
+                                    show.legend = FALSE)
+            
+            p <- p + labs(x = 'keepX', y = 'keepY', size = 'mean', col = 'SD') +
                 facet_grid(V~comp)
             
-            if (measure == 'RSS')
-            {
-                p <- p + scale_size_continuous(range = c(6,1))
-            }
+            p <- p + scale_size_continuous(range = if (measure == 'RSS') rev(size.range) else size.range)
             
             p <- p + guides(colour = guide_legend(order=2, override.aes = list(size=2)),
                             size = guide_legend(order=1))
@@ -131,26 +105,35 @@ plot.tune.spls <-
             list(gg.plot = p, df= df)
         }
         
+        ## this should not bee needed at all as tune.pls1 is different
+        ## and uses plot.tune.pls1
         ggplot_pls1 <- function(df, ## from .get_ut_df
                                 title = NULL, ## title
                                 keepA = 'keepX',
                                 cex) ## which keepA is not fixed?
             {
             ## keepX or keepY must be removed before running this
-            p <- ggplot(df, aes_string(x = keepA, y = 'mean', col = 'sd')) + 
+            p <- ggplot(df, aes_string(x = keepA, y = 'mean',  col = 'comp')) + 
                 geom_point(shape = pch, size = cex) +
-                scale_color_gradient(low = 'blue', high = 'red', na.value = color.mixo(1)) + 
+                geom_line()
+            if (!any(is.na(df$sd)))
+            {
+                df$lower <- df$mean - df$sd
+                df$upper <- df$mean + df$sd
+                p <- p + geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.04)
+            }
+            p <- p + scale_color_gradient(low = 'blue', high = 'red', na.value = color.mixo(1)) + 
                 labs(x = keepA, y = measure, col = 'SD') +
                 facet_grid(.~comp, scales = 'free')
             
             ## optimal
-            df_opt <- df[df$optimal,]
-            p <- p + geom_point(data = df_opt, 
-                                aes_string(x = keepA, y = 'mean'), 
-                                size = cex*1.2,
-                                shape = 0,
-                                col = 'green',
-                                show.legend = FALSE)
+            if (any(!is.na(df$optimum.keepA))) ## to make it possible to plot the unused measure too
+                p <- p + geom_point(data = df[df$optimum.keepA,], 
+                                    aes_string(x = keepA, y = 'mean'), 
+                                    size = cex*1.2,
+                                    shape = 0,
+                                    col = 'green',
+                                    show.legend = FALSE)
                 
             p <- p + guides(fill = guide_legend(order=2, override.aes = list(size=2)))
             
@@ -175,25 +158,16 @@ plot.tune.spls <-
         
         text.size = as.integer(cex*10)
         
-        res$gg.plot <- res$gg.plot + theme(panel.border = element_blank(),
-                                         panel.grid.major = element_blank(),
-                                         panel.grid.minor = element_blank(),
-                                         axis.line = element_line(size = 0.5, linetype = "solid",
-                                                                  colour = "black"),
-                                         
-                                         panel.background = element_rect(fill='grey97'),
-                                         
-                                         axis.text = element_text( size = text.size ),
-                                         axis.text.x = element_text( size = text.size, angle = 90, hjust = 1),
-                                         axis.title = element_text( size = text.size),
-                                         legend.text = element_text( size = text.size ),
-                                         legend.title =  element_text( size = text.size),
-                                         plot.title = element_text(hjust = 0.5),
-                                         # subtitles
-                                         strip.text = element_text(size = 1.3*text.size, face = 'bold')
-                                         
-        ) +
-            labs(title = ifelse(!is.null(title), title, sprintf("measure = '%s'", measure)))
+        if (is.null(title))
+        {
+            title <- sprintf("measure = '%s'", measure)
+            if (measure != x$call$measure)
+                title <- sprintf("%s (tune.measure = '%s')", title, x$call$measure)
+                
+        }
+        
+        res$gg.plot <- res$gg.plot + mixo_gg.theme(cex = cex) +
+            labs(title = title)
         
         res$gg.plot
     }

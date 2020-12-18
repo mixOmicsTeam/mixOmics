@@ -310,9 +310,16 @@ Check.entry.pls = function(X, Y, ncomp, keepX, keepY, test.keepX, test.keepY,
     {
         keepX = rep(P, ncomp)
     } else {
-        if (length(keepX)<ncomp)
-            keepX = c(keepX, rep(P, ncomp - length(keepX)))
-        #complete (with ncomp) the keepX already provided
+        len <- length(keepX)
+        if (len<ncomp)
+            keepX = c(keepX, rep(P, ncomp - len))
+        else if (len>ncomp) {
+            cat("keepX is of length", len, "while ncomp is", ncomp, "\n")
+            cat("trimming keepX to ")
+            cat(.colour.txt(paste0('c(', paste0(keepX[seq_len(ncomp)], collapse = ','), ')'), sQuote = FALSE))
+            
+        }
+           
     }
     
     # check keepY

@@ -20,7 +20,6 @@
 \alias{print.sipca}
 \alias{print.sgccda}
 \alias{print.perf.pls.mthd}
-\alias{print.perf.spls.mthd}
 \alias{print.perf.plsda.mthd}
 \alias{print.perf.splsda.mthd}
 \alias{print.perf.mint.splsda.mthd}
@@ -30,6 +29,7 @@
 \alias{print.tune.rcc}
 \alias{print.tune.splsda}
 \alias{print.tune.pls}
+\alias{print.tune.spls1}
 \alias{print.tune.mint.splsda}
 \alias{print.tune.block.splsda}
 \alias{print.predict}
@@ -69,8 +69,6 @@
 
 \method{print}{perf.pls.mthd}(x, ...)
 
-\method{print}{perf.spls.mthd}(x, ...)
-
 \method{print}{perf.plsda.mthd}(x, ...)
 
 \method{print}{perf.splsda.mthd}(x, ...)
@@ -88,6 +86,8 @@
 \method{print}{tune.splsda}(x, ...)
 
 \method{print}{tune.pls}(x, ...)
+
+\method{print}{tune.spls1}(x, ...)
 
 \method{print}{tune.mint.splsda}(x, ...)
 

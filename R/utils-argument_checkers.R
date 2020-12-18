@@ -263,3 +263,43 @@
 
     return(comp)
 }
+
+## --------------------------- .check_character --------------------------- ##
+#' Check character input
+#'
+#' Check character and its length
+#' @param arg character arg
+#' @param len expected length
+#'
+#' @return character, or condition
+#' @keywords Internal
+#' @noRd
+#' @examples
+#' \dontrun{
+#' .check_character(arg = 'foo', len = 1)
+#' bar <- 'foo'
+#' .check_character(arg = bar, len = 2)
+#' .check_character(arg = NULL, default = 'foo')
+#' .check_character(arg = NULL, default = c('foo', 'bar'))
+#' .check_character(arg = 11)
+#' }
+.check_character <- function(arg, len = 1, default = NULL)
+{ # TODO use this throughout for title etc
+    formals(stop)$call. <- FALSE
+    err_msg <- sprintf("'%s' must be character of length %s\n", deparse(substitute(arg)), len)
+    if (is.null(arg))
+    {
+        arg <- default
+        len <- length(arg)
+    }
+    
+    if (is.character(arg))
+    {
+        if (length(arg) != len)
+            stop(err_msg)
+    } else {
+        stop(err_msg)
+    }
+    
+    return(arg)
+}

@@ -14,9 +14,11 @@ tune.spls(
   nrepeat = 1,
   folds,
   mode = c("regression", "canonical", "classic"),
-  measure.tune = c("cor", "RSS"),
+  measure = c("cor", "RSS"),
   BPPARAM = SerialParam(),
-  progressBar = FALSE
+  progressBar = FALSE,
+  limQ2 = 0.0975,
+  ...
 )
 }
 \arguments{
@@ -48,14 +50,18 @@ details.}
 \item{mode}{Character string indicating the type of PLS algorithm to use. One
 of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
 
+\item{measure}{One of c('cor', 'RSS') indicating the tuning measure. See
+details.}
+
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples in \code{?tune.spca}.}
 
 \item{progressBar}{Logical. If \code{TRUE} a progress bar is shown as the
 computation completes. Default to \code{FALSE}.}
 
-\item{measure}{One of c('cor', 'RSS') indicating the tuning measure. See
-details.}
+\item{...}{Optional parameters passed to \code{\link{spls}}}
+
+\item{LimQ2}{Q2 threshold for recommending optimal \code{ncomp}.}
 }
 \value{
 A list that contains: \item{cor.pred}{The correlation of predicted vs

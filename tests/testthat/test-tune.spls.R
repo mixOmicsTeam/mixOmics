@@ -49,8 +49,8 @@ test_that("tune.spls works with and without parallel", code = {
     # set.seed(12)
     # tune.spls31 <- tune.spls(X, Y, ncomp = ncomp, test.keepX = test.keepX, folds = folds,
     #                          nrepeat = nrepeat, BPPARAM = SnowParam(workers = 2, RNGseed = 12))
-    #                          # TODO tune.spls runs full model nrepeat times for each keepX and keepY!
-    #                          # TODO tune.spls fails with SnowParam
+                             # TODO tune.spls runs full model nrepeat times for each keepX and keepY!
+                             # TODO tune.spls fails with SnowParam
     # expect_is(tune.spls31, "tune.spls")
     # set.seed(12)
     # tune.spls13 <- tune(method = "spls", X = X, Y = Y, ncomp = ncomp, test.keepX = test.keepX, folds = folds,

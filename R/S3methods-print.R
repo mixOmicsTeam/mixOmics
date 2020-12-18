@@ -708,26 +708,23 @@ print.summary <-
 #' @export
 print.perf.pls.mthd <- function(x, ...)
 {
+    spls.model <- length(x$features) > 0
     cat("\n")
     cat("Call:\n", deparse(x$call, width.cutoff = 500))
     cat("\n\n")
     cat(" Main numerical outputs: \n",
         "-------------------- \n")
-    cat(" cor.tpred, cor.upred, RSS.tpred, RSS.upred\n")
-    cat(" MSEP, R2, Q2, Q2.total, RSS, PRESS. See the help file ?perf \n")
-    if (is (x, 'perf.spls.mthd'))
+    cat(" Cross-validated model performance measures:\n")
+    cat(sprintf(" %s\n\n", paste0(names(x$measures), collapse = ', ')))
+    if ('features' %in% names(x))
+    if (spls.model)
     {
-        cat(" Stable features of X and Y on each component: see object$features \n\n")
+        cat(" Stable features selected on each component: see object$features \n\n")
     }
-    
+    cat(" See the help file ?perf \n")
     cat(" Visualisation Functions: \n", "-------------------- \n")
     cat(" plot \n")
-    
 }
-#' @name print
-#' @rdname S3methods-print
-#' @export
-print.perf.spls.mthd <- print.perf.pls.mthd
 
 #' @name print
 #' @rdname S3methods-print
@@ -864,25 +861,38 @@ print.tune.splsda = function(x, ...)
 #' @export
 print.tune.pls = function(x, ...)
 {
-    cat("Call:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+    cat("Call:\n", deparse(x$call, width.cutoff = 500), "\n")
     cat("\n  Main numerical outputs: \n",
         "-------------------- \n")
-    
-    if (is(x, 'tune.spls') & x$call$nrepeat > 3)
-    {
-        cat(sprintf("\n  Optimal keep%s for each component based on the provided tune measure, see object$choice.keep%s", c('X', 'Y'), c('X', 'Y')))
-    }
-    # cat(" Optimal number of components: see object$choice.ncomp \n") # TODO 
-    cat(sprintf("\n  %s of predicted vs actual components, see object$%s",
-                c("Correlations", "RSS"),
-                c("cor.pred", "RSS.red")
-                ))
-    
-    cat("\n  Other outputs are available, and details on those outputs in ?tune.spls.\n")
+    cat("\n Optimal number of components based on Q2.total (regard with care): see object$choice.ncomp")
+    meas <- switch(x$call$measure, cor = 'correlations', RSS = 'Residual Sum of Squares')
+    if (is(x, 'tune.spls'))
+        cat(sprintf("\n Optimal number of features selected based on %s from cross-validated components: see object$choice.keepX & object$choice.keepY", x$call$measure))
+    cat("\n See object$measure.pred for prediction measures for X (value.t) and Y (value.u)\n")
     
     cat("\n  Visualisation Functions: \n", "--------------------")
     cat("\n  plot \n")
 }
+
+#' @method print tune.spls1
+#' @rdname S3methods-print
+#' @export
+print.tune.spls1 = function(x, ...)
+{
+    cat("Call:\n", deparse(x$call, width.cutoff = 500), "\n\n")
+    cat("\n  Main numerical outputs: \n",
+        "-------------------- \n")
+    
+    if (is(x, 'tune.spls1') & x$call$nrepeat > 2)
+    {
+        cat(sprintf("\n  Optimal keep%s for each component based on the provided tune measure, see object$choice.keep%s", c('X', 'Y'), c('X', 'Y')))
+    }
+    cat("\n  Optimal number of components: see object$choice.ncomp \n")
+    
+    cat("\n  Visualisation Functions: \n", "--------------------")
+    cat("\n  plot \n")
+}
+
 
 #' @name print
 #' @rdname S3methods-print

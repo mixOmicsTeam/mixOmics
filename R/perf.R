@@ -255,39 +255,85 @@ perf.mixo_pls <- function(object,
                           ...)
 {
     ncomp = object$ncomp
-
+    spls.model <- is(object, 'mixo_spls')
     progressBar <- .check_logical(progressBar)
     
     # TODO add BPPARAM to args and use bplapply
-    repeat_names <- .name_list(char = seq_len(nrepeat), names = paste0('repeat_', seq_len(nrepeat)))
-    result <- lapply(X = repeat_names, FUN = function(repeat_i) {
+    repeat_names <- .name_list(char = seq_len(nrepeat))
+    result <- lapply(X = repeat_names, FUN = function(nrep) {
         ## progress bar
         if (progressBar == TRUE) # TODO drop for parallel
-            .progressBar(repeat_i/nrepeat)
+            .progressBar(nrep/nrepeat)
         ## CV
-        .perf.mixo_pls_cv(object, validation = validation, folds = folds)
+        .perf.mixo_pls_cv(object, validation = validation, folds = folds, nrep = nrep)
     })
     
-    ## change list hierarchy from entry within repeat to repeat within entry
-    result <- .relist(result)
+    measures <- lapply(result, function(x){
+        x$measures
+    })
     
-    #--- class
-    if (is(object,"mixo_spls"))
+    measures <- Reduce(rbind, measures)
+    measures <- as.data.frame(measures)
+    
+    measure.names <- .name_list(unique(measures$measure))
+    measures <- lapply(measure.names, function(meas) {
+        
+        ## ------ value of measures across repeats
+        df <- measures %>% 
+            filter(measure == meas) %>% 
+            mutate(measure = NULL) %>% 
+            as.data.frame()
+        
+        ## ------ summary of measures across repeats
+        df.summ <- df %>%  
+            group_by(feature, comp) %>% 
+            summarise(mean = mean(value, na.rm = TRUE), 
+                      sd = sd(value, na.rm = TRUE)) %>% 
+            as.data.frame()
+        
+        list(values = df, summary = df.summ)
+    })
+
+    ## ------ feature stability
+    if (spls.model)
     {
-        method = "spls.mthd"
-        result$features <- .relist(result$features)
-    } else if (is(object, "mixo_pls")) {
-        method = "pls.mthd"
-    } else {
-        warning("Something went wrong. Please contact us.")
+        features <- lapply(result, function(x){
+            x$features
+        })
+        
+        features <- Reduce(rbind, features) %>% 
+            group_by(feature, comp, block) %>% 
+            summarise(stability = mean(stability, na.rm = TRUE))
+        
+        features <- as.data.frame(features)
+        features <- lapply(list(stability.X = 'X', stability.Y = 'Y'), function(z){
+            lapply(.name_list(unique(features$comp)), function(n.comp){
+                
+                df <- features %>% 
+                    filter(block == z & comp == n.comp) %>% 
+                    .[,c('feature', 'stability')]
+                vec <- df$stability
+                names(vec) <- df$feature
+                sort(vec, decreasing = TRUE)
+            })
+        })
+    } else
+    {
+        features <- NULL
     }
-    class(result) = c("perf",paste(c("perf", method), collapse ="."))
-    result$call <- match.call()
+    
+    result <- list(measures = measures,
+                   features = features)
+    mc <- mget(names(formals())[-1], sys.frame(sys.nframe()))
+    ## replace function, object with unevaluated call
+    mc <- as.call(c(as.list(match.call())[1:2], mc))
+    result <- c(list(call = mc), result)
+    class(result) <- "perf.pls.mthd"
     
     return(result)
     
 }
-    
+
 #' @rdname perf
 #' @export
 perf.mixo_spls  <- perf.mixo_pls
@@ -297,6 +343,7 @@ perf.mixo_spls  <- perf.mixo_pls
 .perf.mixo_pls_cv <- function(object,
                               validation = c("Mfold", "loo"),
                               folds,
+                              nrep = 1,
                               ...)
 {
     # changes to bypass the loop for the Q2
@@ -371,7 +418,7 @@ perf.mixo_spls  <- perf.mixo_pls
         folds = split(1:n, rep(1:n, length = n))
         M = n
     }
-
+    
     #-- initialize new objects --#
     if (mode == 'canonical'){
         RSS = rbind(rep(n - 1, p), matrix(nrow = ncomp, ncol = p))
@@ -396,11 +443,20 @@ perf.mixo_spls  <- perf.mixo_pls
     t.pred.cv = matrix(nrow = nrow(X), ncol = ncomp)
     u.pred.cv = matrix(nrow = nrow(X), ncol = ncomp)
     
-    # to record feature stability 
-    featuresX  = featuresY =  list()
-    for(k in 1:ncomp){
-        featuresX[[k]] = featuresY[[k]] = NA
-    }
+    # to record feature stability, a list of form
+    # list(X = list(comp1 = c(feature1 = 0.99, ...), 
+    #               comp2 = c(feature2 = 0.98, ...)), 
+    #      Y = ...)
+    features <-
+        lapply(list(X = X, Y = Y), function(Z){
+            features <- vector(mode = 'numeric', length = ncol(Z))
+            names(features) <- colnames(Z)
+            features <- lapply(seq_len(ncomp), function(x) features)
+            names(features) <- paste0('comp', seq_len(ncomp))
+            
+            return(features)
+        })
+    
     
     # ====  loop on h = ncomp is only for the calculation of Q2 on each component
     for (h in 1:ncomp)
@@ -411,7 +467,7 @@ perf.mixo_spls  <- perf.mixo_pls
         b = object$loadings$Y[, h]
         #nx = p - keepX[h]
         #ny = q - keepY[h]
-
+        
         # only used for matrices deflation across dimensions
         c = crossprod(X, tt)/drop(crossprod(tt))  #object$mat.c[, h]
         d = crossprod(Y, tt)/drop(crossprod(tt))  #object$mat.d[, h]
@@ -460,17 +516,21 @@ perf.mixo_spls  <- perf.mixo_pls
             #{
             #nzv = (apply(X.train, 2, var) > .Machine$double.eps) # removed in v6.0.0 so that MSEP, R2 and Q2 are obtained with the same data
             # re-added in >6.1.3 to remove constant variables
-            nzv = (apply(X.train, 2, var) > .Machine$double.eps)
+            nzv.X = (apply(X.train, 2, var) > .Machine$double.eps)
+            nzv.Y = (apply(Y.train, 2, var) > .Machine$double.eps)
             
-            # creating a keepX.temp that can change for each fold, depending on nzv
+            # creating a keepX/Y.temp that can change for each fold, depending on nzv.X/Y
             keepX.temp = keepX
-            if(any(keepX.temp > sum(nzv)))
-                keepX.temp[which(keepX.temp>sum(nzv))] = sum(nzv)
-            
+            keepY.temp = keepY
+            if(any(keepX.temp > sum(nzv.X)))
+                keepX.temp[which(keepX.temp>sum(nzv.X))] = sum(nzv.X)
+            if(any(keepY.temp > sum(nzv.Y)))
+                keepY.temp[which(keepY.temp>sum(nzv.Y))] = sum(nzv.Y)
+            # TODO clarify the iterative nzv process in docs -- give it a better name (these are actually !nzv)
             # here h = 1 because we deflate at each step then extract the vectors for each h comp
-            spls.res = spls(X.train[,nzv], Y.train, ncomp = 1, mode = mode, max.iter = max.iter, tol = tol, 
-                                      keepX = keepX.temp, keepY = keepY, near.zero.var = FALSE, scale = scale)
-            Y.hat = predict.mixo_spls(spls.res, X.test[,nzv, drop = FALSE])$predict
+            spls.res = spls(X.train[, nzv.X, drop = FALSE], Y.train[, nzv.Y, drop = FALSE], ncomp = 1, mode = mode, max.iter = max.iter, tol = tol, 
+                            keepX = keepX.temp[h], keepY = keepY.temp[h], near.zero.var = FALSE, scale = scale)
+            Y.hat = predict.mixo_spls(spls.res, X.test[, nzv.X, drop = FALSE])$predict
             
             # added the stop msg
             if(sum(is.na(Y.hat))>0) stop('Predicted Y values include NA')  
@@ -516,7 +576,7 @@ perf.mixo_spls  <- perf.mixo_pls
                 Y.train = Y.train - t.cv %*% t(d.cv) # could be pred d.pred.cv? does not decrease enough
                 Y.test = Y.test - Y.hat[, , 1]   # == Y.test - t.pred %*% t(d.cv) 
             }
-
+            
             #-- mode canonical  ## KA added
             if (mode == "canonical"){
                 Y.train = Y.train - u.cv %*% t(e.cv)  # could be pred on e
@@ -537,13 +597,15 @@ perf.mixo_spls  <- perf.mixo_pls
             # Record selected features in each set
             if (is(object,"mixo_spls"))
             {
-                featuresX[[h]] = c(unlist(featuresX[[h]]), selectVar(spls.res, comp = 1)$X$name)
-                featuresY[[h]] = c(unlist(featuresY[[h]]), selectVar(spls.res, comp = 1)$Y$name)
+                X.feature <- as.numeric(names(features$X[[h]]) %in% selectVar(spls.res, comp = 1)$X$name)
+                Y.feature <- as.numeric(names(features$Y[[h]]) %in% selectVar(spls.res, comp = 1)$Y$name)
+                # TODO using comp = 1 after deflation: this is problematic if, say, folds = 3, keepX = c(2, 100) (max 4 features (2 folds x 2 features) should be output for comp2 before calculating stability)
+                features$X[[h]] <- features$X[[h]] + X.feature / length(folds)
+                features$Y[[h]] <- features$Y[[h]] + Y.feature / length(folds)
             }
             
         } #  end loop on h ncomp
     } # end i (cross validation)
-    
     
     
     # store results for each comp
@@ -573,61 +635,84 @@ perf.mixo_spls  <- perf.mixo_pls
         colnames(MSEP) = colnames(R2) = colnames(Q2) = object$names$colnames$Y
         
         result$MSEP = t(MSEP)
+        result$RMSEP = sqrt(t(MSEP))
         #result$MSEP.mat = MSEP.mat  
         result$R2 = t(R2)
         result$Q2 = t(Q2)  # remove this output when canonical mode?
     }
     
-    
-    
     result$Q2.total =  Q2.total
-    result$RSS = RSS
-    result$PRESS = PRESS.inside
-    # result$press.mat = press.mat
-    #result$RSS.indiv = RSS.indiv
-    result$d.cv = d.cv  # KA added  
-    result$b.cv = b.cv  # KA added 
-    result$c.cv = c.cv  # KA added 
-    result$u.cv = u.cv  # KA added 
-    result$a.cv = a.cv  # KA added 
-    result$t.pred.cv = t.pred.cv  # needed for tuning
-    result$u.pred.cv = u.pred.cv  # needed for tuning
+    RSS <- t(RSS) ## bc all others are transposed
+    PRESS = t(PRESS.inside)
+    result$RSS <- RSS[,-1, drop = FALSE] ## drop q/p
+    result$PRESS <- PRESS
+    if (ncol(object$Y) > 1)
+    {
+        # TODO ensure these are in fact no more necessary
+        #result$d.cv = d.cv  # KA added  
+        #result$b.cv = b.cv  # KA added 
+        #result$c.cv = c.cv  # KA added 
+        #result$u.cv = u.cv  # KA added 
+        #result$a.cv = a.cv  # KA added 
+        #result$t.pred.cv = t.pred.cv  # needed for tuning
+        #result$u.pred.cv = u.pred.cv  # needed for tuning
+        
+        # extract the predicted components per dimension, take abs value
+        result$cor.tpred = diag(abs(cor(t.pred.cv, object$variates$X)))
+        result$cor.tpred = t(data.matrix(result$cor.tpred, rownames.force = TRUE))
+        result$cor.upred = diag(abs(cor(u.pred.cv, object$variates$Y)))
+        result$cor.upred = t(data.matrix(result$cor.upred, rownames.force = TRUE))
+        
+        # RSS: no abs values here
+        result$RSS.tpred = apply((t.pred.cv - object$variates$X)^2, 2, sum)/(nrow(X) -1)
+        result$RSS.tpred  = t(data.matrix(result$RSS.tpred, rownames.force = TRUE))
+        result$RSS.upred = apply((u.pred.cv - object$variates$Y)^2, 2, sum)/(nrow(X) -1)
+        result$RSS.upred  = t(data.matrix(result$RSS.upred, rownames.force = TRUE))
+    }
+    result <- mapply(result, names(result), FUN = function(arr, measure) {
+        arr <- data.matrix(arr)
+        col.names <- seq_len(ncomp)
+        if (ncol(arr) == ncomp)
+            colnames(arr) <- col.names
+        else
+            stop("unexpected dimension for entry in perf measures: ", measure)
+        if (nrow(arr) == 1)
+            rownames(arr) <- measure
+        arr
+    }, SIMPLIFY = FALSE)
     
-    # extract the predicted components per dimension, take abs value
-    result$cor.tpred = diag(abs(cor(t.pred.cv, object$variates$X)))
-    result$cor.tpred = t(data.matrix(result$cor.tpred, rownames.force = TRUE))
-    result$cor.upred = diag(abs(cor(u.pred.cv, object$variates$Y)))
-    result$cor.upred = t(data.matrix(result$cor.upred, rownames.force = TRUE))
+    ## melt by comp
+    result <- lapply(result, FUN = function(arr, nrep) {
+        arr <- melt(arr)
+        colnames(arr) <- c('feature', 'comp', 'value')
+        if (nlevels(arr$feature) == 1) ## for Y-level measures (ass opossed to Y_feature level) such as Q2.total
+            arr$feature <- factor('Y')
+        arr$nrep <- nrep
+        arr
+    }, nrep = nrep)
+    col.names <- names(result[[1]])
+    #' @importFrom reshape2 melt
+    result <- melt(result, id.vars = col.names)
+    colnames(result) <- c(col.names, 'measure')
     
-    # RSS: no abs values here
-    result$RSS.tpred = apply((t.pred.cv - object$variates$X)^2, 2, sum)/(nrow(X) -1)
-    result$RSS.tpred  = t(data.matrix(result$RSS.tpred, rownames.force = TRUE))
-    result$RSS.upred = apply((u.pred.cv - object$variates$Y)^2, 2, sum)/(nrow(X) -1)
-    result$RSS.upred  = t(data.matrix(result$RSS.upred, rownames.force = TRUE))
-    
-    #---- extract stability of features -----#
+    result <- list(measures = result)
+    #---- stability of features -----#
     if (is(object, "mixo_spls"))
     {
-        list.features.X = list()
-        list.features.Y = list()
-        
-        for(k in 1:ncomp)
+        features <- lapply(features, function(x)
         {
-            #remove the NA value that was added for initialisation
-            remove.naX = which(is.na(featuresX[[k]]))
-            remove.naY = which(is.na(featuresY[[k]]))
-            # then summarise as a factor and output the percentage of appearance
-            list.features.X[[k]] = sort(table(as.factor(featuresX[[k]][-remove.naX])) / M, decreasing = TRUE)
-            list.features.Y[[k]] = sort(table(as.factor(featuresY[[k]][-remove.naY])) / M, decreasing = TRUE)
-            
-        }
-        names(list.features.X)  = names(list.features.Y) = paste0("comp", seq_len(ncomp))
+            x <- lapply(x, function(stab) round(stab, 2))
+            df <- data.frame(x)
+            df <- data.frame(feature = rownames(df), df)
+            df
+        })
+        features <- melt(features, id.vars = 'feature', value.name = 'stability', variable.name = 'comp')
+        ## add block name column instead of default 'L1'
+        colnames(features) <- c(rev(rev(colnames(features))[-1]), 'block')
+        features$nrep <- nrep
         
-        # features
-        result$features$stable.X = list.features.X
-        result$features$stable.Y = list.features.Y
+        result$features <- features
     }
-    
     return(invisible(result))
 }
 
