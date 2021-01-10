@@ -34,8 +34,8 @@
 #' \item{ind.mat}{the indicator matrix.} \item{ncomp}{the number of components
 #' included in the model.} \item{variates}{list containing the \code{X} and
 #' \code{Y} variates.} \item{loadings}{list containing the estimated loadings
-#' associated to each component. The loading weights multiplied with the deflated (residual) matrix gives the latent component.} \item{loadings.stars}{list containing the estimated loadings
-#' associated to each component. The loading weights are projected so that when multiplied with the original matrix we obtain the latent component.} \item{names}{list containing the names to be used for
+#' associated to each component/variate. The loading weights multiplied with the deflated (residual) matrix gives the variate.} \item{loadings.stars}{list containing the estimated loadings
+#' associated to each component/variate. The loading weights are projected so that when multiplied with the original matrix we obtain the variate.} \item{names}{list containing the names to be used for
 #' individuals and variables.} \item{nzv}{list containing the zero- or
 #' near-zero predictors information.} \item{tol}{the tolerance used in the
 #' iterative algorithm, used for subsequent S3 methods} \item{max.iter}{the
