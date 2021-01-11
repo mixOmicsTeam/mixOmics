@@ -19,6 +19,7 @@ circosPlot(
   size.variables = 0.25,
   size.labels = 1,
   legend = TRUE,
+  linkWidth = 1,
   ...
 )
 }
@@ -58,6 +59,9 @@ see examples.}
 
 \item{legend}{Logical. Whether the legend should be added. Default is TRUE.}
 
+\item{linkWidth}{Numeric. Specifies the range of sizes used for lines linking
+the correlated variables (see details). Must be of length 2 or 1. Default to c(1). See details.}
+
 \item{...}{Advanced plot parameters:
 \itemize{
  \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
@@ -80,6 +84,11 @@ Displays variable correlation among different blocks
 \code{block.splsda} among different blocks, using a generalisation of the
 method presented in González et al 2012. If \code{ncomp} is specified, then
 only the variables selected on that component are displayed.
+
+The \code{linkWidth} argument specifies the width of the links drawn.
+If a vector of length 2 is provided, the smaller value will correspond to
+a similarity values designated by \code{cutoff} argument, while the 
+larger value will be used for a link with perfect similarity (1), if any.
 }
 \examples{
 data(nutrimouse)
@@ -96,6 +105,8 @@ ncomp = 2,
 scheme = "horst")
 
 circosPlot(nutrimouse.sgccda, cutoff = 0.7)
+## links widths based on strength of their similarity
+circosPlot(nutrimouse.sgccda, cutoff = 0.7, linkWidth = c(1, 10))
 ## custom legend
 circosPlot(nutrimouse.sgccda, cutoff = 0.7, size.legend = 1.1)
 

@@ -12,6 +12,8 @@ ncomp = 2,
 scheme = "horst")
 
 circosPlot(nutrimouse.sgccda, cutoff = 0.7)
+## links widths based on strength of their similarity
+circosPlot(nutrimouse.sgccda, cutoff = 0.7, linkWidth = c(1, 10))
 ## custom legend
 circosPlot(nutrimouse.sgccda, cutoff = 0.7, size.legend = 1.1)
 

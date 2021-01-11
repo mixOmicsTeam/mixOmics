@@ -6,6 +6,11 @@
 #' \code{block.splsda} among different blocks, using a generalisation of the
 #' method presented in González et al 2012. If \code{ncomp} is specified, then
 #' only the variables selected on that component are displayed.
+#' 
+#' The \code{linkWidth} argument specifies the width of the links drawn.
+#' If a vector of length 2 is provided, the smaller value will correspond to
+#' a similarity values designated by \code{cutoff} argument, while the 
+#' larger value will be used for a link with perfect similarity (1), if any.
 #' @param object An object of class inheriting from \code{"block.splsda"}.
 #' @param comp Numeric vector indicating which component to plot. Default to
 #' all
@@ -27,6 +32,8 @@
 #' @param size.variables size of the variable labels
 #' @param size.labels size of the block labels
 #' @param legend Logical. Whether the legend should be added. Default is TRUE.
+#' @param linkWidth Numeric. Specifies the range of sizes used for lines linking
+#' the correlated variables (see details). Must be of length 2 or 1. Default to c(1). See details.
 #' @param ... Advanced plot parameters:
 #' \itemize{
 #'  \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
@@ -75,6 +82,7 @@ circosPlot <- function(object,
                        size.variables = 0.25,
                        size.labels = 1,
                        legend = TRUE,
+                       linkWidth = 1,
                        ...)
 {
     
@@ -82,7 +90,6 @@ circosPlot <- function(object,
     Features = Exp = Dataset = Mean = linkColors = chrom = po = NULL
     
     
-    options(stringsAsFactors = FALSE)
     figSize = 800
     segmentWidth = 25
     linePlotWidth = 90
@@ -186,6 +193,23 @@ circosPlot <- function(object,
     }
     comp = unique(sort(comp))
     
+    ## check linkWidth
+    invalid.linkWidth <- FALSE
+    if (mode(linkWidth) == 'numeric')
+    {
+        if (length(linkWidth) == 1)
+            linkWidth <- rep(linkWidth, 2)
+        else if (length(linkWidth) != 2)
+            invalid.linkWidth <- TRUE
+        
+        linkWidth <- sort(linkWidth)
+    } else {
+        invalid.linkWidth <- TRUE
+    }
+    
+    if (invalid.linkWidth)
+        stop("'linkWidth' must be a numeric of length 2 (or 1) specifying ",
+             "the range of widths used for link lines based on similarity measures.", call. = FALSE)
     
     keepA = lapply(object$loadings, function(i)
         apply(abs(i)[, comp, drop = FALSE], 1, sum) > 0)
@@ -282,7 +306,7 @@ circosPlot <- function(object,
                  color.blocks = color.blocks, line = line, ...)
     # Plot links
     if(nrow(links)>0)
-        drawLinks(R=linksR, cir=db,   mapping=links,   col=linkColors,
+        drawLinks(R=linksR, cir=db,   mapping=links,   col=linkColors, lineWidth = linkWidth,
                   drawIntraChr=showIntraLinks, color.cor = color.cor)
     
     # Plot expression values
@@ -430,12 +454,18 @@ drawLinks = function(R, xc=400, yc=400, cir, W,
     dat.in[,4] = gsub("chr", "", dat.in[,4]) 
     
     dat    = dat.in 
-    
+    ## line width based on on abs(cor) 
+    lineWidth.range = lineWidth
+    lineWidths = abs(dat$value)
+    ## normlaised so that (cutoff, 1) would map to lineWidth.range
+    lineWidths = (lineWidths - min(lineWidths)) / (1 - min(lineWidths))
+    lineWidths = lineWidths*(lineWidth.range[2] - lineWidth.range[1]) + lineWidth.range[1]
     for (i in 1:nrow(dat)){
         chr1.s   = dat[i,1] 
         chr2.s   = dat[i,4] 
         po1      = dat[i,2] 
         po2      = dat[i,5] 
+        lineWidth = lineWidths[i]
         
         chr1     = which(chr.po[,1]==chr1.s) 
         chr2     = which(chr.po[,1]==chr2.s) 
