@@ -593,6 +593,7 @@ perf.sgccda <-
         repeat_cv_res <- list(
           error.mat = error.mat,
           error.mat.class = error.mat.class,
+          Y.mean = Y.mean,
           Y.mean.res = Y.mean.res,
           Y.WeightedPredict.res = Y.WeightedPredict.res,
           Y.weighted.vote.res = Y.weighted.vote.res,
