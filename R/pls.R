@@ -82,7 +82,8 @@
 #' \item{ncomp}{the number of components included in the model.}
 #' \item{mode}{the algorithm used to fit the model.} \item{variates}{list
 #' containing the variates.} \item{loadings}{list containing the estimated
-#' loadings for the \eqn{X} and \eqn{Y} variates.} \item{names}{list containing
+#' loadings for the \eqn{X} and \eqn{Y} variates. The loading weights multiplied with their associated deflated (residual) matrix gives the variate.} \item{loadings.stars}{list containing the estimated
+#' weighted loadings for the \eqn{X} and \eqn{Y} variates. The loading weights are projected so that when multiplied with their associated original matrix we obtain the variate.} \item{names}{list containing
 #' the names to be used for individuals and variables.} \item{tol}{the
 #' tolerance used in the iterative algorithm, used for subsequent S3 methods}
 #' \item{iter}{Number of iterations of the algorithm for each component}
