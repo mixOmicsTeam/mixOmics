@@ -17,13 +17,15 @@
 #' successful at maximising the correlation between each data sets' component.
 #' The lower triangular panel indicated the Pearson's correlation coefficient,
 #' the upper triangular panel the scatter plot.
-#' 
-#' @param x object of class inheriting from \code{"block.splsda"}.
+#'
+#' @param object object of class inheriting from \code{"block.splsda"}.
 #' @param ncomp Which component to plot calculated from each data set. Has to
-#' be lower than the minimum of \code{object$ncomp}
+#' be lower than the minimum of \code{object$ncomp}.
+#' @param col.per.group A named character of colours for each group class
+#'   representation. Its names must match the levels of object$Y.
 #' @param legend Logical. Whether the legend should be added. Default is TRUE.
 #' @param legend.ncol Number of columns for the legend. Default to
-#' \code{min(5,nlevels(x$Y))}
+#' \code{min(5,nlevels(x$Y))}.
 #' @param \dots not used
 #' @return none
 #' @author Amrit Singh, Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
@@ -48,23 +50,29 @@
 #' # set number of variables to select, per component and per data set (arbitrarily set)
 #' list.keepX = list(mrna = rep(20, 3), mirna = rep(10,3), prot = rep(10,3))
 #' 
-#' # set up a full design where every block is connected
-#' design = matrix(1, ncol = length(data), nrow = length(data),
-#' dimnames = list(names(data), names(data)))
-#' diag(design) =  0
-#' design
-#' 
-#' BC.diablo = block.splsda(X = data, Y = Y, ncomp = ncomp, keepX = list.keepX, design = design)
-#' plotDiablo(BC.diablo, ncomp = 1)
-plotDiablo <- function(x,
+#' # DIABLO using a full design where every block is connected
+#' BC.diablo = block.splsda(X = data, Y = Y, ncomp = ncomp, keepX = list.keepX, design = 'full')
+#' ## default col.per.group
+#' plotDiablo(BC.diablo, ncomp = 1, legend = TRUE, col.per.group = NULL)
+#' ## custom col.per.group
+#' col.per.group <- viridisLite::viridis(3)
+#' names(col.per.group) <- levels(Y)
+#' plotDiablo(BC.diablo, ncomp = 1, legend = TRUE, col.per.group = col.per.group)
+plotDiablo <- function(object,
                        ncomp = 1,
                        legend = TRUE,
                        legend.ncol,
+                       col.per.group = NULL,
                        ...)
 {
+    if (!is.null(list(...)$x))
+        .stop("use of 'x' has been deprecated. Use 'object' instead.")
     
+    ## col.per.group
+    col.per.group <- .change_if_null(col.per.group, default =  color.mixo(1:nlevels(Y)))
+    col.per.group <- .get.cols.and.group(col.per.group = col.per.group, group = Y, object = object, n_ind = length(object$names$sample))
+    col.per.group <- col.per.group$col.per.group
     
-    object=x
     #need to reorder variates and loadings to put 'Y' in last
     opar = par()[! names(par()) %in% c("cin", "cra", "csi", "cxy", "din", "page")]
     
@@ -113,7 +121,7 @@ plotDiablo <- function(x,
             {
                 intersect(paste(i,j,sep="_"), x)
             }))
-            splotMatPlot(x=VarX[, j], y=VarX[, i], datNames, Y, ptype)
+            splotMatPlot(x=VarX[, j], y=VarX[, i], datNames, Y, ptype, col.per.group)
             
             if(i == 1 & j %in% seq(2, numberOfRows, 1))
                 Axis(side = 3, x=VarX[, i])
@@ -125,7 +133,7 @@ plotDiablo <- function(x,
     #add legend
     plot(1:3,1:3,type="n",axes=FALSE,xlab="",ylab="")
     if(legend)
-        legend("center",legend=levels(Y), col = color.mixo(1:nlevels(Y)), pch = 19, ncol = legend.ncol, cex = 1.5)
+        legend("center",legend=levels(Y), col = col.per.group, pch = 19, ncol = legend.ncol, cex = 1.5)
     
     par(opar)
 }
@@ -135,7 +143,7 @@ plotDiablo <- function(x,
 #' @export
 plot.sgccda <- plotDiablo
 
-splotMatPlot = function(x, y, datNames, Y, ptype)
+splotMatPlot = function(x, y, datNames, Y, ptype, col.per.group)
 {
     if(names(ptype) == "cor")
     {
@@ -145,7 +153,7 @@ splotMatPlot = function(x, y, datNames, Y, ptype)
         box()
     }
     if(names(ptype) == "scatter")
-        panel.ellipses(x=x, y=y, Y = Y)
+        panel.ellipses(x=x, y=y, Y = Y, col.per.group = col.per.group)
     
     if(names(ptype) == "lab")
     {
@@ -154,28 +162,28 @@ splotMatPlot = function(x, y, datNames, Y, ptype)
         text(x=1, y=1, labels=datNames[ind], cex = 2)
         box()
     }
-    if(FALSE)
-    {
-        if(names(ptype) == "bar")
-        {
-            Y2 = factor(as.character(Y), levels = groupOrder)
-            boxplot(x ~ Y2, horizontal=TRUE, axes = FALSE, ylim = c(min(x)-3, max(x)),
-                    col= color.mixo(match(levels(Y2), levels(Y))))
-            axis(4, at=1:nlevels(Y2), labels=levels(Y2))
-        }
-        if(names(ptype) == "stackedbar")
-        {
-            Y2 = factor(as.character(Y), levels = groupOrder)
-            bars = table(Y2)
-            barplot(bars, col= color.mixo(match(levels(Y2), levels(Y))),
-                    axes = FALSE)
-            axis(4, at=seq(0,max(bars),length.out=5), labels=seq(0,max(bars),length.out=5))
-        }
-    }
+    # if(FALSE)
+    # {
+    #     if(names(ptype) == "bar")
+    #     {
+    #         Y2 = factor(as.character(Y), levels = groupOrder)
+    #         boxplot(x ~ Y2, horizontal=TRUE, axes = FALSE, ylim = c(min(x)-3, max(x)),
+    #                 col= col.per.group[groupOrder])
+    #         axis(4, at=1:nlevels(Y2), labels=levels(Y2))
+    #     }
+    #     if(names(ptype) == "stackedbar")
+    #     {
+    #         Y2 = factor(as.character(Y), levels = groupOrder)
+    #         bars = table(Y2)
+    #         barplot(bars, col= color.mixo(match(levels(Y2), levels(Y))),
+    #                 axes = FALSE)
+    #         axis(4, at=seq(0,max(bars),length.out=5), labels=seq(0,max(bars),length.out=5))
+    #     }
+    # }
 }
 
 #' @importFrom ellipse ellipse
-panel.ellipses = function(x, y, Y = Y, pch = par("pch"), col.lm = "red", axes = FALSE, ...)
+panel.ellipses = function(x, y, Y = Y, pch = par("pch"), col.lm = "red", axes = FALSE, col.per.group, ...)
 {
     ind.gp = matrice = cdg = variance = list()
     for(i in 1:nlevels(Y))
@@ -192,12 +200,12 @@ panel.ellipses = function(x, y, Y = Y, pch = par("pch"), col.lm = "red", axes = 
     ind.names = names(Y)
     cex = 0.5
     
-    plot(x, y, xlab = "X.label", ylab = "Y.label", col=color.mixo(as.numeric(Y)), pch=20, axes=axes,
+    plot(x, y, xlab = "X.label", ylab = "Y.label", col = col.per.group, pch=20, axes=axes,
          xlim = c(min(x, min.ellipse[1, ]), max(x, max.ellipse[1, ])), ylim = c(min(y, min.ellipse[2, ]), max(y, max.ellipse[2, ])))
     #text(x, y, ind.names, col = col, cex = cex)
     box()
     for (z in 1:nlevels(Y))
-        points(coord.ellipse[[z]], type = "l", col = color.mixo(c(1:nlevels(Y))[z]))
+        points(coord.ellipse[[z]], type = "l", col = col.per.group[z])
     
 }
 

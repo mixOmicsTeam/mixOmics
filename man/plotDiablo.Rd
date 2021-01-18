@@ -5,20 +5,30 @@
 \alias{plot.sgccda}
 \title{Graphical output for the DIABLO framework}
 \usage{
-plotDiablo(x, ncomp = 1, legend = TRUE, legend.ncol, ...)
+plotDiablo(
+  object,
+  ncomp = 1,
+  legend = TRUE,
+  legend.ncol,
+  col.per.group = NULL,
+  ...
+)
 
-\method{plot}{sgccda}(x, ncomp = 1, legend = TRUE, legend.ncol, ...)
+\method{plot}{sgccda}(object, ncomp = 1, legend = TRUE, legend.ncol, col.per.group = NULL, ...)
 }
 \arguments{
-\item{x}{object of class inheriting from \code{"block.splsda"}.}
+\item{object}{object of class inheriting from \code{"block.splsda"}.}
 
 \item{ncomp}{Which component to plot calculated from each data set. Has to
-be lower than the minimum of \code{object$ncomp}}
+be lower than the minimum of \code{object$ncomp}.}
 
 \item{legend}{Logical. Whether the legend should be added. Default is TRUE.}
 
 \item{legend.ncol}{Number of columns for the legend. Default to
-\code{min(5,nlevels(x$Y))}}
+\code{min(5,nlevels(x$Y))}.}
+
+\item{col.per.group}{A named character of colours for each group class
+representation. Its names must match the levels of object$Y.}
 
 \item{\dots}{not used}
 }
@@ -48,14 +58,14 @@ ncomp = 3
 # set number of variables to select, per component and per data set (arbitrarily set)
 list.keepX = list(mrna = rep(20, 3), mirna = rep(10,3), prot = rep(10,3))
 
-# set up a full design where every block is connected
-design = matrix(1, ncol = length(data), nrow = length(data),
-dimnames = list(names(data), names(data)))
-diag(design) =  0
-design
-
-BC.diablo = block.splsda(X = data, Y = Y, ncomp = ncomp, keepX = list.keepX, design = design)
-plotDiablo(BC.diablo, ncomp = 1)
+# DIABLO using a full design where every block is connected
+BC.diablo = block.splsda(X = data, Y = Y, ncomp = ncomp, keepX = list.keepX, design = 'full')
+## default col.per.group
+plotDiablo(BC.diablo, ncomp = 1, legend = TRUE, col.per.group = NULL)
+## custom col.per.group
+col.per.group <- viridisLite::viridis(3)
+names(col.per.group) <- levels(Y)
+plotDiablo(BC.diablo, ncomp = 1, legend = TRUE, col.per.group = col.per.group)
 }
 \references{
 Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt S.
