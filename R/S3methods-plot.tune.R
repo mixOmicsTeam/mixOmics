@@ -42,8 +42,8 @@
 #' @param col character (or symbol) color to be used, possibly vector. One
 #' colour per component.
 #' @param title Plot title.
-#' @param ... Not used.
-#' @param \dots Further arguments sent to \code{\link{xyplot}} function.
+#' @param size.range Numeric vector of length 2. Range of sizes used in plot.
+#' @param ... Further arguments sent to \code{\link{xyplot}} function.
 #' Not currently used for \code{tune.spca}.
 #' @return none
 #' @author Kim-Anh Lê Cao, Florian Rohart, Francois Bartolo, Al J Abadi
@@ -57,9 +57,13 @@ NULL
 ## --------------------------- plot.tune.(s)pls --------------------------- ##
 #' @method plot tune.spls
 #' @rdname plot.tune
+#' @section plot arguments for pls2 tuning:
+#' For tune.spls objects where tuning is performed on both X and Y, arguments
+#' 'col.low.sd' and 'col.high.sd' can be used to indicate a low and high sd, 
+#' respectively. Default to 'blue' & 'red'.
 #' @export
 plot.tune.spls <-
-    function(x, measure = NULL, comp = c(1,2), pch = 16, cex = 1.2, title = NULL, size.range = c(3,10),...)
+    function(x, measure = NULL, comp = c(1,2), pch = 16, cex = 1.2, title = NULL, size.range = c(3,10), sd = NULL,...)
     {
         
         ## if measure not given, use object's 'measure.tune' for spls
@@ -77,11 +81,17 @@ plot.tune.spls <-
         if (any(na.opt)) ## for plot
             df$optimum.keepA[na.opt] <- FALSE
         
-        ggplot_pls2 <- function(df, title = NULL) {
+        col.low.sd <- .change_if_null(arg = list(...)$col.low.sd, default = 'blue')
+        col.high.sd <- .change_if_null(arg = list(...)$col.high.sd, default = 'red')
+        ## R CMD check
+        keepX <- keepY <- NULL
+        ggplot_pls2 <- function(df, col.low.sd, col.high.sd, title = NULL) {
             
             p <- ggplot(df, aes(factor(keepX), factor(keepY))) + 
                 geom_point(aes_string(size = 'mean', col = 'sd'), shape = pch) + 
-                scale_color_gradient(low = 'blue', high = 'red', na.value = color.mixo(1))
+                scale_color_gradient(low = col.low.sd, 
+                                     high = col.high.sd, 
+                                     na.value = color.mixo(1))
             
             ## optimal keepX/keepY
             # opt.size.coef <- ifelse(measure == 'cor', 2, 0.00001)
@@ -110,21 +120,33 @@ plot.tune.spls <-
         ggplot_pls1 <- function(df, ## from .get_ut_df
                                 title = NULL, ## title
                                 keepA = 'keepX',
+                                sd,
                                 cex) ## which keepA is not fixed?
             {
-            ## keepX or keepY must be removed before running this
-            p <- ggplot(df, aes_string(x = keepA, y = 'mean',  col = 'comp')) + 
-                geom_point(shape = pch, size = cex) +
-                geom_line()
-            if (!any(is.na(df$sd)))
+            
+            # if sd is NULL & sd values are present, set it to TRUE
+            sd <- .change_if_null(sd, default = !any(is.na(df$sd)))
+            sd <- .check_logical(sd)
+            if (isTRUE(sd) & any(is.na(df$sd)))
+            {
+                cat("the model is not repeated > 2 times. setting 'sd' to FALSE")
+                sd <- FALSE
+            }
+                
+            if (sd)
             {
                 df$lower <- df$mean - df$sd
                 df$upper <- df$mean + df$sd
-                p <- p + geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.04)
             }
-            p <- p + scale_color_gradient(low = 'blue', high = 'red', na.value = color.mixo(1)) + 
-                labs(x = keepA, y = measure, col = 'SD') +
-                facet_grid(.~comp, scales = 'free')
+            ## keepX or keepY must be removed before running this
+            p <- ggplot(df, aes_string(x = keepA, y = 'mean',  col = 'comp')) + 
+                geom_point(shape = pch, size = cex) +
+                geom_line(show.legend = FALSE)
+            if (sd)
+            {
+                p <- p + geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.4)
+            }
+            p <- p + labs(x = keepA, y = measure, col = title)
             
             ## optimal
             if (any(!is.na(df$optimum.keepA))) ## to make it possible to plot the unused measure too
@@ -135,23 +157,25 @@ plot.tune.spls <-
                                     col = 'green',
                                     show.legend = FALSE)
                 
-            p <- p + guides(fill = guide_legend(order=2, override.aes = list(size=2)))
+            p <- p + guides(fill = guide_legend( override.aes = list(size=2)))
             
             list(gg.plot = p, df= df)
         }
         
         if ( length(unique(df$keepY)) > 1 & length(unique(df$keepX)) > 1)
-            res <- ggplot_pls2(df, title = title)
+            res <- ggplot_pls2(df, title = title, 
+                               col.low.sd = col.low.sd, 
+                               col.high.sd = col.high.sd)
         else if ( length(unique(df$keepY)) == 1 & length(unique(df$keepX)) > 1)
         {
             df <- df[df$V == 't',]
-            res <- ggplot_pls1(df, title = title, keepA = 'keepX', cex = 2*cex)
+            res <- ggplot_pls1(df, title = title, sd = sd, keepA = 'keepX', cex = 2*cex)
         }
            
         else if ( length(unique(df$keepY)) > 1 & length(unique(df$keepX)) == 1)
         {
             df <- df[df$V == 'u',]
-            res <- ggplot_pls1(df, title = title, keepA = 'keepY', cex = 2*cex)
+            res <- ggplot_pls1(df, title = title, sd = sd, keepA = 'keepY', cex = 2*cex)
         }
         else
             .stop('Unexpected error. Inavlid keepX and/or keepY.')
@@ -345,7 +369,7 @@ plot.tune.block.splsda =
         #     p = ggplot(error.plot, aes(x=names, y=error)) + 
         #         theme_minimal() +
         #         geom_bar(stat="identity", fill = error.plot$color)
-        #     if(sd) p = p + geom_errorbar(aes(ymin=error-error.sd, ymax = error+error.sd), width=0.04)
+        #     if(sd) p = p + geom_errorbar(aes(ymin=error-error.sd, ymax = error+error.sd), width=0.4)
         #     
         #     p= p +
         #         ylab(ylab)+
@@ -370,7 +394,7 @@ plot.tune.block.splsda =
             p = ggplot(error.plot, aes(x=reorder(names, -error), y=error)) +
                 theme_classic() +
                 geom_bar(stat="identity", fill = error.plot$color)
-            if(sd) p = p + geom_errorbar(aes(ymin=error-error.sd, ymax = error+error.sd), width=0.04)
+            if(sd) p = p + geom_errorbar(aes(ymin=error-error.sd, ymax = error+error.sd), width=0.4)
             
             p= p +
                 ylab(ylab)+
@@ -455,7 +479,7 @@ plot.tune.spca <-
         {
             p <- p + geom_errorbar(aes_string(ymin = 'corQ1', ymax = 'corQ3'), 
                                    # position = position_dodge(0.02),
-                                   width = 0.04,
+                                   width = 0.4,
                                    ...)
             ## suppress "position_dodge requires non-overlapping x intervals"
             suppressWarnings(print(p))

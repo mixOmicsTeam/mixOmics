@@ -5,7 +5,7 @@ tune.pls <-  function(X,
                       nrepeat = 1,
                       folds,
                       mode = c('regression', 'canonical', 'classic'),
-                      measure.tune = c("Q2.total", "RSS", "cor"),
+                      measure = c("Q2.total", "RSS", "cor"),
                       BPPARAM = SerialParam(),
                       progressBar = FALSE,
                       ...

@@ -24,9 +24,9 @@ test_that("tune.spls works with and without parallel", code = {
             folds = folds,
             nrepeat = nrepeat
         )
-    expect_equal(c(comp1 = 5, comp2 = 5), tune.spls11$choice.keepX)
-    expect_equal(c(comp1 = 5, comp2 = 5), tune.spls11$choice.keepY)
     expect_is(tune.spls11, "tune.spls")
+    expect_equal(c(comp1 = 10, comp2 = 10), tune.spls11$choice.keepX)
+    expect_equal(c(comp1 = 10, comp2 = 5), tune.spls11$choice.keepY)
     
     ## ----------- tune(method="spls") same as tune.spls ----------- 
     set.seed(42)

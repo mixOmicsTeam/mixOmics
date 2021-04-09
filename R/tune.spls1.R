@@ -168,7 +168,7 @@
 #' plot(tune)
 #' }
 #' @noRd
-tune.spls1 <- 
+tune.spls1 <- #TODO naming for tune.spls1 is wrong. it should hint the block where variable selection is performed
     function (X, 
               Y,
               ncomp = 1,

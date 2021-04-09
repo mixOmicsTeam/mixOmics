@@ -265,7 +265,7 @@ NULL
 #'   Default to \code{'X'}.
 #' @param ind.names.size Numeric, sample name size.
 #' @param ind.names.col Character, sample name colour.
-#' @param pch.size Numeric, sample point character size.
+#' @template arg/pch.size
 #' @param pch.levels If \code{pch} is a factor, a named vector providing the
 #'   point characters to use. See examples.
 #' @param var.names Logical indicating whether to show variable names. 

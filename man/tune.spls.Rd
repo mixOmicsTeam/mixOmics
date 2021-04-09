@@ -59,9 +59,9 @@ of parallelisation. See examples in \code{?tune.spca}.}
 \item{progressBar}{Logical. If \code{TRUE} a progress bar is shown as the
 computation completes. Default to \code{FALSE}.}
 
-\item{...}{Optional parameters passed to \code{\link{spls}}}
+\item{limQ2}{Q2 threshold for recommending optimal \code{ncomp}.}
 
-\item{LimQ2}{Q2 threshold for recommending optimal \code{ncomp}.}
+\item{...}{Optional parameters passed to \code{\link{spls}}}
 }
 \value{
 A list that contains: \item{cor.pred}{The correlation of predicted vs

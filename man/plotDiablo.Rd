@@ -14,7 +14,7 @@ plotDiablo(
   ...
 )
 
-\method{plot}{sgccda}(object, ncomp = 1, legend = TRUE, legend.ncol, col.per.group = NULL, ...)
+\method{plot}{sgccda}(x, ...)
 }
 \arguments{
 \item{object}{object of class inheriting from \code{"block.splsda"}.}
@@ -63,7 +63,7 @@ BC.diablo = block.splsda(X = data, Y = Y, ncomp = ncomp, keepX = list.keepX, des
 ## default col.per.group
 plotDiablo(BC.diablo, ncomp = 1, legend = TRUE, col.per.group = NULL)
 ## custom col.per.group
-col.per.group <- viridisLite::viridis(3)
+col.per.group <- color.mixo(1:3)
 names(col.per.group) <- levels(Y)
 plotDiablo(BC.diablo, ncomp = 1, legend = TRUE, col.per.group = col.per.group)
 }

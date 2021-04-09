@@ -275,9 +275,12 @@ perf.mixo_pls <- function(object,
     measures <- Reduce(rbind, measures)
     measures <- as.data.frame(measures)
     
+    ## R CMD check stuff
+    measure <- feature <- comp <- block <- stability <- value <- NULL
+    lower <- upper <- keepX <- keepY <- NULL
+    
     measure.names <- .name_list(unique(measures$measure))
     measures <- lapply(measure.names, function(meas) {
-        
         ## ------ value of measures across repeats
         df <- measures %>% 
             filter(measure == meas) %>% 
@@ -311,7 +314,7 @@ perf.mixo_pls <- function(object,
                 
                 df <- features %>% 
                     filter(block == z & comp == n.comp) %>% 
-                    .[,c('feature', 'stability')]
+                    dplyr::select(feature, stability)
                 vec <- df$stability
                 names(vec) <- df$feature
                 sort(vec, decreasing = TRUE)
