@@ -1,3 +1,5 @@
+#TODO docs
+#' @export
 tune.pls <-  function(X,
                       Y,
                       ncomp,

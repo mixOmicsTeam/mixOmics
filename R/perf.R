@@ -314,7 +314,7 @@ perf.mixo_pls <- function(object,
                 
                 df <- features %>% 
                     filter(block == z & comp == n.comp) %>% 
-                    dplyr::select(feature, stability)
+                    .[,c('feature', 'stability')]
                 vec <- df$stability
                 names(vec) <- df$feature
                 sort(vec, decreasing = TRUE)
