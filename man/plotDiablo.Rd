@@ -17,7 +17,7 @@ plotDiablo(
 \method{plot}{sgccda}(x, ...)
 }
 \arguments{
-\item{object}{object of class inheriting from \code{"block.splsda"}.}
+\item{object, x}{object of class inheriting from \code{"block.splsda"}.}
 
 \item{ncomp}{Which component to plot calculated from each data set. Has to
 be lower than the minimum of \code{object$ncomp}.}

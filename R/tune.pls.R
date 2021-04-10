@@ -23,7 +23,7 @@ tune.pls <-  function(X,
                               folds = folds, 
                               progressBar = progressBar, 
                               nrepeat = nrepeat)
-    meaure <- result[[measure.tune]]
+    meaure <- result[[measure]]
     result$call <- match.call()
         
         return(result)

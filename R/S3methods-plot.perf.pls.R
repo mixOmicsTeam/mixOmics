@@ -27,6 +27,7 @@
 #' @param col Character. Colour to be used for data points.
 #' @param title Character, Plot title. Not used by PLS2 feature-wise measure
 #'   plots.
+#' @param ... Not used.
 #' @return none
 #' @author Al J Abadi
 #' @seealso \code{\link{pls}}, \code{\link{spls}}, \code{\link{plsda}},
@@ -59,6 +60,8 @@ plot.perf.pls.mthd <-
               ...
     )
     {
+        ## fix check issues
+        comp <- lower <- upper <- NULL
         if (length(criterion) > 1 || !(criterion %in% names(x$measures) ))
             stop("'criterion' must be one of names(", 
                  deparse(substitute(x)),"$measures): ", "\n", 

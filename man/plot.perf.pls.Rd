@@ -69,6 +69,8 @@ number of repeats is 1.}
 
 \item{title}{Character, Plot title. Not used by PLS2 feature-wise measure
 plots.}
+
+\item{...}{Not used.}
 }
 \value{
 none

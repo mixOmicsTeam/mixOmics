@@ -253,17 +253,17 @@ tune.spls <-
                                                      measure.pred$V == v &
                                                      measure.pred$measure == measure_i
                                                    ,]$value.v[[1]] <- measure.vpred$value
-         
-                                      
-                                    }
+                                      ## Q2
                                     value.Q2.total <- pls.perf$measures$Q2.total$values
                                     value.Q2.total <- filter(value.Q2.total, comp == comp)$value
-                                    
                                     measure.pred[measure.pred$comp == comp & 
                                                    measure.pred$keepX == test.keepX[keepX] &
                                                    measure.pred$keepY == test.keepY[keepY] &
-                                                   measure.pred$V == 'u' 
-                                                 ,]$value.Q2.total <- value.Q2.total
+                                                   # TODO the following filtering criteria needs review - not sure if Q2 is per c('u' , 't')
+                                                   measure.pred$V == v &
+                                                   measure.pred$measure == measure_i
+                                                 ,]$value.Q2.total[[1]] <- value.Q2.total
+                                    }
                                     
                                   }
 

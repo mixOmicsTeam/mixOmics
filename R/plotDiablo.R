@@ -18,7 +18,7 @@
 #' The lower triangular panel indicated the Pearson's correlation coefficient,
 #' the upper triangular panel the scatter plot.
 #'
-#' @param object object of class inheriting from \code{"block.splsda"}.
+#' @param object,x object of class inheriting from \code{"block.splsda"}. 
 #' @param ncomp Which component to plot calculated from each data set. Has to
 #' be lower than the minimum of \code{object$ncomp}.
 #' @param col.per.group A named character of colours for each group class

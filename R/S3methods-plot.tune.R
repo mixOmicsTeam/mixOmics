@@ -123,6 +123,8 @@ plot.tune.spls <-
                                 sd,
                                 cex) ## which keepA is not fixed?
             {
+            ## fix check issues
+            comp <- lower <- upper <- NULL
             
             # if sd is NULL & sd values are present, set it to TRUE
             sd <- .change_if_null(sd, default = !any(is.na(df$sd)))
