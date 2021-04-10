@@ -199,8 +199,7 @@ panel.ellipses = function(x, y, Y = Y, pch = par("pch"), col.lm = "red", axes = 
     min.ellipse = sapply(coord.ellipse, function(x){apply(x, 2, min)})
     ind.names = names(Y)
     cex = 0.5
-    
-    plot(x, y, xlab = "X.label", ylab = "Y.label", col = col.per.group, pch=20, axes=axes,
+    plot(x, y, xlab = "X.label", ylab = "Y.label", col = col.per.group[Y], pch=20, axes=axes,
          xlim = c(min(x, min.ellipse[1, ]), max(x, max.ellipse[1, ])), ylim = c(min(y, min.ellipse[2, ]), max(y, max.ellipse[2, ])))
     #text(x, y, ind.names, col = col, cex = cex)
     box()
