@@ -1,7 +1,7 @@
 Package: mixOmics
 Type: Package
 Title: Omics Data Integration Project
-Version: 6.15.33
+Version: 6.15.34
 Depends: R (>= 3.5.0), 
          MASS, 
          lattice, 
@@ -50,7 +50,7 @@ URL: http://www.mixOmics.org
 BugReports: https://github.com/mixOmicsTeam/mixOmics/issues/
 Repository: Bioconductor
 VignetteBuilder: knitr
-Date: 2021-01-18
+Date: 2021-04-10
 Packaged: 2017-02-06 06:49:17 UTC; klecao
 NeedsCompilation: no
 biocViews: ImmunoOncology, 
