@@ -56,7 +56,7 @@ plot.perf.pls.mthd <-
               pch.size = 3,
               cex = 1.2,
               col = color.mixo(1),
-              title = NULL,
+              title = NULL, ## not used by feature-wise measures
               ...
     )
     {
@@ -133,6 +133,7 @@ plot.perf.pls.mthd <-
         
         p
     }
+
 
 #' @method plot perf.spls.mthd
 #' @rdname plot.perf.pls

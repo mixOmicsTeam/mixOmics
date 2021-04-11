@@ -43,8 +43,7 @@
 #' colour per component.
 #' @param title Plot title.
 #' @param size.range Numeric vector of length 2. Range of sizes used in plot.
-#' @param ... Further arguments sent to \code{\link{xyplot}} function.
-#' Not currently used for \code{tune.spca}.
+#' @param ... Not currently used.
 #' @return none
 #' @author Kim-Anh Lê Cao, Florian Rohart, Francois Bartolo, Al J Abadi
 #' @seealso \code{\link{tune.mint.splsda}}, \code{\link{tune.splsda}},
@@ -123,6 +122,7 @@ plot.tune.spls <-
                                 sd,
                                 cex) ## which keepA is not fixed?
             {
+            # TODO do we need this one now that we have plot.tune.spls1? Is it used?
             ## fix check issues
             comp <- lower <- upper <- NULL
             
@@ -492,3 +492,152 @@ plot.tune.spca <-
         }
         
     }
+
+## --------------------------- plot.tune.(s)pls --------------------------- ##
+#' Plot for model performance
+#' 
+#' Function to plot performance criteria, such as classification error rate or
+#' balanced error rate on a tune.splsda result.
+#' 
+#' \code{plot.tune.splsda} plots the classification error rate or the balanced
+#' error rate from x$error.rate, for each component of the model. A lozenge
+#' highlights the optimal number of variables on each component.
+#' 
+#' \code{plot.tune.block.splsda} plots the classification error rate or the
+#' balanced error rate from x$error.rate, for each component of the model. The
+#' error rate is ordered by increasing value, the yaxis shows the optimal
+#' combination of keepX at the top (e.g. `keepX on block 1'_`keepX on block
+#' 2'_`keepX on block 3')
+#' 
+#' @param x an \code{tune.splsda} object.
+#' @param optimal If TRUE, highlights the optimal keepX per component
+#' @param sd If 'nrepeat' was used in the call to 'tune.splsda', error bar
+#' shows the standard deviation if sd=TRUE
+#' @param col character (or symbol) color to be used, possibly vector. One
+#' colour per component.
+#' @return none
+#' @author Kim-Anh Lê Cao, Florian Rohart, Francois Bartolo, AL J Abadi
+#' @seealso \code{\link{tune.mint.splsda}}, \code{\link{tune.splsda}}
+#' \code{\link{tune.block.splsda}} and http://www.mixOmics.org for more
+#' details.
+#' @keywords regression multivariate hplot
+#' @name plot.tune
+#' @method plot tune.spls1
+#' @importFrom reshape2 melt
+#' @export
+plot.tune.spls1 <-
+    function(x, optimal = TRUE, sd = TRUE, col, ...)
+    {
+        # TODO add examples
+        # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
+        y = Comp = lwr = upr = NULL
+        
+        if (!is.logical(optimal))
+            stop("'optimal' must be logical.", call. = FALSE)
+        
+        
+        error <- x$error.rate
+        if(sd & !is.null(x$error.rate.sd))
+        {
+            error.rate.sd = x$error.rate.sd
+            ylim = range(c(error + error.rate.sd), c(error - error.rate.sd))
+        } else {
+            error.rate.sd = NULL
+            ylim = range(error)
+        }
+        
+        optimal <- optimal && (any(grepl('mint', class(x))) || x$call$nrepeat > 2)
+        select.keepX <- x$choice.keepX[colnames(error)]
+        comp.tuned = length(select.keepX)
+        
+        legend=NULL
+        measure = x$measure
+        
+        if (length(select.keepX) < 10)
+        {
+            #only 10 colors in color.mixo
+            if(missing(col))
+                col = color.mixo(seq_len(comp.tuned))
+        } else {
+            #use color.jet
+            if(missing(col))
+                col = color.jet(comp.tuned)
+        }
+        if(length(col) != comp.tuned)
+            stop("'col' should be a vector of length ", comp.tuned,".")
+        
+        if(measure == "overall")
+        {
+            ylab = "Classification error rate"
+        } else if (measure == "BER")
+        {
+            ylab = "Balanced error rate"
+        } else if (measure == "MSE"){
+            ylab = "MSE"
+        }else if (measure == "MAE"){
+            ylab = "MAE"
+        }else if (measure == "Bias"){
+            ylab = "Bias"
+        }else if (measure == "R2"){
+            ylab = "R2"
+        }else if (measure == "AUC"){
+            ylab = "AUC"
+        }
+        
+        #legend
+        names.comp = substr(colnames(error),5,10) # remove "comp" from the name
+        if(length(x$choice.keepX) == 1){
+            #only first comp tuned
+            legend = "1"
+        } else if(length(x$choice.keepX) == comp.tuned) {
+            # all components have been tuned
+            legend = c("1", paste("1 to", names.comp[-1]))
+        } else {
+            #first components were not tuned
+            legend = paste("1 to", names.comp)
+        }
+        
+        
+        # creating data.frame with all the information
+        df = melt(error)
+        colnames(df) = c("x","Comp","y")
+        df$Comp = factor(df$Comp, labels=legend)
+        
+        p = ggplot(df, aes(x = x, y = y, color = Comp)) +
+            labs(x = "Number of selected features", y = ylab) +
+            theme_bw() +
+            geom_line()+ geom_point()
+        p = p+ scale_x_continuous(trans='log10') +
+            scale_color_manual(values = col)
+        
+        # error bar
+        if(!is.null(error.rate.sd))
+        {
+            dferror = melt(error.rate.sd)
+            df$lwr = df$y - dferror$value
+            df$upr = df$y + dferror$value
+            
+            #adding the error bar to the plot
+            p = p + geom_errorbar(data=df,aes(ymin=lwr, ymax=upr), width = 0.04)
+        }
+        
+        if(optimal)
+        {
+            index = NULL
+            for(i in seq_len(comp.tuned))
+                index = c(index, which(df$x == select.keepX[i] & df$Comp == levels(df$Comp)[i]))
+            
+            # adding the choseen keepX to the graph
+            p = p + geom_point(data=df[index,],size=7, shape = 18)
+            p = p + guides(color = guide_legend(override.aes =
+                                                    list(size=0.7,stroke=1)))
+        }
+        
+        p
+    }
+
+#' @rdname plot.tune
+#' @method plot tune.splsda
+#' @export
+plot.tune.splsda <- plot.tune.spls1
+# TODO add examples

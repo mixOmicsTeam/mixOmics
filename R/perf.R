@@ -312,9 +312,9 @@ perf.mixo_pls <- function(object,
         features <- lapply(list(stability.X = 'X', stability.Y = 'Y'), function(z){
             lapply(.name_list(unique(features$comp)), function(n.comp){
                 
-                df <- features %>% 
-                    filter(block == z & comp == n.comp) %>% 
-                    .[,c('feature', 'stability')]
+                df <- features
+                df <- filter(df, block == z & comp == n.comp)
+                df <- df[,c('feature', 'stability')]
                 vec <- df$stability
                 names(vec) <- df$feature
                 sort(vec, decreasing = TRUE)
