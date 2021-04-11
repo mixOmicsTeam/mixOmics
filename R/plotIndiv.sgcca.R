@@ -68,8 +68,8 @@ plotIndiv.sgcca <-
     #-- rep.space
     rep.space = "multi" # rep.space is not used afterwards, put to "multi" to plot all blocks
     
-    input_consensus_blocks <- NULL
-    valid_consensus_blocks <- c('consensus', 'weighted.consensus')
+    input_average_blocks <- NULL
+    valid_average_blocks <- c('average', 'weighted.average')
     
     if (is.null(blocks))
     {
@@ -77,18 +77,18 @@ plotIndiv.sgcca <-
     } else if (is.numeric(blocks) & min(blocks) > 0 &  max(blocks) <=  length(object$names$blocks)) {
       blocks = object$names$blocks[blocks]
     } else if (is.character(blocks)) {
-      if (any(grepl(blocks, pattern = "consensus", ignore.case = TRUE))) {
-        input_consensus_blocks <- match.arg(blocks, choices = valid_consensus_blocks, several.ok = TRUE)
+      if (any(grepl(blocks, pattern = "average", ignore.case = TRUE))) {
+        input_average_blocks <- match.arg(blocks, choices = valid_average_blocks, several.ok = TRUE)
         supported.classes <- c("sgcca", "rgcca", "sgccda")
         if (! any(supported.classes %in% class(object)) ){
-          stop(sprintf("Consensus plots are supported for objects of classes: %s", paste(supported.classes, collapse = ", ")), call. = FALSE)
+          stop(sprintf("average plots are supported for objects of classes: %s", paste(supported.classes, collapse = ", ")), call. = FALSE)
         }
-        object <- .add_consensus_blocks(block_object = object, consensus_blocks = input_consensus_blocks)
+        object <- .add_average_blocks(block_object = object, average_blocks = input_average_blocks)
       }
       invalid_blocks <- setdiff(blocks, object$names$blocks)
       if (length(invalid_blocks) > 0  ) {
         valid_blocks <- object$names$blocks
-        stop(sprintf("Block(s) not found: %s. Blocks must be a selection of: %s", paste(invalid_blocks , collapse = ', '), paste(valid_blocks, collapse = ', ')))
+        stop(sprintf("Block(s) not found: %s. Blocks must be a selection of: %s, average, or weighted.average", paste(invalid_blocks , collapse = ', '), paste(valid_blocks, collapse = ', ')))
       }
     } else {
       stop("Incorrect value for 'blocks'", call. = FALSE)
@@ -204,23 +204,23 @@ plotIndiv.sgcca <-
     star = out$star
     plot_parameters = out$plot_parameters
     
-    if (!is.null(input_consensus_blocks)) {
-      ## ------ drop 'Block: ' from consensus labels
+    if (!is.null(input_average_blocks)) {
+      ## ------ drop 'Block: ' from average labels
       df$Block <- as.character(df$Block)
       
-      df$Block[df$Block == 'Block: weighted.consensus'] <- 'Consensus (weighted)'
-      df.ellipse$Block[df.ellipse$Block == 'Block: weighted.consensus'] <- 'Consensus (weighted)'
+      df$Block[df$Block == 'Block: weighted.average'] <- 'average (weighted)'
+      df.ellipse$Block[df.ellipse$Block == 'Block: weighted.average'] <- 'average (weighted)'
       
-      df$Block[df$Block == 'Block: consensus'] <- 'Consensus'
-      df.ellipse$Block[df.ellipse$Block == 'Block: consensus'] <- 'Consensus'
+      df$Block[df$Block == 'Block: average'] <- 'average'
+      df.ellipse$Block[df.ellipse$Block == 'Block: average'] <- 'average'
       
       df$Block <- factor(df$Block)
       
-      ## ------ drop explained variance on axes if only consensus asked
+      ## ------ drop explained variance on axes if only average asked
       if (length(unique(df$Block)) == 1) {
-        X.label <- 'variate 1 - consensus'
-        Y.label <- 'variate 2 - consensus'
-        Z.label <- 'variate 3 - consensus'
+        X.label <- 'variate 1 - average'
+        Y.label <- 'variate 2 - average'
+        Z.label <- 'variate 3 - average'
       }
     }
     

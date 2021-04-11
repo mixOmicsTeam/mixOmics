@@ -460,8 +460,8 @@ any.}
 \code{\link{background.predict}}}
 
 \item{blocks}{integer value or name(s) of block(s) to be plotted using the
-GCCA module. "consensus" and "weighted.consensus" will create consensus and
-weighted consensus plots, respectively. See examples.}
+GCCA module. "average" and "weighted.average" will create average and
+weighted average plots, respectively. See details and examples.}
 }
 \value{
 none
@@ -505,10 +505,10 @@ the surfaces obtained for higher order components cannot be projected onto a
 2D representation in a meaningful way. For more details, see
 \code{\link{background.predict}}
 
-The argument \code{block = 'consensus'} averages the components from all
-blocks to produce a consensus plot. The argument
-\code{block='weighted.consensus'} is a weighted average of the components
-according to their correlation with the outcome \code{Y}
+The argument \code{block = 'average'} averages the components from all blocks
+to produce a consensus plot. The argument \code{block='weighted.average'} is
+a weighted average of the components according to their correlation with the
+outcome Y.
 
 For customized plots (i.e. adding points, text), use the style = 'graphics'
 (default is ggplot2).
@@ -713,14 +713,14 @@ plotIndiv(nutrimouse.sgccda1)
 # displaying only 2 blocks
 plotIndiv(nutrimouse.sgccda1, blocks = c(1,2), group = nutrimouse$diet)
 
-# include the consensus plot (average the components across datasets)
-plotIndiv(nutrimouse.sgccda1, blocks = "consensus", group = nutrimouse$diet)
+# include the average plot (average the components across datasets)
+plotIndiv(nutrimouse.sgccda1, blocks = "average", group = nutrimouse$diet)
 
-# include the weighted consensus plot (average of components weighted by 
+# include the weighted average plot (average of components weighted by 
 # correlation of each dataset with Y)
 plotIndiv(
     nutrimouse.sgccda1,
-    blocks = c("consensus", "weighted.consensus"),
+    blocks = c("average", "weighted.average"),
     group = nutrimouse$diet
 )
 

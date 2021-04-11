@@ -195,14 +195,14 @@ plotIndiv(nutrimouse.sgccda1)
 # displaying only 2 blocks
 plotIndiv(nutrimouse.sgccda1, blocks = c(1,2), group = nutrimouse$diet)
 
-# include the consensus plot (average the components across datasets)
-plotIndiv(nutrimouse.sgccda1, blocks = "consensus", group = nutrimouse$diet)
+# include the average plot (average the components across datasets)
+plotIndiv(nutrimouse.sgccda1, blocks = "average", group = nutrimouse$diet)
 
-# include the weighted consensus plot (average of components weighted by 
+# include the weighted average plot (average of components weighted by 
 # correlation of each dataset with Y)
 plotIndiv(
     nutrimouse.sgccda1,
-    blocks = c("consensus", "weighted.consensus"),
+    blocks = c("average", "weighted.average"),
     group = nutrimouse$diet
 )
 

@@ -117,7 +117,7 @@ test_that("plotIndiv.rcc works without ind.names", code = {
 
 ## ------------------------------------------------------------------------ ##
 
-test_that("plotIndiv.sgcca(..., blocks = 'consensus') works", code = {
+test_that("plotIndiv.sgcca(..., blocks = 'average') works", code = {
     data(nutrimouse)
     Y = unmap(nutrimouse$diet)
     data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
@@ -129,14 +129,14 @@ test_that("plotIndiv.sgcca(..., blocks = 'consensus') works", code = {
                                       scheme = "horst")
     
     # default style: one panel for each block
-    plotindiv_res <- plotIndiv(nutrimouse.sgcca, blocks = c("lipid","consensus"))
+    plotindiv_res <- plotIndiv(nutrimouse.sgcca, blocks = c("lipid","average"))
     
-    expect_true(any(grepl(pattern = "Consensus", x = unique(plotindiv_res$df$Block))))
+    expect_true(any(grepl(pattern = "average", x = unique(plotindiv_res$df$Block))))
 })
 
 ## ------------------------------------------------------------------------ ##
 
-test_that("plotIndiv.sgccda(..., blocks = 'consensus') works with ind.names and ell", code = {
+test_that("plotIndiv.sgccda(..., blocks = 'average') works with ind.names and ell", code = {
     data("breast.TCGA")
     data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
                 protein = breast.TCGA$data.train$protein)
@@ -147,14 +147,14 @@ test_that("plotIndiv.sgccda(..., blocks = 'consensus') works with ind.names and 
     list.keepX = list(mrna = rep(4, 2), mirna = rep(5,2), protein = rep(5, 2))
     TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
                                      ncomp = 2, keepX = list.keepX, design = design)
-    blocks <- c("consensus", "mrna", "weighted.consensus")
+    blocks <- c("average", "mrna", "weighted.average")
     diablo_plot <- plotIndiv(TCGA.block.splsda, ind.names = FALSE, blocks = blocks)
-    expect_true(all(unique(diablo_plot$df$Block) %in% c('Consensus', 'Block: mrna', 'Consensus (weighted)')))
+    expect_true(all(unique(diablo_plot$df$Block) %in% c('average', 'Block: mrna', 'average (weighted)')))
 })
 
 ## ------------------------------------------------------------------------ ##
 
-test_that("plotIndiv.sgccda(..., blocks = 'consensus') works with ellipse=TRUE", code = {
+test_that("plotIndiv.sgccda(..., blocks = 'average') works with ellipse=TRUE", code = {
     data("breast.TCGA")
     data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
                 protein = breast.TCGA$data.train$protein)
@@ -165,9 +165,9 @@ test_that("plotIndiv.sgccda(..., blocks = 'consensus') works with ellipse=TRUE",
     list.keepX = list(mrna = rep(4, 2), mirna = rep(5,2), protein = rep(5, 2))
     TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
                                      ncomp = 2, keepX = list.keepX, design = design)
-    blocks <- c("consensus", "mrna", "weighted.consensus")
+    blocks <- c("average", "mrna", "weighted.average")
     diablo_plot <- plotIndiv(TCGA.block.splsda, ind.names = TRUE, blocks = blocks, ellipse = TRUE)
-    expect_true(all(unique(diablo_plot$df.ellipse$Block) %in% c('Consensus', 'Block: mrna', 'Consensus (weighted)')))
+    expect_true(all(unique(diablo_plot$df.ellipse$Block) %in% c('average', 'Block: mrna', 'average (weighted)')))
 })
 
 unlink(list.files(pattern = "*.pdf"))

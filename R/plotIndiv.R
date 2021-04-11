@@ -37,10 +37,10 @@
 #' 2D representation in a meaningful way. For more details, see
 #' \code{\link{background.predict}}
 #' 
-#' The argument \code{block = 'consensus'} averages the components from all
-#' blocks to produce a consensus plot. The argument
-#' \code{block='weighted.consensus'} is a weighted average of the components
-#' according to their correlation with the outcome \code{Y}
+#' The argument \code{block = 'average'} averages the components from all blocks
+#' to produce a consensus plot. The argument \code{block='weighted.average'} is
+#' a weighted average of the components according to their correlation with the
+#' outcome Y.
 #' 
 #' For customized plots (i.e. adding points, text), use the style = 'graphics'
 #' (default is ggplot2).
@@ -58,8 +58,8 @@
 #' \code{"rgcca"} and \code{"sgcca"}, numerical value(s) indicating the block
 #' data set to represent needs to be specified.
 #' @param blocks integer value or name(s) of block(s) to be plotted using the
-#' GCCA module. "consensus" and "weighted.consensus" will create consensus and
-#' weighted consensus plots, respectively. See examples.
+#' GCCA module. "average" and "weighted.average" will create average and
+#' weighted average plots, respectively. See details and examples.
 #' @param study Indicates which study-specific outputs to plot. A character
 #' vector containing some levels of \code{object$study}, "all.partial" to plot
 #' all studies or "global" is expected. Default to "global".

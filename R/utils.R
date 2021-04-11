@@ -178,15 +178,15 @@ stratified.subsampling <- function(Y, folds = 10)
     )
 }
 
-## ------------------------ .add_consensus_blocks ------------------------- ##
-#' Add consensus blocks to DIABLO object
+## ------------------------ .add_average_blocks ------------------------- ##
+#' Add average blocks to DIABLO object
 #'
-#' For plotIndiv(..., blocks = "consensus")
+#' For plotIndiv(..., blocks = "average")
 #' 
 #' @param block_object A diablo object
-#' @param consensus_blocks One or both of c('consensus', 'weighted.consensus')
+#' @param average_blocks One or both of c('average', 'weighted.average')
 #'
-#' @return A diablo object with consensus blocks added for smooth input into plotIndiv.sgccda
+#' @return A diablo object with average blocks added for smooth input into plotIndiv.sgccda
 #' @author Al J Abadi
 #' @examples 
 #' \dontrun{
@@ -201,23 +201,23 @@ stratified.subsampling <- function(Y, folds = 10)
 #'                                      ncomp = 2,
 #'                                      keepX = list(gene = c(10,10), lipid = c(15,15)),
 #'                                      scheme = "centroid")
-#' nutrimouse.sgccda.consensus <- mixOmics:::.add_consensus_blocks(nutrimouse.sgccda1, consensus_blocks = "consensus")
-#' names(nutrimouse.sgccda.consensus$X)
-#> "gene"      "lipid"     "consensus"
+#' nutrimouse.sgccda.average <- mixOmics:::.add_average_blocks(nutrimouse.sgccda1, average_blocks = "average")
+#' names(nutrimouse.sgccda.average$X)
+#> "gene"      "lipid"     "average"
 #' }
 #' @noRd
-.add_consensus_blocks <- function(block_object, consensus_blocks = c('consensus', 'weighted.consensus')) {
+.add_average_blocks <- function(block_object, average_blocks = c('average', 'weighted.average')) {
     X_blocks <- with(block_object, names$blocks[-which(names$block == 'Y')])
-    consensus_blocks <- match.arg(consensus_blocks, several.ok = TRUE)
+    average_blocks <- match.arg(average_blocks, several.ok = TRUE)
     
-    .get_consensus_variates <- function(object, X_blocks, weighted = FALSE) {
+    .get_average_variates <- function(object, X_blocks, weighted = FALSE) {
         
         arrays <- object$variates
         arrays <- arrays[X_blocks]
         if (isTRUE(weighted)) {
             if (!is(block_object, "sgccda")) {
-                if ('weighted.consensus' %in% consensus_blocks ) {
-                    stop("'weighted.consensus' plots are only available for block.splsda objects ")
+                if ('weighted.average' %in% average_blocks ) {
+                    stop("'weighted.average' plots are only available for block.splsda objects ")
                 }
             }
             weights <- object$weights
@@ -241,17 +241,17 @@ stratified.subsampling <- function(Y, folds = 10)
         sweep(wtd_sum, MARGIN = 2, colSums(weights), FUN = "/")
     }
     
-    for (consensus_block in consensus_blocks) {
-        block_object$X[[consensus_block]] <-  0
-        if (consensus_block == "weighted.consensus") {
-            block_object$variates[[consensus_block]] <-  .get_consensus_variates(object = block_object, X_blocks = X_blocks, weighted = TRUE)
+    for (average_block in average_blocks) {
+        block_object$X[[average_block]] <-  0
+        if (average_block == "weighted.average") {
+            block_object$variates[[average_block]] <-  .get_average_variates(object = block_object, X_blocks = X_blocks, weighted = TRUE)
         }
-        if (consensus_block == "consensus") {
-            block_object$variates[[consensus_block]] <-  .get_consensus_variates(object = block_object, X_blocks = X_blocks, weighted = FALSE)
+        if (average_block == "average") {
+            block_object$variates[[average_block]] <-  .get_average_variates(object = block_object, X_blocks = X_blocks, weighted = FALSE)
         }
-        block_object$names$blocks <- c(block_object$names$blocks, consensus_block)
-        block_object$ncomp[consensus_block] <- block_object$ncomp[1]
-        block_object$prop_expl_var[consensus_block] <- 0
+        block_object$names$blocks <- c(block_object$names$blocks, average_block)
+        block_object$ncomp[average_block] <- block_object$ncomp[1]
+        block_object$prop_expl_var[average_block] <- 0
         
     }
     
