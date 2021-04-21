@@ -146,7 +146,7 @@ plot.tune.spls <-
                 geom_line(show.legend = FALSE)
             if (sd)
             {
-                p <- p + geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.4)
+                p <- p + geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.04)
             }
             p <- p + labs(x = keepA, y = measure, col = title)
             
@@ -481,7 +481,7 @@ plot.tune.spca <-
         {
             p <- p + geom_errorbar(aes_string(ymin = 'corQ1', ymax = 'corQ3'), 
                                    # position = position_dodge(0.02),
-                                   width = 0.4,
+                                   width = 0.04,
                                    ...)
             ## suppress "position_dodge requires non-overlapping x intervals"
             suppressWarnings(print(p))
