@@ -158,8 +158,26 @@ names(pch) <- blocks
 pch
 #>   gene   lipid     Y 
 #>   1       2        3 
-plotArrow(nutrimouse.sgcca, group = nutrimouse$genotype, ind.names = TRUE, 
-           pch =pch, legend.title = 'Genotype' )
+p <- plotArrow(nutrimouse.sgcca, group = nutrimouse$genotype, ind.names = TRUE, 
+           pch = pch, legend.title = 'Genotype')
+
+p
+
+### further customise the ggplot object
+# custom labels
+p + labs(x = 'Variate 1',
+         y = 'Variate 2') +
+    guides(
+        shape = guide_legend(title = 'BLOCK')
+    ) 
+# TODO include these customisations into function args
+## custom shapes
+p + scale_shape_manual(values = c(
+    centroid = 1,
+    gene = 2,
+    lipid = 3,
+    Y = 4
+))
 
 ## individual representation for objects of class 'sgccda'
 # ----------------------------------------------------
