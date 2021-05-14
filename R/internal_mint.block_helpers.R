@@ -47,8 +47,7 @@
 #' @noRd
 get.weights <- function(variates, indY)
 {
-    ## for all X blocks, calculate correlation matrix of block components and Y components
-    ## and keep the intra-component correlations only
+    ## for all X blocks, and for i=1:ncomp calculate correlation of block_component_i and Y_component_i
     block_correlation_with_Y <- lapply(variates[-indY], function(x) {
         diag(cor(x, variates[[indY]]))
     })

@@ -144,7 +144,7 @@ MCVfold.block.splsda <-
                     temp = stratified.subsampling(Y, folds = M)
                     folds = temp$SAMPLE
                     if(temp$stop > 0 & nrep == 1) # to show only once
-                        warning("At least one class is not represented in one fold,
+                        warning("\nAt least one class is not represented in one fold,
                     which may unbalance the error rate.\n  Consider a number of
                     folds lower than the minimum in table(Y): ", min(table(Y)))
                 }
