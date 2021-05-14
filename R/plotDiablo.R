@@ -68,6 +68,7 @@ plotDiablo <- function(object,
     if (!is.null(list(...)$x))
         .stop("use of 'x' has been deprecated. Use 'object' instead.")
     
+    Y <- object$Y
     ## col.per.group
     col.per.group <- .change_if_null(col.per.group, default =  color.mixo(1:nlevels(Y)))
     col.per.group <- .get.cols.and.group(col.per.group = col.per.group, group = Y, object = object, n_ind = length(object$names$sample))
@@ -87,7 +88,6 @@ plotDiablo <- function(object,
         stop("This function is only available when there are more than 3 blocks") # so 2 blocks + the outcome Y
     
     # check input parameters
-    Y=object$Y
     
     if (length(ncomp) != 1 | ncomp > min(object$ncomp))
         stop(paste0("'ncomp' must be a numeric value lower than ", min(object$ncomp),", which is min(object$ncomp)"))
