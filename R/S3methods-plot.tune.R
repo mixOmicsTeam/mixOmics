@@ -537,10 +537,15 @@ plot.tune.spls1 <-
         
         
         error <- x$error.rate
-        if(sd & !is.null(x$error.rate.sd))
+        if(sd == TRUE)
         {
-            error.rate.sd = x$error.rate.sd
-            ylim = range(c(error + error.rate.sd), c(error - error.rate.sd))
+            if (!is.null(x$error.rate.sd)) 
+            {
+                error.rate.sd = x$error.rate.sd
+                ylim = range(c(error + error.rate.sd), c(error - error.rate.sd))
+            } else {
+                message("sd bars cannot be calculated when nrepeat = 1.\n")
+            }
         } else {
             error.rate.sd = NULL
             ylim = range(error)
