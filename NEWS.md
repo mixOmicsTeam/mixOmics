@@ -1,3 +1,37 @@
+## version 6.18.0
+
+### new features / enhancements / changes
+
+* `plotIndiv.pca` default shape set to `16`
+
+### bug fixes
+
+* `plotDiablo` error `undefined variable (Y)` fixed
+
+## version 6.16.0
+
+### new features / enhancements / changes
+
+* `biplot` default colours now match `plotIndiv`
+* `biplot` now takes `cex` argument
+* `nipals` now takes `center` and `scale` arguments
+* `nipals` now only outputs `p`, `t` and `eig`
+* new function `impute.nipals` to impute missing values using NIPALS algorithm
+* `nipals` function checks for orthogonality of components
+* `plot.tune` legends improved
+* `plot.tune` now uses colour-blind friendly colours
+* new `tune.spls` function to perform variable selection on both X and Y
+* `tune.spls` now chooses optimal keepX even if nrepeat < 3
+* `tune.spls` now takes `validation` arg
+* `tune.spca` is now much faster
+* `circosPlot` links can now have adjustable width (#118)
+* `plotDiablo` now takes `col.per.group` (#119)
+* terminology change: `consensus` renamed to `average` in Diablo context
+
+### bug fixes
+
+* `plotVar` bug fixed
+
 ## version 6.14.0
 
 ### new features / enhancements / changes
