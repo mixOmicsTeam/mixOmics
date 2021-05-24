@@ -552,8 +552,10 @@ predict.mixo_pls <-
             # if misdata.all and ind.na.X are provided, we don't calculate the is.na(X) as it takes time. Used in tune functions.
             concat.newdata = lapply(1:J, function(q){replace(concat.newdata[[q]], list(...)$is.na.newdata[[q]], 0)})
             
-        } else {
-            # replace NA by 0
+        }
+        
+        if (any(sapply(concat.newdata, anyNA)))
+        {
             concat.newdata = lapply(concat.newdata,function(x)
             {
                 if (anyNA(x)){
@@ -563,10 +565,7 @@ predict.mixo_pls <-
                 x
             })
         }
-        
-        if (any(sapply(concat.newdata, anyNA)))
-            stop("Some missing values are present in the test data")
-        
+     
         
         # replace NA by 0 in Y
         Y[is.na(Y)] = 0
