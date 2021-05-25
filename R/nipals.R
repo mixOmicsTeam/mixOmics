@@ -134,7 +134,7 @@ nipals <- function (X,
             max.comp.cor <-  max(abs(cor(th, t.mat[,seq_len(h-1),drop=FALSE])))
             if (max.comp.cor >= 0.05)
             {
-                message(sprintf("Component %s is not orthogonal to previous ones. (cor = %s)",
+                message(sprintf("Component %s is not orthogonal to previous ones. (cor = %s).\nConsider filtering features with high rate of missing values or imputing the missing values.\n",
                                 h, 
                                 round(max.comp.cor, 3)))
             }

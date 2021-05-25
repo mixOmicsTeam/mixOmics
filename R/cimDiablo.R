@@ -180,7 +180,8 @@ cimDiablo = function(object,
     y = keepA[-length(keepA)],
     SIMPLIFY = FALSE)
     XDat = do.call(cbind, XDatList)
-    XDat[which(XDat > 2)] = 2
+    XDat[is.na(XDat)] <- 0 # XDat is centred so this is equiv. to imputation by the mean
+    XDat[which(XDat > 2)] = 2 # to avoid huge effects from outliers
     XDat[which(XDat < -2)] = -2
     
     #dark = brewer.pal(n = 12, name = 'Paired')[seq(2, 12, by = 2)]
