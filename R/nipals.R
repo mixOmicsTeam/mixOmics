@@ -67,9 +67,16 @@ nipals <- function (X,
     #-- loop on h --#
     for (h in 1:ncomp)
     {
-        ## initialise with maximum variance column
-        max.var.col <- which.max(apply(X.iter, 2, var, na.rm = TRUE))
-        th <- X.iter[, max.var.col]
+        if (na.X)
+        {
+            ## initialise with minimum missing value column
+            init.col <- which.min(colSums(is.na(X.iter)))
+        } else {
+            ## initialise with maximum variance column
+            init.col <- which.max(apply(X.iter, 2, var, na.rm = TRUE))
+        }
+        
+        th <- X.iter[, init.col]
         th[is.na(th)] <- 0
         ph.old <- 1/rep(sqrt(nc), nc)
         ph.new <- vector("numeric", length = nc)
