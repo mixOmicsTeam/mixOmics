@@ -407,6 +407,12 @@ network <- function(mat,
         
     } else if(any(class.object %in% object.blocks)) {
         
+        mat$X <- mapply(mat$X, names(mat$X), FUN =  function(x, y)
+        {
+            colnames(x) <- paste0(colnames(x),"_", y)
+            x
+        }, SIMPLIFY = FALSE)
+        
         # remove Y from the list of blocks for DA objects
         if(any(class.object == "DA"))
         {
