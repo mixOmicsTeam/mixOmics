@@ -3,10 +3,13 @@
 ### new features / enhancements / changes
 
 * `plotIndiv.pca` default shape set to `16`
+* `circosPlot` & `network` now support blocks with similar feature names 
 
 ### bug fixes
 
 * `plotDiablo` error `undefined variable (Y)` fixed
+* `nipals` initialisation bug with high-variance high-NA rate column fixed 
+* `cim` bug with high NA rate data fixed using imputation by the column mean
 
 ## version 6.16.0
 
@@ -17,7 +20,7 @@
 * `nipals` now takes `center` and `scale` arguments
 * `nipals` now only outputs `p`, `t` and `eig`
 * new function `impute.nipals` to impute missing values using NIPALS algorithm
-* `nipals` function checks for orthogonality of components
+* `nipals` function checks for orthogonality of components when NA present
 * `plot.tune` legends improved
 * `plot.tune` now uses colour-blind friendly colours
 * new `tune.spls` function to perform variable selection on both X and Y
