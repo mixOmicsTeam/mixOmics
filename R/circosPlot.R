@@ -153,9 +153,23 @@ circosPlot <- function(object,
             stop("'color.cor' must be of length 2")
     }
     
-    X = object$X
+    ## create unique feature names for circosPlot
+    object$X <- mapply(object$X, names(object$X), FUN = function(mat,blockname)
+    {
+        colnames(mat) <- sprintf("%s_%s", colnames(mat), blockname)
+        mat
+    }, SIMPLIFY = FALSE)
+    loadings.X <- object$loadings[-length(object$loadings)]
+    original.var.names <- lapply(loadings.X, rownames)
+    loadings.X <- mapply(loadings.X, names(loadings.X), FUN = function(mat,blockname)
+    {
+        rownames(mat) <- sprintf("%s_%s", rownames(mat), blockname)
+        mat
+    }, SIMPLIFY = FALSE)
+    object$loadings[-length(object$loadings)] <- loadings.X
+    ## DONE - create unique feature names for circosPlot
     Y = object$Y
-    
+    X = object$X
     #need to reorder variates and loadings to put 'Y' in last
     indY = object$indY
     object$variates = c(object$variates[-indY], object$variates[indY])
@@ -167,8 +181,7 @@ circosPlot <- function(object,
                       function(x){1 : nrow(x)})
     if (is.null(var.names))
     {
-        var.names.list = unlist(sapply(object$loadings[
-            -length(object$loadings)], rownames))
+        var.names.list = original.var.names
     } else if (is.list(var.names)) {
         if (length(var.names) != length(object$loadings[
             -length(object$loadings)]))
@@ -215,7 +228,7 @@ circosPlot <- function(object,
         apply(abs(i)[, comp, drop = FALSE], 1, sum) > 0)
     cord = mapply(function(x, y, keep){
         cor(x[, keep], y[, comp], use = "pairwise")
-    }, x=object$X, y=object$variates[-length(object$variates)],
+    }, x=X, y=object$variates[-length(object$variates)],
     keep = keepA[-length(keepA)],SIMPLIFY = FALSE)
     
     simMatList = vector("list", length(X))
@@ -226,7 +239,8 @@ circosPlot <- function(object,
             simMatList[[i]][[j]] = cord[[i]] %*% t(cord[[j]])
         }
     }
-    simMat = do.call(rbind, lapply(simMatList, function(i) do.call(cbind, i)))
+    simMatList <- lapply(simMatList, function(i) do.call(cbind, i))
+    simMat = do.call(rbind, simMatList)
     
     ## merge all similarity measures in one data.frame where rows are samples
     Xdat = as.data.frame(do.call(cbind, X)[, colnames(simMat)])
@@ -368,6 +382,20 @@ circosPlot <- function(object,
                col = "black", cex=size.legend, bty = "n")
     }
     par(xpd=opar,mar=opar1)# put the previous default parameter for xpd
+    
+    # use original feature names in similarity matrix if possible
+    feat_block <- colnames(simMat)
+    # remove anything from last underscore to end of the feature name
+    feat <- gsub('(.*)_\\w+', '\\1', feat_block)
+    if(!any(duplicated(feat)))
+    {
+        dimnames(simMat) <- list(feat, feat)
+    } else {
+        cat("\n")
+        cat("adding block name to feature names in the output similarity ")
+        cat("matrix as there are similar feature names across blocks.")
+        cat("\n")
+    }
     return(invisible(simMat))
 }
 

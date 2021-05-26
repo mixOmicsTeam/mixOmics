@@ -16,4 +16,29 @@ test_that("circosPlot works", code = {
     cp_res <- circosPlot(nutrimouse.sgccda, cutoff = 0.7, ncol.legend = 2, size.legend = 1.1,
                         color.Y = 1:5, color.blocks = c("green","brown"), color.cor = c("magenta", "purple"))
     expect_is(cp_res, "matrix")
+    
 })
+
+test_that("circosPlot works with similar feature names in different blocks", code = {
+
+    create_similar_feature_names <- function(data_list)
+    {
+        lapply(data_list, function(x){
+            colnames(x) <- paste0('feature_', seq_len(ncol(x)))
+            x
+        })
+    }
+    data("breast.TCGA")
+    data = list(mrna = breast.TCGA$data.train$mrna, 
+                mirna = breast.TCGA$data.train$mirna,
+                protein = breast.TCGA$data.train$protein)
+    
+    data <- create_similar_feature_names(data)
+    list.keepX = list(mrna = rep(20, 2), mirna = rep(10,2), protein = rep(10, 2))
+    TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype, 
+                                     ncomp = 2, keepX = list.keepX, design = 'full')
+    cp_res <- circosPlot(TCGA.block.splsda, cutoff = 0.7)
+    
+    expect_is(cp_res, "matrix")
+})
+
