@@ -690,7 +690,11 @@ plotVar <-
             }
             
             #-- Modify scale colour - Change X/Ylabel - split plots into Blocks
-            p = p + scale_colour_manual(values = unique(col)[match(levels(factor(as.character(df$Block))), levels(df$Block))], name = legend.title, breaks = levels(df$Block))
+            cols <- unique(df[,c('Block', "col")])
+            col.per.group <- cols[,'col']
+            names(col.per.group) <- cols[,'Block']
+            
+            p = p + scale_colour_manual(values = col.per.group)
             p = p + scale_x_continuous(limits = c(-1, 1)) + scale_y_continuous(limits = c(-1, 1))
             p = p + facet_wrap(~ Overlap, ncol = 2, as.table = TRUE)
             

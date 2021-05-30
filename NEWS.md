@@ -7,6 +7,7 @@
 
 ### bug fixes
 
+* `plotVar` legend colour mismatch bug fixed
 * `plotDiablo` error `undefined variable (Y)` fixed
 * `nipals` initialisation bug with high-variance high-NA rate column fixed 
 * `cim` bug with high NA rate data fixed using imputation by the column mean
