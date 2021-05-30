@@ -133,6 +133,19 @@ jobs:
         run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
 
+      - name: Push to DockerHub
+        if: >
+            github.event_name != 'schedule' && github.repository == 'mixOmicsTeam/mixOmics' &&
+            ('${GITHUB_REF##*/}' == 'master' || '${GITHUB_REF##*/}' == 'devel')
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: mixomicsteam/mixomics
+          tag_with_ref: true
+          tag_with_sha: true
+          tags: latest
+
       - name: Test coverage 🔍
         # if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
         # the commands between 'set +e' and 'set -e' are run without throwing any error
