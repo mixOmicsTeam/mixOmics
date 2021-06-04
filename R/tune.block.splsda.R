@@ -128,7 +128,7 @@ tune.block.splsda <-
     }
     ## ----------- checks -----------
     
-    # check inpuy 'Y' and transformation in a dummy matrix
+    # check input 'Y' and transformation in a dummy matrix
     if (!missing(Y))
     {
       if (is.null(dim(Y)))
@@ -159,6 +159,14 @@ tune.block.splsda <-
       stop("Either 'Y' or 'indY' is needed")
       
     }
+    ## check using internal #TODO we need to unify the checks
+    Y.check <- unmap(Y)
+    Y.check <- matrix(Y.check, nrow = nrow(Y.check), dimnames = list(rownames(X[[1]]), NULL))
+    Check.entry.wrapper.mint.block(X = X, Y = Y.check, indY = indY,
+                                   ncomp = ncomp, DA=TRUE,
+                                   design = design, init = init, scheme = scheme, scale = scale,
+                                   near.zero.var = near.zero.var, mode = 'regression', tol = tol,
+                                   max.iter = max.iter)
     
     ## ensure all X blocks are matrices, keeping dimnames
     X <- lapply(X, function(z){
