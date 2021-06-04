@@ -249,10 +249,13 @@ tune.block.splsda <-
     #-- test.keepX
     if (missing(test.keepX))
     {
-      test.keepX = lapply(seq_along(X), function(x) {
-        c(5, 10, 15)[which(c(5, 10, 15) < ncol(X[[x]]))]
+      test.keepX = lapply(X, function(x) {
+        max.test.keepX <- min(30, ncol(x))
+        if (max.test.keepX > 15)
+          return(seq(5, max.test.keepX, 5))
+        else
+          return(seq(1, max.test.keepX, 2))
       })
-      names(test.keepX) = names(X)
       
     } else {
       if (length(test.keepX) != length(X))
