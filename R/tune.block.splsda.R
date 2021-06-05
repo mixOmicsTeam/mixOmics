@@ -305,6 +305,16 @@ tune.block.splsda <-
         ))
     }
     
+    
+    ## sort blocks (see #131)
+    blocks <- sort(names(X))
+    X <- X[blocks]
+    test.keepX <- test.keepX[blocks]
+    if (!is.null(already.tested.X))
+    {
+      already.tested.X <- already.tested.X[blocks]
+    }
+    
     ## ----------- END checks -----------#
     
     ## ----------- NA calculation ----------- 

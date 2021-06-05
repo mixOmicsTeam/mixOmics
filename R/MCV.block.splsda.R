@@ -446,6 +446,7 @@ MCVfold.block.splsda <-
             # if (excess_cpus > 0 & do_excess) {
             #     result.all = bplapply(1:M, fonction.j.folds, BPPARAM = MulticoreParam(workers = excess_cpus))
             # } else {
+            #TODO function.j.folds and repeat_cv should be modified to output tidy data.frames
             result.all = lapply(1:M, fonction.j.folds) ## too much overhead if we also parallelise folds
             # }
             
