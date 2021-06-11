@@ -61,7 +61,7 @@ NULL
         variates <- object$variates[[block]]
         variates <- data.frame(variates)
         ## scaler of var vs sample coordinates
-        scaler <- max(variates, na.rm = TRUE)/max(loadings, na.rm = TRUE)
+        scaler <- max(variates, na.rm = TRUE)/max(abs(loadings), na.rm = TRUE)
         
         PCs <- paste0('component_', comp)
         expl_vars <- round(object$prop_expl_var[[block]]*100)[comp]
