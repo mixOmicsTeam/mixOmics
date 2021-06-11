@@ -8,8 +8,10 @@ test_that("tune.block.splsda works with and without parallel without auc", {
         mirna = breast.TCGA$data.train$mirna,
         protein = breast.TCGA$data.train$protein
     )
-    diag(design) =  0
+    
+    design = 'full'
     ncomp <- 2
+    folds <- 3
     nrep <- 3
     test.keepX = list(
         mrna = c(10, 20),
@@ -27,24 +29,24 @@ test_that("tune.block.splsda works with and without parallel without auc", {
     tune11 = tune.block.splsda(
         X = data,
         Y = Y,
-        folds = 3,
+        folds = folds,
         ncomp = ncomp,
         test.keepX = test.keepX,
-        design = 'full',
+        design = design,
         nrepeat = nrep
     )
     expect_is(tune11, "tune.block.splsda")
-    expect_equal(tune11$choice.keepX, list(mirna = c(20, 20), mrna = c(10, 10), protein = c(3, 3)))
+    expect_equal(tune11$choice.keepX, list(mrna = c(10, 10), mirna = c(20, 20), protein = c(3, 3)))
     
     ## -------------------- parallel
     BPPARAM <- if (!.onUnix()) BiocParallel::SnowParam(workers = 2) else BiocParallel::MulticoreParam(workers = 2)
     tune41 = tune.block.splsda(
         X = data,
         Y = Y,
-        folds = 3,
+        folds = folds,
         ncomp = ncomp,
         test.keepX = test.keepX,
-        design = 'full',
+        design = design,
         nrepeat = nrep,
         BPPARAM = BPPARAM
     )
@@ -59,7 +61,7 @@ test_that("tune.block.splsda works with and without parallel without auc", {
         X = data,
         Y = Y,
         ncomp = ncomp,
-        folds = 3,
+        folds = folds,
         test.keepX = test.keepX,
         design = design,
         already.tested.X = already.tested.X,
