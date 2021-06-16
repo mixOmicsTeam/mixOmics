@@ -2,9 +2,10 @@
 % Please edit documentation in R/circosPlot.R
 \name{circosPlot}
 \alias{circosPlot}
+\alias{circosPlot.block.splsda}
 \title{circosPlot for DIABLO}
 \usage{
-circosPlot(
+\method{circosPlot}{block.splsda}(
   object,
   comp = 1:min(object$ncomp),
   cutoff,

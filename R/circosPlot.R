@@ -67,8 +67,15 @@
 #' @importFrom reshape2 dcast
 #' @importFrom tidyr gather
 #' @importFrom dplyr group_by mutate summarise arrange 
+#' @name circosPlot
+NULL
 #' @export
-circosPlot <- function(object,
+#' @noRd
+circosPlot <- function(object, ...) UseMethod('circosPlot')
+
+#' @keywords Internal
+.circosPlot <- 
+    function(object,
                        comp = 1:min(object$ncomp),
                        cutoff,
                        color.Y,
@@ -106,8 +113,8 @@ circosPlot <- function(object,
     ##############################
     
     # check input object
-    if (!is(object, "block.splsda"))
-        stop("circosPlot is only available for 'block.splsda' objects")
+    if (!(is(object, "block.splsda") | is(object, "block.spls") ))
+        stop("circosPlot is only available for 'block.spls(da)' objects")
     
     if (length(object$X) < 2)
         stop("This function is only available when there are more than 3 blocks
@@ -399,6 +406,12 @@ circosPlot <- function(object,
     return(invisible(simMat))
 }
 
+#' @method circosPlot block.splsda
+#' @rdname circosPlot
+#' @export
+circosPlot.block.splsda <- .circosPlot
+
+## ------------- circosPlot utils
 drawIdeogram = function(R, xc=400, yc=400, cir, W,
                         show.band.labels = FALSE,
                         show.chr.labels = FALSE, chr.labels.R = 0,
@@ -1163,5 +1176,3 @@ add.alpha = function(col, alpha=1){
               rgb(x[1], x[2], x[3], alpha=alpha))  
 }
 ###-------------------------------------------------------------------------
-
-
