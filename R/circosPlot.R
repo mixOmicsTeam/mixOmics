@@ -3,15 +3,17 @@
 #' Displays variable correlation among different blocks
 #' 
 #' \code{circosPlot} function depicts correlations of variables selected with
-#' \code{block.splsda} among different blocks, using a generalisation of the
-#' method presented in González et al 2012. If \code{ncomp} is specified, then
-#' only the variables selected on that component are displayed.
+#' \code{block.splsda} or \code{block.spls} among different blocks, using a
+#' generalisation of the method presented in González et al 2012. If
+#' \code{ncomp} is specified, then only the variables selected on that component
+#' are displayed.
 #' 
 #' The \code{linkWidth} argument specifies the width of the links drawn.
 #' If a vector of length 2 is provided, the smaller value will correspond to
 #' a similarity values designated by \code{cutoff} argument, while the 
 #' larger value will be used for a link with perfect similarity (1), if any.
-#' @param object An object of class inheriting from \code{"block.splsda"}.
+#' @param object An object of class inheriting from \code{"block.splsda"} or
+#'   \code{"blocks.spls"}.
 #' @param comp Numeric vector indicating which component to plot. Default to
 #' all
 #' @param cutoff Only shows links with a correlation higher than \code{cutoff}
@@ -166,32 +168,26 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
         colnames(mat) <- sprintf("%s_%s", colnames(mat), blockname)
         mat
     }, SIMPLIFY = FALSE)
-    loadings.X <- object$loadings[-length(object$loadings)]
+    loadings.X <- object$loadings
     original.var.names <- lapply(loadings.X, rownames)
     loadings.X <- mapply(loadings.X, names(loadings.X), FUN = function(mat,blockname)
     {
         rownames(mat) <- sprintf("%s_%s", rownames(mat), blockname)
         mat
     }, SIMPLIFY = FALSE)
-    object$loadings[-length(object$loadings)] <- loadings.X
+    object$loadings <- loadings.X
     ## DONE - create unique feature names for circosPlot
     Y = object$Y
     X = object$X
-    #need to reorder variates and loadings to put 'Y' in last
-    indY = object$indY
-    object$variates = c(object$variates[-indY], object$variates[indY])
-    object$loadings = c(object$loadings[-indY], object$loadings[indY])
-    object$ncomp = c(object$ncomp[-indY], object$ncomp[indY])
     
     #check var.names
-    sample.X = lapply(object$loadings[-length(object$loadings)],
+    sample.X = lapply(object$loadings,
                       function(x){1 : nrow(x)})
     if (is.null(var.names))
     {
         var.names.list = original.var.names
     } else if (is.list(var.names)) {
-        if (length(var.names) != length(object$loadings[
-            -length(object$loadings)]))
+        if (length(var.names) != length(object$loadings))
             stop.message('var.names', sample.X)
         
         if(sum(sapply(1 : length(var.names), function(x){
@@ -235,8 +231,8 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
         apply(abs(i)[, comp, drop = FALSE], 1, sum) > 0)
     cord = mapply(function(x, y, keep){
         cor(x[, keep], y[, comp], use = "pairwise")
-    }, x=X, y=object$variates[-length(object$variates)],
-    keep = keepA[-length(keepA)],SIMPLIFY = FALSE)
+    }, x=X, y=object$variates,
+    keep = keepA, SIMPLIFY = FALSE)
     
     simMatList = vector("list", length(X))
     for(i in 1:length(cord))
@@ -309,8 +305,7 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
     
     # replace chr$name by the ones in var.names (matching)
     # matching var.names.list with object$loadings
-    ind.match = match(chr$name, unlist(sapply(object$loadings[
-        -length(object$loadings)],rownames)))
+    ind.match = match(chr$name, unlist(sapply(object$loadings,rownames)))
     chr$name.user = unlist(var.names.list)[ind.match]
     
     opar1=par("mar")
@@ -409,7 +404,36 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
 #' @method circosPlot block.splsda
 #' @rdname circosPlot
 #' @export
-circosPlot.block.splsda <- .circosPlot
+circosPlot.block.splsda <- function(object, ...)
+{
+    indY <- object$indY
+    object$variates[indY] <- NULL
+    object$loadings[indY] <-  NULL
+    .circosPlot(object, ...)
+}
+
+#' @method circosPlot block.spls
+#' @rdname circosPlot
+#' @param group The grouping factor used when \code{line = TRUE}
+#' @param Y.name Character, the name of the \code{Y} block
+#' @export
+circosPlot.block.spls <- function(object, ..., group = NULL, Y.name = 'Y')
+{
+    if (length(group) != nrow(object$X$Y))
+        stop("group must be a factor of length: nrow(object$X$Y) = ", nrow(object$X$Y), "\n")
+    object$Y <- factor(group)
+    object$keepX <- c(object$keepX, list(Y = object$keepY))
+    nX <- length(object$variates)
+   
+    block.names <- names(object$X)
+    block.names[which(block.names == 'Y')] <- Y.name
+    
+    names(object$X) <-
+        names(object$variates) <- 
+        names(object$loadings) <- 
+        block.names
+    .circosPlot(object, ...)
+}
 
 ## ------------- circosPlot utils
 drawIdeogram = function(R, xc=400, yc=400, cir, W,

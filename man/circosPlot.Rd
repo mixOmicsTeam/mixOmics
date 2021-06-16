@@ -3,29 +3,29 @@
 \name{circosPlot}
 \alias{circosPlot}
 \alias{circosPlot.block.splsda}
+\alias{circosPlot.block.spls}
 \title{circosPlot for DIABLO}
 \usage{
-\method{circosPlot}{block.splsda}(
-  object,
-  comp = 1:min(object$ncomp),
-  cutoff,
-  color.Y,
-  color.blocks,
-  color.cor,
-  var.names = NULL,
-  showIntraLinks = FALSE,
-  line = FALSE,
-  size.legend = 0.8,
-  ncol.legend = 1,
-  size.variables = 0.25,
-  size.labels = 1,
-  legend = TRUE,
-  linkWidth = 1,
-  ...
-)
+\method{circosPlot}{block.splsda}(object, ...)
+
+\method{circosPlot}{block.spls}(object, ..., group = NULL, Y.name = "Y")
 }
 \arguments{
-\item{object}{An object of class inheriting from \code{"block.splsda"}.}
+\item{object}{An object of class inheriting from \code{"block.splsda"} or
+\code{"blocks.spls"}.}
+
+\item{...}{Advanced plot parameters:
+\itemize{
+ \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
+ units of the arc band width. Positive values push feature names radially 
+ outward. Default to -0.33.
+ \item \bold{block.labels.adj} Numeric between -1 and 1. Adjusts the radial
+ location of block names radially inward or outward. Default to 0.
+}}
+
+\item{group}{The grouping factor used when \code{line = TRUE}}
+
+\item{Y.name}{Character, the name of the \code{Y} block}
 
 \item{comp}{Numeric vector indicating which component to plot. Default to
 all}
@@ -62,15 +62,6 @@ see examples.}
 
 \item{linkWidth}{Numeric. Specifies the range of sizes used for lines linking
 the correlated variables (see details). Must be of length 2 or 1. Default to c(1). See details.}
-
-\item{...}{Advanced plot parameters:
-\itemize{
- \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
- units of the arc band width. Positive values push feature names radially 
- outward. Default to -0.33.
- \item \bold{block.labels.adj} Numeric between -1 and 1. Adjusts the radial
- location of block names radially inward or outward. Default to 0.
-}}
 }
 \value{
 If saved in an object, the circos plot will output the similarity
@@ -82,9 +73,10 @@ Displays variable correlation among different blocks
 }
 \details{
 \code{circosPlot} function depicts correlations of variables selected with
-\code{block.splsda} among different blocks, using a generalisation of the
-method presented in González et al 2012. If \code{ncomp} is specified, then
-only the variables selected on that component are displayed.
+\code{block.splsda} or \code{block.spls} among different blocks, using a
+generalisation of the method presented in González et al 2012. If
+\code{ncomp} is specified, then only the variables selected on that component
+are displayed.
 
 The \code{linkWidth} argument specifies the width of the links drawn.
 If a vector of length 2 is provided, the smaller value will correspond to
@@ -128,11 +120,33 @@ circosPlot(nutrimouse.sgccda, cutoff = 0.7, line = TRUE, ncol.legend = 1,
 ## custom line legends
 circosPlot(nutrimouse.sgccda, cutoff = 0.7, line = TRUE, ncol.legend = 2,
            size.legend = 1.1, showIntraLinks = TRUE)
-
+par(mfrow=c(1,1))
 
 ## adjust feature and block names radially
 circosPlot(nutrimouse.sgccda, cutoff = 0.7, size.legend = 1.1)
 circosPlot(nutrimouse.sgccda, cutoff = 0.7, size.legend = 1.1, var.adj = 0.8, block.labels.adj = -0.5)
+## ---  example using breast.TCGA data
+data("breast.TCGA")
+data = list(mrna = breast.TCGA$data.train$mrna, 
+            mirna = breast.TCGA$data.train$mirna, 
+            protein = breast.TCGA$data.train$protein)
+list.keepX = list(mrna = rep(20, 2), mirna = rep(10,2), protein = c(10, 2))
+
+TCGA.block.splsda = block.splsda(X = data, 
+                             Y =breast.TCGA$data.train$subtype,
+                             ncomp = 2, keepX = list.keepX, 
+                             design = 'full')
+circosPlot(TCGA.block.splsda, cutoff = 0.7, line=TRUE)
+data("breast.TCGA")
+data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna)
+list.keepX = list(mrna = rep(20, 2), mirna = rep(10,2))
+list.keepY = c(rep(10, 2))
+
+TCGA.block.spls = block.spls(X = data, 
+                             Y = breast.TCGA$data.train$protein,
+                             ncomp = 2, keepX = list.keepX, 
+                             keepY = list.keepY, design = 'full')
+circosPlot(TCGA.block.spls, group = breast.TCGA$data.train$subtype, cutoff = 0.7, Y.name = 'protein')
 }
 }
 \references{
