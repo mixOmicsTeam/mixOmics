@@ -82,348 +82,348 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
 #' @keywords Internal
 .circosPlot <- 
     function(object,
-                       comp = 1:min(object$ncomp),
-                       cutoff,
-                       color.Y,
-                       blocks = NULL,
-                       color.blocks,
-                       color.cor,
-                       var.names = NULL,
-                       showIntraLinks = FALSE,
-                       line = FALSE,
-                       size.legend = 0.8,
-                       ncol.legend = 1,
-                       size.variables = 0.25,
-                       size.labels = 1,
-                       legend = TRUE,
-                       linkWidth = 1,
-                       ...)
-{
-    
-    # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
-    Features = Exp = Dataset = Mean = linkColors = chrom = po = NULL
-    
-    
-    figSize = 800
-    segmentWidth = 25
-    linePlotWidth = 90
-    
-    ##############################
-    ###   networkDiagram_core.R
-    ###
-    ###   Authors: Michael Vacher (minor changes by Amrit :)
-    ###
-    ###   Parts of this code has been modified from the original OmicCircos
-    ###     package obtained from:
-    ###   Ying Hu Chunhua Yan <yanch@mail.nih.gov> (2015). OmicCircos:
-    ###     High-quality circular visualization of omics data. v1.6.0.
-    ##############################
-    
-    # check input object
-    if (!(is(object, "block.splsda") | is(object, "block.spls") ))
-        stop("circosPlot is only available for 'block.spls(da)' objects")
-    
-    if (length(object$X) < 2)
-        stop("This function is only available when there are more than 3 blocks
+             comp = 1:min(object$ncomp),
+             cutoff,
+             color.Y,
+             blocks = NULL,
+             color.blocks,
+             color.cor,
+             var.names = NULL,
+             showIntraLinks = FALSE,
+             line = FALSE,
+             size.legend = 0.8,
+             ncol.legend = 1,
+             size.variables = 0.25,
+             size.labels = 1,
+             legend = TRUE,
+             linkWidth = 1,
+             ...)
+    {
+        
+        # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
+        Features = Exp = Dataset = Mean = linkColors = chrom = po = NULL
+        
+        
+        figSize = 800
+        segmentWidth = 25
+        linePlotWidth = 90
+        
+        ##############################
+        ###   networkDiagram_core.R
+        ###
+        ###   Authors: Michael Vacher (minor changes by Amrit :)
+        ###
+        ###   Parts of this code has been modified from the original OmicCircos
+        ###     package obtained from:
+        ###   Ying Hu Chunhua Yan <yanch@mail.nih.gov> (2015). OmicCircos:
+        ###     High-quality circular visualization of omics data. v1.6.0.
+        ##############################
+        
+        # check input object
+        if (!(is(object, "block.splsda") | is(object, "block.spls") ))
+            stop("circosPlot is only available for 'block.spls(da)' objects")
+        
+        if (length(object$X) < 2)
+            stop("This function is only available when there are more than 3 blocks
     (2 in object$X + an outcome object$Y)") # so 2 blocks in X + the outcome Y
-    if (!is.null(blocks))
-    { ## allow selection of blocks to show
-        # TODO checks for valid blocks
+        if (!is.null(blocks))
+        { ## allow selection of blocks to show
+            # TODO checks for valid blocks
+            
+            oblocks <- names(object$X)[-object$indY]
+            
+            if (is.numeric(blocks))
+            {
+                blocks <- oblocks[blocks]
+            }
+            
+            drop.blocks <- which(!oblocks %in% blocks)
+            if (length(drop.blocks) > 0) {
+                object$X <- object$X[-drop.blocks]
+                object$variates <- object$variates[-drop.blocks]
+                object$loadings <- object$loadings[-drop.blocks]
+            }
+        }
         
-        oblocks <- names(object$X)[-object$indY]
+        if (missing(cutoff))
+            stop("'cutoff' is missing", call.=FALSE) # so 2 blocks in X + the outcome Y
         
-        if (is.numeric(blocks))
+        if(missing(color.Y))
         {
-            blocks <- oblocks[blocks]
+            color.Y = color.mixo(1:nlevels(object$Y))
+        } else {
+            if(length(color.Y) != nlevels(object$Y))
+                stop("'color.Y' must be of length ", nlevels(object$Y))
+            
+        }
+        if (missing(color.blocks))
+        {
+            color.blocks = brewer.pal(n = 12, name = 'Paired') #why 12?? ANS: bc max allowed n is 12 for this function
+            if (length(object$X) > 6) {
+                ## if more than 6 X, extend the palette
+                ## 2*length(object$X) because we need dark and clear cols for each block
+                color.blocks <- colorRampPalette(color.blocks)(2*length(object$X))
+            }
+            
+        } else {
+            if(length(color.blocks) != length(object$X))
+                stop("'color.blocks' must be of length ", length(object$X))
+            
+            color.blocks.adj = adjustcolor(color.blocks, alpha.f = 0.5)
+            #to get two shades of the same color per block
+            
+            color.blocks = c(rbind(color.blocks, color.blocks.adj))
+            # to put the color next to its shaded color
         }
         
-        drop.blocks <- which(!oblocks %in% blocks)
-        if (length(drop.blocks) > 0) {
-            object$X <- object$X[-drop.blocks]
-            object$variates <- object$variates[-drop.blocks]
-            object$loadings <- object$loadings[-drop.blocks]
-        }
-    }
-    
-    if (missing(cutoff))
-        stop("'cutoff' is missing", call.=FALSE) # so 2 blocks in X + the outcome Y
-    
-    if(missing(color.Y))
-    {
-        color.Y = color.mixo(1:nlevels(object$Y))
-    } else {
-        if(length(color.Y) != nlevels(object$Y))
-            stop("'color.Y' must be of length ", nlevels(object$Y))
-        
-    }
-    if (missing(color.blocks))
-    {
-        color.blocks = brewer.pal(n = 12, name = 'Paired') #why 12?? ANS: bc max allowed n is 12 for this function
-        if (length(object$X) > 6) {
-            ## if more than 6 X, extend the palette
-            ## 2*length(object$X) because we need dark and clear cols for each block
-            color.blocks <- colorRampPalette(color.blocks)(2*length(object$X))
+        if(missing(color.cor))
+        {
+            color.cor = c(colors()[134],  # blue, negative correlation
+                          colors()[128])  # pale red, positive correlation
+        } else {
+            if(length(color.cor) != 2)
+                stop("'color.cor' must be of length 2")
         }
         
-    } else {
-        if(length(color.blocks) != length(object$X))
-            stop("'color.blocks' must be of length ", length(object$X))
+        ## create unique feature names for circosPlot
+        object$X <- mapply(object$X, names(object$X), FUN = function(mat,blockname)
+        {
+            colnames(mat) <- sprintf("%s_%s", colnames(mat), blockname)
+            mat
+        }, SIMPLIFY = FALSE)
+        loadings.X <- object$loadings
+        original.var.names <- lapply(loadings.X, rownames)
+        loadings.X <- mapply(loadings.X, names(loadings.X), FUN = function(mat,blockname)
+        {
+            rownames(mat) <- sprintf("%s_%s", rownames(mat), blockname)
+            mat
+        }, SIMPLIFY = FALSE)
+        object$loadings <- loadings.X
+        ## DONE - create unique feature names for circosPlot
+        Y = object$Y
+        X = object$X
         
-        color.blocks.adj = adjustcolor(color.blocks, alpha.f = 0.5)
-        #to get two shades of the same color per block
-        
-        color.blocks = c(rbind(color.blocks, color.blocks.adj))
-        # to put the color next to its shaded color
-    }
-    
-    if(missing(color.cor))
-    {
-        color.cor = c(colors()[134],  # blue, negative correlation
-                      colors()[128])  # pale red, positive correlation
-    } else {
-        if(length(color.cor) != 2)
-            stop("'color.cor' must be of length 2")
-    }
-    
-    ## create unique feature names for circosPlot
-    object$X <- mapply(object$X, names(object$X), FUN = function(mat,blockname)
-    {
-        colnames(mat) <- sprintf("%s_%s", colnames(mat), blockname)
-        mat
-    }, SIMPLIFY = FALSE)
-    loadings.X <- object$loadings
-    original.var.names <- lapply(loadings.X, rownames)
-    loadings.X <- mapply(loadings.X, names(loadings.X), FUN = function(mat,blockname)
-    {
-        rownames(mat) <- sprintf("%s_%s", rownames(mat), blockname)
-        mat
-    }, SIMPLIFY = FALSE)
-    object$loadings <- loadings.X
-    ## DONE - create unique feature names for circosPlot
-    Y = object$Y
-    X = object$X
-    
-    #check var.names
-    sample.X = lapply(object$loadings,
-                      function(x){1 : nrow(x)})
-    if (is.null(var.names))
-    {
-        var.names.list = original.var.names
-    } else if (is.list(var.names)) {
-        if (length(var.names) != length(object$loadings))
+        #check var.names
+        sample.X = lapply(object$loadings,
+                          function(x){1 : nrow(x)})
+        if (is.null(var.names))
+        {
+            var.names.list = original.var.names
+        } else if (is.list(var.names)) {
+            if (length(var.names) != length(object$loadings))
+                stop.message('var.names', sample.X)
+            
+            if(sum(sapply(1 : length(var.names), function(x){
+                length(var.names[[x]]) == length(sample.X[[x]])})) !=
+               length(var.names))
+                stop.message('var.names', sample.X)
+            
+            var.names.list = var.names
+        } else {
             stop.message('var.names', sample.X)
+        }
         
-        if(sum(sapply(1 : length(var.names), function(x){
-            length(var.names[[x]]) == length(sample.X[[x]])})) !=
-           length(var.names))
-            stop.message('var.names', sample.X)
         
-        var.names.list = var.names
-    } else {
-        stop.message('var.names', sample.X)
-    }
-    
-    
-    if(any(comp > min(object$ncomp)))
-    {
-        warning("Limitation to ",min(object$ncomp),
-                " components, as determined by min(object$ncomp)")
-        comp[which(comp > min(object$ncomp))] = min(object$ncomp)
-    }
-    comp = unique(sort(comp))
-    
-    ## check linkWidth
-    invalid.linkWidth <- FALSE
-    if (mode(linkWidth) == 'numeric')
-    {
-        if (length(linkWidth) == 1)
-            linkWidth <- rep(linkWidth, 2)
-        else if (length(linkWidth) != 2)
+        if(any(comp > min(object$ncomp)))
+        {
+            warning("Limitation to ",min(object$ncomp),
+                    " components, as determined by min(object$ncomp)")
+            comp[which(comp > min(object$ncomp))] = min(object$ncomp)
+        }
+        comp = unique(sort(comp))
+        
+        ## check linkWidth
+        invalid.linkWidth <- FALSE
+        if (mode(linkWidth) == 'numeric')
+        {
+            if (length(linkWidth) == 1)
+                linkWidth <- rep(linkWidth, 2)
+            else if (length(linkWidth) != 2)
+                invalid.linkWidth <- TRUE
+            
+            linkWidth <- sort(linkWidth)
+        } else {
             invalid.linkWidth <- TRUE
+        }
         
-        linkWidth <- sort(linkWidth)
-    } else {
-        invalid.linkWidth <- TRUE
-    }
-    
-    if (invalid.linkWidth)
-        stop("'linkWidth' must be a numeric of length 2 (or 1) specifying ",
-             "the range of widths used for link lines based on similarity measures.", call. = FALSE)
-    
-    keepA = lapply(object$loadings, function(i)
-        apply(abs(i)[, comp, drop = FALSE], 1, sum) > 0)
-    cord = mapply(function(x, y, keep){
-        cor(x[, keep], y[, comp], use = "pairwise")
-    }, x=X, y=object$variates,
-    keep = keepA, SIMPLIFY = FALSE)
-    
-    simMatList = vector("list", length(X))
-    for(i in 1:length(cord))
-    {
-        for(j in 1:length(cord))
+        if (invalid.linkWidth)
+            stop("'linkWidth' must be a numeric of length 2 (or 1) specifying ",
+                 "the range of widths used for link lines based on similarity measures.", call. = FALSE)
+        
+        keepA = lapply(object$loadings, function(i)
+            apply(abs(i)[, comp, drop = FALSE], 1, sum) > 0)
+        cord = mapply(function(x, y, keep){
+            cor(x[, keep], y[, comp], use = "pairwise")
+        }, x=X, y=object$variates,
+        keep = keepA, SIMPLIFY = FALSE)
+        
+        simMatList = vector("list", length(X))
+        for(i in 1:length(cord))
         {
-            simMatList[[i]][[j]] = cord[[i]] %*% t(cord[[j]])
+            for(j in 1:length(cord))
+            {
+                simMatList[[i]][[j]] = cord[[i]] %*% t(cord[[j]])
+            }
         }
-    }
-    simMatList <- lapply(simMatList, function(i) do.call(cbind, i))
-    simMat = do.call(rbind, simMatList)
-    
-    ## merge all similarity measures in one data.frame where rows are samples
-    Xdat = as.data.frame(do.call(cbind, X)[, colnames(simMat)])
-    ## add Y as another feature
-    AvgFeatExp0 <- mutate(.data = Xdat, Y = Y)
-    ## create a long data.frame with columns: CELL FEATURE FEATURE_VALUE -Y
-    AvgFeatExp0 <- gather(data = AvgFeatExp0, Features, Exp, -Y)
-    ## group by Y and feature for averaging and calcuate the mean and SD to 
-    ## get a data.frame with columns: Y FEATURES MEAN SD
-    AvgFeatExp0 <- group_by(.data = AvgFeatExp0, Y, Features)
-    AvgFeatExp0 <- summarise(.data = AvgFeatExp0, Mean = mean(Exp, na.rm = TRUE), SD = sd(Exp,na.rm = TRUE))
-    ## add a column as the dataset from which the feature came from:
-    AvgFeatExp0$Dataset <- factor(rep(names(X), unlist(lapply(cord, nrow))),
-                                  levels = names(X))[match(AvgFeatExp0$Features,colnames(Xdat))]
-    # to match Xdat that is reordered in AvgFeatExp0
-    featExp <- group_by(.data = AvgFeatExp0 , Dataset, Y)
-    featExp <- arrange(.data = featExp , Mean)
-    #Generate a circular plot (circos like) from a correlation matrix (pairwise)
-    #
-    # Args:
-    #   simMat: the main correlation matrix.
-    #         -> colnames == rownames (pairwise)  values = correlations
-    #   featExp: data.frame holding the expression data.
-    #   cutoff: minimum value for correlations (<threshold will be ignored)
-    #   figSize: figure size
-    #   segmentWidth: thickness of the segment (main circle)
-    #   linePlotWidth: thickness of the line plot (showing expression data)
-    #   showIntraLinks = display links intra segments
-    
-    
-    
-    # 1) Generate karyotype data
-    chr = genChr(featExp, color.blocks = color.blocks)
-    ## ------ re-order blocks based on object$X names
-    ## define an ordered factor to re-order blocks so with given X, block orders
-    ## are always the same
-    Xblocks <- unique(paste0('chr',names(object$X)))
-    chr$block <- factor(chr$chrom, levels = Xblocks, ordered = TRUE)
-    chr <- chr[order(chr$block),]
-    chr$block <- NULL
-    
-    chr.names = unique(chr$chrom) # paste("chr", 1:seg.num, sep="") 
-    # Calculate angles and band positions
-    db = segAnglePo(chr, seg=chr.names)
-    db = data.frame(db)
-    
-    # 2) Generate Links
-    blocks.link <- list(...)$blocks.link
-    links = genLinks(chr, simMat, threshold=cutoff, blocks.link = blocks.link)
-    if (nrow(links) < 1)
-        warning("Choose a lower correlation threshold to highlight
-    links between datasets")
-    
-    # 3) Plot
-    # Calculate parameters
-    circleR = (figSize / 2.0) -  segmentWidth - linePlotWidth
-    linksR = circleR - segmentWidth
-    linePlotR = circleR + segmentWidth
-    chrLabelsR = (figSize / 2.0)
-    
-    # replace chr$name by the ones in var.names (matching)
-    # matching var.names.list with object$loadings
-    ind.match = match(chr$name, unlist(sapply(object$loadings,rownames)))
-    chr$name.user = unlist(var.names.list)[ind.match]
-    
-    opar1=par("mar")
-    par(mar=c(2, 2, 2, 2))
-    
-    plot(c(1,figSize), c(1,figSize), type="n", axes=FALSE, xlab="",
-         ylab="", main="")
-    
-    #save(list=ls(),file="temp.Rdata")
-    # Plot ideogram
-    drawIdeogram(R=circleR, cir=db, W=segmentWidth,  show.band.labels=TRUE,
-                 show.chr.labels=TRUE, chr.labels.R= chrLabelsR, chrData=chr,
-                 size.variables = size.variables, size.labels=size.labels,
-                 color.blocks = color.blocks, line = line, ...)
-    # Plot links
-    if(nrow(links)>0)
-        drawLinks(R=linksR, cir=db,   mapping=links,   col=linkColors, lineWidth = linkWidth,
-                  drawIntraChr=showIntraLinks, color.cor = color.cor)
-    
-    # Plot expression values
-    cTypes = levels(Y)
-    #unique(featExp[,1]) #Get the different disease/cancer types (lines)
-    #lineCols = rainbow(nrow(cTypes), alpha=0.5)
-    lineCols = color.Y
-    #color.mixo(1:nlevels(Y))#color.mixo(match(levels(Y), levels(Y)))
-    
-    # Fixme: remove this loop and send the whole expr dframe to drawLinePlot
-    if(line==TRUE)
-    {
-        for (i in 1:length(chr.names)){
-            seg.name = gsub("chr","",chr.names[i])
-            #Get data for each segment
-            expr = subset(featExp,featExp$Dataset==seg.name)
-            
-            expr = dcast(expr, formula = Features ~ Y, value.var="Mean")
-            ## changed PAM50 to Y
-            expr = merge(expr, chr, by.x="Features", by.y="name")
-            expr$po = (as.numeric(expr$chromStart) +
-                           as.numeric(expr$chromEnd)) / 2.0
-            #' @importFrom dplyr rename
-            expr = rename(expr, seg.name = chrom, seg.po = po)
-            
-            # Reorder columns
-            cOrder = c(c(grep("seg.name", colnames(expr)),
-                         grep("seg.po", colnames(expr))),c(1:length(cTypes)+1))
-            expr = expr[, cOrder]
-            
-            # Plot data on each sub segment
-            subChr = subset(db, db$seg.name == chr.names[i] )
-            drawLinePlot(R=linePlotR, cir=subChr,   W=linePlotWidth,
-                         lineWidth=1, mapping=expr, col=lineCols, scale=FALSE)
-        }
-    }
-    opar=par("xpd")
-    par(xpd=TRUE) # to authorise the legend to be written outside the margin,
-    #       otherwise it's too small
-    # Plot legend
-    if(legend == TRUE)
-    {
-        # First legeng bottom left corner
-        legend(x=5, y = (circleR/4), title="Correlations",
-               c("Positive Correlation", "Negative Correlation"),
-               col = color.cor, pch = 19, cex=size.legend, bty = "n")
-        # Second legend bottom righ corner
-        if(line==TRUE)
-            legend(x=figSize-(circleR/3), y = (circleR/3), title="Expression",
-                   legend=levels(Y),  ## changed PAM50 to Y
-                   col = lineCols, pch = 19, cex=size.legend, bty = "n",ncol=ncol.legend)
-        # third legend top left corner
-        legend(x=figSize-(circleR/2), y = figSize, title="Correlation cut-off",
-               legend=paste("r", cutoff, sep = "="),
-               col = "black", cex=size.legend, bty = "n")
+        simMatList <- lapply(simMatList, function(i) do.call(cbind, i))
+        simMat = do.call(rbind, simMatList)
         
-        legend(x=-circleR/4, y = figSize, legend=paste("Comp",
-                                                       paste(comp,collapse="-")),
-               col = "black", cex=size.legend, bty = "n")
+        ## merge all similarity measures in one data.frame where rows are samples
+        Xdat = as.data.frame(do.call(cbind, X)[, colnames(simMat)])
+        ## add Y as another feature
+        AvgFeatExp0 <- mutate(.data = Xdat, Y = Y)
+        ## create a long data.frame with columns: CELL FEATURE FEATURE_VALUE -Y
+        AvgFeatExp0 <- gather(data = AvgFeatExp0, Features, Exp, -Y)
+        ## group by Y and feature for averaging and calcuate the mean and SD to 
+        ## get a data.frame with columns: Y FEATURES MEAN SD
+        AvgFeatExp0 <- group_by(.data = AvgFeatExp0, Y, Features)
+        AvgFeatExp0 <- summarise(.data = AvgFeatExp0, Mean = mean(Exp, na.rm = TRUE), SD = sd(Exp,na.rm = TRUE))
+        ## add a column as the dataset from which the feature came from:
+        AvgFeatExp0$Dataset <- factor(rep(names(X), unlist(lapply(cord, nrow))),
+                                      levels = names(X))[match(AvgFeatExp0$Features,colnames(Xdat))]
+        # to match Xdat that is reordered in AvgFeatExp0
+        featExp <- group_by(.data = AvgFeatExp0 , Dataset, Y)
+        featExp <- arrange(.data = featExp , Mean)
+        #Generate a circular plot (circos like) from a correlation matrix (pairwise)
+        #
+        # Args:
+        #   simMat: the main correlation matrix.
+        #         -> colnames == rownames (pairwise)  values = correlations
+        #   featExp: data.frame holding the expression data.
+        #   cutoff: minimum value for correlations (<threshold will be ignored)
+        #   figSize: figure size
+        #   segmentWidth: thickness of the segment (main circle)
+        #   linePlotWidth: thickness of the line plot (showing expression data)
+        #   showIntraLinks = display links intra segments
+        
+        
+        
+        # 1) Generate karyotype data
+        chr = genChr(featExp, color.blocks = color.blocks)
+        ## ------ re-order blocks based on object$X names
+        ## define an ordered factor to re-order blocks so with given X, block orders
+        ## are always the same
+        Xblocks <- unique(paste0('chr',names(object$X)))
+        chr$block <- factor(chr$chrom, levels = Xblocks, ordered = TRUE)
+        chr <- chr[order(chr$block),]
+        chr$block <- NULL
+        
+        chr.names = unique(chr$chrom) # paste("chr", 1:seg.num, sep="") 
+        # Calculate angles and band positions
+        db = segAnglePo(chr, seg=chr.names)
+        db = data.frame(db)
+        
+        # 2) Generate Links
+        blocks.link <- list(...)$blocks.link
+        links = genLinks(chr, simMat, threshold=cutoff, blocks.link = blocks.link)
+        if (nrow(links) < 1)
+            warning("Choose a lower correlation threshold to highlight
+    links between datasets")
+        
+        # 3) Plot
+        # Calculate parameters
+        circleR = (figSize / 2.0) -  segmentWidth - linePlotWidth
+        linksR = circleR - segmentWidth
+        linePlotR = circleR + segmentWidth
+        chrLabelsR = (figSize / 2.0)
+        
+        # replace chr$name by the ones in var.names (matching)
+        # matching var.names.list with object$loadings
+        ind.match = match(chr$name, unlist(sapply(object$loadings,rownames)))
+        chr$name.user = unlist(var.names.list)[ind.match]
+        
+        opar1=par("mar")
+        par(mar=c(2, 2, 2, 2))
+        
+        plot(c(1,figSize), c(1,figSize), type="n", axes=FALSE, xlab="",
+             ylab="", main="")
+        
+        #save(list=ls(),file="temp.Rdata")
+        # Plot ideogram
+        drawIdeogram(R=circleR, cir=db, W=segmentWidth,  show.band.labels=TRUE,
+                     show.chr.labels=TRUE, chr.labels.R= chrLabelsR, chrData=chr,
+                     size.variables = size.variables, size.labels=size.labels,
+                     color.blocks = color.blocks, line = line, ...)
+        # Plot links
+        if(nrow(links)>0)
+            drawLinks(R=linksR, cir=db,   mapping=links,   col=linkColors, lineWidth = linkWidth,
+                      drawIntraChr=showIntraLinks, color.cor = color.cor)
+        
+        # Plot expression values
+        cTypes = levels(Y)
+        #unique(featExp[,1]) #Get the different disease/cancer types (lines)
+        #lineCols = rainbow(nrow(cTypes), alpha=0.5)
+        lineCols = color.Y
+        #color.mixo(1:nlevels(Y))#color.mixo(match(levels(Y), levels(Y)))
+        
+        # Fixme: remove this loop and send the whole expr dframe to drawLinePlot
+        if(line==TRUE)
+        {
+            for (i in 1:length(chr.names)){
+                seg.name = gsub("chr","",chr.names[i])
+                #Get data for each segment
+                expr = subset(featExp,featExp$Dataset==seg.name)
+                
+                expr = dcast(expr, formula = Features ~ Y, value.var="Mean")
+                ## changed PAM50 to Y
+                expr = merge(expr, chr, by.x="Features", by.y="name")
+                expr$po = (as.numeric(expr$chromStart) +
+                               as.numeric(expr$chromEnd)) / 2.0
+                #' @importFrom dplyr rename
+                expr = rename(expr, seg.name = chrom, seg.po = po)
+                
+                # Reorder columns
+                cOrder = c(c(grep("seg.name", colnames(expr)),
+                             grep("seg.po", colnames(expr))),c(1:length(cTypes)+1))
+                expr = expr[, cOrder]
+                
+                # Plot data on each sub segment
+                subChr = subset(db, db$seg.name == chr.names[i] )
+                drawLinePlot(R=linePlotR, cir=subChr,   W=linePlotWidth,
+                             lineWidth=1, mapping=expr, col=lineCols, scale=FALSE)
+            }
+        }
+        opar=par("xpd")
+        par(xpd=TRUE) # to authorise the legend to be written outside the margin,
+        #       otherwise it's too small
+        # Plot legend
+        if(legend == TRUE)
+        {
+            # First legeng bottom left corner
+            legend(x=5, y = (circleR/4), title="Correlations",
+                   c("Positive Correlation", "Negative Correlation"),
+                   col = color.cor, pch = 19, cex=size.legend, bty = "n")
+            # Second legend bottom righ corner
+            if(line==TRUE)
+                legend(x=figSize-(circleR/3), y = (circleR/3), title="Expression",
+                       legend=levels(Y),  ## changed PAM50 to Y
+                       col = lineCols, pch = 19, cex=size.legend, bty = "n",ncol=ncol.legend)
+            # third legend top left corner
+            legend(x=figSize-(circleR/2), y = figSize, title="Correlation cut-off",
+                   legend=paste("r", cutoff, sep = "="),
+                   col = "black", cex=size.legend, bty = "n")
+            
+            legend(x=-circleR/4, y = figSize, legend=paste("Comp",
+                                                           paste(comp,collapse="-")),
+                   col = "black", cex=size.legend, bty = "n")
+        }
+        par(xpd=opar,mar=opar1)# put the previous default parameter for xpd
+        
+        # use original feature names in similarity matrix if possible
+        feat_block <- colnames(simMat)
+        # remove anything from last underscore to end of the feature name
+        feat <- gsub('(.*)_\\w+', '\\1', feat_block)
+        if(!any(duplicated(feat)))
+        {
+            dimnames(simMat) <- list(feat, feat)
+        } else {
+            cat("\n")
+            cat("adding block name to feature names in the output similarity ")
+            cat("matrix as there are similar feature names across blocks.")
+            cat("\n")
+        }
+        return(invisible(simMat))
     }
-    par(xpd=opar,mar=opar1)# put the previous default parameter for xpd
-    
-    # use original feature names in similarity matrix if possible
-    feat_block <- colnames(simMat)
-    # remove anything from last underscore to end of the feature name
-    feat <- gsub('(.*)_\\w+', '\\1', feat_block)
-    if(!any(duplicated(feat)))
-    {
-        dimnames(simMat) <- list(feat, feat)
-    } else {
-        cat("\n")
-        cat("adding block name to feature names in the output similarity ")
-        cat("matrix as there are similar feature names across blocks.")
-        cat("\n")
-    }
-    return(invisible(simMat))
-}
 
 #' @method circosPlot block.splsda
 #' @rdname circosPlot
@@ -448,7 +448,7 @@ circosPlot.block.spls <- function(object, ..., group = NULL, Y.name = 'Y')
     object$Y <- factor(group)
     object$keepX <- c(object$keepX, list(Y = object$keepY))
     nX <- length(object$variates)
-   
+    
     block.names <- names(object$X)
     block.names[which(block.names == 'Y')] <- Y.name
     
