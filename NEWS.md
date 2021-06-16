@@ -5,6 +5,7 @@
 * `plotIndiv.pca` default shape set to `16`
 * `circosPlot` & `network` now support blocks with similar feature names 
 * `circosPlot` now has methods for block.spls objects
+* `circosPlot` now takes new formal and advanced args for customisation. See `?circosPlot`.
 
 ### bug fixes
 

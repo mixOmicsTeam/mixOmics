@@ -17,6 +17,8 @@
 #' @param comp Numeric vector indicating which component to plot. Default to
 #' all
 #' @param cutoff Only shows links with a correlation higher than \code{cutoff}
+#' @param blocks Character or integer vector indicating which blocks to show.
+#' Default to all
 #' @param color.Y a character vector of colors to be used for the levels of the
 #' outcome
 #' @param color.blocks a character vector of colors to be used for the blocks
@@ -40,9 +42,11 @@
 #' \itemize{
 #'  \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
 #'  units of the arc band width. Positive values push feature names radially 
-#'  outward. Default to -0.33.
+#'  outward. Default to -0.33. See examples.
 #'  \item \bold{block.labels.adj} Numeric between -1 and 1. Adjusts the radial
-#'  location of block names radially inward or outward. Default to 0.
+#'  location of block names radially inward or outward. Default to 0. See examples.
+#'  \item \bold{blocks.link} Character vector of blocks. If provided, only correlations
+#'  from features of these blocks are shown using links. See examples.
 #' }
 #' @return If saved in an object, the circos plot will output the similarity
 #' matrix and the names of the variables displayed on the plot (see
@@ -81,6 +85,7 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
                        comp = 1:min(object$ncomp),
                        cutoff,
                        color.Y,
+                       blocks = NULL,
                        color.blocks,
                        color.cor,
                        var.names = NULL,
@@ -121,6 +126,24 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
     if (length(object$X) < 2)
         stop("This function is only available when there are more than 3 blocks
     (2 in object$X + an outcome object$Y)") # so 2 blocks in X + the outcome Y
+    if (!is.null(blocks))
+    { ## allow selection of blocks to show
+        # TODO checks for valid blocks
+        
+        oblocks <- names(object$X)[-object$indY]
+        
+        if (is.numeric(blocks))
+        {
+            blocks <- oblocks[blocks]
+        }
+        
+        drop.blocks <- which(!oblocks %in% blocks)
+        if (length(drop.blocks) > 0) {
+            object$X <- object$X[-drop.blocks]
+            object$variates <- object$variates[-drop.blocks]
+            object$loadings <- object$loadings[-drop.blocks]
+        }
+    }
     
     if (missing(cutoff))
         stop("'cutoff' is missing", call.=FALSE) # so 2 blocks in X + the outcome Y
@@ -291,7 +314,8 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
     db = data.frame(db)
     
     # 2) Generate Links
-    links = genLinks(chr, simMat, threshold=cutoff)
+    blocks.link <- list(...)$blocks.link
+    links = genLinks(chr, simMat, threshold=cutoff, blocks.link = blocks.link)
     if (nrow(links) < 1)
         warning("Choose a lower correlation threshold to highlight
     links between datasets")
@@ -740,7 +764,7 @@ genChr =function (expr, bandWidth = 1.0, color.blocks)
 }
 
 #' @importFrom reshape2 melt 
-genLinks = function(chr, simMat, threshold)
+genLinks = function(chr, simMat, threshold, blocks.link = NULL)
 {
     
     # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
@@ -762,6 +786,13 @@ genLinks = function(chr, simMat, threshold)
     linkList = subset(melt(simMat), Var1!=Var2 ) 
     # Remove links below the threshold
     linkList = subset(linkList, abs(linkList$value) >= threshold) 
+    
+    ## Al: if we want links only to certain block
+    if (!is.null(blocks.link)) {
+        only.chr <- paste0('chr', blocks.link)
+        only.names <- chr[chr$chrom == only.chr,]$name
+        linkList <- linkList[linkList$Var2 %in% only.names,]
+    }
     
     #First merge
     #' @importFrom dplyr rename

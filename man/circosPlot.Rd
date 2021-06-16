@@ -18,9 +18,11 @@
 \itemize{
  \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
  units of the arc band width. Positive values push feature names radially 
- outward. Default to -0.33.
+ outward. Default to -0.33. See examples.
  \item \bold{block.labels.adj} Numeric between -1 and 1. Adjusts the radial
- location of block names radially inward or outward. Default to 0.
+ location of block names radially inward or outward. Default to 0. See examples.
+ \item \bold{blocks.link} Character vector of blocks. If provided, only correlations
+ from features of these blocks are shown using links. See examples.
 }}
 
 \item{group}{The grouping factor used when \code{line = TRUE}}
@@ -31,6 +33,9 @@
 all}
 
 \item{cutoff}{Only shows links with a correlation higher than \code{cutoff}}
+
+\item{blocks}{Character or integer vector indicating which blocks to show.
+Default to all}
 
 \item{color.Y}{a character vector of colors to be used for the levels of the
 outcome}
@@ -103,7 +108,6 @@ circosPlot(nutrimouse.sgccda, cutoff = 0.7, linkWidth = c(1, 10))
 ## custom legend
 circosPlot(nutrimouse.sgccda, cutoff = 0.7, size.legend = 1.1)
 
-\dontrun{
 ## more customisation
 circosPlot(nutrimouse.sgccda, cutoff = 0.7, size.legend = 1.1, color.Y = 1:5, 
            color.blocks = c("green","brown"), color.cor = c("magenta", "purple"))
@@ -137,6 +141,11 @@ TCGA.block.splsda = block.splsda(X = data,
                              ncomp = 2, keepX = list.keepX, 
                              design = 'full')
 circosPlot(TCGA.block.splsda, cutoff = 0.7, line=TRUE)
+## show only first 2 blocks
+circosPlot(TCGA.block.splsda, cutoff = 0.7, line=TRUE, blocks = c(1,2))
+## show only correlations including the mrna block features
+circosPlot(TCGA.block.splsda, cutoff = 0.7, blocks.link = 'mrna')
+
 data("breast.TCGA")
 data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna)
 list.keepX = list(mrna = rep(20, 2), mirna = rep(10,2))
@@ -146,8 +155,12 @@ TCGA.block.spls = block.spls(X = data,
                              Y = breast.TCGA$data.train$protein,
                              ncomp = 2, keepX = list.keepX, 
                              keepY = list.keepY, design = 'full')
-circosPlot(TCGA.block.spls, group = breast.TCGA$data.train$subtype, cutoff = 0.7, Y.name = 'protein')
-}
+circosPlot(TCGA.block.spls, group = breast.TCGA$data.train$subtype, cutoff = 0.7, 
+           Y.name = 'protein')
+## only show links including mrna
+circosPlot(TCGA.block.spls, group = breast.TCGA$data.train$subtype, cutoff = 0.7, 
+           Y.name = 'protein', blocks.link = 'mrna')
+
 }
 \references{
 Singh A., Gautier B., Shannon C., Vacher M., Rohart F., Tebbutt

@@ -17,7 +17,6 @@ circosPlot(nutrimouse.sgccda, cutoff = 0.7, linkWidth = c(1, 10))
 ## custom legend
 circosPlot(nutrimouse.sgccda, cutoff = 0.7, size.legend = 1.1)
 
-\dontrun{
 ## more customisation
 circosPlot(nutrimouse.sgccda, cutoff = 0.7, size.legend = 1.1, color.Y = 1:5, 
            color.blocks = c("green","brown"), color.cor = c("magenta", "purple"))
@@ -51,6 +50,11 @@ TCGA.block.splsda = block.splsda(X = data,
                              ncomp = 2, keepX = list.keepX, 
                              design = 'full')
 circosPlot(TCGA.block.splsda, cutoff = 0.7, line=TRUE)
+## show only first 2 blocks
+circosPlot(TCGA.block.splsda, cutoff = 0.7, line=TRUE, blocks = c(1,2))
+## show only correlations including the mrna block features
+circosPlot(TCGA.block.splsda, cutoff = 0.7, blocks.link = 'mrna')
+
 data("breast.TCGA")
 data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna)
 list.keepX = list(mrna = rep(20, 2), mirna = rep(10,2))
@@ -60,5 +64,9 @@ TCGA.block.spls = block.spls(X = data,
                              Y = breast.TCGA$data.train$protein,
                              ncomp = 2, keepX = list.keepX, 
                              keepY = list.keepY, design = 'full')
-circosPlot(TCGA.block.spls, group = breast.TCGA$data.train$subtype, cutoff = 0.7, Y.name = 'protein')
-}
+circosPlot(TCGA.block.spls, group = breast.TCGA$data.train$subtype, cutoff = 0.7, 
+           Y.name = 'protein')
+## only show links including mrna
+circosPlot(TCGA.block.spls, group = breast.TCGA$data.train$subtype, cutoff = 0.7, 
+           Y.name = 'protein', blocks.link = 'mrna')
+
