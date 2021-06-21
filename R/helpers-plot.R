@@ -149,10 +149,12 @@
         if (nlevels(group) == 1)
         {
             col.per.group <- ifelse(is.null(col), color.mixo(1), .are.colors(col))
-        }
-        else
-        { ## group is of length >= 2
+        } else if (nlevels(group) < 10)
+        { 
             col.per.group <- color.mixo(seq_len(nlevels(group)))
+        } else if (nlevels(group) >= 10)
+        { 
+            col.per.group <- color.jet(nlevels(group))
         }
        
         names(col.per.group) <- levels(group)

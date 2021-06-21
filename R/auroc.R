@@ -51,8 +51,8 @@
 #' i.e. the individuals ID. See examples in \code{splsda}.
 #' @param plot Whether the ROC curves should be plotted, by default set to TRUE
 #' (see details).
-#' @param roc.comp Specify the component (integer) for which the ROC will be
-#' plotted from the multivariate model, default to 1.
+#' @param roc.comp Specify the component (integer) up to which the ROC
+#'   will be calculated and plotted from the multivariate model, default to 1.
 #' @param roc.block Specify the block number (integer) or the name of the block
 #' (set of characters) for which the ROC will be plotted for a block.plsda or
 #' block.splsda object, default to 1.

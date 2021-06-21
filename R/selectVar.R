@@ -133,15 +133,13 @@ selectVar.sgcca <- selectVar.mixo_pls
 selectVar.rgcca <- selectVar.mixo_pls
 
 ## -------------------------------- helper -------------------------------- ##
-get.name.and.value=function(x,comp)
+get.name.and.value <- function(x,comp)
 {
-    if(length(x[,comp,drop=FALSE]) > 1)
-    {
-        name.var = names(sort(abs(x[,comp]), decreasing = TRUE)[1:sum(x[,comp]!=0)])
-    } else {
-        name.var = rownames(x) # when only one number, sort loses the name of the variable
-    }
-    value.var=x[name.var,comp]
-    return(list(name = name.var, value = data.frame(value.var)))
+    value <- data.frame(value.var = x[,comp])
+    value <- value[abs(value$value.var) > .Machine$double.eps,,drop=FALSE]
+    value <- value[order(-abs(value$value.var)),,drop=FALSE]
+    
+    name.var <- rownames(value)
+    return(list(name = name.var, value = value))
 }
 
