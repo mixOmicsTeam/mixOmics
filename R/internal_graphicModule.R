@@ -228,7 +228,7 @@ internal_graphicModule <-
                 p = p + scale_shape_manual(values = values.pch[match(
                     levels(factor(as.character(df$pch.levels))),levels(df$pch.levels))],
                     name = legend.title, labels = levels(factor(df$group)),
-                    guide = FALSE)
+                    guide = "none")
                 #match(..) reorder the values as the values of pch.levels,
                 #if there's more than 10 levels, R/ggplot orders characters
                 #different than values 1, 10, 11, 2, 3, etc
