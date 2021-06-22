@@ -70,8 +70,7 @@
 #' for ellipse plots. Coded as default for the supervised methods \code{PLS-DA,
 #' SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
 #' \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}
-#' @param col.per.group character (or symbol) color to be used when 'group' is
-#' defined. Vector of the same length as the number of groups.
+#' @template arg/col.per.group
 #' @param style argument to be set to either \code{'graphics'},
 #' \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
 #' Default set to 'ggplot2'. See details. \code{3d} is not available for MINT
