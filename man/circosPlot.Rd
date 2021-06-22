@@ -6,7 +6,25 @@
 \alias{circosPlot.block.spls}
 \title{circosPlot for DIABLO}
 \usage{
-\method{circosPlot}{block.splsda}(object, ...)
+\method{circosPlot}{block.splsda}(
+  object,
+  comp = 1:min(object$ncomp),
+  cutoff,
+  color.Y,
+  blocks = NULL,
+  color.blocks,
+  color.cor,
+  var.names = NULL,
+  showIntraLinks = FALSE,
+  line = FALSE,
+  size.legend = 0.8,
+  ncol.legend = 1,
+  size.variables = 0.25,
+  size.labels = 1,
+  legend = TRUE,
+  linkWidth = 1,
+  ...
+)
 
 \method{circosPlot}{block.spls}(object, ..., group = NULL, Y.name = "Y")
 }
@@ -14,31 +32,16 @@
 \item{object}{An object of class inheriting from \code{"block.splsda"} or
 \code{"blocks.spls"}.}
 
-\item{...}{Advanced plot parameters:
-\itemize{
- \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
- units of the arc band width. Positive values push feature names radially 
- outward. Default to -0.33. See examples.
- \item \bold{block.labels.adj} Numeric between -1 and 1. Adjusts the radial
- location of block names radially inward or outward. Default to 0. See examples.
- \item \bold{blocks.link} Character vector of blocks. If provided, only correlations
- from features of these blocks are shown using links. See examples.
-}}
-
-\item{group}{The grouping factor used when \code{line = TRUE}}
-
-\item{Y.name}{Character, the name of the \code{Y} block}
-
 \item{comp}{Numeric vector indicating which component to plot. Default to
 all}
 
 \item{cutoff}{Only shows links with a correlation higher than \code{cutoff}}
 
-\item{blocks}{Character or integer vector indicating which blocks to show.
-Default to all}
-
 \item{color.Y}{a character vector of colors to be used for the levels of the
 outcome}
+
+\item{blocks}{Character or integer vector indicating which blocks to show.
+Default to all}
 
 \item{color.blocks}{a character vector of colors to be used for the blocks}
 
@@ -67,6 +70,23 @@ see examples.}
 
 \item{linkWidth}{Numeric. Specifies the range of sizes used for lines linking
 the correlated variables (see details). Must be of length 2 or 1. Default to c(1). See details.}
+
+\item{...}{For object of class \code{block.splsda}, advanced plot parameters:
+\itemize{
+ \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
+ units of the arc band width. Positive values push feature names radially 
+ outward. Default to -0.33. See examples.
+ \item \bold{block.labels.adj} Numeric between -1 and 1. Adjusts the radial
+ location of block names radially inward or outward. Default to 0. See examples.
+ \item \bold{blocks.link} Character vector of blocks. If provided, only correlations
+ from features of these blocks are shown using links. See examples.
+}
+For object of class \code{block.spls}, all listed arguments passed to the
+\code{block.splsda} method.}
+
+\item{group}{The grouping factor used when \code{line = TRUE}}
+
+\item{Y.name}{Character, the name of the \code{Y} block}
 }
 \value{
 If saved in an object, the circos plot will output the similarity

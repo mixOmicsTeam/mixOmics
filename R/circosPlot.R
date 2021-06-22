@@ -38,7 +38,7 @@
 #' @param legend Logical. Whether the legend should be added. Default is TRUE.
 #' @param linkWidth Numeric. Specifies the range of sizes used for lines linking
 #' the correlated variables (see details). Must be of length 2 or 1. Default to c(1). See details.
-#' @param ... Advanced plot parameters:
+#' @param ... For object of class \code{block.splsda}, advanced plot parameters:
 #' \itemize{
 #'  \item \bold{var.adj} Numeric. Adjusts the radial location of variable names in 
 #'  units of the arc band width. Positive values push feature names radially 
@@ -48,6 +48,8 @@
 #'  \item \bold{blocks.link} Character vector of blocks. If provided, only correlations
 #'  from features of these blocks are shown using links. See examples.
 #' }
+#' For object of class \code{block.spls}, all listed arguments passed to the
+#' \code{block.splsda} method.
 #' @return If saved in an object, the circos plot will output the similarity
 #' matrix and the names of the variables displayed on the plot (see
 #' \code{attributes(object)}).
@@ -99,6 +101,12 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
              linkWidth = 1,
              ...)
     {
+        
+        if (inherits(object, "block.splsda")) {
+            indY <- object$indY
+            object$variates[indY] <- NULL
+            object$loadings[indY] <-  NULL
+        }
         
         # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
         Features = Exp = Dataset = Mean = linkColors = chrom = po = NULL
@@ -428,13 +436,7 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
 #' @method circosPlot block.splsda
 #' @rdname circosPlot
 #' @export
-circosPlot.block.splsda <- function(object, ...)
-{
-    indY <- object$indY
-    object$variates[indY] <- NULL
-    object$loadings[indY] <-  NULL
-    .circosPlot(object, ...)
-}
+circosPlot.block.splsda <- .circosPlot
 
 #' @method circosPlot block.spls
 #' @rdname circosPlot

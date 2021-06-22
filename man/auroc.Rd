@@ -130,8 +130,8 @@ i.e. the individuals ID. See examples in \code{splsda}.}
 \item{plot}{Whether the ROC curves should be plotted, by default set to TRUE
 (see details).}
 
-\item{roc.comp}{Specify the component (integer) for which the ROC will be
-plotted from the multivariate model, default to 1.}
+\item{roc.comp}{Specify the component (integer) up to which the ROC
+will be calculated and plotted from the multivariate model, default to 1.}
 
 \item{title}{Character, specifies the title of the plot.}
 
