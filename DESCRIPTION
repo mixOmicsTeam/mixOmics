@@ -30,12 +30,12 @@ Suggests: BiocStyle,
           testthat, 
           rgl
 Authors@R: 
-    c(person("Kim-Anh", "Le Cao", role = c("aut", "cre"), email = "kimanh.lecao@unimelb.edu.au"), 
+    c(person("Kim-Anh", "Le Cao", role = "aut", email = "kimanh.lecao@unimelb.edu.au"), 
       person("Florian", "Rohart", role = "aut"), 
       person("Ignacio", "Gonzalez", role = "aut"),
       person("Sebastien", "Dejean", role = "aut"), 
       ## key contributors
-      person("Al", "Abadi", role = "ctb"), 
+      person("Al", "Abadi", role = c("ctb", "cre"), email = "al.jal.abadi@gmail.com"), 
       person("Benoit", "Gautier", role = "ctb"), 
       person("Francois", "Bartolo", role = "ctb"), 
       ## also contributions from
