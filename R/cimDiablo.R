@@ -37,6 +37,9 @@
 #' and/or \code{colnames(mat)} are used. Possible character vectors with row
 #' and/or column labels can be used.
 #' @param size.legend size of the legend
+#' @param trim (Logical or numeric) If FALSE, values are not changed. If TRUE,
+#'   the values are trimmed to 3 standard deviation range. If a numeric,
+#'   values with absolute values greater than the provided values are trimmed.
 #' @param ... Other valid arguments passed to \code{cim}.
 #' @inherit cim return
 #' @author Amrit Singh, Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
@@ -86,6 +89,7 @@ cimDiablo = function(object,
                      row.names = TRUE,
                      col.names = TRUE,
                      size.legend = 1.5,
+                     trim = TRUE,
                      ...)
 {
     # check input object
@@ -164,10 +168,22 @@ cimDiablo = function(object,
     y = keepA[-length(keepA)],
     SIMPLIFY = FALSE)
     XDat = do.call(cbind, XDatList)
-    XDat[is.na(XDat)] <- 0 # XDat is centred so this is equiv. to imputation by the mean
-    XDat[which(XDat > 2)] = 2 # to avoid huge effects from outliers
-    XDat[which(XDat < -2)] = -2
     
+    XDat[is.na(XDat)] <- 0 # XDat is centred so this is equiv. to imputation by the mean
+    
+    ## --- trim outlier values
+    if (is.numeric(trim) | isTRUE(trim))
+    {
+        trim <- if (isTRUE(trim)) 3 else abs(trim)
+        cat(sprintf("\ntrimming values to [-%s, %s] range for cim visualisation. See 'trim' arg in ?cimDiablo\n", trim, trim))
+        trim <- abs(trim)
+        XDat[which(XDat > trim)] = trim # to avoid huge effects from outliers
+        XDat[which(XDat < -trim)] = -trim
+    } else if (!isFALSE(trim))
+    {
+        stop("'trim' must be either logical or numeric")
+    }
+  
     #dark = brewer.pal(n = 12, name = 'Paired')[seq(2, 12, by = 2)]
     VarLabels = factor(rep(names(keepA[-length(keepA)]), lapply(keepA[-length(keepA)], sum)),
                        levels = names(X))#[order(names(X))])

@@ -16,6 +16,7 @@ cimDiablo(
   row.names = TRUE,
   col.names = TRUE,
   size.legend = 1.5,
+  trim = TRUE,
   ...
 )
 }
@@ -51,6 +52,10 @@ and/or \code{colnames(mat)} are used. Possible character vectors with row
 and/or column labels can be used.}
 
 \item{size.legend}{size of the legend}
+
+\item{trim}{(Logical or numeric) If FALSE, values are not changed. If TRUE,
+the values are trimmed to 3 standard deviation range. If a numeric,
+values with absolute values greater than the provided values are trimmed.}
 
 \item{...}{Other valid arguments passed to \code{cim}.}
 }
@@ -89,6 +94,10 @@ nutrimouse.sgccda <- block.splsda(X = data,
                                   scheme = "centroid")
 
 cimDiablo(nutrimouse.sgccda, comp = c(1,2))
+## change trim range
+cimDiablo(nutrimouse.sgccda, comp = c(1,2), trim = 4)
+## do not trim values
+cimDiablo(nutrimouse.sgccda, comp = c(1,2), trim = FALSE)
 }
 \references{
 Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt S.

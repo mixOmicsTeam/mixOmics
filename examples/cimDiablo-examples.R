@@ -12,3 +12,7 @@ nutrimouse.sgccda <- block.splsda(X = data,
                                   scheme = "centroid")
 
 cimDiablo(nutrimouse.sgccda, comp = c(1,2))
+## change trim range
+cimDiablo(nutrimouse.sgccda, comp = c(1,2), trim = 4)
+## do not trim values
+cimDiablo(nutrimouse.sgccda, comp = c(1,2), trim = FALSE)
