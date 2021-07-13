@@ -71,28 +71,24 @@ This function generates color-coded Clustered Image Maps (CIMs) ("heat
 maps") to represent "high-dimensional" data sets analysed with DIABLO.
 }
 \details{
-This function is a small wrapper of \code{link{cim}} specific to the DIABLO
+This function is a small wrapper of \code{\link{cim}} specific to the DIABLO
 framework.
 }
 \examples{
-
 ## default method: shows cross correlation between 2 data sets
 #------------------------------------------------------------------
 data(nutrimouse)
 Y = nutrimouse$diet
 data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
-design = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
-
 
 nutrimouse.sgccda <- block.splsda(X = data,
-Y = Y,
-design = design,
-keepX = list(gene = c(10,10), lipid = c(15,15)),
-ncomp = 2,
-scheme = "centroid")
+                                  Y = Y,
+                                  design = "full",
+                                  keepX = list(gene = c(10,10), lipid = c(15,15)),
+                                  ncomp = 2,
+                                  scheme = "centroid")
 
-cimDiablo(nutrimouse.sgccda)
-
+cimDiablo(nutrimouse.sgccda, comp = c(1,2))
 }
 \references{
 Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt S.

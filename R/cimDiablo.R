@@ -12,7 +12,7 @@
 #' This function generates color-coded Clustered Image Maps (CIMs) ("heat
 #' maps") to represent "high-dimensional" data sets analysed with DIABLO.
 #' 
-#' This function is a small wrapper of \code{link{cim}} specific to the DIABLO
+#' This function is a small wrapper of \code{\link{cim}} specific to the DIABLO
 #' framework.
 #' 
 #' @param object An object of class inheriting from \code{"block.splsda"}.
@@ -73,25 +73,7 @@
 #' feature selection and multiple data integration. PLoS Comput Biol 13(11):
 #' e1005752
 #' @keywords multivariate iplot hplot graphs cluster
-#' @examples
-#' 
-#' ## default method: shows cross correlation between 2 data sets
-#' #------------------------------------------------------------------
-#' data(nutrimouse)
-#' Y = nutrimouse$diet
-#' data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
-#' design = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
-#' 
-#' 
-#' nutrimouse.sgccda <- block.splsda(X = data,
-#' Y = Y,
-#' design = design,
-#' keepX = list(gene = c(10,10), lipid = c(15,15)),
-#' ncomp = 2,
-#' scheme = "centroid")
-#' 
-#' cimDiablo(nutrimouse.sgccda)
-#' 
+#' @example ./examples/cimDiablo-examples.R
 #' @export
 cimDiablo = function(object,
                      color = NULL,
@@ -134,7 +116,6 @@ cimDiablo = function(object,
     if (length(comp) == 1) {
         if (is.null(comp) || !is.numeric(comp) || comp <= 0 || comp > ncomp)
             stop("invalid value for 'comp'.", call. = FALSE)
-        comp = c(comp, comp)
     }
     
     comp = round(comp)
