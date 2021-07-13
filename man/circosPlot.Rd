@@ -81,8 +81,8 @@ the correlated variables (see details). Must be of length 2 or 1. Default to c(1
  \item \bold{blocks.link} Character vector of blocks. If provided, only correlations
  from features of these blocks are shown using links. See examples.
 }
-For object of class \code{block.spls}, all listed arguments passed to the
-\code{block.splsda} method.}
+For object of class \code{block.spls}, all listed and advanced arguments
+passed to the \code{block.splsda} method.}
 
 \item{group}{The grouping factor used when \code{line = TRUE}}
 

@@ -48,8 +48,8 @@
 #'  \item \bold{blocks.link} Character vector of blocks. If provided, only correlations
 #'  from features of these blocks are shown using links. See examples.
 #' }
-#' For object of class \code{block.spls}, all listed arguments passed to the
-#' \code{block.splsda} method.
+#' For object of class \code{block.spls}, all listed and advanced arguments
+#' passed to the \code{block.splsda} method.
 #' @return If saved in an object, the circos plot will output the similarity
 #' matrix and the names of the variables displayed on the plot (see
 #' \code{attributes(object)}).

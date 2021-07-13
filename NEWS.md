@@ -2,6 +2,7 @@
 
 ### new features / enhancements / changes
 
+* `auroc` title now fixed (#135)
 * `cimDiablo` takes `trim` argument to customise outlier filtering (#136)
 * `plotIndiv.pca` default shape set to `16`
 * `circosPlot` & `network` now support blocks with similar feature names 

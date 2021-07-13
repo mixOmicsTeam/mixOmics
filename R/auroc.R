@@ -88,14 +88,23 @@ auroc.mixo_plsda <-
         outcome.test = as.factor(object$Y),
         multilevel = NULL,
         plot = TRUE,
-        roc.comp = 1,
-        title=paste("ROC Curve Comp",roc.comp),
+        roc.comp = NULL,
+        title = NULL,
         print=TRUE,
         ...)
     {
         if(dim(newdata)[[1]] != length(outcome.test))
             stop("Factor outcome.test must be a factor with ",dim(newdata)[[1]],
                  " elements.",call. = FALSE)
+        
+        
+        if (is.null(roc.comp))
+        {
+            roc.comp <- object$ncomp
+        }
+        
+        if( length(roc.comp) != 1)
+            stop("`roc.comp' must be a single integer")
         
         data = list()
         statauc.res = graph = list()
@@ -107,6 +116,7 @@ auroc.mixo_plsda <-
         
         for (i in seq_len(object$ncomp))
         {
+            title <- paste0("ROC Curve Using Comp(s): ",paste0(seq_len(i), collapse = ', '))
             data$data=res.predict[,,i]
             temp = statauc(data, plot = ifelse(i%in%roc.comp,plot,FALSE), title=title,...)
             statauc.res[[paste0("Comp", i, sep = "")]] = temp[[1]]
@@ -135,7 +145,7 @@ auroc.mint.plsda <-
         study.test = object$study,
         multilevel = NULL,
         plot = TRUE,
-        roc.comp = 1,
+        roc.comp = NULL,
         roc.study = "global",
         title=NULL,
         print=TRUE,
@@ -144,6 +154,11 @@ auroc.mint.plsda <-
         if(length(roc.study) != 1)
             stop("`roc.study' must be a single entry,
     either `global' or one of levels(object$study)")
+        
+        if (is.null(roc.comp))
+        {
+            roc.comp <- object$ncomp
+        }
         
         if( length(roc.comp) != 1)
             stop("`roc.comp' must be a single integer")
@@ -184,7 +199,7 @@ auroc.mint.plsda <-
         data$data=res.predict[,,roc.comp]
         
         if (is.null(title)) {
-            title=paste0("ROC Curve Comp ", roc.comp, title.temp)
+            title=paste0("ROC Curve Using Comp(s): ", paste0(seq_len(roc.comp), collapse = ', '), title.temp)
         }
         
         temp = statauc(data, plot = ifelse(roc.comp%in% roc.comp,plot,FALSE), title=title,...)
@@ -215,7 +230,7 @@ auroc.sgccda <- function(
     multilevel = NULL,
     plot = TRUE,
     roc.block = 1L,
-    roc.comp = 1L,
+    roc.comp = NULL,
     title=NULL,
     print=TRUE,
     ...)
@@ -224,6 +239,11 @@ auroc.sgccda <- function(
     data=list()
     auc.mean = graph=list()
     data$outcome=factor(outcome.test)
+    
+    if (is.null(roc.comp))
+    {
+        roc.comp <- object$ncomp
+    }
     
     # note here: the dist does not matter as we used the predicted scores only
     res.predict  =  predict.block.spls(object, newdata = newdata,
@@ -247,8 +267,8 @@ auroc.sgccda <- function(
         {
             data$data=res.predict[[j]][,,i]
             if (is.null(title.temp)) {
-                title=paste("ROC Curve\nBlock: ", names(res.predict)[j],
-                            ", comp: ",i, sep="")
+                title=paste0("ROC Curve\nBlock: ", names(res.predict)[j],
+                            ", Using Comp(s): ",paste0(seq_len(i), collapse = ', '))
             }
             
             plot.temp =
@@ -282,7 +302,7 @@ auroc.mint.block.plsda <- function(
     multilevel = NULL,
     plot = TRUE,
     roc.block = 1,
-    roc.comp = 1,
+    roc.comp = NULL,
     title=NULL,
     print=TRUE,
     ...)
@@ -292,6 +312,11 @@ auroc.mint.block.plsda <- function(
     auc.mean = graph=list()
     data$outcome=factor(outcome.test)
     study.test=factor(study.test)
+    
+    if (is.null(roc.comp))
+    {
+        roc.comp <- object$ncomp
+    }
     
     # note here: the dist does not matter as we used the predicted scores only
     res.predict  =  predict.mixo_spls(object, newdata = newdata,
