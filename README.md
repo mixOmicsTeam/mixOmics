@@ -3,9 +3,8 @@
 
 [![R build
 status](https://github.com/mixOmicsteam/mixOmics/workflows/R-CMD-check/badge.svg)](https://github.com/mixOmicsteam/mixOmics/actions)
-[![](https://img.shields.io/badge/bioc%20release-6.13.49-green.svg)](https://www.bioconductor.org/packages/mixOmics)
-[![Build
-Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)
+<!-- [![](https://img.shields.io/badge/bioc%20release-6.14.1-green.svg)](https://www.bioconductor.org/packages/mixOmics) -->
+<!-- [![Build Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics) -->
 [![](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
 [![download](http://www.bioconductor.org/shields/downloads/release/mixOmics.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
@@ -37,7 +36,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::valid()
 ```
 
-#### Latest Bioconductor Release
+#### a) Latest `Bioconductor` Release
 
 You can then install `mixOmics` using the following code:
 
@@ -46,7 +45,7 @@ You can then install `mixOmics` using the following code:
 BiocManager::install('mixOmics')
 ```
 
-#### `GitHub` Versions
+#### b) `GitHub` Versions
 
 ##### Stable version
 
@@ -79,6 +78,96 @@ New](/https://github.com/ajabadi/mixOmics#whats-new)):
 ``` r
 BiocManager::install("mixOmicsTeam/mixOmics@devel")
 ```
+
+#### c) `Docker` container of the stable GitHub version
+
+<details>
+<summary>
+Click to expand
+</summary>
+
+**Note: requires root privileges**
+
+1.  Install Docker following instructions at
+    <https://docs.docker.com/docker-for-mac/install/>
+
+**if your OS is not compatible with the latest version** download an
+older version of Docker from the following link:
+
+-   MacOS: <https://docs.docker.com/docker-for-mac/release-notes/>
+-   Windows: <https://docs.docker.com/docker-for-windows/release-notes/>
+
+Then open your system’s command line interface (e.g. Terminal for MacOS
+and Command Promot for Windows) for the following steps.
+
+**MacOS Users:** Launch Docker Desktop to activate root priliveges
+before running any docker commands from the command line.
+
+2.  Pull mixOmics container
+
+``` bash
+docker pull mixomicsteam/mixomics
+```
+
+3.  Ensure it is installed
+
+The following command lists the running images:
+
+``` bash
+docker images
+```
+
+This lists the installed images. The output should be something similar
+to the following:
+
+    $ docker images 
+      > REPOSITORY                       TAG       IMAGE ID       CREATED         SIZE
+      > mixomicsteam/mixomics            latest    e755393ac247   2 weeks ago     4.38GB
+
+4.  Active the container
+
+Running the following command activates the container. You must change
+`your_password` to a custom password of your own. You can also customise
+ports (8787:8787) if desired/necessary. see
+<https://docs.docker.com/config/containers/container-networking/> for
+details.
+
+``` bash
+docker run -e PASSWORD=your_password --rm -p 8787:8787 mixomicsteam/mixomics
+```
+
+5.  Run
+
+In your web browser, go to `http://localhost:8787/` (change port if
+necessary) and login with the following credentials:
+
+*username*: rstudio  
+*password*: (your\_password set in step 4)
+
+6.  Inspect/stop
+
+The following command lists the running containers:
+
+``` bash
+sudo docker ps
+```
+
+The output should be something similar to the following:
+
+``` bash
+$ sudo docker ps
+  > CONTAINER ID   IMAGE                   COMMAND   CREATED         STATUS         PORTS                    NAMES
+  > f14b0bc28326   mixomicsteam/mixomics   "/init"   7 minutes ago   Up 7 minutes   0.0.0.0:8787->8787/tcp   compassionate_mestorf
+```
+
+The listed image ID can then be used to stop the container (here
+`f14b0bc28326`)
+
+``` bash
+docker stop f14b0bc28326
+```
+
+</details>
 
 ## Contribution
 
@@ -175,7 +264,6 @@ Thank you for using `mixOmics`!
 -   `plotIndiv` now supports (weighted) consensus plots for block
     analyses. See the example in [this
     issue](https://github.com/mixOmicsTeam/mixOmics/issues/57)
-
 -   `plotIndiv(..., ind.names=FALSE)` [warning
     issue](https://github.com/mixOmicsTeam/mixOmics/issues/59) now fixed
 
