@@ -249,10 +249,20 @@ Thank you for using `mixOmics`!
 
 ## What’s New
 
-#### Septermber 2020
+#### July 2021
 
--   New biplot now available for `pca` family. See the examples in [this
-    issue](https://github.com/mixOmicsTeam/mixOmics/issues/90)
+-   `tune.spls` now able to tune the selected variables on both `X` and
+    `Y`. See `?tune.spls`
+-   new function `impute.nipals` to impute missing values using the
+    nipals algorithm
+-   new function `tune.spca` to tune the number of selected variables
+    for pca components
+-   `circosPlot` now has methods for `block.spls` objects. It can now
+    handle similar feature names across blocks. It is also much more
+    customisable. See advanced arguments in `?circosPlot`
+-   new `biplot` function for `pca` and `pls` objects. See
+    `?mixOmics::biplot`
+-   `plotDiablo` now takes `col.per.group` (see \#119)
 
 #### April 2020
 
@@ -272,21 +282,3 @@ Thank you for using `mixOmics`!
 -   `perf.block.splsda` now supports calculation of combined AUC
 -   `block.splsda` bug which could drop some classes with
     `near.zero.variance=TRUE` now fixed
-
-#### November 2019
-
--   Parallel computing improved for `tune` and `perf` functions, and
-    even more on Unix-like systems
-
--   Fixed margin error problem with `plotLoadings`. See the example in
-    [this issue](https://github.com/mixOmicsTeam/mixOmics/issues/45)
-
--   `cim` bug which overestimated correlations for single component now
-    fixed
-
--   `perf.sgccda` now supports calculation of average combined AUC
-
-#### September 2019
-
--   You can now customise `auroc` plots in version 6.8.3. See example
-    [here](https://github.com/mixOmicsTeam/mixOmics/issues/35)
