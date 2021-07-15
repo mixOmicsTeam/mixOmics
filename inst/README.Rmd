@@ -8,9 +8,26 @@ knit: (function(inputFile, encoding) {
     rmarkdown::render(inputFile, output_file="README.md", encoding = encoding, output_dir = "../") })
 ---
 
-<!-- PLEASE DO NOT EDIT BY HAND, EDIT ./inst/README.Rmd AND RENDER TO CREATE THIS -->
+<!-- PLEASE DO NOT EDIT ./README.md BY HAND, EDIT ./inst/README.Rmd AND RENDER TO CREATE ./README.md -->
+
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(
+  echo = TRUE,
+  eval = FALSE,
+  warning = FALSE,
+  fig.path = "whatsnew-files/",
+  fig.asp = 1,
+  out.width = "50%",
+  cache = FALSE
+)
+opts_knit$set(cache.path = "whatsnew-files/")
+```
 
 ```{r create-badges, include=FALSE, eval=TRUE}
+if (!requireNamespace('badger', quietly = TRUE))
+  install.packages("badger")
 library(badger)
 pkg_license <- read.dcf("../DESCRIPTION")[, "License"]
 pkg_license_badge <- sprintf("https://img.shields.io/badge/license-%s-lightgrey.svg", pkg_license)
@@ -29,25 +46,17 @@ bioc_release_badge <- gsub(bioc_release_badge, pattern = "release%20version", re
 # latest_devel <- sprintf("https://img.shields.io/badge/latest%%20devel-%s-orange.svg", github_devel)
 # 
 # latest_stable_badge <- sprintf("[![](%s)](https://github.com/mixOmicsTeam/mixOmics#latest-github-version)", latest_stable)
-latest_stable_build <- "[![Build Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics)"
 # latest_devel_badge <- sprintf("[![](%s)](https://github.com/mixOmicsTeam/mixOmics#development-version)", latest_devel)
 # latest_devel_build <- "[![Build Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=devel)](https://travis-ci.org/mixOmicsTeam/mixOmics)"
 ```
 
 `r badge_github_actions("mixOmicsteam/mixOmics")`
-<!-- `r bioc_release_badge` -->
-<!-- `r latest_stable_build` -->
-`r badge_codecov("mixOmicsTeam/mixOmics")`
+`r bioc_release_badge`
+`r badge_codecov("mixOmicsTeam/mixOmics", branch='master')`
 `r badge_bioc_download_rank('mixOmics')`
-`r badge_last_commit("mixOmicsTeam/mixOmics")`
+`r badge_last_commit("mixOmicsTeam/mixOmics", branch='master')`
 [![license](`r pkg_license_badge`)](https://choosealicense.com/)
 [![dependencies](http://bioconductor.org/shields/dependencies/release/mixOmics.svg)](http://bioconductor.org/packages/release/bioc/html/mixOmics.html#since)
-
-```{r setup, include=FALSE}
-library(knitr)
-opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, fig.path = "whatsnew-files/", fig.asp = 1, out.width = "50%", cache = FALSE)
-opts_knit$set( cache.path = "whatsnew-files/")
-```
 
 ![](http://mixomics.org/wp-content/uploads/2019/07/MixOmics-Logo-1.png)
 
@@ -55,14 +64,18 @@ This repository contains the `R` package [now hosted on Bioconductor](http://bio
 
 ## Installation
 
-**(Mac OS Users Only:)** Ensure you have installed [XQuartz](https://www.xquartz.org/) first.
+**(macOS users only:)** Ensure you have installed [XQuartz](https://www.xquartz.org/) first.
 
 Make sure you have the latest R version and the latest `BiocManager` package installed following [these instructions](https://www.bioconductor.org/install/) (if you use legacy R versions (<=3.5.0) refer to the instructions at the end of the mentioned page).
 ```{r}
 ## install BiocManager if not installed
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-## ensure the following returns TRUE, or follow guidelines
+```
+
+Ensure the following returns `TRUE`, or follow guidelines provided by the output.
+
+```{r}
 BiocManager::valid()
 ```
 

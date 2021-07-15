@@ -1,14 +1,13 @@
 
-<!-- PLEASE DO NOT EDIT BY HAND, EDIT ./inst/README.Rmd AND RENDER TO CREATE THIS -->
+<!-- PLEASE DO NOT EDIT ./README.md BY HAND, EDIT ./inst/README.Rmd AND RENDER TO CREATE ./README.md -->
 
 [![R build
 status](https://github.com/mixOmicsteam/mixOmics/workflows/R-CMD-check/badge.svg)](https://github.com/mixOmicsteam/mixOmics/actions)
-<!-- [![](https://img.shields.io/badge/bioc%20release-6.14.1-green.svg)](https://www.bioconductor.org/packages/mixOmics) -->
-<!-- [![Build Status](https://travis-ci.org/mixOmicsTeam/mixOmics.svg?branch=master)](https://travis-ci.org/mixOmicsTeam/mixOmics) -->
+[![](https://img.shields.io/badge/bioc%20release-6.16.1-green.svg)](https://www.bioconductor.org/packages/mixOmics)
 [![](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://codecov.io/gh/mixOmicsTeam/mixOmics)
 [![download](http://www.bioconductor.org/shields/downloads/release/mixOmics.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
-[![license](https://img.shields.io/badge/license-GPL%20(%3E=%202)-lightgrey.svg)](https://choosealicense.com/)
+[![license](https://img.shields.io/badge/license-GPL%20\(%3E=%202\)-lightgrey.svg)](https://choosealicense.com/)
 [![dependencies](http://bioconductor.org/shields/dependencies/release/mixOmics.svg)](http://bioconductor.org/packages/release/bioc/html/mixOmics.html#since)
 
 ![](http://mixomics.org/wp-content/uploads/2019/07/MixOmics-Logo-1.png)
@@ -19,20 +18,25 @@ and our stable and development `GitHub` versions.
 
 ## Installation
 
-**(Mac OS Users Only:)** Ensure you have installed
+**(macOS users only:)** Ensure you have installed
 [XQuartz](https://www.xquartz.org/) first.
 
 Make sure you have the latest R version and the latest `BiocManager`
 package installed following [these
 instructions](https://www.bioconductor.org/install/) (if you use legacy
-R versions (&lt;=3.5.0) refer to the instructions at the end of the
+R versions (\<=3.5.0) refer to the instructions at the end of the
 mentioned page).
 
 ``` r
 ## install BiocManager if not installed
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-## ensure the following returns TRUE, or follow guidelines
+```
+
+Ensure the following returns `TRUE`, or follow guidelines provided by
+the output.
+
+``` r
 BiocManager::valid()
 ```
 
@@ -82,20 +86,19 @@ BiocManager::install("mixOmicsTeam/mixOmics@devel")
 #### c) `Docker` container of the stable GitHub version
 
 <details>
-<summary>
-Click to expand
-</summary>
+
+<summary>Click to expand</summary>
 
 **Note: requires root privileges**
 
-1.  Install Docker following instructions at
+1)  Install Docker following instructions at
     <https://docs.docker.com/docker-for-mac/install/>
 
 **if your OS is not compatible with the latest version** download an
 older version of Docker from the following link:
 
--   MacOS: <https://docs.docker.com/docker-for-mac/release-notes/>
--   Windows: <https://docs.docker.com/docker-for-windows/release-notes/>
+  - MacOS: <https://docs.docker.com/docker-for-mac/release-notes/>
+  - Windows: <https://docs.docker.com/docker-for-windows/release-notes/>
 
 Then open your system’s command line interface (e.g. Terminal for MacOS
 and Command Promot for Windows) for the following steps.
@@ -103,13 +106,15 @@ and Command Promot for Windows) for the following steps.
 **MacOS Users:** Launch Docker Desktop to activate root priliveges
 before running any docker commands from the command line.
 
-2.  Pull mixOmics container
+2)  Pull mixOmics container
+
+<!-- end list -->
 
 ``` bash
 docker pull mixomicsteam/mixomics
 ```
 
-3.  Ensure it is installed
+3)  Ensure it is installed
 
 The following command lists the running images:
 
@@ -124,7 +129,7 @@ to the following:
       > REPOSITORY                       TAG       IMAGE ID       CREATED         SIZE
       > mixomicsteam/mixomics            latest    e755393ac247   2 weeks ago     4.38GB
 
-4.  Active the container
+4)  Active the container
 
 Running the following command activates the container. You must change
 `your_password` to a custom password of your own. You can also customise
@@ -136,7 +141,7 @@ details.
 docker run -e PASSWORD=your_password --rm -p 8787:8787 mixomicsteam/mixomics
 ```
 
-5.  Run
+5)  Run
 
 In your web browser, go to `http://localhost:8787/` (change port if
 necessary) and login with the following credentials:
@@ -144,7 +149,7 @@ necessary) and login with the following credentials:
 *username*: rstudio  
 *password*: (your\_password set in step 4)
 
-6.  Inspect/stop
+6)  Inspect/stop
 
 The following command lists the running containers:
 
@@ -179,7 +184,7 @@ software consistency if you wish to contribute to `mixOmics` R codes.
 
 ### Bug reports and pull requests
 
-To report a bug (or offer a solution for a bug!) visit:
+To report a bug (or offer a solution for a bug\!) visit:
 <https://github.com/mixOmicsTeam/mixOmics/issues>. We fully welcome and
 appreciate well-formatted and detailed pull requests. Preferably with
 tests on our datasets.
@@ -191,8 +196,8 @@ analysis questions to our discussion forum
 <https://mixomics-users.discourse.group>. This forum is aimed to host
 discussions on choices of multivariate analyses, as well as comments and
 suggestions to improve the package. We hope to create an active
-community of users, data analysts, developers and R programmers alike!
-Thank you!
+community of users, data analysts, developers and R programmers alike\!
+Thank you\!
 
 ## About the `mixOmics` team
 
@@ -206,7 +211,7 @@ contributors, past (Benoît Gautier, François Bartolo) and present (Al
 Abadi, University of Melbourne) and several collaborators including
 Amrit Singh (University of British Columbia), Olivier Chapleur (IRSTEA,
 Paris), Antoine Bodein (Universite de Laval) - **it could be you too, if
-you wish to be involved!**.
+you wish to be involved\!**.
 
 The project started at the *Institut de Mathématiques de Toulouse* in
 France, and has been fully implemented in Australia, at the *University
@@ -241,9 +246,9 @@ in this diagram. *PLS* stands for *Projection to Latent Structures*
 (also called Partial Least Squares, but not our preferred nomenclature),
 *CCA* for *Canonical Correlation Analysis*.
 
-That’s it! Ready! Set! Go!
+That’s it\! Ready\! Set\! Go\!
 
-Thank you for using `mixOmics`!
+Thank you for using `mixOmics`\!
 
 ![](http://mixomics.org/wp-content/uploads/2012/04/framework-mixOmics-June2016.jpg)
 
@@ -251,37 +256,37 @@ Thank you for using `mixOmics`!
 
 #### July 2021
 
--   new function `plotMarkers` to visualise the selected features in
+  - new function `plotMarkers` to visualise the selected features in
     block analyses (see
     <https://github.com/mixOmicsTeam/mixOmics/issues/134>)
--   `tune.spls` now able to tune the selected variables on both `X` and
+  - `tune.spls` now able to tune the selected variables on both `X` and
     `Y`. See `?tune.spls`
--   new function `impute.nipals` to impute missing values using the
+  - new function `impute.nipals` to impute missing values using the
     nipals algorithm
--   new function `tune.spca` to tune the number of selected variables
+  - new function `tune.spca` to tune the number of selected variables
     for pca components
--   `circosPlot` now has methods for `block.spls` objects. It can now
+  - `circosPlot` now has methods for `block.spls` objects. It can now
     handle similar feature names across blocks. It is also much more
     customisable. See advanced arguments in `?circosPlot`
--   new `biplot` function for `pca` and `pls` objects. See
+  - new `biplot` function for `pca` and `pls` objects. See
     `?mixOmics::biplot`
--   `plotDiablo` now takes `col.per.group` (see \#119)
+  - `plotDiablo` now takes `col.per.group` (see \#119)
 
 #### April 2020
 
--   weighted consensus plots for DIABLO objects now consider
+  - weighted consensus plots for DIABLO objects now consider
     per-component weights
 
 #### March 2020
 
--   `plotIndiv` now supports (weighted) consensus plots for block
+  - `plotIndiv` now supports (weighted) consensus plots for block
     analyses. See the example in [this
     issue](https://github.com/mixOmicsTeam/mixOmics/issues/57)
--   `plotIndiv(..., ind.names=FALSE)` [warning
+  - `plotIndiv(..., ind.names=FALSE)` [warning
     issue](https://github.com/mixOmicsTeam/mixOmics/issues/59) now fixed
 
 #### January 2020
 
--   `perf.block.splsda` now supports calculation of combined AUC
--   `block.splsda` bug which could drop some classes with
+  - `perf.block.splsda` now supports calculation of combined AUC
+  - `block.splsda` bug which could drop some classes with
     `near.zero.variance=TRUE` now fixed
