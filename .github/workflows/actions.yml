@@ -1,5 +1,7 @@
 on:
   push:
+    branches-ignore: 
+      - updateREADME
   pull_request:
     branches:
       - master

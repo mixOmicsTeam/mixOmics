@@ -1,0 +1,75 @@
+on:
+  schedule:
+    - cron: '0 8 * * 4'
+
+name: "Update README"
+
+jobs:
+  Update-README:
+    if: (github.repository == 'aljabadi/mixOmics')
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { os: ubuntu-latest, r: 'release'}
+
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Check out repo ⬇️
+        uses: actions/checkout@v2
+
+      - name: Set up R ▶️
+        uses: r-lib/actions/setup-r@master
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      - name: Set up pandoc
+        uses: r-lib/actions/setup-pandoc@v1
+
+      - name: Install system dependencies 🔧
+        if: runner.os == 'Linux'
+        env:
+          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
+        run: |
+          sudo apt-get update && sudo apt-get -y install libcurl4-openssl-dev
+
+      - name: Install packages 🔧
+        run: |
+          install.packages(c('rmarkdown', 'badger'), Ncpus=2L)
+        shell: Rscript {0}
+
+      - name: Render README 📖
+        run: |
+          rmarkdown::render("inst/README.Rmd")
+        shell: Rscript {0}
+
+      - name: Create commits
+        run: |
+          git config user.name 'Al J Abadi'
+          git config user.email 'al.jal.abadi@gmail.com'
+          # mkdir readmes
+          # cp README.md readmes/old.md
+          # cp inst/README.md readmes/new.md
+          rm README.md
+          mv inst/README.md README.md
+          git add -f README.md
+          # git diff-index --quiet HEAD || echo "$(git diff-index --quiet HEAD)" >> readmes/diff.md
+          git diff-index --quiet HEAD || git commit -am "automatic update of README.md - skip-ci"
+
+      # - name: Upload README files ⬆️
+      #   uses: actions/upload-artifact@master
+      #   with:
+      #     name: readmes
+      #     path: readmes
+    
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          base: devel
+          branch: updateREADME
+          token: ${{ secrets.UPDATE_README }}
