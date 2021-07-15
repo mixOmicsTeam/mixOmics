@@ -10,7 +10,7 @@
 #' 
 #' \code{selectVar} provides the variables selected on a given component. \
 #' \describe{ \item{list("name")}{outputs the name of the selected variables
-#' (provided that the input data have colnames) ranked in decreasing order of
+#' (provided that the input data have column names) ranked in decreasing order of
 #' importance.} \item{list("value")}{outputs the loading value for each
 #' selected variable, the loadings are ranked according to their absolute
 #' value.} } These functions are only implemented for the sparse versions.
@@ -18,7 +18,8 @@
 #' @aliases selectVar selectVar.mixo_pls selectVar.mixo_spls selectVar.pca
 #' selectVar.sgcca selectVar.rgcca select.var
 #' @param object object of class inherited from \code{"pls"}, \code{"spls"},
-#' \code{"plsda"},\code{"splsda"}, \code{"pca"}, \code{"spca"}, \code{"sipca"}.
+#'   \code{"plsda"},\code{"splsda"},\code{"sgcca"}, \code{"rgcca"},
+#'   \code{"pca"}, \code{"spca"}, \code{"sipca"}.
 #' @param comp integer value indicating the component of interest.
 #' @param block for an object of class \code{"sgcca"}, the block data sets can
 #' be specified as an input vector, for example \code{c(1,2)} for the first two

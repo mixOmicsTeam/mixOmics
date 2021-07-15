@@ -251,6 +251,9 @@ Thank you for using `mixOmics`!
 
 #### July 2021
 
+-   new function `plotMarkers` to visualise the selected features in
+    block analyses (see
+    <https://github.com/mixOmicsTeam/mixOmics/issues/134>)
 -   `tune.spls` now able to tune the selected variables on both `X` and
     `Y`. See `?tune.spls`
 -   new function `impute.nipals` to impute missing values using the

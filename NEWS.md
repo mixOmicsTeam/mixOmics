@@ -2,6 +2,7 @@
 
 ### new features / enhancements / changes
 
+* new function `plotMarkers` to visualise the selected features in block analyses (see #134)
 * `auroc` title now fixed (#135)
 * `cimDiablo` takes `trim` argument to customise outlier filtering (#136)
 * `plotIndiv.pca` default shape set to `16`

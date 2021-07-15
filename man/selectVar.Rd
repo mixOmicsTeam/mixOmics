@@ -26,7 +26,8 @@ selectVar(...)
 \item{...}{other arguments.}
 
 \item{object}{object of class inherited from \code{"pls"}, \code{"spls"},
-\code{"plsda"},\code{"splsda"}, \code{"pca"}, \code{"spca"}, \code{"sipca"}.}
+\code{"plsda"},\code{"splsda"},\code{"sgcca"}, \code{"rgcca"},
+\code{"pca"}, \code{"spca"}, \code{"sipca"}.}
 
 \item{comp}{integer value indicating the component of interest.}
 
@@ -45,7 +46,7 @@ versions for our internal functions).
 \details{
 \code{selectVar} provides the variables selected on a given component. \
 \describe{ \item{list("name")}{outputs the name of the selected variables
-(provided that the input data have colnames) ranked in decreasing order of
+(provided that the input data have column names) ranked in decreasing order of
 importance.} \item{list("value")}{outputs the loading value for each
 selected variable, the loadings are ranked according to their absolute
 value.} } These functions are only implemented for the sparse versions.
