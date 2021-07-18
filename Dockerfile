@@ -1,4 +1,5 @@
-FROM bioconductor/bioconductor_docker:devel
+ARG BIOC_VERSION=devel
+FROM bioconductor/bioconductor_docker:$BIOC_VERSION
 
 WORKDIR /home/rstudio
 

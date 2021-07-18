@@ -12,8 +12,7 @@ name: R-CMD-check
 
 jobs:
   ## pre-job to determine if a job has been run for the same SHA (e.g. on a different branch)
-  Check_for_duplicate_action:
-    if: (github.event_name != 'schedule')
+  gatekeeper:
     runs-on: ubuntu-latest
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
@@ -23,10 +22,51 @@ jobs:
         with:
           github_token: ${{ github.token }}
 
+  versions:
+    needs: gatekeeper
+    if: (github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (github.event_name != 'schedule' && (needs.gatekeeper.outputs.should_skip == 'false') && !contains(github.event.head_commit.message, 'worksave') && !contains(github.event.head_commit.message, 'skip-ci'))
+    runs-on: ubuntu-latest
+    outputs:
+      r: ${{ steps.setup.outputs.r }}
+      bioc: ${{ steps.setup.outputs.bioc }}
+      dockerise: ${{ steps.setup.outputs.dockerise }}
+      docker_tag: ${{ steps.setup.outputs.docker_tag }}
+    steps:
+      - uses: rlespinasse/github-slug-action@v3.x
+      - uses: r-lib/actions/setup-r@master
+      - name: Get R/Bioc versions
+        id: setup
+        run: |
+          BRANCH_NAME="${{ env.GITHUB_REF_SLUG }}"
+          ## R and Bioc versions
+          Rscript -e "install.packages('BiocManager', Ncpus=2)"
+          r_devel=$(Rscript -e "vm=BiocManager:::.version_map(); as.character(vm[vm\$BiocStatus == 'devel',]\$R)")
+          r_release=$(Rscript -e "vm=BiocManager:::.version_map(); as.character(vm[vm\$BiocStatus == 'release',]\$R)")
+          if [[ $BRANCH_NAME =~ "release_" ]];
+          then
+            bioc="latest"
+            r="$r_release"
+          else
+            bioc="devel"
+            r="$r_devel"
+          fi
+          echo ::set-output name=r::$r
+          echo ::set-output name=bioc::$bioc
+
+          ## Docker
+          # Only Dockerise for 'master' or 'RELEASE_*' branches
+          dockerise='false'
+          [[ github.event_name != 'schedule' && ($BRANCH_NAME == "master" || $BRANCH_NAME =~ "release_") ]] && dockerise='true'
+          echo ::set-output name=dockerise::$dockerise
+          # Docker tag is 'github' for master and the branch name for release branches
+          docker_tag="github"
+          [[ $BRANCH_NAME =~ "release_" ]] && docker_tag=$BRANCH_NAME
+          echo ::set-output name=docker_tag::$docker_tag
+
   R-CMD-check:
-    needs: Check_for_duplicate_action
+    needs: [gatekeeper, versions]
     ## run scheduled jobs only on main repo - do not run a duplicate job for merges etc. Do not run if commit messages include any of 'worksave' or 'skip-ci'
-    if: (github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (github.event_name != 'schedule' && (needs.Check_for_duplicate_action.outputs.should_skip == 'false') && !contains(github.event.head_commit.message, 'worksave') && !contains(github.event.head_commit.message, 'skip-ci'))
+    if: (github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (github.event_name != 'schedule' && (needs.gatekeeper.outputs.should_skip == 'false') && !contains(github.event.head_commit.message, 'worksave') && !contains(github.event.head_commit.message, 'skip-ci'))
     runs-on: ${{ matrix.config.os }}
     container: ${{ matrix.config.image }}
 
@@ -36,9 +76,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # - { os: windows-latest, r: 'release', bioc: 'devel'}
-          # - { os: macOS-latest, r: 'devel', bioc: 'devel'}
-          - { os: ubuntu-latest, r: 'devel', image: 'bioconductor/bioconductor_docker:devel'}
+          # - { os: windows-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
+          # - { os: macOS-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
+          - { os: ubuntu-latest, r: '${{ needs.versions.outputs.r }}', image: 'bioconductor/bioconductor_docker:${{ needs.versions.outputs.bioc }}'}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -56,16 +96,19 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
 
+      - name: Create slug/short variables
+        uses: rlespinasse/github-slug-action@v3.x
+
       - name: Install remotes 🔭
         run: |
-          install.packages('remotes')
+          install.packages('remotes', Ncpus=2)
         shell: Rscript {0}
 
       - name: Set BiocManager version 📆
         if: matrix.config.image == null
         run: |
-          install.packages('BiocManager')
-          BiocManager::install(version = "${{ matrix.config.bioc }}", ask = FALSE)
+          install.packages('BiocManager', Ncpus=2)
+          BiocManager::install(version = "${{ matrix.config.bioc }}", ask = FALSE, Ncpus=2)
         shell: Rscript {0}
 
       - name: Query dependencies ❓
@@ -95,8 +138,8 @@ jobs:
         run: |
           options(repos = c(CRAN = "https://cran.r-project.org"))
           remotes::install_deps(dependencies = TRUE, repos = BiocManager::repositories(), Ncpus=2)
-          remotes::install_cran("rcmdcheck")
-          remotes::install_cran("covr")
+          remotes::install_cran("rcmdcheck", Ncpus=2)
+          remotes::install_cran("covr", Ncpus=2)
         shell: Rscript {0}
 
       - name: Session info 🖥️ 
@@ -107,6 +150,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Check ✅ 
+        if: (!contains(github.event.head_commit.message, 'skip-check'))
         run: rcmdcheck::rcmdcheck(args = c("--no-manual"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
@@ -114,12 +158,12 @@ jobs:
         if: github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics'
         env:
           _R_CHECK_CRAN_INCOMING_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran", "--ignore-vignettes", "--run-dontrun"), error_on = "warning", check_dir = "check/asCRAN", build_args = c("--no-build-vignettes"))
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran", "--ignore-vignettes", "--run-dontrun"), error_on = "never", check_dir = "check/asCRAN", build_args = c("--no-build-vignettes"))
         shell: Rscript {0}
       - name: BiocCheck 🧬 ✅
         if: github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics'
         run: |
-          BiocManager::install("BiocCheck")
+          BiocManager::install("BiocCheck", Ncpus=2)
           BiocCheck::BiocCheck(".")
         shell: Rscript {0}
 
@@ -135,18 +179,15 @@ jobs:
         run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
 
-      - name: Push to DockerHub
-        if: >
-            github.event_name != 'schedule' && github.repository == 'mixOmicsTeam/mixOmics' &&
-            ('${GITHUB_REF##*/}' == 'master' || '${GITHUB_REF##*/}' == 'devel')
+      - name: Push to DockerHub 📦
+        if: needs.versions.outputs.dockerise == 'true' && !contains(github.event.head_commit.message, 'skip-docker')
         uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: mixomicsteam/mixomics
-          tag_with_ref: true
-          tag_with_sha: true
-          tags: latest
+          tags: ${{ needs.versions.outputs.docker_tag }}
+          build_args: BIOC_VERSION=${{ needs.versions.outputs.bioc }} 
 
       - name: Test coverage 🔍
         # if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
