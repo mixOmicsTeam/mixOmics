@@ -184,7 +184,7 @@ plotIndiv(object, ...)
   ylim = NULL,
   col,
   cex,
-  pch = 16,
+  pch = NULL,
   pch.levels,
   alpha = 0.2,
   axes.box = "box",

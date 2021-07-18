@@ -2,6 +2,10 @@
 ^\.Rproj\.user$
 ^examples$
 ^man-roxygen
+Dockerfile
+^.*\.RData$
+^.*\.rds$
+^.*\.jpeg$
 
 ^\.travis\.yml$
 ^docs$
@@ -19,5 +23,4 @@ Library
 .github
 ignore
 .Renviron
-^.*\.pdf$
 ^codecov\.yml$

@@ -13,7 +13,7 @@ vector containing the class tumour of each case (4 classes in total).}
 further information on the genes.} }
 }
 \source{
-\url{http://research.nhgri.nih.gov/microarray/Supplement}
+\url{https://www.research.nhgri.nih.gov/projects/Microarray/Supplement/index.html}
 }
 \usage{
 data(srbct)

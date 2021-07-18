@@ -70,7 +70,6 @@ Soft thresholding is implemented on the independent loading vectors to
 obtain sparse loading vectors and enable variable selection.
 }
 \examples{
-
 data(liver.toxicity)
 
 # implement IPCA on a microarray dataset
@@ -82,13 +81,14 @@ plotIndiv(sipca.res, ind.names = liver.toxicity$treatment[, 4],
 group = as.numeric(as.factor(liver.toxicity$treatment[, 4])))
 
 \dontrun{
-plotIndiv(sipca.res, cex = 0.01,
-col = as.numeric(as.factor(liver.toxicity$treatment[, 4])),style="3d")
+plotIndiv(sipca.res, cex = 0.01, 
+          col = as.numeric(as.factor(liver.toxicity$treatment[, 4])), 
+          style="3d")
 
 # variables representation
 plotVar(sipca.res, cex = 2.5)
 
-plotVar(sipca.res, rad.in = 0.5, cex = 2.5,style="3d")
+plotVar(sipca.res, rad.in = 0.5, cex = .6, style="3d")
 }
 }
 \references{

@@ -25,7 +25,7 @@ plotIndiv.pca <-
              ylim = NULL,
              col,
              cex,
-             pch = 16,
+             pch = NULL,
              pch.levels,
              alpha = 0.2,
              axes.box = "box",
@@ -46,6 +46,9 @@ plotIndiv.pca <-
              
     )
     {
+        if (is.null(pch))
+            pch <- if (style == 'ggplot2') 16 else 'sphere'
+        
         plot_parameters = list(
             size.title = size.title,
             size.subtitle = size.subtitle,

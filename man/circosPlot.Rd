@@ -148,7 +148,8 @@ par(mfrow=c(1,1))
 
 ## adjust feature and block names radially
 circosPlot(nutrimouse.sgccda, cutoff = 0.7, size.legend = 1.1)
-circosPlot(nutrimouse.sgccda, cutoff = 0.7, size.legend = 1.1, var.adj = 0.8, block.labels.adj = -0.5)
+circosPlot(nutrimouse.sgccda, cutoff = 0.7, size.legend = 1.1, 
+           var.adj = 0.8, block.labels.adj = -0.5)
 ## ---  example using breast.TCGA data
 data("breast.TCGA")
 data = list(mrna = breast.TCGA$data.train$mrna, 
