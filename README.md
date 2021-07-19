@@ -18,8 +18,8 @@ and our stable and development `GitHub` versions.
 
 ## Installation
 
-**(macOS users only:)** Ensure you have installed
-[XQuartz](https://www.xquartz.org/) first.
+(**macOS users only:** Ensure you have installed
+[XQuartz](https://www.xquartz.org/) first.)
 
 Make sure you have the latest R version and the latest `BiocManager`
 package installed following [these
@@ -33,12 +33,15 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 ```
 
-Ensure the following returns `TRUE`, or follow guidelines provided by
-the output.
+Ensure the following returns `TRUE`, or follow the guidelines provided
+by the output.
 
 ``` r
 BiocManager::valid()
 ```
+
+For installation in R, see options a) and b). For Docker containers, see
+c).
 
 #### a) Latest `Bioconductor` Release
 
@@ -89,7 +92,7 @@ BiocManager::install("mixOmicsTeam/mixOmics@devel")
 
 <summary>Click to expand</summary>
 
-**Note: requires root privileges**
+**Note: this requires root privileges**
 
 1)  Install Docker following instructions at
     <https://docs.docker.com/docker-for-mac/install/>
@@ -103,10 +106,10 @@ older version of Docker from the following link:
 Then open your system’s command line interface (e.g. Terminal for MacOS
 and Command Promot for Windows) for the following steps.
 
-**MacOS Users:** Launch Docker Desktop to activate root priliveges
-before running any docker commands from the command line.
-
 2)  Pull mixOmics container
+**MacOS users only:** you will need to launch Docker Desktop to activate
+your root privileges before running any docker commands from the command
+line.
 
 <!-- end list -->
 
