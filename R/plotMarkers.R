@@ -13,8 +13,11 @@
 #'   \code{block.spls} objects)
 #' @template arg/col.per.group
 #' @param global Logical indicating whether to show the global plots (TRUE) or
-#'   segregate by feature (FALSE)
+#'   segregate by feature (FALSE). Only available when \code{object$scale=TRUE}
 #' @param title The plot title
+#' @param violin (if global = FALSE) Logical indicating whether violin plots should also be shown
+#' @param boxplot.width Numeric, adjusts the width of the box plots
+#' @param violin.width Numeric, adjusts the width of the violin plots
 #'
 #' @return A ggplot object
 #' @seealso \code{\link{plotLoadings}}, \code{\link{block.splsda}}, \code{\link{block.spls}}
@@ -30,8 +33,18 @@ plotMarkers <-
              group = NULL,
              col.per.group = NULL,
              global = FALSE,
-             title = NULL)
+             title = NULL,
+             violin = TRUE,
+             boxplot.width = NULL,
+             violin.width = 0.9
+             )
     {
+        boxplot.width <- .change_if_null(boxplot.width, ifelse(violin, 0.1, 0.5))
+        if (object$scale == FALSE && isTRUE(global))
+        {
+            cat("\n'global' plots are only available with 'scale=TRUE'. Using 'global=FALSE'\n")
+            global <- FALSE
+        }
         
         blocks <- names(object$X)
         if (is.numeric(block))
@@ -50,8 +63,8 @@ plotMarkers <-
         group <- col.group$group
         col.per.group <- col.group$col.per.group
         vars <- selectVar(object, block=block, comp=comp)[[1]]$value
-        
-        var.names <- rownames(vars)
+        vars <- data.frame(feature = rownames(vars), loading = vars$value.var)
+        var.names <- vars$feature
         
         df <- df[,var.names]
         df$group <- group
@@ -60,11 +73,18 @@ plotMarkers <-
                  id.vars = 'group',
                  variable.name = 'feature',
                  value.name = 'value')
+        df <- merge(df, vars)
         df$feature <- factor(df$feature, levels = var.names, ordered = TRUE)
-        df$sign <- ifelse(df$value > 0, 'Positive Loading', 'Negative Loading')
+        df$sign <- ifelse(df$loading > 0, 'Positive Loading', 'Negative Loading')
         # to show +ves on top
         df$sign <- factor(df$sign, levels = c('Positive Loading', 'Negative Loading'), ordered = TRUE)
-        
+        if (global == TRUE)
+        {
+            feature <- value <- NULL
+            #' @importFrom dplyr group_by summarise
+            df <- group_by(.data = df, feature, group, sign)
+            df <- summarise(.data = df, value = median(value, na.rm = TRUE))
+        }
         if (!is.null(markers))
         {
             if (is.numeric(markers))
@@ -86,15 +106,25 @@ plotMarkers <-
             df$feature <- 'plotMarkers'
         }
         
+        df$facet <- paste0(df$feature, "\n", df$value)
         if (is.null(title))
             title <- sprintf("Block: %s | Component: %s", block, comp)
-        p <- ggplot(df, aes_string('group', 'value', fill='group')) +  
-            geom_violin(adjust=0.9) +
-            geom_boxplot(width=0.1) + 
+        y.title <- sprintf("%svalue%s",
+                        ifelse(isTRUE(global), "median ", ""),
+                        ifelse(isTRUE(object$scale), " (standardised)", "")
+                        )
+        p <- ggplot(df, aes_string('group', 'value', fill='group'))
+        
+        if (violin)
+        {
+            p <- p + geom_violin(adjust = violin.width, scale = "count")
+        }
+        p <- p +
+            geom_boxplot(width=boxplot.width) + 
             scale_fill_manual(values = col.per.group) + 
             theme_classic() + 
             labs(x='', 
-                 y='value (standardised)', 
+                 y=y.title, 
                  title = title) + 
             theme(legend.position = 'none', 
                   axis.text.x = element_text(angle = 45, vjust = 1, hjust=1), 

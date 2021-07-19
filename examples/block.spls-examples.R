@@ -11,14 +11,14 @@ design
 # set number of component per data set
 ncomp = c(2)
 # set number of variables to select, per component and per data set (this is set arbitrarily)
-list.keepX = list(mrna = rep(5, 2), mirna = rep(5,2))
+list.keepX = list(mrna = rep(10, 2), mirna = rep(10,2))
 list.keepY = c(rep(10, 2))
 
 TCGA.block.spls = block.spls(X = data, Y = breast.TCGA$data.train$protein,
 ncomp = ncomp, keepX = list.keepX, keepY = list.keepY, design = design)
 TCGA.block.spls
 # in plotindiv we color the samples per breast subtype group but the method is unsupervised!
-plotIndiv(TCGA.block.spls, group =  breast.TCGA$data.train$subtype, ind.names = FALSE)
+plotIndiv(TCGA.block.spls, group =  breast.TCGA$data.train$subtype, ind.names = FALSE, legend=TRUE)
 # illustrates coefficient weights in each block
 plotLoadings(TCGA.block.spls, ncomp = 1)
 plotVar(TCGA.block.spls, style = 'graphics', legend = TRUE)
@@ -31,6 +31,8 @@ plotMarkers(object = TCGA.block.spls, comp = 1, block = 'mrna', group = group)
 plotMarkers(object = TCGA.block.spls, comp = 1, block = 'mrna', group = group, global = TRUE)
 # proteins
 plotMarkers(object = TCGA.block.spls, comp = 1, block = 'Y', group = group)
+## only show boxplots
+plotMarkers(object = TCGA.block.spls, comp = 1, block = 'Y', group = group, violin = FALSE)
 
 \dontrun{
 network(TCGA.block.spls)
