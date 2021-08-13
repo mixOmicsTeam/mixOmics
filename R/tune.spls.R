@@ -50,8 +50,7 @@
 #' @template arg/validation
 #' @template arg/folds
 #' @template arg/nrepeat
-#' @param measure One of c('cor', 'RSS') indicating the tuning measure. See
-#'   details.
+#' @param measure The tuning measure to use. See details.
 #' @template arg/progressBar
 #' @template arg/BPPARAM
 #' @param limQ2 Q2 threshold for recommending optimal \code{ncomp}.
@@ -129,7 +128,7 @@ tune.spls <-
              nrepeat = 1,
              folds,
              mode = c('regression', 'canonical', 'classic'),
-             measure = c('cor', 'RSS'), ## only if spls model
+             measure = NULL,
              BPPARAM = SerialParam(),
              progressBar = FALSE,
              limQ2 = 0.0975,
