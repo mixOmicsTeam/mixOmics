@@ -40,9 +40,11 @@ jobs:
           BRANCH_NAME="${{ env.GITHUB_REF_SLUG }}"
           ## R and Bioc versions
           Rscript -e "install.packages('BiocManager', Ncpus=2)"
-          r_devel=$(Rscript -e "vm=BiocManager:::.version_map(); as.character(vm[vm\$BiocStatus == 'devel',]\$R)")
-          r_release=$(Rscript -e "vm=BiocManager:::.version_map(); as.character(vm[vm\$BiocStatus == 'release',]\$R)")
-          if [[ $BRANCH_NAME =~ "release_" ]];
+          r_devel=$(Rscript -e "vm=BiocManager:::.version_map(); cat(as.character(vm[vm\$BiocStatus == 'devel',]\$R))")
+          r_release=$(Rscript -e "vm=BiocManager:::.version_map(); cat(as.character(vm[vm\$BiocStatus == 'release',]\$R))")
+          echo $r_devel >> check/log
+          echo $r_release >> check/log
+          if [[ $BRANCH_NAME =~ "release_" ]]
           then
             bioc="latest"
             r="$r_release"
@@ -70,7 +72,7 @@ jobs:
     runs-on: ${{ matrix.config.os }}
     container: ${{ matrix.config.image }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }} - ${{ matrix.config.bioc }} - ${{ matrix.config.image }})
+    name: ${{ matrix.config.os }} (r_${{ matrix.config.r }} - bioc_${{ matrix.config.bioc }} - image_${{ matrix.config.image }})
 
     strategy:
       fail-fast: false
@@ -78,7 +80,7 @@ jobs:
         config:
           # - { os: windows-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
           # - { os: macOS-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
-          - { os: ubuntu-latest, r: '${{ needs.versions.outputs.r }}', image: 'bioconductor/bioconductor_docker:${{ needs.versions.outputs.bioc }}'}
+          - { os: ubuntu-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}', image: 'bioconductor/bioconductor_docker:${{ needs.versions.outputs.bioc }}'}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
