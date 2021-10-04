@@ -112,48 +112,51 @@ MCVfold.block.splsda <-
         {
             keepY = rep(nlevels(Y), ncomp-1)
         } else {keepY = NULL}
-        M = length(folds)
         # prediction of all samples for each test.keepX and  nrep at comp fixed
         folds.input = folds
-        repeat_cv <- function(nrep)
+        
+        #-- define the folds --#
+        if (validation ==  "Mfold")
         {
+            n = nrow(X[[1]])
+            repeated.measure = 1:n
+            
+            if (is.null(folds) || !is.numeric(folds) || folds < 2 || folds > n)
+            {
+                stop("Invalid number of folds.")
+            } else {
+                M = round(folds)
+            }
+        } else if (validation ==  "loo") {
+            M = n
+            if(nrepeat != 1) stop("nrepeat should be set to 1 with validation='loo'\n")
+        }
+        
+        all_folds <- lapply(seq_len(nrepeat), function(nrep) {
+            #-- define the folds --#
+            if (validation ==  "Mfold")
+            {
+                temp = stratified.subsampling(Y, folds = M)
+                folds = temp$SAMPLE
+                if(temp$stop > 0 & nrep == 1) # to show only once
+                    warning("\nAt least one class is not represented in one fold,
+                    which may unbalance the error rate.\n  Consider a number of
+                    folds lower than the minimum in table(Y): ", min(table(Y)))
+            } else if (validation ==  "loo") {
+                folds = split(1:n, rep(1:n, length = n))
+            }
+            return(folds)
+        })
+       
+        repeat_cv <- function(nrep, all_folds = all_folds, M = M)
+        {
+            folds = all_folds[[nrep]]
             class.comp.rep <- list()
             for(ijk in dist)
                 class.comp.rep[[ijk]] = array(0, c(nrow(X[[1]]),
                                                    nrow(expand.grid(test.keepX))))
             # we don't record all the predictions for all fold and all blocks,
             #   too much data
-            
-            n = nrow(X[[1]])
-            repeated.measure = 1:n
-            
-            #-- define the folds --#
-            if (validation ==  "Mfold")
-            {
-                
-                if (nrep > 1) # reinitialise the folds
-                    folds = folds.input
-                
-                if (is.null(folds) || !is.numeric(folds) || folds < 2 || folds > n)
-                {
-                    stop("Invalid number of folds.")
-                } else {
-                    M = round(folds)
-                    #if (is.null(multilevel))
-                    #{
-                    temp = stratified.subsampling(Y, folds = M)
-                    folds = temp$SAMPLE
-                    if(temp$stop > 0 & nrep == 1) # to show only once
-                        warning("\nAt least one class is not represented in one fold,
-                    which may unbalance the error rate.\n  Consider a number of
-                    folds lower than the minimum in table(Y): ", min(table(Y)))
-                }
-            } else if (validation ==  "loo") {
-                folds = split(1:n, rep(1:n, length = n))
-                M = n
-            }
-            
-            M = length(folds)
             
             error.sw = matrix(0,nrow = M, ncol = length(test.keepX))
             rownames(error.sw) = paste0("fold",1:M)
@@ -472,7 +475,7 @@ MCVfold.block.splsda <-
             return(list(class.comp.rep=class.comp.rep, keepA=keepA))
         } #end nrep 1:nrepeat
         
-        class.comp.reps <- bplapply(seq_len(nrepeat), repeat_cv, BPPARAM = BPPARAM)
+        class.comp.reps <- bplapply(seq_len(nrepeat), repeat_cv, all_folds = all_folds, M = M, BPPARAM = BPPARAM)
 
         list2array <- function(cc) {
             ## function to make an array of results of all repeats ino the former form
