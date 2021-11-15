@@ -337,7 +337,9 @@ spca <-
         cum.var <- vect.varX/var.tot
         ## calculate per-component explained variance from cum.var,
         # the variance is adjusted to account for potential correlation between PCs:                
-        prop_expl_var <- c(cum.var[1], diff(cum.var))
+        # prop_expl_var <- c(cum.var[1], diff(cum.var))
+        prop_expl_var <- explained_variance(X, mat.u, ncomp)
+        names(prop_expl_var) <- paste0('PC', seq_len(ncomp))
         
         ## return missing values for output
         X[is.na.X] <- NA_real_

@@ -12,7 +12,10 @@ plotMarkers(
   group = NULL,
   col.per.group = NULL,
   global = FALSE,
-  title = NULL
+  title = NULL,
+  violin = TRUE,
+  boxplot.width = NULL,
+  violin.width = 0.9
 )
 }
 \arguments{
@@ -32,9 +35,15 @@ the top 'markers' features are shown}
 defined. Vector of the same length as the number of groups.}
 
 \item{global}{Logical indicating whether to show the global plots (TRUE) or
-segregate by feature (FALSE)}
+segregate by feature (FALSE). Only available when \code{object$scale=TRUE}}
 
 \item{title}{The plot title}
+
+\item{violin}{(if global = FALSE) Logical indicating whether violin plots should also be shown}
+
+\item{boxplot.width}{Numeric, adjusts the width of the box plots}
+
+\item{violin.width}{Numeric, adjusts the width of the violin plots}
 }
 \value{
 A ggplot object

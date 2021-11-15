@@ -273,6 +273,8 @@ tune.splsda <-
             nrepeat = 1
         }
         
+        if (nrepeat < 3 & ncomp > 1)
+            message("Noe that the number of components cannot be reliably tuned with nrepeat < 3 or validaion = 'loo'.")
         #-- logratio
         logratio <- match.arg(logratio)
         
