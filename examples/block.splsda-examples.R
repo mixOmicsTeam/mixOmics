@@ -12,7 +12,7 @@ design
 # set number of component per data set
 ncomp = c(2)
 # set number of variables to select, per component and per data set (this is set arbitrarily)
-list.keepX = list(mrna = rep(5,2), mirna = rep(5,2), protein = rep(5,2))
+list.keepX = list(mrna = rep(8,2), mirna = rep(8,2), protein = rep(8,2))
 
 
 TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype, 
@@ -42,6 +42,8 @@ plotMarkers(object = TCGA.block.splsda, comp = 1, block = 'mrna')
 plotMarkers(object = TCGA.block.splsda, comp = 1, block = 'mrna', global = TRUE)
 # proteins
 plotMarkers(object = TCGA.block.splsda, comp = 1, block = 'protein')
+## do not show violin plots
+plotMarkers(object = TCGA.block.splsda, comp = 1, block = 'protein', violin = FALSE)
 # show top 5 markers
 plotMarkers(object = TCGA.block.splsda, comp = 1, block = 'protein', markers = 1:5)
 # show specific markers

@@ -311,8 +311,8 @@ tune <-
                 }
                 result = tune.spls(X = X,
                                    Y = Y,
-                                   test.keepX = test.keepY,
-                                   test.keepY = test.keepX,
+                                   test.keepX = test.keepX,
+                                   test.keepY = test.keepY,
                                    ncomp = ncomp,
                                    validation = validation,
                                    nrepeat = nrepeat,

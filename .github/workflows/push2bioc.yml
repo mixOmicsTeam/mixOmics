@@ -1,0 +1,51 @@
+on:
+  pull_request:
+    branches: 
+      - bioc_master
+
+name: "Push to Bioconductor"
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo ⬇️
+        uses: actions/checkout@v2
+  
+      - name: Push to Bioconductor
+        run: |
+          mkdir log
+          touch log/log.txt
+          mkdir ~/.ssh
+          cp .github/config ~/.ssh/config
+          wd=$PWD
+          cd ~/.ssh
+          ssh-agent /bin/sh
+          eval `ssh-agent -s`
+          ssh-add - <<< "$SSH_KEY"
+          ssh-keyscan $BIOC_HOST > ~/.ssh/known_hosts
+          cd $wd
+          git config user.name 'Al J Abadi'
+          git config user.email 'al.jal.abadi@gmail.com'
+          git checkout -b current_branch
+          git push git@git.bioconductor.org:packages/mixOmics current_branch:master  &>> log/log.txt
+        env:
+          SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY_AL }}
+          BIOC_HOST: ${{ secrets.BIOC_HOST }}
+
+
+      - name: Diagnostics
+        if: failure()
+        run: |
+          echo "result of git fetch -v:"
+          git fetch -v  &>> log/log.txt
+          echo "result of git remote -v:"
+          git remote -v  &>> log/log.txt
+          ssh -T git@git.bioconductor.org &>> log/log.txt
+
+      - name: Upload Files
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: log
+          path: log

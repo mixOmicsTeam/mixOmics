@@ -1,4 +1,4 @@
-#' @section t-test-process: 
+#' @section Optimisation Process: 
 #' The optimisation process is data-driven and similar to the process detailed
 #' in (Rohart et al., 2016), where one-sided t-tests assess whether there is a
 #' gain in performance when incrementing the number of features or components in

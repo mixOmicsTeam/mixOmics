@@ -14,7 +14,7 @@ tune.spls(
   nrepeat = 1,
   folds,
   mode = c("regression", "canonical", "classic"),
-  measure = c("cor", "RSS"),
+  measure = NULL,
   BPPARAM = SerialParam(),
   progressBar = FALSE,
   limQ2 = 0.0975,
@@ -50,8 +50,7 @@ details.}
 \item{mode}{Character string indicating the type of PLS algorithm to use. One
 of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
 
-\item{measure}{One of c('cor', 'RSS') indicating the tuning measure. See
-details.}
+\item{measure}{The tuning measure to use. See details.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples in \code{?tune.spca}.}
@@ -99,21 +98,35 @@ the process does not need to be repeated as there is only one way to split N
 samples into N groups and hence nrepeat is forced to be 1.
 }
 
-\section{measure-pls}{
+\section{measure}{
  
-Two measures of accuracy are available: Correlation (\code{cor}), as well as
-the Residual Sum of Squares (\code{RSS}). For \code{cor}, the parameters
-which would maximise the correlation between the predicted and the actual
-components are chosen. The \code{RSS} measure tries to predict the held-out
-data by matrix reconstruction and seeks to minimise the error between actual
-and predicted values. For \code{mode='canonical'}, The X matrix is used to
-calculate the \code{RSS}, while for others modes the \code{Y} matrix is used.
-This measure gives more weight to any large errors and is thus sensitive to
-outliers. It also intrinsically selects less number of features on the
-\code{Y} block compared to \code{measure='cor'}.
+\itemize{
+\item \bold{For PLS2} Two measures of accuracy are available: Correlation
+(\code{cor}, used as default), as well as the Residual Sum of Squares
+(\code{RSS}). For \code{cor}, the parameters which would maximise the
+correlation between the predicted and the actual components are chosen. The
+\code{RSS} measure tries to predict the held-out data by matrix
+reconstruction and seeks to minimise the error between actual and predicted
+values. For \code{mode='canonical'}, The X matrix is used to calculate the
+\code{RSS}, while for others modes the \code{Y} matrix is used. This measure
+gives more weight to any large errors and is thus sensitive to outliers. It
+also intrinsically selects less number of features on the \code{Y} block
+compared to \code{measure='cor'}. 
+\item \bold{For PLS1} Four measures of accuracy are available: Mean Absolute
+Error (\code{MAE}), Mean Square Error (\code{MSE}, used as default),
+\code{Bias} and \code{R2}. Both MAE and MSE average the model prediction
+error. MAE measures the average magnitude of the errors without considering
+their direction. It is the average over the fold test samples of the absolute
+differences between the Y predictions and the actual Y observations. The MSE
+also measures the average magnitude of the error. Since the errors are
+squared before they are averaged, the MSE tends to give a relatively high
+weight to large errors. The Bias is the average of the differences between
+the Y predictions and the actual Y observations and the R2 is the correlation
+between the predictions and the observations.
+}
 }
 
-\section{t-test-process}{
+\section{Optimisation Process}{
  
 The optimisation process is data-driven and similar to the process detailed
 in (Rohart et al., 2016), where one-sided t-tests assess whether there is a
