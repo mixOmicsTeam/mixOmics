@@ -33,7 +33,7 @@
 #'
 #' @example ./examples/tune.spca-examples.R
 tune.spca <- function(X, 
-                      ncomp = 2, 
+                      ncomp = 4, 
                       nrepeat = 1, 
                       folds, 
                       test.keepX, 
