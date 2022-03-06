@@ -76,6 +76,22 @@ tune.spca <- function(X,
                     ## split data to train/test
                     X.train = X[-test.fold.inds,,drop=FALSE]
                     X.test = X[test.fold.inds,,drop=FALSE]
+                    
+                    # find indices of rows in X.train that contain NAs
+                    rows.NAs.train <- rowSums(is.na(X.train))
+                    rows.NAs.train <- which(rownames(X.train) %in% names(rows.NAs.train[rows.NAs.train!= 0]))
+                    
+                    # find indices of rows in X.test that contain NAs
+                    rows.NAs.test <- rowSums(is.na(X.test))
+                    rows.NAs.test <- which(rownames(X.test) %in% names(rows.NAs.test[rows.NAs.test!= 0]))
+                    
+                    # if there are rows with NAs, remove them from the appropriate sets
+                    if (length(rows.NAs.train)>0) {X.train <- X.train[-rows.NAs.train,]}
+                    if (length(rows.NAs.test)>0) {
+                        X.test <- X.test[-rows.NAs.test,]
+                        t.comp.actual <- t.comp.actual[-rows.NAs.test]
+                    }
+                    
                     # ---- run sPCA 
                     ## train
                     spca.train = spca(X.train, ncomp = ncomp, keepX = c(keepX.opt, keepX.value), center = center, scale = FALSE)
@@ -89,7 +105,7 @@ tune.spca <- function(X,
                         } else{
                             # calculate deflation beyond comp 1
                             # recalculate the loading vector (here c.sub) on the test set (perhaps we could do this instead on the training set by extracting from spca.train$loadings$X[,k]?)
-                            c.sub = crossprod(X.test, t.comp.pred) / drop(crossprod(t.comp.pred)) 
+                            c.sub = crossprod(X.test, t.comp.pred) / drop(crossprod(t.comp.pred))
                             X.test = X.test - t.comp.pred %*% t(c.sub) 
                             # update predicted comp based on deflated matrix
                             t.comp.pred = X.test %*% spca.train$loadings$X[,k]
