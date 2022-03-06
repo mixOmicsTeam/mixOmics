@@ -537,18 +537,14 @@ plot.tune.spls1 <-
         
         
         error <- x$error.rate
-        if(sd == TRUE)
-        {
-            if (!is.null(x$error.rate.sd)) 
-            {
-                error.rate.sd = x$error.rate.sd
-                ylim = range(c(error + error.rate.sd), c(error - error.rate.sd))
-            } else {
-                message("sd bars cannot be calculated when nrepeat = 1.\n")
-            }
-        } else {
-            error.rate.sd = NULL
+        error.rate.sd = x$error.rate.sd # for LOGOCV and nrepeat=1, will be NULL
+        
+        #
+        if (is.null(x$error.rate.sd)) {
+            message("Note: sd bars cannot be calculated when nrepeat = 1.\n")
             ylim = range(error)
+        } else {
+            ylim = range(c(error + error.rate.sd), c(error - error.rate.sd))
         }
         
         optimal <- optimal && (any(grepl('mint', class(x))) || x$call$nrepeat > 2)
