@@ -612,7 +612,7 @@ plot.tune.spls1 <-
             scale_color_manual(values = col)
         
         # error bar
-        if(!is.null(error.rate.sd))
+        if(!is.null(error.rate.sd) && sd)
         {
             dferror = melt(error.rate.sd)
             df$lwr = df$y - dferror$value
