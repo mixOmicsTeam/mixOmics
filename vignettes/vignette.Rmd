@@ -385,6 +385,7 @@ X <- liver.toxicity$gene
 ## Quick start
 ```{r, fig.show = 'hide'}
 MyResult.pca <- pca(X)     # 1 Run the method
+selectVar(MyResult.pca) # ADDED BY MAX
 plotIndiv(MyResult.pca)    # 2 Plot the samples
 plotVar(MyResult.pca)      # 3 Plot the variables
 ```
@@ -450,12 +451,12 @@ There are no clear guidelines on how many components should be included in PCA: 
 
 We can also have a look at the variable coefficients in each component with the loading vectors.  The loading weights are represented in decreasing order from bottom to top in `plotLoadings`. Their absolute value indicates the importance of each variable to define each PC, as represented by the length of each bar. See `?plotLoadings` to change the arguments.
 
-```{r eval=FALSE, fig.show = 'hide'}
+```{r eval=TRUE, fig.show = 'hide'}
 # a minimal example
 plotLoadings(MyResult.pca)
 ```
 
-```{r eval=FALSE, fig.show = 'hide'}
+```{r eval=TRUE, fig.show = 'hide'}
 # a customized example to only show the top 100 genes 
 # and their gene name
 plotLoadings(MyResult.pca, ndisplay = 100, 
@@ -504,13 +505,13 @@ Those values correspond to the loading weights that are used to define each comp
 
 We can complement this output with `plotLoadings`. We can see here that all coefficients are negative.
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 plotLoadings(MyResult.spca)
 ```
 
 If we look at component two, we can see a mix of positive and negative weights (also see in the `plotVar`), those correspond to variables that oppose the low and high doses (see from the `plotIndiv):
 
-```{r, echo=TRUE,results='hide', fig.show=FALSE, eval = FALSE}
+```{r, echo=TRUE,results='hide', fig.show=FALSE, eval = TRUE}
 selectVar(MyResult.spca, comp=2)$value
 plotLoadings(MyResult.spca, comp = 2)
 ```
@@ -743,7 +744,7 @@ selectVar(MyResult.splsda2, comp=1)$value
 
 and can be visualised in `plotLoadings` with the arguments `contrib = 'max'` that is going to assign to each variable bar the sample group colour for which the mean (`method = 'mean'`) is maximum. See `example(plotLoadings)` for other options (e.g. min, median)
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 plotLoadings(MyResult.splsda2, contrib = 'max', method = 'mean')
 ```
 
@@ -1031,7 +1032,7 @@ MySelectedVariables$Y$name # Selected lipids on component 1
 
 
 The loading plots help visualise the coefficients assigned to each selected variable on each component:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 plotLoadings(MyResult.spls, comp = 1, size.name = rel(0.5))
 ```
 
@@ -1333,7 +1334,7 @@ cimDiablo(MyResult.diablo, color.blocks = c('darkorchid', 'brown1', 'lightgreen'
 #### `plotLoadings`
 The `plotLoadings` function visualises the loading weights of each selected variables on each component (default is `comp = 1`) and each data set. The color indicates the class in which the variable has the maximum level of expression (`contrib = "max"`) or minimum (`contrib ="min"`), on average (`method="mean"`) or using the median (`method ="median"`). We only show the last plot here: 
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 #plotLoadings(MyResult.diablo, contrib = "max")
 plotLoadings(MyResult.diablo, comp = 2, contrib = "max")
 ```
