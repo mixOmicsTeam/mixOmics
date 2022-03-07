@@ -34,7 +34,7 @@ BiocStyle::markdown()
 
 library(knitr)
 # global options
-knitr::opts_chunk$set(dpi = 100, echo=TRUE, warning=FALSE, message=FALSE, eval = TRUE,
+knitr::opts_chunk$set(dpi = 100, echo=TRUE, warning=FALSE, message=FALSE, eval=FALSE,
                       fig.show=TRUE, fig.width= 7,fig.height= 6,fig.align='center', out.width = '80%'#, 
                       #fig.path= 'Figures/'
                       )
@@ -385,7 +385,6 @@ X <- liver.toxicity$gene
 ## Quick start
 ```{r, fig.show = 'hide'}
 MyResult.pca <- pca(X)     # 1 Run the method
-selectVar(MyResult.pca) # ADDED BY MAX
 plotIndiv(MyResult.pca)    # 2 Plot the samples
 plotVar(MyResult.pca)      # 3 Plot the variables
 ```
@@ -409,7 +408,7 @@ Plots can be customized using numerous options in `plotIndiv` and `plotVar`. For
 
 Here is an example where we include the sample groups information with the argument `group`:
 
-```{r eval=TRUE, fig.show=FALSE}
+```{r eval=FALSE, fig.show=FALSE}
 plotIndiv(MyResult.pca, group = liver.toxicity$treatment$Dose.Group, 
           legend = TRUE)
 ```
@@ -428,7 +427,7 @@ By including information related to the dose of acetaminophen and time of exposu
 
 To display the results on other components, we can change the `comp` argument provided we have requested enough components to be calculated. Here is our second PCA with 3 components:
 
-```{r eval=TRUE, fig.show=TRUE}
+```{r eval=FALSE, fig.show=TRUE}
 MyResult.pca2 <- pca(X, ncomp = 3)
 plotIndiv(MyResult.pca2, comp = c(1,3), legend = TRUE,
           group = liver.toxicity$treatment$Time.Group,
@@ -451,12 +450,12 @@ There are no clear guidelines on how many components should be included in PCA: 
 
 We can also have a look at the variable coefficients in each component with the loading vectors.  The loading weights are represented in decreasing order from bottom to top in `plotLoadings`. Their absolute value indicates the importance of each variable to define each PC, as represented by the length of each bar. See `?plotLoadings` to change the arguments.
 
-```{r eval=TRUE, fig.show = 'hide'}
+```{r eval=FALSE, fig.show = 'hide'}
 # a minimal example
 plotLoadings(MyResult.pca)
 ```
 
-```{r eval=TRUE, fig.show = 'hide'}
+```{r eval=FALSE, fig.show = 'hide'}
 # a customized example to only show the top 100 genes 
 # and their gene name
 plotLoadings(MyResult.pca, ndisplay = 100, 
@@ -505,13 +504,13 @@ Those values correspond to the loading weights that are used to define each comp
 
 We can complement this output with `plotLoadings`. We can see here that all coefficients are negative.
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 plotLoadings(MyResult.spca)
 ```
 
 If we look at component two, we can see a mix of positive and negative weights (also see in the `plotVar`), those correspond to variables that oppose the low and high doses (see from the `plotIndiv):
 
-```{r, echo=TRUE,results='hide', fig.show=FALSE, eval = TRUE}
+```{r, echo=TRUE,results='hide', fig.show=FALSE, eval=FALSE}
 selectVar(MyResult.spca, comp=2)$value
 plotLoadings(MyResult.spca, comp = 2)
 ```
@@ -527,7 +526,7 @@ For this set of methods, two parameters need to be chosen:
 
 The function `tune.pca` calculates the percentage of variance explained for each component, up to the minimum between the number of rows, or column in the data set. The `optimal' number of components can be identified if an elbow appears on the screeplot. In the example below the cut-off is not very clear, we could choose 2 components.
 
-```{r eval=TRUE, echo=FALSE, results='hide'}
+```{r eval=FALSE, echo=FALSE, results='hide'}
 tune.pca(X)
 ```
 
@@ -737,14 +736,14 @@ MyResult.splsda2 <- splsda(X,Y, ncomp=3, keepX=c(15,10,5))
 
 Selected variables are listed in the `selectVar` function: 
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 selectVar(MyResult.splsda2, comp=1)$value
 ```
 
 
 and can be visualised in `plotLoadings` with the arguments `contrib = 'max'` that is going to assign to each variable bar the sample group colour for which the mean (`method = 'mean'`) is maximum. See `example(plotLoadings)` for other options (e.g. min, median)
 
-```{r, eval = TRUE}
+```{r, eval=FALSE}
 plotLoadings(MyResult.splsda2, contrib = 'max', method = 'mean')
 ```
 
@@ -771,7 +770,7 @@ For this set of methods, three parameters need to be chosen:
 
 For **item 1**, the `perf` evaluates the performance of PLS-DA for a large number of components, using repeated k-fold cross-validation. For example here we use 3-fold CV repeated 10 times (note that we advise to use at least 50 repeats, and choose the number of folds that are appropriate for the sample size of the data set):
 
-```{r eval= TRUE}
+```{r eval=FALSE}
 MyResult.plsda2 <- plsda(X,Y, ncomp=10)
 set.seed(30) # for reproducibility in this vignette, otherwise increase nrepeat
 MyPerf.plsda <- perf(MyResult.plsda2, validation = "Mfold", folds = 3, 
@@ -802,7 +801,7 @@ MyPerf.plsda
 Regarding **item 2**, we now use `tune.splsda` to assess the optimal number of variables to select on each component. We first set up a grid of `keepX` values that will be assessed on each component, one component at a time. 
 Similar to above we run 3-fold CV repeated 10 times with a maximum distance prediction defined as above. 
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 list.keepX <- c(5:10,  seq(20, 100, 10))
 list.keepX # to output the grid of values tested
 set.seed(30) # for reproducbility in this vignette, otherwise increase nrepeat
@@ -1032,7 +1031,7 @@ MySelectedVariables$Y$name # Selected lipids on component 1
 
 
 The loading plots help visualise the coefficients assigned to each selected variable on each component:
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 plotLoadings(MyResult.spls, comp = 1, size.name = rel(0.5))
 ```
 
@@ -1051,7 +1050,7 @@ For **item 1** we use the `perf` function and repeated k-fold cross-validation t
 
 We run a PLS model with a sufficient number of components first, then run `perf` on the object.
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 MyResult.pls <- pls(X,Y, ncomp = 4)  
 set.seed(30) # for reproducibility in this vignette, otherwise increase nrepeat
 perf.pls <- perf(MyResult.pls, validation = "Mfold", folds = 5,
@@ -1063,7 +1062,7 @@ We can see that the values decrease as we add new components which generally ind
 
 **Item 2** can be quite difficult to tune. Here is a minimal example where we only tune `keepX` based on the correlation between the cross-validated components and those from the full model with all the data. Other measures proposed are Residual Sum of Squares (RSS)  (see `?tune.spls`):
 
-```{r, eval=TRUE, message='hide'}
+```{r, eval=FALSE, message='hide'}
 list.keepX <- c(2:10, 15, 20)
 # tuning based on correlations
 set.seed(30) # for reproducibility in this vignette, otherwise increase nrepeat
@@ -1272,7 +1271,7 @@ If you were to run `block.splsda` with this minimal code, you would be using the
 
 We focused here on the sparse version as would like to identify a minimal multi-omics signature, however, the non sparse version could also be run with `block.plsda`:
 
-```{r eval= TRUE}
+```{r eval=FALSE}
 MyResult.diablo2 <- block.plsda(X, Y)
 ```
 
@@ -1334,7 +1333,7 @@ cimDiablo(MyResult.diablo, color.blocks = c('darkorchid', 'brown1', 'lightgreen'
 #### `plotLoadings`
 The `plotLoadings` function visualises the loading weights of each selected variables on each component (default is `comp = 1`) and each data set. The color indicates the class in which the variable has the maximum level of expression (`contrib = "max"`) or minimum (`contrib ="min"`), on average (`method="mean"`) or using the median (`method ="median"`). We only show the last plot here: 
 
-```{r, eval = TRUE}
+```{r, eval=FALSE}
 #plotLoadings(MyResult.diablo, contrib = "max")
 plotLoadings(MyResult.diablo, comp = 2, contrib = "max")
 ```
@@ -1357,7 +1356,7 @@ network(MyResult.diablo, blocks = c(1,2,3),
 ### Classification performance
 Similar to what is described in Section \@ref(tuning:sPLSDA) we use repeated cross-validation with `perf` to assess the prediction of the model. For this complex classification problems, often a centroid distance is suitable, see details in [@mixomics] Suppl. Material S1. 
 
-```{r, eval = TRUE}
+```{r, eval=FALSE}
 set.seed(123) # for reproducibility in this vignette
 MyPerf.diablo <- perf(MyResult.diablo, validation = 'Mfold', folds = 5, 
                    nrepeat = 10, 
