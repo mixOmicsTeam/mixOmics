@@ -455,7 +455,7 @@ We can also have a look at the variable coefficients in each component with the 
 plotLoadings(MyResult.pca)
 ```
 
-```{r eval=TRUE, fig.show = 'hide'}
+```{r eval=FALSE, fig.show = 'hide'}
 # a customized example to only show the top 100 genes 
 # and their gene name
 plotLoadings(MyResult.pca, ndisplay = 100, 
