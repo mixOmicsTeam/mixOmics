@@ -450,7 +450,7 @@ There are no clear guidelines on how many components should be included in PCA: 
 
 We can also have a look at the variable coefficients in each component with the loading vectors.  The loading weights are represented in decreasing order from bottom to top in `plotLoadings`. Their absolute value indicates the importance of each variable to define each PC, as represented by the length of each bar. See `?plotLoadings` to change the arguments.
 
-```{r eval=TRUE, fig.show = 'hide'}
+```{r eval=FALSE, fig.show = 'hide'}
 # a minimal example
 plotLoadings(MyResult.pca)
 ```
