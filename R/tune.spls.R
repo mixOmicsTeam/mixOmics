@@ -245,7 +245,6 @@ tune.spls <-
                                       ## populate the table for both measures
                                       measure.vpred <- pls.perf$measures[[sprintf("%s.%spred", measure_i, v)]]$values
                                       measure.vpred <- measure.vpred[measure.vpred$comp == comp,]
-             
                                       measure.pred[measure.pred$comp == comp & 
                                                      measure.pred$keepX == test.keepX[keepX] &
                                                      measure.pred$keepY == test.keepY[keepY] &
@@ -265,7 +264,6 @@ tune.spls <-
                                     }
                                     
                                   }
-
                                   ## optimum only uses measure
                             optimum.u <- measure.pred[measure.pred$comp == comp & 
                                                         measure.pred$optimum.keepA == TRUE &
@@ -300,7 +298,7 @@ tune.spls <-
                                     .check_improvement <- function(opt, value, measure, nrepeat) {
                                       ## output TRUE if value improves opt for cor or RSS, else FALSE
                                       if (nrepeat > 2) {
-                                        t.test.res <- tryCatch(t.test(x = opt, y = value, alternative = ifelse(measure == 'cor', 'greater', 'less')), error = function(e) e)
+                                        t.test.res <- tryCatch(t.test(x = opt, y = value, alternative = ifelse(measure == 'cor', 'less', 'greater')), error = function(e) e)
                                         improved <- t.test.res$p.value < 0.05
                                         } else
                                         {
