@@ -24,3 +24,14 @@
     require(testthat)
     expect_equal(round(numeric_value, digits = digits), round(expected, digits = digits))
 }
+
+#' Prevent calls to cat() and print() from showing
+#'
+#' @param x an R object
+#' @keywords internal
+#' @return x, the inputted R object
+.quiet <- function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
+} 
