@@ -70,7 +70,11 @@ plotArrow <- function(object,
     object.blocks=c("sgcca", "sgccda", "rgcca")
     
     if (! any(class.object %in% c(object.pls,object.blocks)))
-        stop( " 'plotArrow' is only implemented for the following objects: pls, plsda, spls, splsda, rcc, sgcca, sgccda, rgcca", call.=FALSE)
+        stop( " 'plotArrow' is only implemented for the following objects: pls, spls, rcc, sgcca, sgccda, rgcca", call.=FALSE)
+    
+    if ("DA" %in% class.object && !any(object.blocks %in% class.object)) {
+        stop("`plotArrow` not implemented for (s)PLSDA or MINT sPLSDA", call.=FALSE)
+    }
     
     ind.names.position <- match.arg(ind.names.position)
     is.multiblock <- ifelse(is.list(object$X), TRUE, FALSE)
