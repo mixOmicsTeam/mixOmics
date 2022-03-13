@@ -73,7 +73,7 @@ plotArrow <- function(object,
         stop( " 'plotArrow' is only implemented for the following objects: pls, spls, rcc, sgcca, sgccda, rgcca", call.=FALSE)
     
     if ("DA" %in% class.object && !any(object.blocks %in% class.object)) {
-        stop("`plotArrow` not implemented for (s)PLSDA or MINT sPLSDA", call.=FALSE)
+        stop("'plotArrow' not implemented for (s)PLSDA or MINT sPLSDA", call.=FALSE)
     }
     
     ind.names.position <- match.arg(ind.names.position)
