@@ -198,119 +198,6 @@ plot.tune.spls <-
         res$gg.plot
     }
 
-## -------------------------- plot.tune.splsda -------------------------- ##
-#' @name plot.tune
-#' @method plot tune.splsda
-#' @importFrom reshape2 melt
-#' @export
-plot.tune.splsda <-
-    function(x, optimal = TRUE, sd = TRUE, col, ...)
-    {
-        # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
-        y = Comp = lwr = upr = NULL
-        
-        if (!is.logical(optimal))
-            stop("'optimal' must be logical.", call. = FALSE)
-        
-        
-        error <- x$error.rate
-        if(sd & !is.null(x$error.rate.sd))
-        {
-            error.rate.sd = x$error.rate.sd
-            ylim = range(c(error + error.rate.sd), c(error - error.rate.sd))
-        } else {
-            error.rate.sd = NULL
-            ylim = range(error)
-        }
-        
-        select.keepX <- x$choice.keepX[colnames(error)]
-        comp.tuned = length(select.keepX)
-        
-        legend=NULL
-        measure = x$measure
-        
-        if (length(select.keepX) < 10)
-        {
-            #only 10 colors in color.mixo
-            if(missing(col))
-                col = color.mixo(seq_len(comp.tuned))
-        } else {
-            #use color.jet
-            if(missing(col))
-                col = color.jet(comp.tuned)
-        }
-        if(length(col) != comp.tuned)
-            stop("'col' should be a vector of length ", comp.tuned,".")
-        
-        if(measure == "overall")
-        {
-            ylab = "Classification error rate"
-        } else if (measure == "BER")
-        {
-            ylab = "Balanced error rate"
-        } else if (measure == "MSE"){
-            ylab = "MSE"
-        }else if (measure == "MAE"){
-            ylab = "MAE"
-        }else if (measure == "Bias"){
-            ylab = "Bias"
-        }else if (measure == "R2"){
-            ylab = "R2"
-        }else if (measure == "AUC"){
-            ylab = "AUC"
-        }
-        
-        #legend
-        names.comp = substr(colnames(error),5,10) # remove "comp" from the name
-        if(length(x$choice.keepX) == 1){
-            #only first comp tuned
-            legend = "1"
-        } else if(length(x$choice.keepX) == comp.tuned) {
-            # all components have been tuned
-            legend = c("1", paste("1 to", names.comp[-1]))
-        } else {
-            #first components were not tuned
-            legend = paste("1 to", names.comp)
-        }
-        
-        
-        # creating data.frame with all the information
-        df = melt(error)
-        colnames(df) = c("x","Comp","y")
-        df$Comp = factor(df$Comp, labels=legend)
-        
-        p = ggplot(df, aes(x = x, y = y, color = Comp)) +
-            labs(x = "Number of selected features", y = ylab) +
-            theme_bw() +
-            geom_line()+ geom_point()
-        p = p+ scale_x_continuous(trans='log10') +
-            scale_color_manual(values = col)
-        
-        # error bar
-        if(!is.null(error.rate.sd))
-        {
-            dferror = melt(error.rate.sd)
-            df$lwr = df$y - dferror$value
-            df$upr = df$y + dferror$value
-            
-            #adding the error bar to the plot
-            p = p + geom_errorbar(data=df,aes(ymin=lwr, ymax=upr))
-        }
-        
-        if(optimal)
-        {
-            index = NULL
-            for(i in seq_len(comp.tuned))
-                index = c(index, which(df$x == select.keepX[i] & df$Comp == levels(df$Comp)[i]))
-            
-            # adding the choseen keepX to the graph
-            p=p + geom_point(data=df[index,],size=7, shape = 18)
-            p = p + guides(color = guide_legend(override.aes =
-                                                    list(size=0.7,stroke=1)))
-        }
-        
-        p
-    }
 ## ------------------------ plot.tune.block.(s)plsda ---------------------- ##
 #' @importFrom gridExtra grid.arrange
 #' @rdname plot.tune
@@ -641,8 +528,10 @@ plot.tune.spls1 <-
         p
     }
 
+## -------------------------- plot.tune.splsda -------------------------- ##
 #' @rdname plot.tune
 #' @method plot tune.splsda
 #' @export
 plot.tune.splsda <- plot.tune.spls1
 # TODO add examples
+
