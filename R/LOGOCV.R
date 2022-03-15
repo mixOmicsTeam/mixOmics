@@ -263,8 +263,12 @@ LOGOCV <- function(X,
                 })
             }
             
-            # average BER over the study
-            error.mean[[ijk]] = apply(error, 2, mean)
+            # weighted average BER over the studies
+            error.mean[[ijk]] = apply(error, 2, function(x) {
+                sum(x * table(study)/length(study))
+            })
+            
+            
             keepX.opt[[ijk]] =
                 which(error.mean[[ijk]] ==  min(error.mean[[ijk]]))[1]
             
