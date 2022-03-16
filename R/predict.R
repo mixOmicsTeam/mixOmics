@@ -236,7 +236,7 @@ predict.mixo_pls <-
             if(length(object$nzv$Position) > 0)
                 newdata = newdata[, -object$nzv$Position,drop=FALSE]
             
-            if(all.equal(colnames(newdata),colnames(object$X))!=TRUE)
+            if(all.equal(colnames(newdata),colnames(object$X)))
                 stop("'newdata' must include all the variables of 'object$X'")
             
             #not a block, the input newdata should be a matrix
@@ -343,7 +343,7 @@ predict.mixo_pls <-
             names(newdata)=names(X)
             
             #check that newdata and X have the same variables
-            if(all.equal(lapply(newdata,colnames),lapply(X,colnames))!=TRUE)
+            if (any(unlist(lapply(seq_along(X), function(i) length(setdiff(colnames(X[[i]], colnames(newdata[[i]])))) > 0))))
                 stop("Each 'newdata[[i]]' must include all the variables of 'object$X[[i]]'")
             
             #need to reorder variates and loadings to put 'Y' in last
