@@ -588,6 +588,7 @@ tune.splsda <-
             result$measure = measure
             result$call = match.call()
             result$call$nrepeat = nrepeat
+            result$nrepeat = nrepeat
             
             class(result) = "tune.splsda"
             

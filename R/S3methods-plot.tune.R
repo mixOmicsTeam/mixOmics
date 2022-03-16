@@ -204,15 +204,14 @@ plot.tune.spls <-
 #' @importFrom reshape2 melt
 #' @export
 plot.tune.splsda <-
-    function(x, optimal = TRUE, sd = TRUE, col, ...)
+    function(x, optimal = TRUE, sd = NULL, col, ...)
     {
         # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
         y = Comp = lwr = upr = NULL
         
         if (!is.logical(optimal))
             stop("'optimal' must be logical.", call. = FALSE)
-        
-        
+        sd = .change_if_null(sd, !is.null(x$error.rate.sd))
         error <- x$error.rate
         if(sd & !is.null(x$error.rate.sd))
         {
@@ -317,12 +316,13 @@ plot.tune.splsda <-
 #' @method plot tune.block.splsda
 #' @export
 plot.tune.block.splsda =
-    function(x, sd = TRUE, col, ...)
+    function(x, sd = NULL, col, ...)
     {
         
         # R check
         error.sd=NULL
         
+        sd = .change_if_null(sd, !is.null(x$error.rate.sd))
         error <- x$error.rate
         if(sd & !is.null(x$error.rate.sd))
         {
@@ -526,7 +526,7 @@ plot.tune.spca <-
 #' @importFrom reshape2 melt
 #' @export
 plot.tune.spls1 <-
-    function(x, optimal = TRUE, sd = TRUE, col, ...)
+    function(x, optimal = TRUE, sd = NULL, col, ...)
     {
         # TODO add examples
         # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
@@ -534,8 +534,7 @@ plot.tune.spls1 <-
         
         if (!is.logical(optimal))
             stop("'optimal' must be logical.", call. = FALSE)
-        
-        
+        sd = .change_if_null(sd, !is.null(x$error.rate.sd))
         error <- x$error.rate
         error.rate.sd = x$error.rate.sd # for LOGOCV and nrepeat=1, will be NULL
         
