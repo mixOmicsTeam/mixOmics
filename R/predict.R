@@ -236,7 +236,7 @@ predict.mixo_pls <-
             if(length(object$nzv$Position) > 0)
                 newdata = newdata[, -object$nzv$Position,drop=FALSE]
             
-            if(all.equal(colnames(newdata),colnames(object$X)))
+            if(all.equal(colnames(newdata),colnames(object$X))!=TRUE)
                 stop("'newdata' must include all the variables of 'object$X'")
             
             #not a block, the input newdata should be a matrix
