@@ -343,9 +343,13 @@ predict.mixo_pls <-
             names(newdata)=names(X)
             
             #check that newdata and X have the same variables
-            if(all.equal(lapply(newdata,colnames),lapply(X,colnames))!=TRUE)
+            if (any(unlist(lapply(seq_along(X), function(i) length(setdiff(colnames(X[[i]]), colnames(newdata[[i]]))) > 0))))
                 stop("Each 'newdata[[i]]' must include all the variables of 'object$X[[i]]'")
             
+            #reorder variables in the newdata as in X if needed
+            if (all.equal(lapply(newdata, colnames), lapply(X, colnames)) != TRUE) {
+                newdata <- setNames(lapply(seq_along(X), function(i) {newdata[[i]][, colnames(X[[i]])]}), nm = names(X))
+            }
             #need to reorder variates and loadings to put 'Y' in last
             if(!is.null(object$indY))
             {
