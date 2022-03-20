@@ -131,9 +131,16 @@ test_that("predict.block.splsda works on reordered test data", code = {
     predict.diablo = predict(final.diablo.model, newdata = X.test)
     predict.diablo.reordered = predict(final.diablo.model, newdata = X.test.dup)
     
-    for (dist in c("max.dist", "centroids.dist", "mahalanobis.dist")) {
-        for (block in c("mirna", "mrna")) {
-            expect_true(all(predict.diablo$class[[dist]][[block]] == predict.diablo.reordered$class[[dist]][[block]]))
+    homogenity <- matrix(NA, nrow = 2, ncol = 3)
+    colnames(homogenity) <- c("max.dist", "centroids.dist", "mahalanobis.dist")
+    rownames(homogenity) <- c("mirna", "mrna")
+    
+    for (dist in colnames(homogenity)) {
+        for (block in rownames(homogenity)) {
+            homogenity[block, dist] = all(predict.diablo$class[[dist]][[block]] == 
+                                              predict.diablo.reordered$class[[dist]][[block]])
         }
     }
+    
+    expect_true(all(homogenity))
 })
