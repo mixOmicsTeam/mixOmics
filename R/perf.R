@@ -805,6 +805,13 @@ perf.mixo_plsda <- function(object,
         stop("Choose one of the two following logratio transformation: 'none' or 'CLR'")
     #fold is checked in 'MCVfold'
     
+    # check if there is a class with only one sample
+    if (any(table(object$Y) <= 1)) {
+        stop(paste("Cannot evaluate performance when a class level ('", 
+                   names(table(object$Y))[which(table(object$Y) == 1)],
+                   "') has only a single assocaited sample.", sep = ""))
+    }
+    
     
     #-- check significance threshold
     signif.threshold <- .check_alpha(signif.threshold)
