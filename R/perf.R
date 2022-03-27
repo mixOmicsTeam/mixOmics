@@ -553,8 +553,8 @@ perf.mixo_spls  <- perf.mixo_pls
             if(sum(is.na(Y.hat))>0) stop('Predicted Y values include NA')  
             
             # replaced h by 1; Y.hat is the prediction of the test samples for all q variable in comp h = 1
-            Ypred[omit, , h] = Y.hat[, , 1]
-            MSEP.mat[omit, , h] = (Y.test - Y.hat[, , 1])^2
+            Ypred[omit, nzv.Y, h] = Y.hat[, , 1]
+            MSEP.mat[omit, nzv.Y, h] = (Y.test[, nzv.Y] - Y.hat[, , 1])^2
             
             
             # Q2 criterion: buidling directly from spls object
@@ -573,7 +573,7 @@ perf.mixo_spls  <- perf.mixo_pls
             t.pred.cv[omit,h] = t.pred    # needed for tuning
             b.pred = crossprod(Y.test, t.pred)
             b.pred.cv = b.pred/ drop(sqrt(crossprod(b.pred)))
-            u.pred.cv[omit,h] = Y.test %*% b.cv  # needed for tuning, changed instead of b.pred.cv
+            u.pred.cv[omit,h] = Y.test[, nzv.Y] %*% b.cv  # needed for tuning, changed instead of b.pred.cv
             
             # predicted reg coeff, could be removed
             e.pred.cv = crossprod(as.matrix(Y.test), Y.test %*% b.pred.cv) / drop(crossprod(Y.test %*% b.pred))
@@ -585,19 +585,19 @@ perf.mixo_spls  <- perf.mixo_pls
             # deflate matrices X      
             #-- mode classic
             if (mode == "classic"){
-                Y.train = Y.train - t.cv %*% t(b.cv)  # could be pred on b
-                Y.test = Y.test - t.pred %*% t(b.cv)
+                Y.train[, nzv.Y] = Y.train[, nzv.Y] - t.cv %*% t(b.cv)  # could be pred on b
+                Y.test[, nzv.Y] = Y.test[, nzv.Y] - t.pred %*% t(b.cv)
             }
             #-- mode regression
             if (mode == "regression"){
                 Y.train = Y.train - t.cv %*% t(d.cv) # could be pred d.pred.cv? does not decrease enough
-                Y.test = Y.test - Y.hat[, , 1]   # == Y.test - t.pred %*% t(d.cv) 
+                Y.test[, nzv.Y] = Y.test[, nzv.Y] - Y.hat[, , 1]   # == Y.test - t.pred %*% t(d.cv) 
             }
             
             #-- mode canonical  ## KA added
             if (mode == "canonical"){
                 Y.train = Y.train - u.cv %*% t(e.cv)  # could be pred on e
-                Y.test = Y.test - (Y.test %*% b.cv) %*% t(e.cv)  # here u.pred = Y.test %*% b.cv (b.pred.cv gives similar results)
+                Y.test = Y.test - (Y.test[, nzv.Y] %*% b.cv) %*% t(e.cv)  # here u.pred = Y.test %*% b.cv (b.pred.cv gives similar results)
             }
             #-- mode invariant: Y is unchanged
             
