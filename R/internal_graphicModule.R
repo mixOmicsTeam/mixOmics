@@ -141,9 +141,7 @@ internal_graphicModule <-
         # override if only one pch
         if(nlevels(factor(df$pch)) == 1)
             group.pch = "same"
-        
         #save(list=ls(),file="temp.Rdata")
-        
         #-- Start: ggplot2
         if (style == "ggplot2")
         {
@@ -189,12 +187,13 @@ internal_graphicModule <-
                 p = p + scale_fill_manual(values =
                                               col.vals)
                 
-                if(is.null(xlim))# we choose xlim that fits the points,
-                    #   and not the background
-                    xlim = range(df$x)
-                if(is.null(ylim))# we choose ylim that fits the points,
-                    #   and not the background
-                    ylim = range(df$y)
+                # we choose xlim/ylim that fits the points and the background by finding the
+                # average between the extremes of the two. 
+                # 0.5 then added to min of the lim to prevent any uncoloured area showing
+                if(is.null(xlim))
+                    xlim = (range(df$x) + range(background[, "Var1"]))/2 + c(0.5, 0)
+                if(is.null(ylim))
+                    ylim = (range(df$y) + range(background[, "Var2"]))/2 + c(0.5, 0)
             }
             
             #-- Display sample or row.names
@@ -478,6 +477,34 @@ internal_graphicModule <-
                                       color = unique(col.per.group)[i], size = point.lwd,
                                       inherit.aes =FALSE)
                 }
+            }
+            
+            if(!is.null(background))
+            {
+                for(i in 1:length(background))
+                {
+                    if(!is.null(background[[i]]))
+                        background[[i]]=data.frame(id=i,col=names(background)[i],
+                                                   background[[i]])
+                }
+                
+                background = do.call(rbind,background)
+                
+                p = p+geom_polygon(data = background,aes(x=Var1, y=Var2,
+                                                         fill = col), inherit.aes = FALSE, show.legend
+                                   =FALSE)
+                col.vals <- as.character(unique(background$col))
+                names(col.vals) <- col.vals
+                p = p + scale_fill_manual(values =
+                                              col.vals)
+                
+                # we choose xlim/ylim that fits the points and the background by finding the
+                # average between the extremes of the two. 
+                # 0.5 then added to min of the lim to prevent any uncoloured area showing
+                if(is.null(xlim))
+                    xlim = (range(df$x) + range(background[, "Var1"]))/2 + c(0.5, 0)
+                if(is.null(ylim))
+                    ylim = (range(df$y) + range(background[, "Var2"]))/2 + c(0.5, 0)
             }
             
             plot(p)

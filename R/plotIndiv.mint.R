@@ -40,6 +40,7 @@ plotIndiv.mint.pls <-
              legend.title = "Legend",
              legend.position = "right",
              point.lwd = 1,
+             background = NULL,
              ...
              
     )
@@ -364,6 +365,12 @@ plotIndiv.mint.pls <-
         if (style == "ggplot2")
             style = "ggplot2-MINT"
         
+        if(!is.null(background))
+        {
+            ind.match = match(names(background), levels(df$group))
+            names(background) = adjustcolor(col.per.group[ind.match],alpha.f=0.1)
+        }
+        
         #call plot module (ggplot2, lattice, graphics, 3d)
         res = internal_graphicModule(
             df = df,
@@ -383,6 +390,7 @@ plotIndiv.mint.pls <-
             df.ellipse = df.ellipse,
             style = style,
             layout = layout,
+            background = background,
             #missing.col = missing.col,
             #for ggplot2-MINT
             study.levels = study.levels,
