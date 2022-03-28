@@ -43,6 +43,19 @@ test_that("plotIndiv works for (s)plsda", {
   .expect_numerically_close(pl.res$graph$data$x[1], -1.075222)
 })
 
+test_that("plotIndiv works for (s)plsda with background", {
+  data(breast.tumors)
+  X <- breast.tumors$gene.exp
+  Y <- breast.tumors$sample$treatment
+  
+  splsda.breast <- splsda(X, Y,keepX=c(10,10),ncomp=2)
+  bg <- background.predict(splsda.breast, comp.predicted = 2, 
+                           dist = "max.dist")
+  
+  pl.res <- plotIndiv(splsda.breast, background = bg)
+  .expect_numerically_close(pl.res$graph$data$x[1], -1.075222)
+})
+
 ## ------------------------------------------------------------------------ ##
 test_that("plotIndiv works for (s)pls", {
   data(liver.toxicity)
@@ -131,6 +144,42 @@ test_that("plotIndiv.sgcca(..., blocks = 'average') works", code = {
     expect_true(any(grepl(pattern = "average", x = unique(plotindiv_res$df$Block))))
 })
 
+## ------------------------------------------------------------------------ ##
+
+test_that("plotIndiv.mint works", code = {
+  data(srbct)
+  
+  stnd.res.srbct <- splsda(X = srbct$gene, Y = srbct$class, ncomp = 3)
+  
+  pl.res <- plotIndiv(stnd.res.srbct, legend = T, style = "ggplot2")
+  .expect_numerically_close(pl.res$graph$data$x[1], -6.83832)
+})
+
+
+
+test_that("plotIndiv.mint works with background input (all distances)", code = {
+  data(stemcells)
+  
+  mint.res.stem <- mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 4,
+                               study = stemcells$study)
+  
+  distances <- c("max.dist", "centroids.dist", "mahalanobis.dist")
+  truePoints <- list(c(7.795485, 5.947594),
+                     c(5.285750, 6.534955),
+                     c(4.568683, 7.905465))
+  
+  for (i in 1:3) {
+    mint.bg.stem = background.predict(mint.res.stem, comp.predicted = 2, # raises error found in #24 on GitHub
+                                          dist = distances[i])
+    .expect_numerically_close(unname(mint.bg.stem$hiPSC[150,]), truePoints[[i]])
+  }
+  
+  pl.res <- plotIndiv(mint.res.stem, background = mint.bg.stem, legend = T, style = "ggplot2")
+  .expect_numerically_close(pl.res$graph$data$x[1], -4.167696)
+  
+})
+  
+  
 ## ------------------------------------------------------------------------ ##
 
 test_that("plotIndiv.sgccda(..., blocks = 'average') works with ind.names and ell", code = {
