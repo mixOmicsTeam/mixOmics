@@ -185,7 +185,7 @@ predict.mixo_pls <-
         
         # input parameter: noAveragePredict=> no averagePredict calculation, used in tune.block.splsda
         
-        if(is(object, c("rgcca","sparse.rgcca")))
+        if(inherits(object, c("rgcca","sparse.rgcca")))
             stop("no prediction for RGCCA methods")
         
         #check on dist
@@ -223,7 +223,7 @@ predict.mixo_pls <-
         mint.object = c("mint.pls", "mint.spls", "mint.plsda", "mint.splsda")
         block.object = c("block.pls", "block.spls", "block.plsda", "block.splsda")
         ### if the object is a block, the input newdata is different, we check newdata, make sure it's a list and check newdata/X
-        if(!is(object, block.object)) # not a block (pls/spls/plsda/splsda/mint...)
+        if(!inherits(object, block.object)) # not a block (pls/spls/plsda/splsda/mint...)
         {
             p=ncol(object$X)
             if(is.list(object$X))
@@ -624,7 +624,7 @@ predict.mixo_pls <-
         if(time) time4 = proc.time()
         
         # basic prediction results
-        if(is(object, block.object) & length(object$X)>1 )
+        if(inherits(object, block.object) & length(object$X)>1 )
         {
             out=list(predict=Y.hat[which(!is.na(ind.match))],variates=t.pred[which(!is.na(ind.match))],B.hat=B.hat[which(!is.na(ind.match))])
             

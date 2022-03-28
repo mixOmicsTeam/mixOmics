@@ -52,11 +52,11 @@ plotIndiv.mixo_pls <-
                                size.axis = size.axis, size.legend = size.legend, size.legend.title = size.legend.title, legend.title = legend.title,
                                legend.title.pch = legend.title.pch, legend.position = legend.position, point.lwd = point.lwd)
         
-        if (is(object, c("mint.block.pls", "mint.block.spls", "mint.block.plsda", "mint.block.splsda")))
+        if (inherits(object, c("mint.block.pls", "mint.block.spls", "mint.block.plsda", "mint.block.splsda")))
             stop("No plotIndiv for the following functions at this stage: mint.block.pls, mint.block.spls, mint.block.plsda, mint.block.splsda.")
         
         #-- choose rep.space
-        if (is.null(rep.space) && is(object, "DA"))#"splsda", "plsda", "mlsplsda")))
+        if (is.null(rep.space) && inherits(object, "DA"))#"splsda", "plsda", "mlsplsda")))
         {
             rep.space = "X-variate"
         } else if (is.null(rep.space)) {

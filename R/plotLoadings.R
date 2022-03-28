@@ -956,7 +956,7 @@ check.input.plotLoadings <- function(object,
         if (!is(object, "DA"))
         {
             block = object$names$blocks
-        } else  if (is(object, c("mixo_plsda", "mixo_splsda"))) {
+        } else  if (inherits(object, c("mixo_plsda", "mixo_splsda"))) {
             block = "X"
         } else {
             if (!is.null(object$indY))
@@ -968,13 +968,13 @@ check.input.plotLoadings <- function(object,
         }
     }
     
-    if (is(object, c("mixo_plsda", "mixo_splsda")) & (!all(block %in% c(1,"X")) | length(block) > 1 ))
+    if (inherits(object, c("mixo_plsda", "mixo_splsda")) & (!all(block %in% c(1,"X")) | length(block) > 1 ))
         stop("'block' can only be 'X' or '1' for plsda and splsda object")
     
-    if (is(object, c("mixo_plsda", "mixo_splsda","pca")))
+    if (inherits(object, c("mixo_plsda", "mixo_splsda","pca")))
     {
         object$indY = 2
-    } else if (is(object, c("mixo_pls", "mixo_spls"))) {
+    } else if (inherits(object, c("mixo_pls", "mixo_spls"))) {
         object$indY = 3 # we don't want to remove anything in that case, and 3 is higher than the number of blocks which is 2
     }
     
@@ -1189,7 +1189,7 @@ get.loadings.ndisplay <- function(object,
     
     #comp
     # ----
-    if (is(object, c("mixo_pls","mixo_spls", "rcc")))# cause pls methods just have 1 ncomp, block approaches have different ncomp per block
+    if (inherits(object, c("mixo_pls","mixo_spls", "rcc")))# cause pls methods just have 1 ncomp, block approaches have different ncomp per block
     {
         ncomp = object$ncomp
         object$X = list(X = object$X, Y = object$Y) # so that the data is in object$X, either it's a pls or block approach
