@@ -49,6 +49,7 @@ plotIndiv(object, ...)
   legend.title = "Legend",
   legend.position = "right",
   point.lwd = 1,
+  background = NULL,
   ...
 )
 
@@ -86,6 +87,7 @@ plotIndiv(object, ...)
   legend.title = "Legend",
   legend.position = "right",
   point.lwd = 1,
+  background = NULL,
   ...
 )
 
@@ -123,6 +125,7 @@ plotIndiv(object, ...)
   legend.title = "Legend",
   legend.position = "right",
   point.lwd = 1,
+  background = NULL,
   ...
 )
 
@@ -160,6 +163,7 @@ plotIndiv(object, ...)
   legend.title = "Legend",
   legend.position = "right",
   point.lwd = 1,
+  background = NULL,
   ...
 )
 
@@ -438,6 +442,9 @@ is not "global"}
 \item{point.lwd}{\code{lwd} of the points, used when \code{ind.names =
 FALSE}}
 
+\item{background}{color the background by the predicted class, see
+\code{\link{background.predict}}}
+
 \item{ind.names}{either a character vector of names for the individuals to
 be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
 the first (or second) data matrix is used as names (see Details).}
@@ -455,9 +462,6 @@ for the legend.}
 
 \item{legend.title.pch}{title of the second legend created by \code{pch}, if
 any.}
-
-\item{background}{color the background by the predicted class, see
-\code{\link{background.predict}}}
 
 \item{blocks}{integer value or name(s) of block(s) to be plotted using the
 GCCA module. "average" and "weighted.average" will create average and
