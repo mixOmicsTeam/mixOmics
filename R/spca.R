@@ -46,9 +46,13 @@
 #' @param logratio one of ('none','CLR'). Specifies the log ratio
 #' transformation to deal with compositional values that may arise from
 #' specific normalisation in sequencing data. Default to 'none'
+#' @template arg/verbose.call
 #' @return \code{spca} returns a list with class \code{"spca"} containing the
 #' following components:
 #' \describe{
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' \item{ncomp}{the number of components to keep in the
 #' calculation.} 
 #' \item{prop_expl_var}{the adjusted percentage of variance
@@ -80,7 +84,8 @@ spca <-
              max.iter = 500, 
              tol = 1e-06,
              logratio = c('none','CLR'),
-             multilevel = NULL)
+             multilevel = NULL,
+             verbose.call = FALSE)
     {
         
         #-- checking general input parameters --------------------------------------#
@@ -360,6 +365,13 @@ spca <-
         ))
         ## warning if components are not orthogonal
         .eval_non.orthogonality(variates = result$variates$X, scale=scale)
+        
+        if (verbose.call) {
+            c <- result$call
+            result$call <- mget(names(formals()))
+            result$call <- append(c, result$call)
+            names(result$call)[1] <- "simple.call"
+        }
         
         class(result) = c("spca","pca", "prcomp")
         return(invisible(result))

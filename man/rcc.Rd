@@ -11,7 +11,8 @@ rcc(
   ncomp = 2,
   method = c("ridge", "shrinkage"),
   lambda1 = 0,
-  lambda2 = 0
+  lambda2 = 0,
+  verbose.call = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,10 @@ below and reference.}
 \item{lambda1, lambda2}{a non-negative real. The regularization parameter for
 the \emph{X} and \emph{Y} data. Defaults to \code{lambda1=lambda2=0}. Only
 used if \code{method="ridge"}}
+
+\item{verbose.call}{Logical (Default=FALSE), if set to TRUE then the \code{$call}
+component of the returned object will contain the variable values for all 
+parameters. Note that this may cause large memory usage.}
 }
 \value{
 \code{rcc} returns a object of class \code{"rcc"}, a list that
@@ -45,6 +50,9 @@ canonical variates.} \item{names}{list containing the names to be used for
 individuals and variables.}
 \item{prop_expl_var}{Proportion of the explained variance of derived
 components, after setting possible missing values to zero.}
+\item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+If \code{verbose.call = TRUE} then all the inputted values are accessable via
+this component}
 }
 \description{
 The function performs the regularized extension of the Canonical Correlation

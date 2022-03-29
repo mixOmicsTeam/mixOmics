@@ -13,7 +13,8 @@ spca(
   max.iter = 500,
   tol = 1e-06,
   logratio = c("none", "CLR"),
-  multilevel = NULL
+  multilevel = NULL,
+  verbose.call = FALSE
 )
 }
 \arguments{
@@ -51,11 +52,18 @@ specific normalisation in sequencing data. Default to 'none'}
 
 \item{multilevel}{sample information for multilevel decomposition for
 repeated measurements.}
+
+\item{verbose.call}{Logical (Default=FALSE), if set to TRUE then the \code{$call}
+component of the returned object will contain the variable values for all 
+parameters. Note that this may cause large memory usage.}
 }
 \value{
 \code{spca} returns a list with class \code{"spca"} containing the
 following components:
 \describe{
+\item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+If \code{verbose.call = TRUE} then all the inputted values are accessable via
+this component}
 \item{ncomp}{the number of components to keep in the
 calculation.} 
 \item{prop_expl_var}{the adjusted percentage of variance

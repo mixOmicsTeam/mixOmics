@@ -40,6 +40,7 @@
 #' classification and factor response)
 #' @param study Factor, indicating the membership of each sample to each of the
 #' studies being combined
+#' @template arg/verbose.call
 #' @return \code{mint.pls} returns an object of class \code{"mint.pls", "pls"},
 #' a list that contains the following components:
 #' 
@@ -59,6 +60,9 @@
 #' explained variance for each component and each study (note that contrary to
 #' PCA, this amount may not decrease as the aim of the method is not to
 #' maximise the variance, but the covariance between data sets).}
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' @author Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{spls}}, \code{\link{summary}}, \code{\link{plotIndiv}},
 #' \code{\link{plotVar}}, \code{\link{predict}}, \code{\link{perf}},
@@ -101,7 +105,8 @@ mint.pls <- function(X,
                      tol = 1e-06,
                      max.iter = 100,
                      near.zero.var = FALSE,
-                     all.outputs = TRUE)
+                     all.outputs = TRUE,
+                     verbose.call = FALSE)
 {
     
     # call to 'internal_wrapper.mint'
@@ -138,6 +143,13 @@ mint.pls <- function(X,
         scale = result$scale,
         prop_expl_var = result$prop_expl_var
     )
+    
+    if (verbose.call) {
+        c <- out$call
+        out$call <- mget(names(formals()))
+        out$call <- append(c, out$call)
+        names(out$call)[1] <- "simple.call"
+    }
     
     class(out) = c("mint.pls","mixo_pls")
     return(invisible(out))

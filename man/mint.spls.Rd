@@ -16,7 +16,8 @@ mint.spls(
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
-  all.outputs = TRUE
+  all.outputs = TRUE,
+  verbose.call = FALSE
 )
 }
 \arguments{
@@ -57,6 +58,10 @@ computations. Default value is FALSE.}
 
 \item{all.outputs}{Logical. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
+
+\item{verbose.call}{Logical (Default=FALSE), if set to TRUE then the \code{$call}
+component of the returned object will contain the variable values for all 
+parameters. Note that this may cause large memory usage.}
 }
 \value{
 \code{mint.spls} returns an object of class
@@ -77,7 +82,7 @@ variates of X relative to each study - partial variates.}
 partial variates - partial loadings.} \item{names}{list containing the names
 to be used for individuals and variables.} \item{nzv}{list containing the
 zero- or near-zero predictors information.} \item{iter}{Number of iterations
-of the algorithm for each component} #' \item{prop_expl_var}{The amount
+of the algorithm for each component} \item{prop_expl_var}{The amount
 of the variance explained by each variate / component divided by the total
 variance in the \code{data} for each study (after removing the possible
 missing values) using the definition of 'redundancy'. Note that contrary to
@@ -85,6 +90,9 @@ missing values) using the definition of 'redundancy'. Note that contrary to
 aim of the method is not to maximise the variance, but the covariance between
 data sets (including the dummy matrix representation of the outcome variable
 in case of the supervised approaches).}
+\item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+If \code{verbose.call = TRUE} then all the inputted values are accessable via
+this component}
 }
 \description{
 Function to integrate and combine multiple independent studies measured on
