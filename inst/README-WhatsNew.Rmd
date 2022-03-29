@@ -17,6 +17,21 @@ opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE)
 
 ## What's New
 
+#### March 2022
+
+* bug fix implemented for [Issue #196](https://github.com/mixOmicsTeam/mixOmics/issues/196). `perf()` can now handle features with a `(s)pls` which have near zero variance.
+* bug fix implemented for [Issue #192](https://github.com/mixOmicsTeam/mixOmics/issues/192). `predict()` can now handle when the testing and training data have their columns in different orders.
+* bug fix implemented for [Issue #178](https://github.com/mixOmicsTeam/mixOmics/issues/178). If the `indY` parameter is used in `block.spls()`, `circosPlot()` can now properly identify the $Y$ dataframe.
+* bug fix implemented for [Issue #172](https://github.com/mixOmicsTeam/mixOmics/issues/172). `perf()` now returns values for the `choice.ncomp` component when `nrepeat` $< 3$ whereas before it would just return `NA`s.
+* bug fix implemented for [Issue #171](https://github.com/mixOmicsTeam/mixOmics/issues/171). `cim()` now can take `pca` objects as input.
+* bug fix implemented for [Issue #161](https://github.com/mixOmicsTeam/mixOmics/issues/161). `tune.spca()` can now handle `NA` values appropriately.
+* bug fix implemented for [Issue #150](https://github.com/mixOmicsTeam/mixOmics/issues/150). Provided users with a specific error message for when `plotArrow()` is run on a `(mint).(s)plsda` object.
+* bug fix implemented for [Issue #122](https://github.com/mixOmicsTeam/mixOmics/issues/122). Provided users with a specific error message for when a `splsda` object that has only one sample associated with a given class is passed to `perf()`.
+* bug fix implemented for [Issue #120](https://github.com/mixOmicsTeam/mixOmics/issues/120). `plotLoadings()` now returns the loading values for features from **all** dataframes rather than just the last one when operating on a `(mint).(block).(s)plsda` object.
+* bug fix implemented for [Issue #43](https://github.com/mixOmicsTeam/mixOmics/issues/43). Homogenised the way in which `tune.mint.splsda()` and `perf.mint.splsda()` calculate balanced error rate (BER) as there was disparity between them. Also made the global BER a weighted average of BERs across each study.
+* enhancement implemented for [Issue #30/#34](https://github.com/mixOmicsTeam/mixOmics/issues/34). The parameter `verbose.call` was added to most of the methods. This parameter allows users to access the specific values input into the call of a function from its output.
+* bug fix implemented for [Issue #24](https://github.com/mixOmicsTeam/mixOmics/issues/24). `background.predict()` can now operate on `mint.splsda` objects and can be used as part of `plotIndiv()`.
+
 #### July 2021
 
 * new function `plotMarkers` to visualise the selected features in block analyses (see https://github.com/mixOmicsTeam/mixOmics/issues/134)
