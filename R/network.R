@@ -195,7 +195,8 @@ network <- function(mat,
                     interactive = FALSE,
                     layout.fun = NULL,
                     save = NULL,
-                    name.save = NULL
+                    name.save = NULL,
+                    plot.graph = TRUE
                     
 )
 {
@@ -267,6 +268,10 @@ network <- function(mat,
         if (save == "pdf")
             pdf(file = paste0(name.save,".pdf"))
         
+    }
+    
+    if (!plot.graph & interactive) {
+        stop("plot.graph cannot be FALSE if interactive = TRUE", call.=FALSE)
     }
     
     class.object = class(mat)
@@ -973,50 +978,53 @@ network <- function(mat,
     #-----------------------------------#
     # construction of the initial graph #
     #-----------------------------------#
-    nn = vcount(gR)
-    V(gR)$label.cex = min(2.5 * cex.node.name/log(nn), 1)
-    E(gR)$label.cex = min(2.25 * cex.edge.label/log(nn), 1)
-    cex0 = 2 * V(gR)$label.cex
     
-    def.par = par(no.readonly = TRUE)
-    dev.new()
-    par(pty = "s", mar = c(0, 0, 0, 0),mfrow=c(1,1))
-    plot(1:100, 1:100, type = "n", axes = FALSE, xlab = "", ylab = "")
-    cha = V(gR)$label
-    cha = paste("", cha, "")
-    xh = strwidth(cha, cex = cex0) * 1.5
-    yh = strheight(cha, cex = cex0) * 3
-    
-    V(gR)$size = xh
-    V(gR)$size2 = yh
-    
-    dev.off()
-    
-    if (is.null(layout.fun))
-    {
-        l = layout.fruchterman.reingold(gR, weights = (1 - abs(E(gR)$weight)))
-    } else {
-        l = layout.fun(gR)
-    }
-    
-    if (isTRUE(!interactive))
-    {
-        if (isTRUE(show.color.key))
+    if (plot.graph) {
+        nn = vcount(gR)
+        V(gR)$label.cex = min(2.5 * cex.node.name/log(nn), 1)
+        E(gR)$label.cex = min(2.25 * cex.edge.label/log(nn), 1)
+        cex0 = 2 * V(gR)$label.cex
+        
+        def.par = par(no.readonly = TRUE)
+        dev.new()
+        par(pty = "s", mar = c(0, 0, 0, 0),mfrow=c(1,1))
+        plot(1:100, 1:100, type = "n", axes = FALSE, xlab = "", ylab = "")
+        cha = V(gR)$label
+        cha = paste("", cha, "")
+        xh = strwidth(cha, cex = cex0) * 1.5
+        yh = strheight(cha, cex = cex0) * 3
+        
+        V(gR)$size = xh
+        V(gR)$size2 = yh
+        
+        dev.off()
+        
+        if (is.null(layout.fun))
         {
-            layout(lmat, widths = lwid, heights = lhei, respect = FALSE)
-            par(mar = c(5, 4, 2, 1), cex = 0.75)
-            image(z.mat, col = col, xaxt = "n", yaxt = "n")
-            box()
-            par(usr = c(0, 1, 0, 1))
-            axis(1, at = xv, labels = lv, cex.axis = keysize.label)
-            title("Color key", font.main = 1, cex.main = keysize.label)
-            par(def.par)
-            par(new = TRUE)
+            l = layout.fruchterman.reingold(gR, weights = (1 - abs(E(gR)$weight)))
+        } else {
+            l = layout.fun(gR)
         }
         
-        par(pty = "s", mar = c(0, 0, 0, 0),mfrow=c(1,1))
-        plot(gR, layout = l)
-        par(def.par)
+        if (isTRUE(!interactive))
+        {
+            if (isTRUE(show.color.key))
+            {
+                layout(lmat, widths = lwid, heights = lhei, respect = FALSE)
+                par(mar = c(5, 4, 2, 1), cex = 0.75)
+                image(z.mat, col = col, xaxt = "n", yaxt = "n")
+                box()
+                par(usr = c(0, 1, 0, 1))
+                axis(1, at = xv, labels = lv, cex.axis = keysize.label)
+                title("Color key", font.main = 1, cex.main = keysize.label)
+                par(def.par)
+                par(new = TRUE)
+            }
+            
+            par(pty = "s", mar = c(0, 0, 0, 0),mfrow=c(1,1))
+            plot(gR, layout = l)
+            par(def.par)
+        }
     }
     
     #-----------------------#
