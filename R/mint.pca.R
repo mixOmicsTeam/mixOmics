@@ -34,6 +34,7 @@
 #' means and unit variances. Default = \code{TRUE}.
 #' @param tol Convergence stopping value.
 #' @param max.iter integer, the maximum number of iterations.
+#' @template arg/verbose.call
 #' @return \code{mint.pca} returns an object of class \code{"mint.pca", "pca"},
 #' a list that contains the following components:
 #' 
@@ -51,6 +52,9 @@
 #' spirit} \item{prop_expl_var}{Proportion of the explained variance from the multivariate
 #' model after setting possible missing values to zero in the data.} \item{names}{list containing the names to be used
 #' for individuals and variables.}
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' @author Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{spls}}, \code{\link{summary}}, \code{\link{plotIndiv}},
 #' \code{\link{plotVar}}, \code{\link{predict}}, \code{\link{perf}},
@@ -79,7 +83,8 @@ mint.pca <- function(X,
                      study,
                      scale = TRUE,
                      tol = 1e-06,
-                     max.iter = 100)
+                     max.iter = 100,
+                     verbose.call = FALSE)
 {
     
     #-- checking general input parameters --------------------------------------#
@@ -176,6 +181,13 @@ mint.pca <- function(X,
     
     # choose the desired output from 'result'
     out$study <- study
+    
+    if (verbose.call) {
+        c <- out$call
+        out$call <- mget(names(formals()))
+        out$call <- append(c, out$call)
+        names(out$call)[1] <- "simple.call"
+    }
     
     class(out) <- c("mint.pca","pca")
     return(invisible(out))

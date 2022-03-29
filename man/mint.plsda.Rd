@@ -14,7 +14,8 @@ mint.plsda(
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
-  all.outputs = TRUE
+  all.outputs = TRUE,
+  verbose.call = FALSE
 )
 }
 \arguments{
@@ -45,6 +46,10 @@ computations. Default value is FALSE.}
 
 \item{all.outputs}{Logical. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
+
+\item{verbose.call}{Logical (Default=FALSE), if set to TRUE then the \code{$call}
+component of the returned object will contain the variable values for all 
+parameters. Note that this may cause large memory usage.}
 }
 \value{
 \code{mint.plsda} returns an object of class \code{"mint.plsda",
@@ -68,6 +73,9 @@ each component and each study after setting possible missing values to zero
 (note that contrary to PCA, this amount may not decrease as the aim of the
 method is not to maximise the variance, but the covariance between X and the
 dummy matrix Y).}
+\item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+If \code{verbose.call = TRUE} then all the inputted values are accessable via
+this component}
 }
 \description{
 Function to combine multiple independent studies measured on the same

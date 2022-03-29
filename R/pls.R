@@ -74,9 +74,13 @@
 #' @templateVar multilevel.example in \code{?spls}.
 #' @template arg/multilevel
 #' @template arg/all.outputs
+#' @template arg/verbose.call
 #' @return \code{pls} returns an object of class \code{"pls"}, a list that
 #' contains the following components:
 #' 
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' \item{X}{the centered and standardized original predictor matrix.}
 #' \item{Y}{the centered and standardized original response vector or matrix.}
 #' \item{ncomp}{the number of components included in the model.}
@@ -146,7 +150,8 @@ pls <- function(X,
                 logratio = "none",
                 # one of "none", "CLR"
                 multilevel = NULL,
-                all.outputs = TRUE)
+                all.outputs = TRUE,
+                verbose.call = FALSE)
 {
     # call to 'internal_wrapper.mint'
     result = internal_wrapper.mint(
@@ -186,6 +191,13 @@ pls <- function(X,
         mat.c = result$mat.c#,
         #defl.matrix = result$defl.matrix
     )
+    
+    if (verbose.call) {
+        c <- out$call
+        out$call <- mget(names(formals()))
+        out$call <- append(c, out$call)
+        names(out$call)[1] <- "simple.call"
+    }
     
     class(out) = c("mixo_pls")
     # output if multilevel analysis

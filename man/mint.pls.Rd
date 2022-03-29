@@ -14,7 +14,8 @@ mint.pls(
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
-  all.outputs = TRUE
+  all.outputs = TRUE,
+  verbose.call = FALSE
 )
 }
 \arguments{
@@ -49,6 +50,10 @@ computations. Default value is FALSE.}
 
 \item{all.outputs}{Logical. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
+
+\item{verbose.call}{Logical (Default=FALSE), if set to TRUE then the \code{$call}
+component of the returned object will contain the variable values for all 
+parameters. Note that this may cause large memory usage.}
 }
 \value{
 \code{mint.pls} returns an object of class \code{"mint.pls", "pls"},
@@ -70,6 +75,9 @@ of the algorithm for each component} \item{prop_expl_var}{Percentage of
 explained variance for each component and each study (note that contrary to
 PCA, this amount may not decrease as the aim of the method is not to
 maximise the variance, but the covariance between data sets).}
+\item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+If \code{verbose.call = TRUE} then all the inputted values are accessable via
+this component}
 }
 \description{
 Function to integrate and combine multiple independent studies measured on
