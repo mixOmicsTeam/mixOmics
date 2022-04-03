@@ -204,12 +204,13 @@ plot.tune.spls <-
 #' @method plot tune.block.splsda
 #' @export
 plot.tune.block.splsda =
-    function(x, sd = TRUE, col, ...)
+    function(x, sd = NULL, col, ...)
     {
         
         # R check
         error.sd=NULL
         
+        sd = .change_if_null(sd, !is.null(x$error.rate.sd))
         error <- x$error.rate
         if(sd & !is.null(x$error.rate.sd))
         {
@@ -413,7 +414,7 @@ plot.tune.spca <-
 #' @importFrom reshape2 melt
 #' @export
 plot.tune.spls1 <-
-    function(x, optimal = TRUE, sd = TRUE, col, ...)
+    function(x, optimal = TRUE, sd = NULL, col, ...)
     {
         # TODO add examples
         # to satisfy R CMD check that doesn't recognise x, y and group (in aes)
@@ -421,21 +422,16 @@ plot.tune.spls1 <-
         
         if (!is.logical(optimal))
             stop("'optimal' must be logical.", call. = FALSE)
-        
-        
+        sd = .change_if_null(sd, !is.null(x$error.rate.sd))
         error <- x$error.rate
-        if(sd == TRUE)
-        {
-            if (!is.null(x$error.rate.sd)) 
-            {
-                error.rate.sd = x$error.rate.sd
-                ylim = range(c(error + error.rate.sd), c(error - error.rate.sd))
-            } else {
-                message("sd bars cannot be calculated when nrepeat = 1.\n")
-            }
-        } else {
-            error.rate.sd = NULL
+        error.rate.sd = x$error.rate.sd # for LOGOCV and nrepeat=1, will be NULL
+        
+        #
+        if (is.null(x$error.rate.sd)) {
+            message("Note: sd bars cannot be calculated when nrepeat = 1.\n")
             ylim = range(error)
+        } else {
+            ylim = range(c(error + error.rate.sd), c(error - error.rate.sd))
         }
         
         optimal <- optimal && (any(grepl('mint', class(x))) || x$call$nrepeat > 2)
@@ -503,7 +499,7 @@ plot.tune.spls1 <-
             scale_color_manual(values = col)
         
         # error bar
-        if(!is.null(error.rate.sd))
+        if(!is.null(error.rate.sd) && sd)
         {
             dferror = melt(error.rate.sd)
             df$lwr = df$y - dferror$value

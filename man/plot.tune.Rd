@@ -25,9 +25,9 @@
 
 \method{plot}{tune.spca}(x, optimal = TRUE, sd = NULL, col = NULL, ...)
 
-\method{plot}{tune.spls1}(x, optimal = TRUE, sd = TRUE, col, ...)
+\method{plot}{tune.spls1}(x, optimal = TRUE, sd = NULL, col, ...)
 
-\method{plot}{tune.splsda}(x, optimal = TRUE, sd = TRUE, col, ...)
+\method{plot}{tune.splsda}(x, optimal = TRUE, sd = NULL, col, ...)
 }
 \arguments{
 \item{x}{an \code{tune.splsda} object.}
