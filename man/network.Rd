@@ -33,7 +33,8 @@ network(
   interactive = FALSE,
   layout.fun = NULL,
   save = NULL,
-  name.save = NULL
+  name.save = NULL,
+  plot.graph = TRUE
 )
 }
 \arguments{
@@ -110,6 +111,10 @@ layout.fruchterman.reingold.}
 \code{'jpeg'}, \code{'tiff'}, \code{'png'} or \code{'pdf'}.}
 
 \item{name.save}{character string giving the name of the saved file.}
+
+\item{plot.graph}{logical. If \code{TRUE} (default), plotting window will be 
+filled with network. If \code{FALSE}, then no graph will be plotted, though 
+the return value of the function is the exact same.}
 }
 \value{
 \code{network} return a list containing the following components:

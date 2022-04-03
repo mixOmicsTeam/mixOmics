@@ -136,6 +136,9 @@
 #' @param layout.fun a function. It specifies how the vertices will be placed
 #' on the graph. See help(layout) in the igraph package. Defaults to
 #' layout.fruchterman.reingold.
+#' @param plot.graph logical. If \code{TRUE} (default), plotting window will be 
+#' filled with network. If \code{FALSE}, then no graph will be plotted, though 
+#' the return value of the function is the exact same.
 #' @return \code{network} return a list containing the following components:
 #' \item{M}{the correlation matrix used by \code{network}.} \item{gR}{a
 #' \code{graph} object to save the graph for cytoscape use (requires to load
