@@ -21,7 +21,7 @@
   ...
 )
 
-\method{plot}{tune.block.splsda}(x, sd = TRUE, col, ...)
+\method{plot}{tune.block.splsda}(x, sd = NULL, col, ...)
 
 \method{plot}{tune.spca}(x, optimal = TRUE, sd = NULL, col = NULL, ...)
 
