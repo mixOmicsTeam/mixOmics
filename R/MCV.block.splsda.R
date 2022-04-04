@@ -482,7 +482,7 @@ MCVfold.block.splsda <-
             return(list(class.comp.rep=class.comp.rep, keepA=keepA))
         } #end nrep 1:nrepeat
         
-        class.comp.reps <- bplapply(seq_len(nrepeat), repeat_cv, all_folds = all_folds, M = M) # , BPPARAM = BPPARAM
+        class.comp.reps <- bplapply(seq_len(nrepeat), repeat_cv, all_folds = all_folds, M = M, BPPARAM = BPPARAM)
  
         list2array <- function(cc) {
             ## function to make an array of results of all repeats ino the former form
