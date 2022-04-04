@@ -12,6 +12,7 @@ test_that("ALL DA functions raise specific error when Y contains NAs", {
               mrna = breast.TCGA$data.train$mrna)
   Y.b <- breast.TCGA$data.train$subtype
   Y.b[c(1,2,3)] <- NA
+  Y.b.2 <- breast.TCGA$data.train$protein
   
   data("stemcells")
   X.m <- stemcells$gene
@@ -21,12 +22,12 @@ test_that("ALL DA functions raise specific error when Y contains NAs", {
   
   # ------------------------------------------------------------------------- #
   
-  # plsda - needs work
+  # plsda
   expect_error(plsda(X, Y), 
                "Unmapped Y contains samples with no associated class. May be caused by NAs in input Y vector", 
                fixed = TRUE)
   
-  # splsda - needs work
+  # splsda
   expect_error(plsda(X, Y), 
                "Unmapped Y contains samples with no associated class. May be caused by NAs in input Y vector", 
                fixed = TRUE)
@@ -50,4 +51,10 @@ test_that("ALL DA functions raise specific error when Y contains NAs", {
   expect_error(mint.splsda(X.m, Y.m, study = S.m), 
                "Unmapped Y contains samples with no associated class. May be caused by NAs in input Y vector", 
                fixed = TRUE)
+  
+  # block.pls - ensure no error is raised for regression type problem
+  expect_is(block.pls(X.b, Y.b.2), "block.pls")
+  
+  # block.spls - ensure no error is raised for regression type problem
+  expect_is(block.spls(X.b, Y.b.2), "block.spls")
 })
