@@ -144,7 +144,8 @@ mint.plsda <- function(X,
         mode = 'regression',
         max.iter = max.iter,
         tol = tol,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        DA = TRUE
     )
     
     # choose the desired output from 'result'

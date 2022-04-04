@@ -150,7 +150,8 @@ mint.splsda <- function(X,
         max.iter = max.iter,
         tol = tol,
         scale = scale,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        DA = TRUE
     )
     
     # choose the desired output from 'result'
