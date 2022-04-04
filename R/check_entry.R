@@ -467,8 +467,18 @@ Check.entry.wrapper.mint.block = function(X,
         stop("Either 'Y' or 'indY' is needed")
     
     # if DA and the unmapped Y has rows without associated class
-    if (DA & length(which(rowSums(Y)==0)) != 0) {
-        stop("Unmapped Y contains samples with no associated class. May be caused by NAs in input Y vector")
+    if (DA) {
+        Y.tmp <- NULL
+        if (missing(Y)) {
+            Y.tmp <- X[[indY]]
+        } else {
+            Y.tmp <- Y
+        }
+        
+        if (length(which(rowSums(Y.tmp)==0)) != 0) {
+            stop("Unmapped Y contains samples with no associated class. May be caused by NAs in input Y vector")
+        }
+        rm(Y.tmp)
     }
     
     if (missing(ncomp))
