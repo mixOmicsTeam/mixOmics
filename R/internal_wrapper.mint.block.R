@@ -70,7 +70,7 @@ internal_wrapper.mint.block <-
         
         # checks (near.zero.var is done there)
         check <- Check.entry.wrapper.mint.block(X = X, Y = Y, indY = indY,
-                                             ncomp = ncomp, keepX = keepX, keepY = keepY, DA=DA,
+                                             ncomp = ncomp, keepX = keepX, keepY = keepY, DA = DA,
                                              study = study, design = design, init = init, scheme = scheme, scale = scale,
                                              near.zero.var = near.zero.var, mode = mode, tol = tol,
                                              max.iter = max.iter)
