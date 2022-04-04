@@ -205,7 +205,7 @@ internal_wrapper.mint <-
                                  ncomp = c(ncomp, ncomp), tol = tol, max.iter = max.iter,
                                  design = design, keepA = keepA, scale = scale, scheme = "horst",init="svd",
                                  study = study, misdata = misdata, is.na.A = is.na.A, ind.NA = ind.NA,
-                                 ind.NA.col = ind.NA.col, all.outputs= all.outputs, remove.object=c("X"), DA = DA)
+                                 ind.NA.col = ind.NA.col, all.outputs= all.outputs, remove.object=c("X"))
     
     #-- pls approach ----------------------------------------------------#
     #--------------------------------------------------------------------------#
