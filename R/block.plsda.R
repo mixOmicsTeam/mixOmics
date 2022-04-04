@@ -104,10 +104,10 @@ block.plsda <- function(X,
     # check inpuy 'Y' and transformation in a dummy matrix
     if (!missing(Y))
     {
-        if (is.null(dim(Y)))
-        {
+        if (is.null(dim(Y))) {
             Y = factor(Y)
-        } else {
+        } 
+        else {
             stop("'Y' should be a factor or a class vector.")
         }
         
@@ -154,7 +154,8 @@ block.plsda <- function(X,
         tol = tol,
         max.iter = max.iter,
         near.zero.var = near.zero.var,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        DA = TRUE
     )
     
     # calculate weights for each dataset
