@@ -1,7 +1,4 @@
-on:
-  pull_request:
-    branches: 
-      - bioc_master
+on: workflow_dispatch
 
 name: "Push to Bioconductor"
 
@@ -11,40 +8,46 @@ jobs:
     steps:
       - name: Check out repo ⬇️
         uses: actions/checkout@v2
-  
+
       - name: Push to Bioconductor
         run: |
-          mkdir log
-          touch log/log.txt
+          wd=$PWD
+          #--- log setup: log everything in log/log.out
+          mkdir -p log
+          exec 1>log/log.out 2>&1
+          set -ex
+          #--- ssh setup
           mkdir ~/.ssh
           cp .github/config ~/.ssh/config
-          wd=$PWD
           cd ~/.ssh
           ssh-agent /bin/sh
           eval `ssh-agent -s`
           ssh-add - <<< "$SSH_KEY"
           ssh-keyscan $BIOC_HOST > ~/.ssh/known_hosts
           cd $wd
+          #--- git config
           git config user.name 'Al J Abadi'
           git config user.email 'al.jal.abadi@gmail.com'
-          git checkout -b current_branch
-          git push git@git.bioconductor.org:packages/mixOmics current_branch:master  &>> log/log.txt
+          git remote add bioc git@git.bioconductor.org:packages/mixOmics.git
+          git fetch --all # for logs in case of failure
+          current_branch=${{ github.ref_name }}
+          echo $current_branch
+          #--- debug
+          # ensure entire history of the github branch is there, as opposed to a shallow clone
+          git reset --hard origin/$current_branch
+          # checkout bioc branch and inspect
+          git branch biocmaster bioc/master
+          git checkout biocmaster
+          git log -10 --oneline
+          git log biocmaster..$current_branch --pretty=format:"%s"
+          #--- fetch & push
+          git push bioc $current_branch:$current_branch
         env:
           SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY_AL }}
           BIOC_HOST: ${{ secrets.BIOC_HOST }}
 
-
-      - name: Diagnostics
-        if: failure()
-        run: |
-          echo "result of git fetch -v:"
-          git fetch -v  &>> log/log.txt
-          echo "result of git remote -v:"
-          git remote -v  &>> log/log.txt
-          ssh -T git@git.bioconductor.org &>> log/log.txt
-
-      - name: Upload Files
-        if: failure()
+      - name: Upload Logs
+        if: always()
         uses: actions/upload-artifact@master
         with:
           name: log
