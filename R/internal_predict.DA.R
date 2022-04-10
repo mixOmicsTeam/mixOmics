@@ -270,7 +270,7 @@ internal_predict.DA <-
         }
         
         block.object = c("block.pls", "block.spls", "block.plsda", "block.spsda")
-        if (is(object, block.object) & J>1) # a block
+        if (inherits(object, block.object) & J>1) # a block
         {
             out.DA$centroids = G
         }else{ #not a block
