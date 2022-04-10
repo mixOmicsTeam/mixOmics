@@ -7,7 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo ⬇️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Push to Bioconductor
         run: |
@@ -29,18 +31,9 @@ jobs:
           git config user.name 'Al J Abadi'
           git config user.email 'al.jal.abadi@gmail.com'
           git remote add bioc git@git.bioconductor.org:packages/mixOmics.git
+          #--- push
           git fetch --all # for logs in case of failure
           current_branch=${{ github.ref_name }}
-          echo $current_branch
-          #--- debug
-          # ensure entire history of the github branch is there, as opposed to a shallow clone
-          git reset --hard origin/$current_branch
-          # checkout bioc branch and inspect
-          git branch biocmaster bioc/master
-          git checkout biocmaster
-          git log -10 --oneline
-          git log biocmaster..$current_branch --pretty=format:"%s"
-          #--- fetch & push
           git push bioc $current_branch:$current_branch
         env:
           SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY_AL }}
