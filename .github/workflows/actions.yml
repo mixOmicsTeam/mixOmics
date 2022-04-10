@@ -47,8 +47,8 @@ jobs:
             bioc="latest"
             r="$r_release"
           else
-            bioc="latest"
-            r="$r_release"
+            bioc="devel"
+            r="$r_devel"
           fi
           echo ::set-output name=r::$r
           echo ::set-output name=bioc::$bioc
