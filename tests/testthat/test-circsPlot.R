@@ -42,3 +42,18 @@ test_that("circosPlot works with similar feature names in different blocks", cod
     expect_is(cp_res, "matrix")
 })
 
+test_that("circosPlot works when using the indY parameter", code = {
+    
+    data("breast.TCGA")
+    data = list(mrna = breast.TCGA$data.train$mrna, 
+                mirna = breast.TCGA$data.train$mirna,
+                protein = breast.TCGA$data.train$protein)
+    
+    list.keepX = list(mrna = rep(20, 2), mirna = rep(10,2), protein = rep(10, 2))
+    TCGA.block.spls = block.spls(X = data, indY = 3, 
+                                     ncomp = 2, keepX = list.keepX, design = 'full')
+    cp_res <- circosPlot(TCGA.block.spls, cutoff = 0.7, group = breast.TCGA$data.train$subtype)
+    
+    expect_is(cp_res, "matrix")
+})
+

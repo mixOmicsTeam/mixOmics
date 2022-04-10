@@ -445,6 +445,13 @@ circosPlot.block.splsda <- .circosPlot
 #' @export
 circosPlot.block.spls <- function(object, ..., group = NULL, Y.name = 'Y')
 {
+    # when a block.spls object is supplied that uses the indY parameter, the name
+    # of the object$X component for this dataframe is its proper name
+    # for below checks, change it back to "Y"
+    if (is.null(object$X$Y)) {
+        names(object$X)[object$indY] <- "Y"
+    }
+    
     if (length(group) != nrow(object$X$Y))
         stop("group must be a factor of length: nrow(object$X$Y) = ", nrow(object$X$Y), "\n")
     object$Y <- factor(group)
