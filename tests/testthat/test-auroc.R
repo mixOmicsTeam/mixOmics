@@ -21,7 +21,7 @@ Testable.Components <- list(basic.plsda = c("Comp1", "Comp2"),
                             newdata.splsda = c("Comp1", "Comp2"),
                             multilevel.splsda = c("Comp1", "Comp2"),
                             roc.comp.splsda = c("Comp1", "Comp2"),
-                            roc.study.mint.splsda = c("Comp1"),
+                            roc.study.mint.splsda = c("Comp2"),
                             roc.block.splsda = c("miRNA", "mRNA", "proteomics"),
                             study.test.mint.splsda = c("Comp2")
 )
@@ -166,9 +166,11 @@ Ground.Truths <- list(basic.plsda = list(Comp1 = structure(c(0.863, 2.473e-05),
                                                                .Dim = 1:2, 
                                                                .Dimnames = list("AF vs BE", 
                                                                                 c("AUC", "p-value")))),
-                      roc.study.mint.splsda = list(Comp1 = structure(c(0.863, 2.473e-05), 
-                                                                     .Dim = 1:2, 
-                                                                     .Dimnames = list("AF vs BE", 
+                      roc.study.mint.splsda = list(Comp2 = structure(c(1, 0.9028, 0.9889, 4.799e-09, 0.02024, 3.751e-09), 
+                                                                     .Dim = 3:2, 
+                                                                     .Dimnames = list(c("Fibroblast vs Other(s)",
+                                                                                        "hESC vs Other(s)", 
+                                                                                        "hiPSC vs Other(s)"), 
                                                                                       c("AUC", "p-value")))),
                       roc.block.splsda = list(miRNA = list(comp1 = structure(c(0.9365, 0.5861, 0.9218, 0, 0.1453, 0), 
                                                                              .Dim = 3:2, 
@@ -457,9 +459,9 @@ test_that("(auroc:parameter): roc.study", {
 
     res.mint.plsda <- mint.plsda(X, Y, ncomp = 2, study = s)
 
-    roc.study.auroc = auroc(res.mint.plsda, roc.study = 2, print = FALSE)
+    roc.study.mint.splsda = auroc(res.mint.plsda, roc.study = 2, print = FALSE)
 
-    invisible(capture.output(TT <- dput(roc.comp.auroc[testable.components])))
+    invisible(capture.output(TT <- dput(roc.study.mint.splsda[testable.components])))
     
     expect_equal(TT, GT)
 })
