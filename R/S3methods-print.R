@@ -614,7 +614,7 @@ print.summary <-
         digits = x$digits
         
         #--------------------- output pls/spls ---------------------#
-        if(is(x, c("pls", "spls"))){
+        if(inherits(x, c("pls", "spls"))){
             
             if (is(x, "pls"))
             {
