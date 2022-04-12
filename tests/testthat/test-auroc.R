@@ -11,7 +11,9 @@
 ### ============================ GROUND TRUTHS ============================ ###
 ###############################################################################
 
-source(system.file("testdata", "testdata-auroc.R", package = "mixOmics"))
+load(system.file("testdata", "testdata-auroc.RData", package = "mixOmics"))
+Testable.Components <- Test.Data$tc
+Ground.Truths <- Test.Data$gt
 
 ###############################################################################
 ### ================================ BASIC ================================ ###
