@@ -11,7 +11,7 @@
 ### ============================ GROUND TRUTHS ============================ ###
 ###############################################################################
 
-load(system.file("testdata", "testdata-background.predict.RData", package = "mixOmics"))
+Test.Data <- readRDS(system.file("testdata", "testdata-background.predict.rda", package = "mixOmics"))
 Testable.Components <- Test.Data$tc
 Ground.Truths <- Test.Data$gt
 

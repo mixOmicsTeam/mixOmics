@@ -10,7 +10,7 @@
 ### ============================ GROUND TRUTHS ============================ ###
 ###############################################################################
 
-load(system.file("testdata", "testdata-cim.RData", package = "mixOmics"))
+Test.Data <- readRDS(system.file("testdata", "testdata-cim.rda", package = "mixOmics"))
 Testable.Components <- Test.Data$tc
 Ground.Truths <- Test.Data$gt
 
