@@ -342,9 +342,24 @@ predict.mixo_pls <-
             }
             names(newdata)=names(X)
             
-            #check that newdata and X have the same variables
-            if (any(unlist(lapply(seq_along(X), function(i) length(setdiff(colnames(X[[i]]), colnames(newdata[[i]]))) > 0))))
-                stop("Each 'newdata[[i]]' must include all the variables of 'object$X[[i]]'")
+            #check that newdata and X have the same variables and that they are in the same order
+            for (i in 1:length(newdata)) {
+                X.names <- colnames(X[[i]])
+                newdata.names <- colnames(newdata[[i]])
+                
+                if (any(X.names != newdata.names)) { # if there is any difference between colnames
+                    if (length(setdiff(X.names, newdata.names)) > 0) { # if there is presence of novel feature/absence of existing feature
+                        stop(paste("The set of features in 'object$X$", 
+                                   names(X)[i], "' is different to 'newdata$", 
+                                   names(newdata)[i], "'. Please ensure they have the same features.", sep = ""))
+                    }
+                    else if (all(sort(X.names) == sort(newdata.names))) { # if it is only a difference in order
+                        stop(paste("The order of features in 'object$X$", 
+                                   names(X)[i], "' is different to 'newdata$", 
+                                   names(newdata)[i], "'. Please ensure that you adjust these to the same order", sep = ""))
+                    }
+                }
+            }
             
             #reorder variables in the newdata as in X if needed
             if (all.equal(lapply(newdata, colnames), lapply(X, colnames)) != TRUE) {
