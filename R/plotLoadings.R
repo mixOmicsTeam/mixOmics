@@ -176,6 +176,8 @@ plotLoadings.mixo_pls <-
         if (length(block) == 1 & !is.null(name.var))
             name.var = list(name.var = name.var)
         
+        contrib.df <- list()
+        
         for (i in 1 : length(block))
         {
             res = get.loadings.ndisplay(object = object, comp = comp, block = block[i], name.var = name.var[[i]], name.var.complete = name.var.complete, ndisplay = ndisplay)
@@ -204,7 +206,11 @@ plotLoadings.mixo_pls <-
             } else if (length(block) > 1 & !missing(subtitle)) {
                 title(paste(subtitle[i]), line=0, cex.main = size.subtitle)
             }
+            
+            contrib.df <- c(contrib.df, list(df))
         }
+        
+        names(contrib.df) <- block
         
         if (length(block) > 1 & !is.null(title))
             title(title, outer=TRUE, line = -2, cex.main = size.title)
@@ -215,7 +221,7 @@ plotLoadings.mixo_pls <-
         par(mar = omar) #reset mar
         
         # return the contribution matrix
-        return(invisible(df))
+        return(invisible(contrib.df))
     }
 
 #' @rdname plotLoadings
@@ -391,6 +397,9 @@ plotLoadings.mixo_plsda <-
             if (length(block) == 1 & !is.null(name.var))
                 name.var = list(name.var = name.var)
             
+            
+            contrib.df <- list()
+            
             for (i in 1 : length(block))
             {
                 res = get.loadings.ndisplay(object = object, comp = comp, block = block[i], name.var = name.var[[i]], name.var.complete = name.var.complete, ndisplay = ndisplay)
@@ -457,8 +466,13 @@ plotLoadings.mixo_plsda <-
                                title = paste(legend.title),
                                cex = size.legend)
                     }
+                    
+                    contrib.df <- c(contrib.df, list(df))
                 } # end if plot
             }
+            
+            names(contrib.df) <- block
+            
             
             if(plot) # overall title and reset par if needed
             {
@@ -473,7 +487,7 @@ plotLoadings.mixo_plsda <-
             }
             
             # return the contribution matrix
-            return(invisible(df))
+            return(invisible(contrib.df)) # df
         }# end contrib missing
     }
 
@@ -956,7 +970,7 @@ check.input.plotLoadings <- function(object,
         if (!is(object, "DA"))
         {
             block = object$names$blocks
-        } else  if (is(object, c("mixo_plsda", "mixo_splsda"))) {
+        } else  if (inherits(object, c("mixo_plsda", "mixo_splsda"))) {
             block = "X"
         } else {
             if (!is.null(object$indY))
@@ -968,13 +982,13 @@ check.input.plotLoadings <- function(object,
         }
     }
     
-    if (is(object, c("mixo_plsda", "mixo_splsda")) & (!all(block %in% c(1,"X")) | length(block) > 1 ))
+    if (inherits(object, c("mixo_plsda", "mixo_splsda")) & (!all(block %in% c(1,"X")) | length(block) > 1 ))
         stop("'block' can only be 'X' or '1' for plsda and splsda object")
     
-    if (is(object, c("mixo_plsda", "mixo_splsda","pca")))
+    if (inherits(object, c("mixo_plsda", "mixo_splsda","pca")))
     {
         object$indY = 2
-    } else if (is(object, c("mixo_pls", "mixo_spls"))) {
+    } else if (inherits(object, c("mixo_pls", "mixo_spls"))) {
         object$indY = 3 # we don't want to remove anything in that case, and 3 is higher than the number of blocks which is 2
     }
     
@@ -1189,7 +1203,7 @@ get.loadings.ndisplay <- function(object,
     
     #comp
     # ----
-    if (is(object, c("mixo_pls","mixo_spls", "rcc")))# cause pls methods just have 1 ncomp, block approaches have different ncomp per block
+    if (inherits(object, c("mixo_pls","mixo_spls", "rcc")))# cause pls methods just have 1 ncomp, block approaches have different ncomp per block
     {
         ncomp = object$ncomp
         object$X = list(X = object$X, Y = object$Y) # so that the data is in object$X, either it's a pls or block approach
@@ -1253,6 +1267,7 @@ get.contrib.df <- function(Y,
         method.group[[k]] = tapply(X[, k], Y, method, na.rm=TRUE) #method is either mean or median
         # determine which group has the highest mean/median
         which.contrib[k, 1:nlevels(Y)] = (method.group[[k]]) == get(contrib)((method.group[[k]]), na.rm=TRUE) # contrib is either min or max
+        
     }
     
     # we also add an output column indicating the group that is max

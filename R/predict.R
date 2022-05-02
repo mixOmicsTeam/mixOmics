@@ -185,7 +185,7 @@ predict.mixo_pls <-
         
         # input parameter: noAveragePredict=> no averagePredict calculation, used in tune.block.splsda
         
-        if(is(object, c("rgcca","sparse.rgcca")))
+        if(inherits(object, c("rgcca","sparse.rgcca")))
             stop("no prediction for RGCCA methods")
         
         #check on dist
@@ -223,7 +223,7 @@ predict.mixo_pls <-
         mint.object = c("mint.pls", "mint.spls", "mint.plsda", "mint.splsda")
         block.object = c("block.pls", "block.spls", "block.plsda", "block.splsda")
         ### if the object is a block, the input newdata is different, we check newdata, make sure it's a list and check newdata/X
-        if(!is(object, block.object)) # not a block (pls/spls/plsda/splsda/mint...)
+        if(!inherits(object, block.object)) # not a block (pls/spls/plsda/splsda/mint...)
         {
             p=ncol(object$X)
             if(is.list(object$X))
@@ -378,7 +378,7 @@ predict.mixo_pls <-
         # we only scale the data if the input `newdata.scale' is missing. Only use in tune functions where we do not need to scale for every prediction as we predict on the same newdata for a grid of keepX
         if(!hasArg(newdata.scale))
         {
-            if(!is(object, mint.object))#| nlevels(factor(object$study))<=1) #not a mint object or just one level in the study
+            if(!inherits(object, mint.object))#| nlevels(factor(object$study))<=1) #not a mint object or just one level in the study
             {   # not a mint (pls/spls/plsda/splsda/block...)
                 
                 # scale newdata if just one study
@@ -624,7 +624,7 @@ predict.mixo_pls <-
         if(time) time4 = proc.time()
         
         # basic prediction results
-        if(is(object, block.object) & length(object$X)>1 )
+        if(inherits(object, block.object) & length(object$X)>1 )
         {
             out=list(predict=Y.hat[which(!is.na(ind.match))],variates=t.pred[which(!is.na(ind.match))],B.hat=B.hat[which(!is.na(ind.match))])
             
@@ -663,7 +663,7 @@ predict.mixo_pls <-
             
             
             #out$newdata=concat.newdata
-        }else if(is(object, block.object)){ # a block but can have only one block (so e.g. a pls done with a block.pls)
+        }else if(inherits(object, block.object)){ # a block but can have only one block (so e.g. a pls done with a block.pls)
             out=list(predict=Y.hat,variates=t.pred,B.hat=B.hat)
             
         } else {# not a block (pls/spls/plsda/splsda/mint...)
@@ -679,7 +679,7 @@ predict.mixo_pls <-
         if(is(object, "DA")) # a DA analysis (mint).(block).(s)plsda
         {
             
-            if(is(object, block.object) & length(object$X)>1 )
+            if(inherits(object, block.object) & length(object$X)>1 )
             {
                 if(!hasArg(noAveragePredict))
                 {

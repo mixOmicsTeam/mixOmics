@@ -1,7 +1,7 @@
 Package: mixOmics
 Type: Package
 Title: Omics Data Integration Project
-Version: 6.19.3
+Version: 6.19.4
 Depends: R (>= 3.5.0), 
          MASS, 
          lattice, 
@@ -63,5 +63,5 @@ biocViews: ImmunoOncology,
            MultipleComparison, 
            Classification, 
            Regression
-RoxygenNote: 7.1.1.9000
+RoxygenNote: 7.1.2
 Encoding: UTF-8

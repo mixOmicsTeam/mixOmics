@@ -10,7 +10,7 @@ test_that("plotLoadings.spls works", code = {
     
     pl_res <- plotLoadings(toxicity.spls)
     
-    expect_is(pl_res, "data.frame")
+    expect_is(pl_res, "list")
     
 })
 
@@ -23,7 +23,7 @@ test_that("plotLoadings.splsda works", code = {
 
     pl_res <- plotLoadings(splsda.liver, comp = 1, method = 'median')
     
-    expect_is(pl_res, "data.frame")
+    expect_is(pl_res, "list")
     
 })
 
@@ -42,7 +42,7 @@ test_that("plotLoadings.block.splsda works", code = {
     
     pl_res <- plotLoadings(nutrimouse.sgccda,block=2)
     
-    expect_is(pl_res, "data.frame")
+    expect_is(pl_res, "list")
     
 })
 
@@ -55,7 +55,7 @@ test_that("plotLoadings.mint.splsda works", code = {
     res = mint.splsda(X = data, Y = type.id, ncomp = 3, keepX = c(10,5,15), study = exp)
     pl_res <- plotLoadings(res, contrib = "max")
     
-    expect_is(pl_res, "data.frame")
+    expect_is(pl_res, "list")
     
 })
 
