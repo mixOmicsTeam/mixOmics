@@ -122,10 +122,16 @@ MCVfold.block.splsda <-
         if (validation ==  "Mfold")
         {
             
-            if (is.null(folds) || !is.numeric(folds) || folds < 2 || folds > n)
-            {
-                stop("Invalid number of folds.")
-            } else {
+            if (is.null(folds) || !is.numeric(folds)) {
+                stop("'folds' need to be non-NULL and numeric")
+            } 
+            else if (folds < 2) {
+                stop("'folds' needs to be at least 2")  
+            } 
+            else if (folds > n) {
+                stop("'folds' cannot be greater than the number of input samples") 
+            } 
+            else {
                 M = round(folds)
             }
         } else if (validation ==  "loo") {
