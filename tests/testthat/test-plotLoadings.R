@@ -59,6 +59,24 @@ test_that("plotLoadings.mint.splsda works", code = {
     
 })
 
+
+test_that("plotLoadings.mint.spls works", code = {
+    data(stemcells)
+    samples <- c(1:5,60:64)
+    X <- stemcells$gene[samples, 1:10]
+    Y <- stemcells$gene[samples+5, 1:10]
+    S <- as.character(stemcells$study[samples])
+    
+    res = mint.spls(X = X, Y = Y, ncomp = 3, 
+                    keepX = seq(3, 9, 3), 
+                    keepY = seq(3, 9, 3), 
+                    study = S)
+    pl_res <- plotLoadings(res, contrib = "max")
+    
+    expect_is(pl_res, "list")
+})
+
+
 test_that("plotLoadings margin errrors is handled properly", code = {
     data(nutrimouse)
     Y = nutrimouse$diet
