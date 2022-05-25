@@ -156,94 +156,94 @@ test_that("(plotVar:basic): splsda", {
 })
 
 
-test_that("(plotVar:basic): block.pls", {
-    
-    testable.components <- Testable.Components$basic.block.pls
-    GT <- Ground.Truths$basic.block.pls
-    
-    data(breast.TCGA)
-    X = list(miRNA = breast.TCGA$data.train$mirna[,1:10],
-            mRNA = breast.TCGA$data.train$mrna[,1:10],
-            proteomics = breast.TCGA$data.train$protein[,1:10])
-    
-    res.block.pls <- block.pls(X, indY=3)
-    
-    block.pls.plotVar = plotVar(res.block.pls)
-    
-    invisible(capture.output(TT <- dput(block.pls.plotVar[testable.components])))
-    
-    expect_equal(TT, GT)
-})
-
-
-test_that("(plotVar:basic): block.spls", {
-    
-    testable.components <- Testable.Components$basic.block.spls
-    GT <- Ground.Truths$basic.block.spls
-    
-    data(breast.TCGA)
-    X = list(miRNA = breast.TCGA$data.train$mirna[,1:10],
-            mRNA = breast.TCGA$data.train$mrna[,1:10],
-            proteomics = breast.TCGA$data.train$protein[,1:10])
-    
-    choice.keepX = list(miRNA = c(3,3),
-                        mRNA = c(3,3),
-                        proteomics = c(3,3))
-    
-    res.block.spls <- block.spls(X, indY=3, keepX = choice.keepX)
-    
-    block.spls.plotVar = plotVar(res.block.spls)
-    
-    invisible(capture.output(TT <- dput(block.spls.plotVar[testable.components])))
-    
-    expect_equal(TT, GT)
-})
-
-
-test_that("(plotVar:basic): block.plsda", {
-    
-    testable.components <- Testable.Components$basic.block.plsda
-    GT <- Ground.Truths$basic.block.plsda
-    
-    data(breast.TCGA)
-    X = list(miRNA = breast.TCGA$data.train$mirna[,1:10],
-             mRNA = breast.TCGA$data.train$mrna[,1:10],
-             proteomics = breast.TCGA$data.train$protein[,1:10])
-    Y = breast.TCGA$data.train$subtype
-    
-    res.block.plsda <- block.plsda(X, Y)
-    
-    block.plsda.plotVar = plotVar(res.block.plsda)
-    
-    invisible(capture.output(TT <- dput(block.plsda.plotVar[testable.components])))
-    
-    expect_equal(TT, GT)
-})
-
-
-test_that("(plotVar:basic): block.splsda", {
-    
-    testable.components <- Testable.Components$basic.block.splsda
-    GT <- Ground.Truths$basic.block.splsda
-    
-    data(breast.TCGA)
-    X = list(miRNA = breast.TCGA$data.train$mirna[,1:10],
-             mRNA = breast.TCGA$data.train$mrna[,1:10],
-             proteomics = breast.TCGA$data.train$protein[,1:10])
-    Y = breast.TCGA$data.train$subtype
-    
-    choice.keepX = list(miRNA = c(3,3),
-                        mRNA = c(3,3),
-                        proteomics = c(3,3))
-    
-    res.block.splsda <- block.splsda(X, Y, keepX = choice.keepX)
-    
-    block.splsda.plotVar = plotVar(res.block.splsda)
-    
-    invisible(capture.output(TT <- dput(block.splsda.plotVar[testable.components])))
-    
-    expect_equal(TT, GT)
-})
+# test_that("(plotVar:basic): block.pls", {
+#     
+#     testable.components <- Testable.Components$basic.block.pls
+#     GT <- Ground.Truths$basic.block.pls
+#     
+#     data(breast.TCGA)
+#     X = list(miRNA = breast.TCGA$data.train$mirna[,1:10],
+#             mRNA = breast.TCGA$data.train$mrna[,1:10],
+#             proteomics = breast.TCGA$data.train$protein[,1:10])
+#     
+#     res.block.pls <- block.pls(X, indY=3)
+#     
+#     block.pls.plotVar = plotVar(res.block.pls)
+#     
+#     invisible(capture.output(TT <- dput(block.pls.plotVar[testable.components])))
+#     
+#     expect_equal(TT, GT)
+# })
+# 
+# 
+# test_that("(plotVar:basic): block.spls", {
+#     
+#     testable.components <- Testable.Components$basic.block.spls
+#     GT <- Ground.Truths$basic.block.spls
+#     
+#     data(breast.TCGA)
+#     X = list(miRNA = breast.TCGA$data.train$mirna[,1:10],
+#             mRNA = breast.TCGA$data.train$mrna[,1:10],
+#             proteomics = breast.TCGA$data.train$protein[,1:10])
+#     
+#     choice.keepX = list(miRNA = c(3,3),
+#                         mRNA = c(3,3),
+#                         proteomics = c(3,3))
+#     
+#     res.block.spls <- block.spls(X, indY=3, keepX = choice.keepX)
+#     
+#     block.spls.plotVar = plotVar(res.block.spls)
+#     
+#     invisible(capture.output(TT <- dput(block.spls.plotVar[testable.components])))
+#     
+#     expect_equal(TT, GT)
+# })
+# 
+# 
+# test_that("(plotVar:basic): block.plsda", {
+#     
+#     testable.components <- Testable.Components$basic.block.plsda
+#     GT <- Ground.Truths$basic.block.plsda
+#     
+#     data(breast.TCGA)
+#     X = list(miRNA = breast.TCGA$data.train$mirna[,1:10],
+#              mRNA = breast.TCGA$data.train$mrna[,1:10],
+#              proteomics = breast.TCGA$data.train$protein[,1:10])
+#     Y = breast.TCGA$data.train$subtype
+#     
+#     res.block.plsda <- block.plsda(X, Y)
+#     
+#     block.plsda.plotVar = plotVar(res.block.plsda)
+#     
+#     invisible(capture.output(TT <- dput(block.plsda.plotVar[testable.components])))
+#     
+#     expect_equal(TT, GT)
+# })
+# 
+# 
+# test_that("(plotVar:basic): block.splsda", {
+#     
+#     testable.components <- Testable.Components$basic.block.splsda
+#     GT <- Ground.Truths$basic.block.splsda
+#     
+#     data(breast.TCGA)
+#     X = list(miRNA = breast.TCGA$data.train$mirna[,1:10],
+#              mRNA = breast.TCGA$data.train$mrna[,1:10],
+#              proteomics = breast.TCGA$data.train$protein[,1:10])
+#     Y = breast.TCGA$data.train$subtype
+#     
+#     choice.keepX = list(miRNA = c(3,3),
+#                         mRNA = c(3,3),
+#                         proteomics = c(3,3))
+#     
+#     res.block.splsda <- block.splsda(X, Y, keepX = choice.keepX)
+#     
+#     block.splsda.plotVar = plotVar(res.block.splsda)
+#     
+#     invisible(capture.output(TT <- dput(block.splsda.plotVar[testable.components])))
+#     
+#     expect_equal(TT, GT)
+# })
 
 
 test_that("(plotVar:basic): mint.pls", {
