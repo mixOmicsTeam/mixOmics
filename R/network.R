@@ -813,7 +813,7 @@ network <- function(mat,
     
     #-- check cutoff
     if (round(max(abs(w)), 2) == 0)
-        stop("There is no correlation between these blocks whith these components.",
+        stop("There is no correlation between these blocks with these components.",
              "Try a different value of 'comp'.", call. = FALSE)
     
     if (!is.numeric(cutoff) || cutoff < 0 || cutoff > 1)

@@ -147,9 +147,13 @@ pca <- function(X,
     if (is.null(ncomp))
         ncomp = min(nrow(X), ncol(X))
     
+    if (!is.numeric(ncomp)) {
+        stop("`ncomp` must be numeric", call. = FALSE)
+    }
+    
     ncomp = round(ncomp)
     
-    if (!is.numeric(ncomp) || ncomp < 1 || !is.finite(ncomp))
+    if (ncomp < 1 || !is.finite(ncomp))
         stop("invalid value for 'ncomp'.", call. = FALSE)
     
     if (ncomp > min(ncol(X), nrow(X)))
