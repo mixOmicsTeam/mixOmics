@@ -136,6 +136,7 @@ MCVfold.block.splsda <-
             }
         } else if (validation ==  "loo") {
             M = n
+            if(nrepeat != 1) { stop("nrepeat should be set to 1 with validation='loo'\n") }
         }
         
         all_folds <- lapply(seq_len(nrepeat), function(nrep) {
