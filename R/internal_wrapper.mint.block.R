@@ -58,7 +58,8 @@ internal_wrapper.mint.block <-
              max.iter = 100,
              near.zero.var = FALSE,
              misdata = NULL, is.na.A = NULL, ind.NA = NULL, ind.NA.col = NULL,
-             all.outputs=TRUE
+             all.outputs=TRUE,
+             retain.feats = NULL
     )
     {
         if (missing(scheme))
@@ -73,7 +74,7 @@ internal_wrapper.mint.block <-
                                              ncomp = ncomp, keepX = keepX, keepY = keepY, DA=DA,
                                              study = study, design = design, init = init, scheme = scheme, scale = scale,
                                              near.zero.var = near.zero.var, mode = mode, tol = tol,
-                                             max.iter = max.iter)
+                                             max.iter = max.iter, retain.feats = retain.feats)
         
         # get some values after checks
         A = check$A
@@ -85,6 +86,7 @@ internal_wrapper.mint.block <-
         keepA.save = keepA
         init = check$init
         nzv.A = check$nzv.A
+        retain.feats = check$retain.feats
         
         #--------------------------------------------------------------------------#
         #-- keepA ----------------------------------------------------#
@@ -145,7 +147,8 @@ internal_wrapper.mint.block <-
                                    study = study,
                                    keepA = keepA,
                                    misdata = misdata, is.na.A = is.na.A, ind.NA = ind.NA,
-                                   ind.NA.col = ind.NA.col, all.outputs= all.outputs)
+                                   ind.NA.col = ind.NA.col, all.outputs= all.outputs,
+                                   retain.feats = retain.feats)
         
         if(near.zero.var)
             result$nzv=nzv.A

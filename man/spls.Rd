@@ -17,7 +17,8 @@ spls(
   near.zero.var = FALSE,
   logratio = "none",
   multilevel = NULL,
-  all.outputs = TRUE
+  all.outputs = TRUE,
+  retain.feats = NULL
 )
 }
 \arguments{
@@ -64,6 +65,10 @@ columns indicate those factors. See examples.}
 
 \item{all.outputs}{Logical. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
+
+\item{retain.feats}{character/numeric list indicating what specific variables
+should be retained and used in the model. This works independently of 
+\code{keepX/Y}. By default, none are retained.}
 }
 \value{
 \code{spls} returns an object of class \code{"spls"}, a list that

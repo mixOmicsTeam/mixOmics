@@ -121,16 +121,18 @@ study_split <- function(data, study)
 #' 
 #' soft_thresholding_L1(x = x2, nx = 2)
 #' #> 0.01 -0.31  0.00  0.00
-soft_thresholding_L1 <- function(x, nx)
+soft_thresholding_L1 <- function(x, nx, retain.feats)
 {
     if (nx > 0)
-    {
+    { 
         abs.a = abs(x)
         select_feature <- rank(abs.a, ties.method = "max") > nx
+        if (!is.null(retain.feats)) { retain_feature <- 1:length(abs.a) %in% retain.feats } #  select_feature[1:length(abs.a) %in% retain.feats] <- T
+        else {retain_feature <- rep(F, length(abs.a));}
         if (!all(select_feature))
         {
-            x <- ifelse(test = select_feature, 
-                        yes = sign(x) * (abs.a - max(abs.a[!select_feature])), 
+            x <- ifelse(test = (select_feature | retain_feature),  #  
+                        yes = sign(x) * (abs.a), # - max(abs.a[!select_feature])
                         no = 0)
         }
     }
@@ -186,12 +188,11 @@ norm2 <- function(vec)
 # --------------------------------------
 # sparsity function: used in 'internal_mint.block.R'
 # --------------------------------------
-sparsity <- function(loadings.A, keepA, penalty=NULL)
+sparsity <- function(loadings.A, keepA, penalty=NULL, retain.feats=NULL)
 {
-    
     if (!is.null(keepA)) {
         nx = length(loadings.A) - keepA
-        loadings.A = soft_thresholding_L1(loadings.A, nx = nx)
+        loadings.A = soft_thresholding_L1(loadings.A, nx = nx, retain.feats)
     } else if (!is.null(penalty)) {
         loadings.A = soft.threshold(loadings.A, penalty)
     }

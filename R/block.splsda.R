@@ -97,7 +97,8 @@ block.splsda <- function(X,
                          tol = 1e-06,
                          max.iter = 100,
                          near.zero.var = FALSE,
-                         all.outputs = TRUE)
+                         all.outputs = TRUE,
+                         retain.feats = NULL)
 {
     # check inpuy 'Y' and transformation in a dummy matrix
     if (!missing(Y))
@@ -156,7 +157,8 @@ block.splsda <- function(X,
         tol = tol,
         max.iter = max.iter,
         near.zero.var = near.zero.var,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        retain.feats = retain.feats
     )
     
     # calculate weights for each dataset

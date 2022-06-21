@@ -19,6 +19,9 @@
 #' @param keepX numeric vector of length \code{ncomp}, the number of variables
 #' to keep in \eqn{X}-loadings. By default all variables are kept in the model.
 #' @param keepY numeric vector of length \code{ncomp}, the number of variables
+#' @param retain.feats character/numeric list indicating what specific variables
+#' should be retained and used in the model. This works independently of 
+#' \code{keepX/Y}. By default, none are retained.
 #' @return \code{spls} returns an object of class \code{"spls"}, a list that
 #' contains the following components:
 #' \item{X}{the centered and standardized original predictor matrix.}
@@ -101,7 +104,8 @@ spls <- function(X,
                  logratio = "none",
                  # one of "none", "CLR"
                  multilevel = NULL,
-                 all.outputs = TRUE)
+                 all.outputs = TRUE,
+                 retain.feats = NULL)
 {
     
     
@@ -120,7 +124,8 @@ spls <- function(X,
         logratio = logratio,
         multilevel = multilevel,
         DA = FALSE,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        retain.feats = retain.feats
     )
     
     # choose the desired output from 'result'

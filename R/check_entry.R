@@ -175,10 +175,11 @@ Check.entry.single = function(X,  ncomp, q)
 # DA: whether the input is used for a Discrimant Analysis
 # multilevel: whether a multilevel analysis will be performed
 #   (repeated measurements)
+# retain.feats: list of features to include in the model, independent of keepX/Y
 
 
 Check.entry.pls = function(X, Y, ncomp, keepX, keepY, test.keepX, test.keepY,
-                           mode, scale, near.zero.var, max.iter, tol, logratio, DA, multilevel)
+                           mode, scale, near.zero.var, max.iter, tol, logratio, DA, multilevel, retain.feats)
 {
     
     if (missing(mode))
@@ -261,6 +262,12 @@ Check.entry.pls = function(X, Y, ncomp, keepX, keepY, test.keepX, test.keepY,
         dimnames(X)[[2]] = X.names
     }
     
+    if(!is.null(retain.feats)) {
+        
+        b <- list(X=X, Y=Y)
+        if (DA) {b <- list(X=X)}
+        Check.retain.feats(retain.feats, b)
+    }
     
     
     ind.names = dimnames(X)[[1]]
@@ -380,7 +387,7 @@ Check.entry.pls = function(X, Y, ncomp, keepX, keepY, test.keepX, test.keepY,
     
     
     return(list(X=X, Y=Y, ncomp=ncomp, X.names=X.names, Y.names=Y.names,
-                ind.names=ind.names, mode=mode, multilevel=multilevel, keepX=keepX, keepY=keepY, nzv.A=nzv.A))
+                ind.names=ind.names, mode=mode, multilevel=multilevel, keepX=keepX, keepY=keepY, nzv.A=nzv.A, retain.feats = retain.feats))
 }
 
 
@@ -414,6 +421,7 @@ Check.entry.pls = function(X, Y, ncomp, keepX, keepY, test.keepX, test.keepY,
 #   Default to "regression"
 # tol: Convergence stopping value.
 # max.iter: integer, the maximum number of iterations.
+# retain.feats: list of features to include in the model, independent of keepX/Y
 
 Check.entry.wrapper.mint.block = function(X,
                                           Y,
@@ -430,7 +438,8 @@ Check.entry.wrapper.mint.block = function(X,
                                           near.zero.var,
                                           mode,
                                           tol,
-                                          max.iter)
+                                          max.iter,
+                                          retain.feats)
 {
     #need to give the default values of mint.block.spls to mixOmics
     
@@ -496,6 +505,11 @@ Check.entry.wrapper.mint.block = function(X,
     #   provided, otherwise Y is in X[[indY]])
     check = get.keepA(X=X, keepX=keepX, ncomp=ncomp)
     keepA = check$keepA
+    
+    if(!is.null(retain.feats)) {
+        
+        Check.retain.feats(retain.feats, X)
+    }
     
     
     if (!missing(Y))# Y is not missing, so we don't care about indY
@@ -688,7 +702,8 @@ Check.entry.wrapper.mint.block = function(X,
     }
     
     return(list(A=A, ncomp=ncomp, study=study, keepA=keepA,
-                indY=indY, design=design, init=init, nzv.A=nzv.A))
+                indY=indY, design=design, init=init, nzv.A=nzv.A,
+                retain.feats = retain.feats))
 }
 
 
@@ -1050,4 +1065,45 @@ Check.entry.rgcca = function(X,
 
 
 
+
+
+# --------------------------------------
+# Check.retain.feats: used in 'Check.entry.wrapper.mint.block' and 'Check.enrty.pls'
+# --------------------------------------
+# retain.feats: the list of features on each block which are to keep kept as 
+#               part of the model
+# blocks: the input blocks, primarily needed for column names
+Check.retain.feats <- function(retain.feats, blocks) {
+    
+    # if single dataframe, ensure vector is converted to list
+    if (!is.list(retain.feats)) { 
+        retain.feats <- list(X=retain.feats)
+    }
+    
+    # fill any missing blocks with NULL in retain.feats
+    if (length(blocks) != length(retain.feats)) {
+        for (n in names(blocks)) {
+            if (!(n %in% names(retain.feats))) {
+                retain.feats[[n]] <- NULL
+            }
+        }
+    }
+    # if names do not match
+    if (!all(sort(names(retain.feats)) == names(blocks))) {
+        stop("'retain.feats' should have the names: ", paste(names(blocks), collapse = ', '))
+    }
+    
+    # ensure the features stipulated are actually part of associated blocks
+    for (b in 1:length(blocks)) {
+        if (is.character(retain.feats[[b]])) {
+            if (!(all(retain.feats[[b]] %in% colnames(blocks[[b]])))) {
+                stop(paste0("Features stipulated in 'retain.feats$", names(blocks)[b], "' are not features of corresponding dataframe"))
+            } 
+        } else if (is.numeric(retain.feats[[b]])) {
+            if (!(all(retain.feats[[b]] %in% 1:ncol(blocks[[b]])))) {
+                stop(paste0("Feature indices stipulated in 'retain.feats$", names(blocks)[b], "' are are outside index of corresponding dataframe"))
+            }
+        }
+    }
+}
 

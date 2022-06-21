@@ -50,6 +50,9 @@
 #' default all variables are kept in the model.
 #' @param keepY Only if Y is provided (and not \code{indY}). Each entry is the number of variables to
 #' select in each of the blocks of Y for each component.
+#' @param retain.feats character/numeric list indicating what specific variables
+#' should be retained and used in the model. This works independently of 
+#' \code{keepX/Y}. By default, none are retained.
 #' @return \code{block.spls} returns an object of class \code{"block.spls"}, a
 #' list that contains the following components:
 #' 
@@ -101,7 +104,8 @@ block.spls = function(X,
                       tol = 1e-06,
                       max.iter = 100,
                       near.zero.var = FALSE,
-                      all.outputs = TRUE)
+                      all.outputs = TRUE,
+                      retain.feats = NULL)
 {
     
     # call to 'internal_wrapper.mint.block'
@@ -120,7 +124,8 @@ block.spls = function(X,
         tol = tol,
         max.iter = max.iter,
         near.zero.var = near.zero.var,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        retain.feats = retain.feats
     )
     
     # calculate weights for each dataset

@@ -51,6 +51,8 @@
 #   with withinVariation
 # multilevel: multilevel is passed to multilevel(design=) in withinVariation.
 #   Y is omitted and should be included in multilevel design
+# retain.feats: the list of features on each block which are to keep kept as 
+#   part of the model
 
 internal_wrapper.mint <- 
   function(X,
@@ -71,7 +73,8 @@ internal_wrapper.mint <-
            multilevel = NULL,
            misdata = NULL, is.na.A = NULL, ind.NA = NULL, ind.NA.col = NULL,
            all.outputs=FALSE,
-           remove.object=NULL
+           remove.object=NULL,
+           retain.feats = NULL
   )
   {
     
@@ -82,7 +85,7 @@ internal_wrapper.mint <-
     
     check = Check.entry.pls(X, Y, ncomp, keepX, keepY, mode=mode, scale=scale,
                             near.zero.var=near.zero.var, max.iter=max.iter ,tol=tol ,logratio=logratio,
-                            DA=DA, multilevel=multilevel)
+                            DA=DA, multilevel=multilevel, retain.feats=retain.feats)
     X = check$X
     input.X = X # save the checked X, before logratio/multileve/scale
     Y = check$Y
@@ -92,6 +95,7 @@ internal_wrapper.mint <-
     keepY = check$keepY
     nzv.A = check$nzv.A
     multilevel <- check$multilevel
+    retain.feats = check$retain.feats
     rm(check) # free memory
     #remove `X' from the previous environment
     if(!is.null(remove.object))
@@ -198,14 +202,14 @@ internal_wrapper.mint <-
     #-- keepA ----------------------------------------------------#
     #--------------------------------------------------------------------------#
     
-    
     #--------------------------------------------------------------------------#
     #-- pls approach ----------------------------------------------------#
     result = internal_mint.block(A = list(X = X, Y = Y), indY = 2, mode = mode,
                                  ncomp = c(ncomp, ncomp), tol = tol, max.iter = max.iter,
                                  design = design, keepA = keepA, scale = scale, scheme = "horst",init="svd",
                                  study = study, misdata = misdata, is.na.A = is.na.A, ind.NA = ind.NA,
-                                 ind.NA.col = ind.NA.col, all.outputs= all.outputs, remove.object=c("X"))
+                                 ind.NA.col = ind.NA.col, all.outputs= all.outputs, remove.object=c("X"),
+                                 retain.feats = retain.feats)
     
     #-- pls approach ----------------------------------------------------#
     #--------------------------------------------------------------------------#

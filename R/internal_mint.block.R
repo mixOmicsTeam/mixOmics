@@ -42,7 +42,8 @@ internal_mint.block <-
               init = "svd.single", tol = 1e-06,
               mode = "canonical", max.iter = 100,study = NULL, keepA = NULL,
               penalty = NULL, all.outputs = FALSE, misdata = NULL, is.na.A = NULL,
-              ind.NA = NULL, ind.NA.col = NULL, remove.object=NULL)
+              ind.NA = NULL, ind.NA.col = NULL, remove.object=NULL,
+              retain.feats = NULL)
     {
         # A: list of matrices
         # indY: integer, pointer to one of the matrices of A
@@ -77,6 +78,14 @@ internal_mint.block <-
         
         
         names(ncomp) = names(A)
+        
+        if (!is.null(retain.feats)) {
+            for(q in 1:length(retain.feats)) {
+                if (is.character(retain.feats[[q]])) {
+                    retain.feats[[q]] <- which(colnames(A[[q]]) %in% retain.feats[[q]])
+                }
+            }
+        }
         
         
         # center the data per study, per matrix of A, scale if scale=TRUE, option
@@ -208,6 +217,8 @@ internal_mint.block <-
         compteur = 0
         for (comp in 1 : N)
         {
+            r.t <- retain.feats # features to be retained must be on comp1
+            if (comp!=1) { r.t <- NULL } 
             
             if(misdata.all)# replace NA in A[[q]] by 0
                 for(j in c(1:J)[misdata])
@@ -235,7 +246,7 @@ internal_mint.block <-
                                                                         scheme = scheme, max.iter = max.iter, tol = tol,
                                                                         penalty = penalty,
                                                                         misdata=misdata, is.na.A=is.na.A, ind.NA = ind.NA,
-                                                                        all.outputs = all.outputs)
+                                                                        all.outputs = all.outputs, retain.feats = r.t)
                     } else {
                         mint.block.result = sparse.rgcca_iteration(R, design,
                                                                    tau = if (is.matrix(tau)){tau[comp, ]} else {"optimal"},
@@ -524,7 +535,8 @@ sparse.mint.block_iteration = function (A, design, study = NULL, loadings.A,
                                         keepA = NULL,
                                         scheme = "horst", max.iter = 100, tol = 1e-06,
                                         misdata = NULL, is.na.A = NULL, ind.NA = NULL,
-                                        penalty=NULL, all.outputs = FALSE)
+                                        penalty=NULL, all.outputs = FALSE,
+                                        retain.feats = NULL)
 {
     
     # keepA is a list of length the number of blocks. Each entry is a vector of
@@ -642,7 +654,7 @@ sparse.mint.block_iteration = function (A, design, study = NULL, loadings.A,
                                            penalty = penalty[q])
             }else{
                 loadings.A[[q]] = sparsity(loadings.A[[q]], keepA[[q]],
-                                           penalty = NULL)
+                                           penalty = NULL, retain.feats = retain.feats[[q]])
             }
             
             loadings.A[[q]]=l2.norm(as.vector(loadings.A[[q]]))
@@ -681,7 +693,6 @@ sparse.mint.block_iteration = function (A, design, study = NULL, loadings.A,
         ### Start: Match algorithm with mixOmics algo (stopping point)
         diff.value <- max(sapply(1:J, function(x){crossprod(loadings.A[[x]] -
                                                                 loadings.A_old[[x]])}))
-        
         if (diff.value < tol | iter > max.iter)
             break
         ### End: Match algorithm with mixOmics algo (stopping point)

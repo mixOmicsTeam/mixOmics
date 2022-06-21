@@ -16,7 +16,8 @@ mint.spls(
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
-  all.outputs = TRUE
+  all.outputs = TRUE,
+  retain.feats = NULL
 )
 }
 \arguments{
@@ -57,6 +58,10 @@ computations. Default value is FALSE.}
 
 \item{all.outputs}{Logical. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
+
+\item{retain.feats}{character/numeric list indicating what specific variables
+should be retained and used in the model. This works independently of 
+\code{keepX/Y}. By default, none are retained.}
 }
 \value{
 \code{mint.spls} returns an object of class

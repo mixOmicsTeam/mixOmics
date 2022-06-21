@@ -45,6 +45,9 @@
 #' \code{X} on each component. By default all variables are kept in the model.
 #' @param keepY numeric vector indicating the number of variables to select in
 #' \code{Y} on each component. By default all variables are kept in the model.
+#' @param retain.feats character/numeric list indicating what specific variables
+#' should be retained and used in the model. This works independently of 
+#' \code{keepX/Y}. By default, none are retained.
 #' @return \code{mint.spls} returns an object of class
 #' \code{"mint.spls","spls"}, a list that contains the following components:
 #' 
@@ -115,7 +118,8 @@ mint.spls <- function(X,
                       tol = 1e-06,
                       max.iter = 100,
                       near.zero.var = FALSE,
-                      all.outputs = TRUE)
+                      all.outputs = TRUE,
+                      retain.feats = NULL)
 {
     
     # call to 'internal_wrapper.mint'
@@ -131,7 +135,8 @@ mint.spls <- function(X,
         keepY = keepY,
         max.iter = max.iter,
         tol = tol,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        retain.feats = retain.feats
     )
     
     # choose the desired output from 'result'

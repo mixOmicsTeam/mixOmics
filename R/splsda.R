@@ -81,7 +81,8 @@ splsda <- function(X,
                    logratio = "none",
                    # one of "none", "CLR"
                    multilevel = NULL,
-                   all.outputs = TRUE)
+                   all.outputs = TRUE,
+                   retain.feats = NULL)
 {
     
     
@@ -139,7 +140,8 @@ splsda <- function(X,
         multilevel = multilevel,
         DA = TRUE,
         all.outputs = all.outputs,
-        remove.object = c("X")
+        remove.object = c("X"),
+        retain.feats = retain.feats
     )
     
     

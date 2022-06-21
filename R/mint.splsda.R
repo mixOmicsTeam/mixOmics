@@ -106,7 +106,8 @@ mint.splsda <- function(X,
                         tol = 1e-06,
                         max.iter = 100,
                         near.zero.var = FALSE,
-                        all.outputs = TRUE)
+                        all.outputs = TRUE,
+                        retain.feats = NULL)
 {
     
     #-- validation des arguments --#
@@ -150,7 +151,9 @@ mint.splsda <- function(X,
         max.iter = max.iter,
         tol = tol,
         scale = scale,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        retain.feats = retain.feats,
+        DA = TRUE
     )
     
     # choose the desired output from 'result'
