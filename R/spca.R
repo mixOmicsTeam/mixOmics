@@ -43,6 +43,9 @@
 #' @param keepX numeric vector of length \code{ncomp}, the number of variables to keep
 #' in loading vectors. By default all variables are kept in the model. See
 #' details.
+#' @param retain.feats character/numeric list indicating what specific variables
+#' should be retained and used in the model. This works independently of 
+#' \code{keepX/Y}. By default, none are retained.
 #' @param logratio one of ('none','CLR'). Specifies the log ratio
 #' transformation to deal with compositional values that may arise from
 #' specific normalisation in sequencing data. Default to 'none'
@@ -80,7 +83,8 @@ spca <-
              max.iter = 500, 
              tol = 1e-06,
              logratio = c('none','CLR'),
-             multilevel = NULL)
+             multilevel = NULL,
+             retain.feats = NULL)
     {
         
         #-- checking general input parameters --------------------------------------#
@@ -169,6 +173,8 @@ spca <-
         #-- tol
         if (is.null(tol) || !is.numeric(tol) || tol < 0 || !is.finite(tol))
             stop("invalid value for 'tol'.", call. = FALSE)
+        
+        retain.feats <- Check.retain.feats(retain.feats, list(X=X))
         
         #-- end checking --#
         #------------------#
@@ -280,8 +286,13 @@ spca <-
                 #--penalisation on loading vectors--#
                 if (nx != 0) {
                     absa = abs(loadings)
-                    if(any(rank(absa, ties.method = "max") <= nx)) {
-                        loadings = ifelse(rank(absa, ties.method = "max") <= nx, 0, sign(loadings) * (absa - max(absa[rank(absa, ties.method = "max") <= nx])))
+                    if (!is.null(retain.feats)) { retain_feature <- 1:length(absa) %in% retain.feats$X }
+                    else { retain_feature <- rep(F, length(absa)) }
+                    select_feature <- rank(absa, ties.method = "max") >= nx
+                    if(any(select_feature)) {
+                        loadings = ifelse((select_feature | retain_feature), 
+                                          sign(loadings) * (absa - max(absa[!(select_feature | retain_feature)])), 
+                                          0)
                     }
                 }
                 loadings = loadings / drop(sqrt(crossprod(loadings)))

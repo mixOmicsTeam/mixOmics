@@ -121,7 +121,7 @@ study_split <- function(data, study)
 #' 
 #' soft_thresholding_L1(x = x2, nx = 2)
 #' #> 0.01 -0.31  0.00  0.00
-soft_thresholding_L1 <- function(x, nx, retain.feats)
+soft_thresholding_L1 <- function(x, nx, retain.feats=NULL)
 {
     if (nx > 0)
     { 
@@ -132,7 +132,7 @@ soft_thresholding_L1 <- function(x, nx, retain.feats)
         if (!all(select_feature))
         {
             x <- ifelse(test = (select_feature | retain_feature),  #  
-                        yes = sign(x) * (abs.a), # - max(abs.a[!select_feature])
+                        yes = sign(x) * (abs.a- max(abs.a[!(select_feature | retain_feature)])), # - max(abs.a[!(select_feature | retain_feature)])
                         no = 0)
         }
     }

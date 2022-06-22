@@ -179,7 +179,7 @@ Check.entry.single = function(X,  ncomp, q)
 
 
 Check.entry.pls = function(X, Y, ncomp, keepX, keepY, test.keepX, test.keepY,
-                           mode, scale, near.zero.var, max.iter, tol, logratio, DA, multilevel, retain.feats)
+                           mode, scale, near.zero.var, max.iter, tol, logratio, DA, multilevel, retain.feats=NULL)
 {
     
     if (missing(mode))
@@ -266,7 +266,7 @@ Check.entry.pls = function(X, Y, ncomp, keepX, keepY, test.keepX, test.keepY,
         
         b <- list(X=X, Y=Y)
         if (DA) {b <- list(X=X)}
-        Check.retain.feats(retain.feats, b)
+        retain.feats <- Check.retain.feats(retain.feats, b)
     }
     
     
@@ -439,7 +439,7 @@ Check.entry.wrapper.mint.block = function(X,
                                           mode,
                                           tol,
                                           max.iter,
-                                          retain.feats)
+                                          retain.feats=NULL)
 {
     #need to give the default values of mint.block.spls to mixOmics
     
@@ -508,7 +508,7 @@ Check.entry.wrapper.mint.block = function(X,
     
     if(!is.null(retain.feats)) {
         
-        Check.retain.feats(retain.feats, X)
+       retain.feats <- Check.retain.feats(retain.feats, X)
     }
     
     
@@ -1105,5 +1105,7 @@ Check.retain.feats <- function(retain.feats, blocks) {
             }
         }
     }
+    
+    return(retain.feats)
 }
 

@@ -693,6 +693,7 @@ sparse.mint.block_iteration = function (A, design, study = NULL, loadings.A,
         ### Start: Match algorithm with mixOmics algo (stopping point)
         diff.value <- max(sapply(1:J, function(x){crossprod(loadings.A[[x]] -
                                                                 loadings.A_old[[x]])}))
+        
         if (diff.value < tol | iter > max.iter)
             break
         ### End: Match algorithm with mixOmics algo (stopping point)
