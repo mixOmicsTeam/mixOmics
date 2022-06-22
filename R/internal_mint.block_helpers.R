@@ -132,7 +132,7 @@ soft_thresholding_L1 <- function(x, nx, retain.feats=NULL)
         if (!all(select_feature))
         {
             x <- ifelse(test = (select_feature | retain_feature),  #  
-                        yes = sign(x) * (abs.a- max(abs.a[!(select_feature | retain_feature)])), # - max(abs.a[!(select_feature | retain_feature)])
+                        yes = sign(x) * (abs.a - max(abs.a[!(select_feature | retain_feature)])), # - max(abs.a[!(select_feature | retain_feature)])
                         no = 0)
         }
     }

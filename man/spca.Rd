@@ -13,7 +13,8 @@ spca(
   max.iter = 500,
   tol = 1e-06,
   logratio = c("none", "CLR"),
-  multilevel = NULL
+  multilevel = NULL,
+  retain.feats = NULL
 )
 }
 \arguments{
@@ -51,6 +52,10 @@ specific normalisation in sequencing data. Default to 'none'}
 
 \item{multilevel}{sample information for multilevel decomposition for
 repeated measurements.}
+
+\item{retain.feats}{character/numeric list indicating what specific variables
+should be retained and used in the model. This works independently of 
+\code{keepX/Y}. By default, none are retained.}
 }
 \value{
 \code{spca} returns a list with class \code{"spca"} containing the
