@@ -147,8 +147,8 @@
     }
     
     if (MULTIGROUP) { # include study
-        out$S.tr <- S[tr]
-        out$S.te <- S[te]
+        out$S.tr <- as.factor(S[tr])
+        out$S.te <- as.factor(S[te])
     }
     
     
