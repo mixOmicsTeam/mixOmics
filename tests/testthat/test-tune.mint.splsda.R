@@ -632,11 +632,11 @@ test_that("(tune.mint.splsda:error): catches invalid 'test.keepX' objects", {
 
 
 ###############################################################################
-### ============================== EDGE CASES ============================= ###
+### =============================== WARNINGS ============================== ###
 ###############################################################################
 
 
-test_that("(tune.mint.splsda:edgecase): warnings for 'study", {
+test_that("(tune.mint.splsda:warning): warnings for 'study", {
     
     data(stemcells)
     X <- stemcells$gene

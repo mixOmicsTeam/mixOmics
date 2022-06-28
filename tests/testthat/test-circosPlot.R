@@ -189,11 +189,11 @@ test_that("(circosPlot:error): cannot take block.plsda objects", {
 
 
 ###############################################################################
-### ============================== EDGE CASES ============================= ###
+### =============================== WARNINGS ============================== ###
 ###############################################################################
 
 
-test_that("(circosPlot:edge.case): works with similar feature names in different blocks", {
+test_that("(circosPlot:warning): works with similar feature names in different blocks", {
   
   create_similar_feature_names <- function(data_list)
       {
@@ -223,7 +223,7 @@ test_that("(circosPlot:edge.case): works with similar feature names in different
 })
 
 
-test_that("(circosPlot:edge.case): warning for high cutoff value", {
+test_that("(circosPlot:warning): warning for high cutoff value", {
   
   data(breast.TCGA)
   X = list(miRNA = breast.TCGA$data.train$mirna,

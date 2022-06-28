@@ -599,11 +599,11 @@ test_that("(plotIndiv:error): catches use of mint.block.(s)pls(da) as invalid", 
 
 
 ###############################################################################
-### ============================== EDGE CASES ============================= ###
+### =============================== WARNINGS ============================== ###
 ###############################################################################
 
 
-test_that("(plotIndiv:edge.case): warned that col is ignored when group is supplied", {
+test_that("(plotIndiv:warning): warned that col is ignored when group is supplied", {
     
     data(liver.toxicity)
     X <- liver.toxicity$gene[1:10,]

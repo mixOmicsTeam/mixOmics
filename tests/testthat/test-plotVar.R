@@ -657,11 +657,11 @@ test_that("(plotVar:error): catches invalid `comp.selected` values", {
 
 
 ###############################################################################
-### ============================== EDGE CASES ============================= ###
+### =============================== WARNINGS ============================== ###
 ###############################################################################
 
 
-test_that("(plotVar:edge.case): notifying user of negative correlation between variates of differing blocks", {
+test_that("(plotVar:warning): notifying user of negative correlation between variates of differing blocks", {
     
     data(breast.TCGA)
     X = list(miRNA = breast.TCGA$data.train$mirna[,1:10],

@@ -615,11 +615,11 @@ test_that("(tune.block.splsda:error): catches invalid value of 'folds'", {
 
 
 ###############################################################################
-### ============================== EDGE CASES ============================= ###
+### =============================== WARNINGS ============================== ###
 ###############################################################################
 
 
-test_that("(tune.block.splsda:edgecase): catches nrepeat>1 when validation='loo'", {
+test_that("(tune.block.splsda:warning): catches nrepeat>1 when validation='loo'", {
     
     data(breast.TCGA)
     X <- list(miRNA = breast.TCGA$data.train$mirna[,1:10], 
