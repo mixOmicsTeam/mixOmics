@@ -34,10 +34,17 @@
 #' @param Y Y dataframe or factor vector for any mixOmics method
 #' @param S study factor vector for multigroup frameworks
 #' @param ML repreated measures vector for multilevel frameworks
+#' @param n.tr number of training samples (per class if DA)
+#' @param n.te number of testing samples (per class if DA)
 #' @param seed controls the sample selection seed
 #' @return list of X, Y, study and multilevel components split by training and testing samples
 #' @keywords internal
-.minimal_train_test_subset <- function(X=NULL, Y=NULL, S=NULL, ML=NULL,
+.minimal_train_test_subset <- function(X=NULL, 
+                                       Y=NULL, 
+                                       S=NULL, 
+                                       ML=NULL,
+                                       n.tr=2,
+                                       n.te=1,
                                        seed=16) {
     set.seed(seed)
     
@@ -51,9 +58,9 @@
     
     if (MULTILEVEL) { # any multilevel method
         
-        n.indivs <- 3 # default case for number of repeated samples to consider
+        n.indivs <- 3 # default number of repeated samples to consider
         
-        if(DA) { n.indivs <- length(unique(Y))-1 } # if DA, set specific quantity
+        #if(DA) { n.indivs <- length(unique(Y))-1 } # if DA, set specific quantity
             
         # only look at the first n.indiv samples were measured the maximum amount of times
         indivs <- unname(which(table(ML) == max(table(ML))))[1:n.indivs] 
@@ -62,11 +69,11 @@
             s <- indivs[i]
             
             rel.sam <- which(ML==s) # determine the corresponding rows
-            tr.sam <- rel.sam[1:2+(i-1)] # take two of these for training
-            te.sam <- setdiff(rel.sam, tr.sam) # and the remaining for testing
+            tr.sam <- sample(rel.sam, n.tr, F) # take n.tr of these for training (1:n.tr+(i-1))
+            te.sam <- setdiff(rel.sam, tr.sam) # and take n.te of these for testing
             
-            te <- c(te, tr.sam)
-            tr <- c(tr, te.sam)
+            tr <- c(tr, tr.sam)
+            te <- c(te, te.sam)
             
         }
     } 
@@ -78,14 +85,14 @@
                 for (s in unique(S)){ # for each study ...
                     # determine the rows with that class and for that study
                     rel.sam <- intersect(which(Y==c), which(S==s)) 
-                    tr <- c(tr, rel.sam[1]) # take first for training
+                    tr <- c(tr, rel.sam[1:n.tr]) # take first n.tr samples for training
                     # if that samples's class and study is not already present in testing, add it
-                    if (!(s %in% S[te] || c %in% Y[te])) {te <- c(te, rel.sam[2]) }
+                    if (!(s %in% S[te] || c %in% Y[te])) {te <- c(te, rel.sam[(n.tr+1):(n.tr+n.te)]) } # THIS WILL FUCK UP !!!!!!!!!!!!!!!!!
                 }
             } else { # (BLOCK).(s)PLSDA
                 rows <- which(Y == c)
-                tr <- c(tr, rows[2:3])
-                te <- c(te, rows[1])
+                tr <- c(tr, rows[1:n.tr+1])
+                te <- c(te, rows[(n.tr+1):(n.tr+n.te)])
             }
             
         }
@@ -94,7 +101,7 @@
             tr.te.study.diff <- setdiff(unique(S[tr]), unique(S[te]))
             if (length(tr.te.study.diff) != 0) {
                 for (s in tr.te.study.diff) {
-                    te <- c(te, which(S == s)[1])
+                    te <- c(te, which(S == s)[1])  # THIS WILL FUCK UP !!!!!!!!!!!!!!!!!
                 }
             }
         }
@@ -104,12 +111,12 @@
         if (MULTIGROUP) { # MINT.(S)PLS
             for (s in unique(S)){
                 rel.sam <- which(S==s)
-                te <- c(te, rel.sam[1])
-                tr <- c(tr, rel.sam[c(2,3)])
+                tr <- c(tr, rel.sam[1:n.tr])
+                te <- c(te, rel.sam[(n.tr+1):(n.tr+n.te)])
             }
         } else { # (BLOCK).(s)PLS
-            tr <- 1:6
-            te <- 7:9
+            tr <- 1:n.tr
+            te <- (n.tr+1):(n.tr+n.te)
         }
     }
     
@@ -154,3 +161,10 @@
     
     return(out)
 }
+
+
+quiet <- function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
+} 

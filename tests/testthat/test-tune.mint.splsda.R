@@ -3,17 +3,10 @@
 ### ============================ MISSING TESTS ============================ ###
 ###############################################################################
 
-# error
-## X
-## Y
-## 
-
-# edge cases
-## 
 
 ###############################################################################
 ### ============================ GROUND TRUTHS ============================ ###
-###############################################################################
+###############################################################################   
 
 Test.Data <- readRDS(system.file("testdata", "testdata-tune.mint.splsda.rda", package = "mixOmics"))
 Testable.Components <- Test.Data$tc
@@ -650,20 +643,20 @@ test_that("(tune.mint.splsda:edgecase): warnings for 'study", {
     Y <- stemcells$celltype
     S <- stemcells$study
 
-    d <- .minimal_train_test_subset(X, Y, S)
+    d <- .minimal_train_test_subset(X, Y, S, n.tr=1)
     
     test.keepX <- c(3,6,9)
     
     expect_warning(tune.mint.splsda(X = d$X.tr, Y=d$Y.tr,
                                      study=d$S.tr,
                                      test.keepX = test.keepX),
-                "study")
+                "5 samples")
     
     d$S.tr[12] <- 3
     expect_warning(tune.mint.splsda(X = d$X.tr, Y=d$Y.tr,
                                      study=d$S.tr,
                                      test.keepX = test.keepX),
-                "study")
+                "all the levels")
 })
 
 

@@ -23,8 +23,10 @@ test_that("(predict:basic): pls", {
     GT <- Ground.Truths$basic.pls
     
     data(liver.toxicity)
+    X <- liver.toxicity$gene
+    Y <- liver.toxicity$clinic
     
-    d <- .minimal_train_test_subset(liver.toxicity$gene, liver.toxicity$clinic)
+    d <- .minimal_train_test_subset(X, Y, n.tr=6, n.te=3)
     
     res.pls <- pls(d$X.tr, d$Y.tr)
     
@@ -42,8 +44,10 @@ test_that("(predict:basic): spls", {
     GT <- Ground.Truths$basic.spls
     
     data(liver.toxicity)
+    X <- liver.toxicity$gene
+    Y <- liver.toxicity$clinic
     
-    d <- .minimal_train_test_subset(liver.toxicity$gene, liver.toxicity$clinic)
+    d <- .minimal_train_test_subset(X, Y, n.tr=6, n.te=3)
     
     choice.keepX = c(3,3)
     choice.keepY = c(3,3)
@@ -111,7 +115,7 @@ test_that("(predict:basic): block.pls", {
              mRNA = breast.TCGA$data.train$mrna[,1:5])
     Y <- breast.TCGA$data.train$protein[,1:5]
     
-    d <- .minimal_train_test_subset(X, Y)
+    d <- .minimal_train_test_subset(X, Y, n.tr=6, n.te=3)
     
     res.block.pls <- block.pls(d$X.tr, d$Y.tr)
     
@@ -133,7 +137,7 @@ test_that("(predict:basic): block.spls", {
              mRNA = breast.TCGA$data.train$mrna[,1:5])
     Y <- breast.TCGA$data.train$protein[,1:5]
     
-    d <- .minimal_train_test_subset(X, Y)
+    d <- .minimal_train_test_subset(X, Y, n.tr=6, n.te=3)
     
     choice.keepX <- list(miRNA = c(3,3),
                          mRNA = c(3,3))
