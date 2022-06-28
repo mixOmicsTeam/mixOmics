@@ -97,3 +97,8 @@ test_that("plotLoadings margin errrors is handled properly", code = {
                                      scheme = "centroid")
     expect_error(plotLoadings(nutrimouse.sgccda, contrib = "min"), regexp = "plotLoadings encountered margin errors")
 })
+
+###############################################################################
+
+dev.off()
+unlink(list.files(pattern = "*.pdf"))
