@@ -20,8 +20,8 @@ Ground.Truths <- Test.Data$gt
 
 test_that("(tune.splsda:basic): basic", {
     
-    testable.components <- Testable.Components$basic.tune.splsda
-    GT <- Ground.Truths$basic.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$basic 
     
     data(srbct)
     X <- srbct$gene
@@ -48,8 +48,8 @@ test_that("(tune.splsda:basic): basic", {
 
 test_that("(tune.splsda:data): breast tcga train", {
     
-    testable.components <- Testable.Components$breast.train.tune.splsda
-    GT <- Ground.Truths$breast.train.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$breast.train 
     
     data(breast.TCGA)
     X <- breast.TCGA$data.train$mrna
@@ -71,8 +71,8 @@ test_that("(tune.splsda:data): breast tcga train", {
 
 test_that("(tune.splsda:data): breast tcga test", {
     
-    testable.components <- Testable.Components$breast.test.tune.splsda
-    GT <- Ground.Truths$breast.test.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$breast.test 
     
     data(breast.TCGA)
     X <- breast.TCGA$data.test$mrna
@@ -94,8 +94,8 @@ test_that("(tune.splsda:data): breast tcga test", {
 
 test_that("(tune.splsda:data): stem cells", {
     
-    testable.components <- Testable.Components$stem.cells.tune.splsda
-    GT <- Ground.Truths$stem.cells.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$stem.cells 
     
     data(stemcells)
     X <- stemcells$gene
@@ -122,8 +122,8 @@ test_that("(tune.splsda:data): stem cells", {
 
 test_that("(tune.splsda:parameter): ncomp", {
     
-    testable.components <- Testable.Components$ncomp.tune.splsda
-    GT <- Ground.Truths$ncomp.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$ncomp 
     
     data(srbct)
     X <- srbct$gene
@@ -146,8 +146,8 @@ test_that("(tune.splsda:parameter): ncomp", {
 
 test_that("(tune.splsda:parameter): test.keepX", {
     
-    testable.components <- Testable.Components$test.keepX.tune.splsda
-    GT <- Ground.Truths$test.keepX.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$test.keepX 
     
     data(srbct)
     X <- srbct$gene
@@ -169,8 +169,8 @@ test_that("(tune.splsda:parameter): test.keepX", {
 
 test_that("(tune.splsda:parameter): already.tested.X", {
     
-    testable.components <- Testable.Components$already.tested.X.tune.splsda
-    GT <- Ground.Truths$already.tested.X.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$already.tested.X 
     
     data(srbct)
     X <- srbct$gene
@@ -195,8 +195,8 @@ test_that("(tune.splsda:parameter): already.tested.X", {
 
 test_that("(tune.splsda:parameter): validation", {
     
-    testable.components <- Testable.Components$validation.tune.splsda
-    GT <- Ground.Truths$validation.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$validation 
     
     data(srbct)
     X <- srbct$gene
@@ -218,8 +218,8 @@ test_that("(tune.splsda:parameter): validation", {
 
 test_that("(tune.splsda:parameter): dist", {
     
-    testable.components <- Testable.Components$dist.tune.splsda
-    
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$dist 
     data(srbct)
     X <- srbct$gene
     Y <- srbct$class
@@ -236,8 +236,8 @@ test_that("(tune.splsda:parameter): dist", {
     
     invisible(capture.output(TT <- dput(centroids.dist.splsda.tune[testable.components])))
     
-    GT <- Ground.Truths$centroids.dist.tune.splsda
     expect_equal(TT, GT)
+    
     
     set.seed(16)
     mahalanobis.dist.splsda.tune <- tune.splsda(X=d$X.tr, Y=d$Y.tr,
@@ -247,14 +247,13 @@ test_that("(tune.splsda:parameter): dist", {
     
     invisible(capture.output(TT <- dput(mahalanobis.dist.splsda.tune[testable.components])))
     
-    GT <- Ground.Truths$mahalanobis.dist.tune.splsda
     expect_equal(TT, GT)
 })
 
 
 test_that("(tune.splsda:parameter): measure", {
     
-    testable.components <- Testable.Components$measure.tune.splsda
+    testable.components <- Testable.Components$measure
     
     data(srbct)
     X <- srbct$gene
@@ -272,7 +271,7 @@ test_that("(tune.splsda:parameter): measure", {
     
     invisible(capture.output(TT <- dput(overall.measure.splsda.tune[testable.components])))
     
-    GT <- Ground.Truths$overall.measure.tune.splsda
+    GT <- Ground.Truths$overall.measure 
     expect_equal(TT, GT)
     
     set.seed(16)
@@ -283,15 +282,15 @@ test_that("(tune.splsda:parameter): measure", {
     
     invisible(capture.output(TT <- dput(auc.measure.splsda.tune[testable.components])))
     
-    GT <- Ground.Truths$auc.measure.tune.splsda
+    GT <- Ground.Truths$auc.measure 
     expect_equal(TT, GT)
 })
 
 
 test_that("(tune.splsda:parameter): scale", {
     
-    testable.components <- Testable.Components$scale.tune.splsda
-    GT <- Ground.Truths$scale.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$scale 
     
     data(srbct)
     X <- srbct$gene
@@ -314,8 +313,8 @@ test_that("(tune.splsda:parameter): scale", {
 
 test_that("(tune.splsda:parameter): auc", {
     
-    testable.components <- Testable.Components$auc.tune.splsda
-    GT <- Ground.Truths$auc.tune.splsda
+    testable.components <- Testable.Components$auc
+    GT <- Ground.Truths$auc 
     
     data(srbct)
     X <- srbct$gene
@@ -339,8 +338,8 @@ test_that("(tune.splsda:parameter): auc", {
 
 test_that("(tune.splsda:parameter): progressBar", {
     
-    testable.components <- Testable.Components$progressBar.tune.splsda
-    GT <- Ground.Truths$progressBar.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$basic 
     
     data(srbct)
     X <- srbct$gene
@@ -363,8 +362,8 @@ test_that("(tune.splsda:parameter): progressBar", {
 
 test_that("(tune.splsda:parameter): tol", {
     
-    testable.components <- Testable.Components$tol.tune.splsda
-    GT <- Ground.Truths$tol.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$basic 
     
     data(srbct)
     X <- srbct$gene
@@ -387,8 +386,8 @@ test_that("(tune.splsda:parameter): tol", {
 
 test_that("(tune.splsda:parameter): max.iter", {
     
-    testable.components <- Testable.Components$max.iter.tune.splsda
-    GT <- Ground.Truths$max.iter.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$max.iter 
     
     data(srbct)
     X <- srbct$gene
@@ -411,8 +410,8 @@ test_that("(tune.splsda:parameter): max.iter", {
 
 test_that("(tune.splsda:parameter): near.zero.var", {
     
-    testable.components <- Testable.Components$near.zero.var.tune.splsda
-    GT <- Ground.Truths$near.zero.var.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$nzv.logr 
     
     data(srbct)
     X <- srbct$gene
@@ -437,8 +436,8 @@ test_that("(tune.splsda:parameter): near.zero.var", {
 
 test_that("(tune.splsda:parameter): nrepeat", {
     
-    testable.components <- Testable.Components$nrepeat.tune.splsda
-    GT <- Ground.Truths$nrepeat.tune.splsda
+    testable.components <- Testable.Components$nrepeat
+    GT <- Ground.Truths$nrepeat 
     
     data(srbct)
     X <- srbct$gene
@@ -462,8 +461,8 @@ test_that("(tune.splsda:parameter): nrepeat", {
 
 test_that("(tune.splsda:parameter): logratio", {
     
-    testable.components <- Testable.Components$logratio.tune.splsda
-    GT <- Ground.Truths$logratio.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$nzv.logr 
     
     data(srbct)
     X <- srbct$gene
@@ -487,8 +486,8 @@ test_that("(tune.splsda:parameter): logratio", {
 
 # test_that("(tune.splsda:parameter): multilevel", {
 #     
-#     testable.components <- Testable.Components$multilevel.tune.splsda
-#     GT <- Ground.Truths$multilevel.tune.splsda
+#     testable.components <- Testable.Components$basic
+#     GT <- Ground.Truths$multilevel 
 #     
 #     data(vac18)
 #     X <- vac18$genes
@@ -513,8 +512,8 @@ test_that("(tune.splsda:parameter): logratio", {
 
 test_that("(tune.splsda:parameter): light.output", {
     
-    testable.components <- Testable.Components$light.output.tune.splsda
-    GT <- Ground.Truths$light.output.tune.splsda
+    testable.components <- Testable.Components$light.output
+    GT <- Ground.Truths$light.output 
     
     data(srbct)
     X <- srbct$gene
@@ -537,8 +536,8 @@ test_that("(tune.splsda:parameter): light.output", {
 
 test_that("(tune.splsda:parameter): signif.threshold", {
     
-    testable.components <- Testable.Components$signif.threshold.tune.splsda
-    GT <- Ground.Truths$signif.threshold.tune.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$basic 
     
     data(srbct)
     X <- srbct$gene

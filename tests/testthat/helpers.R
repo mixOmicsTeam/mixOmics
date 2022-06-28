@@ -168,3 +168,46 @@
   on.exit(sink()) 
   invisible(force(x)) 
 } 
+
+
+.gt.homogeneity <- function(items) {
+  
+  novel.items <- list()
+  novel.items["basic"] <- items[1]
+    
+  for (idx in 2:length(items)) {
+    
+    i <- items[[idx]]
+    novel<-T
+    
+    for (n.i in novel.items) {
+      if (setequal(i, n.i)) {
+        novel<-F
+      }
+    }
+        
+    if (novel) {
+      novel.items[[names(items)[idx]]] <- i
+    }
+  }
+    
+  homo.list <- list()
+  for (n.i in names(novel.items)) {
+    homo.list[[n.i]] <- vector()
+  }
+  
+  for (n.i.idx in 1:length(novel.items)) {
+    n.i <- novel.items[n.i.idx]
+    for (i.idx in 1:length(items)) {
+      i <- items[i.idx]
+      if (setequal(i, n.i)) {
+        homo.list[[n.i.idx]] <- c(homo.list[[n.i.idx]], names(items)[i.idx])
+      }
+    }
+  }
+  
+  return(list(novel.items=novel.items,
+              homo.list=homo.list))
+}
+
+
