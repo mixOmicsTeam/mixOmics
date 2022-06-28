@@ -499,6 +499,7 @@ test_that("(tune.splsda:parameter): multilevel", {
     
     test.keepX <- c(3,6,9)
     
+    set.seed(16)
     multilevel.splsda.tune <- tune.splsda(X=d$X.tr, Y=d$Y.tr,
                                test.keepX = test.keepX,
                                folds = 2,
