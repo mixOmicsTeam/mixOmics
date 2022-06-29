@@ -532,7 +532,7 @@ plotLoadings.mint.pls <-
         if(any(study == "global"))
         {
             # if study == "global" then we plot the results on the concatenated data, thus direct call to plotLoadings.plsda
-            plotLoadings.mixo_pls(object = object, block = "X", comp = comp, ndisplay = ndisplay,
+            plotLoadings.mixo_pls(object = object, block = c("X", "Y"), comp = comp, ndisplay = ndisplay,
                                   size.name = size.name,
                                   name.var = name.var,
                                   name.var.complete = name.var.complete,
@@ -549,11 +549,11 @@ plotLoadings.mint.pls <-
             # if study != "global" then we plot the results on each study
             
             # -- input checks
-            check = check.input.plotLoadings(object = object, block = "X", title = title, col = col, size.name = size.name, name.var = name.var)
+            check = check.input.plotLoadings(object = object, block = c("X", "Y"), study = study, title = title, col = col, size.name = size.name, name.var = name.var)
             
             col = check$col
             size.name = check$size.name
-            block = check$block # "X"
+            block = check$block # c("X", "Y")
             
             #study needs to be either: from levels(object$study), numbers from 1:nlevels(study) or "global"
             if (any(!study%in%c(levels(object$study), "global" , "all.partial")))
@@ -967,7 +967,7 @@ check.input.plotLoadings <- function(object,
     # --
     if (missing(block))
     {
-        if (!is(object, "DA"))
+        if (!inherits(object, "DA"))
         {
             block = object$names$blocks
         } else  if (inherits(object, c("mixo_plsda", "mixo_splsda"))) {
@@ -992,7 +992,7 @@ check.input.plotLoadings <- function(object,
         object$indY = 3 # we don't want to remove anything in that case, and 3 is higher than the number of blocks which is 2
     }
     
-    if(!is(object, "DA"))
+    if(!inherits(object, "DA"))
         object$indY = length(object$names$blocks)+1  # we don't want to remove anything in that case, and 3 is higher than the number of blocks which is 2
     
     if(is.numeric(block))
