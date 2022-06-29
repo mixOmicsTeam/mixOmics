@@ -442,8 +442,6 @@ test_that("(plotLoadings:error): catches invalid `block` values", {
 })
 
 
-
-
 test_that("(plotLoadings:error): catches invalid `contrib` values", {
     
     data(breast.TCGA)

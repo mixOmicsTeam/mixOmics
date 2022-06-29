@@ -160,12 +160,12 @@ jobs:
           _R_CHECK_CRAN_INCOMING_: false
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran", "--ignore-vignettes", "--run-dontrun"), error_on = "never", check_dir = "check/asCRAN", build_args = c("--no-build-vignettes"))
         shell: Rscript {0}
-      - name: BiocCheck 🧬 ✅
-        if: github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics'
-        run: |
-          BiocManager::install("BiocCheck", Ncpus=2)
-          BiocCheck::BiocCheck(".")
-        shell: Rscript {0}
+#       - name: BiocCheck 🧬 ✅
+#         if: github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics'
+#         run: |
+#           BiocManager::install("BiocCheck", Ncpus=2)
+#           BiocCheck::BiocCheck(".")
+#         shell: Rscript {0}
 
       - name: Upload check results ⬆️
         if: failure()
