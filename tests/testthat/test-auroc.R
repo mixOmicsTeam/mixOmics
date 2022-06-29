@@ -5,7 +5,7 @@
 
 # basic
 ## mint.block.plsda
-## mint.block.splsda
+## mint.block.splsda - created a node within the Project workflow. Once addressed, add tests
 
 ###############################################################################
 ### ============================ GROUND TRUTHS ============================ ###
@@ -21,14 +21,16 @@ Ground.Truths <- Test.Data$gt
 
 
 
-test_that("(auroc:basic): plsda", {
+test_that("(auroc:basic): (s)plsda", {
     
-    testable.components <- Testable.Components$basic.plsda
-    GT <- Ground.Truths$basic.plsda
+    testable.components <- Testable.Components$basic
     
     data(breast.tumors)
     X <- breast.tumors$gene.exp
     Y <- breast.tumors$sample$treatment
+    
+    # --- PLS-DA -- # 
+    GT <- Ground.Truths$basic.plsda
     
     res.plsda <- plsda(X, Y, ncomp = 2)
     
@@ -37,17 +39,9 @@ test_that("(auroc:basic): plsda", {
     invisible(capture.output(TT <- dput(plsda.auroc[testable.components])))
     
     expect_equal(TT, GT)
-})
-
-
-test_that("(auroc:basic): splsda", {
     
-    testable.components <- Testable.Components$basic.splsda
+    # --- sPLS-DA -- # 
     GT <- Ground.Truths$basic.splsda
-    
-    data(breast.tumors)
-    X <- breast.tumors$gene.exp
-    Y <- breast.tumors$sample$treatment
     
     choice.keepX <- c(10, 10)
     
@@ -61,15 +55,17 @@ test_that("(auroc:basic): splsda", {
 })
 
 
-test_that("(auroc:basic): mint.plsda", {
+test_that("(auroc:basic): mint.(s)plsda", {
     
-    testable.components <- Testable.Components$basic.mint.plsda
-    GT <- Ground.Truths$basic.mint.plsda
+    testable.components <- Testable.Components$mint
 
     data(stemcells)
     X <- stemcells$gene
     Y <- stemcells$celltype
     s <- stemcells$study
+    
+    # --- MINT.PLS-DA -- # 
+    GT <- Ground.Truths$basic.mint.plsda
 
     res.mint.plsda <- mint.plsda(X, Y, ncomp = 2, study = s)
 
@@ -78,18 +74,9 @@ test_that("(auroc:basic): mint.plsda", {
     invisible(capture.output(TT <- dput(mint.plsda.auroc[testable.components])))
 
     expect_equal(TT, GT)
-})
-
-
-test_that("(auroc:basic): mint.splsda", {
-
-    testable.components <- Testable.Components$basic.mint.splsda
-    GT <- Ground.Truths$basic.mint.splsda
     
-    data(stemcells)
-    X <- stemcells$gene
-    Y <- stemcells$celltype
-    s <- stemcells$study
+    # --- MINT.sPLS-DA -- # 
+    GT <- Ground.Truths$basic.mint.splsda
 
     choice.keepX <- c(10,10)
 
@@ -103,16 +90,18 @@ test_that("(auroc:basic): mint.splsda", {
 })
 
 
-test_that("(auroc:basic): block.plsda", {
+test_that("(auroc:basic): block.(s)plsda", {
 
-    testable.components <- Testable.Components$basic.block.plsda
-    GT <- Ground.Truths$basic.block.plsda
+    testable.components <- Testable.Components$block
         
     data(breast.TCGA)
     X = list(miRNA = breast.TCGA$data.train$mirna,
              mRNA = breast.TCGA$data.train$mrna,
              proteomics = breast.TCGA$data.train$protein)
     Y = breast.TCGA$data.train$subtype
+    
+    # --- BLOCK.PLS-DA -- # 
+    GT <- Ground.Truths$basic.block.plsda
 
     res.block.plsda <- block.plsda(X, Y, design = "full")
 
@@ -121,19 +110,9 @@ test_that("(auroc:basic): block.plsda", {
     invisible(capture.output(TT <- dput(block.plsda.auroc[testable.components])))
     
     expect_equal(TT, GT)
-})
-
-
-test_that("(auroc:basic): block.splsda", {
     
-    testable.components <- Testable.Components$basic.block.splsda
+    # --- BLOCK.sPLS-DA -- # 
     GT <- Ground.Truths$basic.block.splsda
-
-    data(breast.TCGA)
-    X = list(miRNA = breast.TCGA$data.train$mirna,
-             mRNA = breast.TCGA$data.train$mrna,
-             proteomics = breast.TCGA$data.train$protein)
-    Y = breast.TCGA$data.train$subtype
 
     choice.keepX <- list(miRNA=c(10,10),
                          mRNA=c(10,10),
@@ -156,7 +135,7 @@ test_that("(auroc:basic): block.splsda", {
 
 test_that("(auroc:data): splsda, srbct", {
     
-    testable.components <- Testable.Components$srbct.splsda
+    testable.components <- Testable.Components$basic
     GT <- Ground.Truths$srbct.splsda
 
     data(srbct)
@@ -182,23 +161,19 @@ test_that("(auroc:data): splsda, srbct", {
 
 test_that("(auroc:parameter): newdata/outcome.test", {
 
-    testable.components <- Testable.Components$newdata.splsda
+    testable.components <- Testable.Components$basic
     GT <- Ground.Truths$newdata.splsda
 
     data(breast.tumors)
-    set.seed(3)
-    test=sample(1:47,5,replace=FALSE)
+    X <- breast.tumors$gene.exp
+    Y <- breast.tumors$sample$treatment
+    
+    d <- .minimal_train_test_subset(X, as.factor(Y), n.tr = 15, n.te = 3)
 
-    X <- breast.tumors$gene.exp[-test,]
-    Y <- breast.tumors$sample$treatment[-test]
-
-    X.test<-breast.tumors$gene.exp[test,]
-    Y.test<-breast.tumors$sample$treatment[test]
-
-    res.plsda <- plsda(X, Y, ncomp = 2)
+    res.plsda <- plsda(d$X.tr, d$Y.tr, ncomp = 2)
 
     newdata.outcome.test.auroc = auroc(res.plsda, print = FALSE, roc.comp = 1,
-                                          newdata = X.test, outcome.test = Y.test)
+                                          newdata = d$X.te, outcome.test = d$Y.te)
 
     invisible(capture.output(TT <- dput(newdata.outcome.test.auroc[testable.components])))
     
@@ -208,7 +183,7 @@ test_that("(auroc:parameter): newdata/outcome.test", {
 
 test_that("(auroc:parameter): multilevel", {
     
-    testable.components <- Testable.Components$multilevel.splsda
+    testable.components <- Testable.Components$basic
     GT <- Ground.Truths$multilevel.splsda
 
     data(diverse.16S)
@@ -229,8 +204,8 @@ test_that("(auroc:parameter): multilevel", {
 
 test_that("(auroc:parameter): roc.comp", {
 
-    testable.components <- Testable.Components$roc.comp.splsda
-    GT <- Ground.Truths$roc.comp.splsda
+    testable.components <- Testable.Components$basic
+    GT <- Ground.Truths$basic.plsda
 
     data(breast.tumors)
     X <- breast.tumors$gene.exp
@@ -248,7 +223,7 @@ test_that("(auroc:parameter): roc.comp", {
 
 test_that("(auroc:parameter): roc.study", {
     
-    testable.components <- Testable.Components$roc.study.mint.splsda
+    testable.components <- Testable.Components$study
     GT <- Ground.Truths$roc.study.mint.splsda
 
     data(stemcells)
@@ -268,8 +243,8 @@ test_that("(auroc:parameter): roc.study", {
 
 test_that("(auroc:parameter): roc.block", {
     
-    testable.components <- Testable.Components$roc.block.splsda
-    GT <- Ground.Truths$roc.block.splsda
+    testable.components <- Testable.Components$block
+    GT <- Ground.Truths$basic.block.plsda
 
     data(breast.TCGA)
     X = list(miRNA = breast.TCGA$data.train$mirna,
@@ -284,33 +259,34 @@ test_that("(auroc:parameter): roc.block", {
     invisible(capture.output(TT <- dput(roc.block.auroc[testable.components])))
     
     expect_equal(TT, GT)
+    
+    roc.block.auroc <- auroc(res.block.plsda, roc.block = "mRNA", print = FALSE)
+    
+    invisible(capture.output(TT <- dput(roc.block.auroc[testable.components])))
+    
+    expect_equal(TT, GT)
 })
 
 
 test_that("(auroc:parameter): study.test", {
     
-    testable.components <- Testable.Components$study.test.mint.splsda
+    testable.components <- Testable.Components$study
     GT <- Ground.Truths$study.test.mint.splsda
 
     data(stemcells)
-    set.seed(3)
-    test=sample(1:125,5,replace=FALSE)
-
-
-    X.tr <- stemcells$gene[-test,]
-    X.te <- stemcells$gene[test,]
-    Y.tr <- stemcells$celltype[-test]
-    Y.te <- stemcells$celltype[test]
-    s.tr <- stemcells$study[-test]
-    s.te <- stemcells$study[test]
-
-    res.mint.plsda <- mint.plsda(X.tr, Y.tr, ncomp = 2, study = s.tr)
-
-    roc.study.test.auroc = auroc(res.mint.plsda, print = FALSE,
-                                    newdata = X.te, outcome.test = Y.te,
-                                    study.test = s.te)
+    X <- stemcells$gene
+    Y <- stemcells$celltype
+    S <- stemcells$study
     
-    invisible(capture.output(TT <- dput(roc.study.test.auroc[testable.components])))
+    d <- .minimal_train_test_subset(X, Y, S=S)
+
+    res.mint.plsda <- mint.plsda(d$X.tr, d$Y.tr, ncomp = 2, study = d$S.tr)
+
+    study.test.auroc = auroc(res.mint.plsda, print = FALSE,
+                                    newdata = d$X.te, outcome.test = d$Y.te,
+                                    study.test = d$S.te)
+    
+    invisible(capture.output(TT <- dput(study.test.auroc[testable.components])))
     
     expect_equal(TT, GT)
 })
@@ -321,7 +297,30 @@ test_that("(auroc:parameter): study.test", {
 ###############################################################################
 
 
-test_that("(auroc:error): roc.block not greater than number of blocks", {
+test_that("(auroc:error): catches invalid `roc.comp` values", {
+
+    data(breast.tumors)
+    X <- breast.tumors$gene.exp
+    Y <- breast.tumors$sample$treatment
+
+    res.plsda <- plsda(X, Y, ncomp = 2)
+
+    expect_error(auroc(res.plsda, roc.comp = c(1,2), print = FALSE),
+                 "roc.comp")
+    
+    data(stemcells)
+    X <- stemcells$gene
+    Y <- stemcells$celltype
+    S <- stemcells$study
+
+    res.mint.plsda <- mint.plsda(X, Y, ncomp = 2, study = S)
+
+    expect_error(auroc(res.mint.plsda, roc.comp = c(1,2), print = FALSE),
+                 "roc.comp")
+})
+
+
+test_that("(auroc:error): catches invalid `roc.block` values", {
 
     data(breast.TCGA)
     X = list(miRNA = breast.TCGA$data.train$mirna,
@@ -332,12 +331,14 @@ test_that("(auroc:error): roc.block not greater than number of blocks", {
     res.block.plsda <- block.plsda(X, Y, ncomp = 2)
 
     expect_error(auroc(res.block.plsda, roc.block = 4, print = FALSE),
-                 "roc.block cannot be greater than 3",
-                 fixed = TRUE)
+                 "roc.block")
+    
+    expect_error(auroc(res.block.plsda, roc.block = TRUE, print = FALSE),
+                 "roc.block")
 })
 
 
-test_that("(auroc:error): roc.study not an invalid value", {
+test_that("(auroc:error): catches invalid `roc.study` values", {
 
     data(stemcells)
     X <- stemcells$gene
@@ -347,13 +348,10 @@ test_that("(auroc:error): roc.study not an invalid value", {
     res.mint.plsda <- mint.plsda(X, Y, study = s, ncomp = 2)
 
     expect_error(auroc(res.mint.plsda, roc.study = c(1, 2), print = FALSE),
-                 "`roc.study' must be a single entry,
-    either `global' or one of levels(object$study)",
-                 fixed = TRUE)
+                 "roc.study")
 
     expect_error(auroc(res.mint.plsda, roc.study = "study1", print = FALSE),
-                 "'roc.study' must be one of 'levels(object$study)'",
-                 fixed = TRUE)
+                 "roc.study")
 })
 
 
@@ -368,35 +366,51 @@ test_that("(auroc:error): prevent sgcca and rgcca objects being used", {
 
 
     expect_error(auroc(res.rgcca, print = FALSE),
-                 "no applicable method for 'auroc' applied to an object of class \"c('sparse.rgcca', 'rgcca')",
-                 fixed = TRUE)
+                 "rgcca")
 
     res.block.pls <- block.pls(X, indY=3)
 
     expect_error(auroc(res.block.pls, print = FALSE),
-                 "no applicable method for 'auroc' applied to an object of class \"c('block.pls', 'sgcca')",
-                 fixed = TRUE)
+                 "sgcca")
 })
 
 
-test_that("(auroc:error): ensure new.data contains all the same features", {
+test_that("(auroc:error): confirm 'new.data', 'outcome.test' and 'study.test' are all of same length and width", {
 
     data(breast.tumors)
-    set.seed(3)
-    test=sample(1:47,5,replace=FALSE)
+    X <- breast.tumors$gene.exp
+    Y <- breast.tumors$sample$treatment
+    
+    d <- .minimal_train_test_subset(X, as.factor(Y), n.tr = 15, n.te = 3)
 
-    X <- breast.tumors$gene.exp[-test,]
-    Y <- breast.tumors$sample$treatment[-test]
-
-    X.test<-breast.tumors$gene.exp[test,1:500]
-    Y.test<-breast.tumors$sample$treatment[test]
-
-    res.plsda <- plsda(X, Y, ncomp = 2)
+    res.plsda <- plsda(d$X.tr, d$Y.tr, ncomp = 2)
 
     expect_error(auroc(res.plsda, print = FALSE, roc.comp = 1,
-                       newdata = X.test, outcome.test = Y.test),
-                 "newdata' must include all the variables of 'object$X",
-                 fixed = TRUE)
+                       newdata = d$X.te[, 1:500], outcome.test = d$Y.te),
+                 "newdata")
+
+    expect_error(auroc(res.plsda, print = FALSE, roc.comp = 1,
+                       newdata = d$X.te[1:4,], outcome.test = d$Y.te),
+                 "outcome.test")
+    
+    data(stemcells)
+    X <- stemcells$gene
+    Y <- stemcells$celltype
+    S <- stemcells$study
+    
+    d <- .minimal_train_test_subset(X, Y, S=S)
+
+    res.mint.plsda <- mint.plsda(X, Y, ncomp = 2, study = S)
+
+    expect_error(auroc(res.mint.plsda, print = FALSE, roc.comp = 1,
+                       newdata = d$X.te[1:2,], outcome.test = d$Y.te,
+                       study.test = d$S.te),
+                 "outcome.test")
+
+    expect_error(auroc(res.mint.plsda, print = FALSE, roc.comp = 1,
+                       newdata = d$X.te, outcome.test = d$Y.te,
+                       study.test = d$S.te[1:2]),
+                 "study.test")
 })
 
 
