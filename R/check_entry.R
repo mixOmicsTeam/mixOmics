@@ -202,6 +202,23 @@ Check.entry.pls = function(X, Y, ncomp, keepX, keepY, test.keepX, test.keepY,
     if (!(logratio %in% c("none", "CLR")))
         stop("Choose one of the two following logratio transformation: none or CLR")
     
+    # if DA and the unmapped Y has rows without associated class
+    if (DA) {
+      Y.tmp <- NULL
+      if (missing(Y)) {
+        Y.tmp <- X[[indY]]
+      } else {
+        Y.tmp <- Y
+      }
+      
+      if (length(which(rowSums(Y.tmp)==0)) != 0) {
+        stop("Unmapped Y contains samples with no associated class. May be caused by NAs in input Y vector")
+      }
+      rm(Y.tmp)
+    }
+    
+    
+    
     if(!is.null(multilevel))
     {
         #multilevel analysis: withinVariation and then pls-like
