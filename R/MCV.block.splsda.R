@@ -331,7 +331,7 @@ MCVfold.block.splsda <-
                         test.keepX=test.keepX, test.keepY=ncol(Y.train.mat),
                         mode="regression", scale=scale, near.zero.var=near.zero.var,
                         design=design, max.iter=max.iter, scheme =scheme, init=init,
-                        tol=tol,
+                        tol=tol, DA = TRUE,
                         misdata = misdata, is.na.A = is.na.A.temp, ind.NA = ind.NA.temp,
                         ind.NA.col = ind.NA.col.temp, all.outputs=FALSE))
                 

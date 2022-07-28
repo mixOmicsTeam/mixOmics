@@ -131,7 +131,8 @@ mint.spls <- function(X,
         keepY = keepY,
         max.iter = max.iter,
         tol = tol,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        DA = FALSE
     )
     
     # choose the desired output from 'result'
