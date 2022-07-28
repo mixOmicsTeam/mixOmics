@@ -60,3 +60,14 @@ test_that(".check_ncomp works as expected for single and list X", code = {
     expect_condition(.check_ncomp(ncomp=4, X = list(a=mtcars, b=mtcars[,1:3])))
     
 })
+
+test_that("ALL DA functions raise specific error when Y contains NAs", {
+
+  data(srbct)
+  X <- srbct$gene
+  Y <- srbct$class
+  Y[c(1,2,3)] <- NA
+
+  expect_error(plsda(X, Y), "NAs")
+
+})
