@@ -373,10 +373,12 @@ plotIndiv.mint.pls <-
             # we choose xlim/ylim that fits the points and the background by finding the
             # average between the extremes of the two. 
             # 0.5 then added to min of the lim to prevent any uncoloured area showing
+            bg.tmp <- (do.call("rbind", background))
             if(is.null(xlim))
-                xlim <- (range(df$x) + range(background[, "Var1"]))/2 + c(0.5, 0)
+                xlim <- (range(df$x) + range(bg.tmp[, "Var1"]))/2 + c(0.5, 0)
             if(is.null(ylim))
-                ylim <- (range(df$y) + range(background[, "Var2"]))/2 + c(0.5, 0)
+                ylim <- (range(df$y) + range(bg.tmp[, "Var2"]))/2 + c(0.5, 0)
+            rm(bg.tmp)
         }
         
 
