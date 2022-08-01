@@ -154,7 +154,8 @@ block.plsda <- function(X,
         tol = tol,
         max.iter = max.iter,
         near.zero.var = near.zero.var,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        DA = TRUE
     )
     
     # calculate weights for each dataset
