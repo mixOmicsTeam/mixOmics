@@ -311,14 +311,14 @@ mean_centering_per_study <- function(data, study, scale)
                 attr(concat.data,paste0("sigma:", levels(study)[m])) = NULL
             }
         }
+    }
+
+    attr(concat.data,"scaled:center") = meanX[[1]]
+    if (scale)
+    {
+        attr(concat.data,"scaled:scale") = sqrt.sdX[[1]]
     } else {
-        attr(concat.data,"scaled:center") = meanX[[1]]
-        if (scale)
-        {
-            attr(concat.data,"scaled:scale") = sqrt.sdX[[1]]
-        } else {
-            attr(concat.data,"scaled:scale") = NULL
-        }
+        attr(concat.data,"scaled:scale") = NULL
     }
     
     return(list(concat.data=concat.data, rownames.study=rownames.study))
