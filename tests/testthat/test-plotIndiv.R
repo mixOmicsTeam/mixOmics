@@ -167,19 +167,23 @@ test_that("plotIndiv.sgccda(..., blocks = 'average') works with ellipse=TRUE", c
     expect_true(all(unique(diablo_plot$df.ellipse$Block) %in% c('average', 'Block: mrna', 'average (weighted)')))
 })
 
-test_that("plotIndiv.mint.plsda() works with ellipse=TRUE", code = {
-  
+
+test_that("mint.splsda can be visualised with predicted background", {
   data(stemcells)
   X <- stemcells$gene
   Y <- stemcells$celltype
   S <- stemcells$study
-  
-  model <- mint.plsda(X, Y, study = S)
-  
-  pl.res <- plotIndiv(model, ellipse = T)
-  
-  .expect_numerically_close(pl.res$graph$data$x[10], -3.129)
-  .expect_numerically_close(pl.res$graph$data$y[20], -5.3516)
+
+  model <- mint.splsda(X = X,
+                       Y = Y,
+                       study = S)
+
+  bgp <- background.predict(model, comp.predicted = 2,
+                            resolution = 10)
+
+  output <- plotIndiv(model, background = bgp, style = "ggplot2")
+
+  expect_equal(dim(output$df), c(125, 9))
 })
 
 unlink(list.files(pattern = "*.pdf"))
