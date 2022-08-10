@@ -21,7 +21,7 @@ test_that("(auroc:basic): (s)plsda", {
     # --- PLS-DA -- # 
     res.plsda <- plsda(X, Y, ncomp = 2)
     
-    res.auroc = auroc(res.plsda, roc.comp = 1, print = FALSE)
+    res.auroc = .quiet(auroc(res.plsda, print = TRUE))
     
     expect_equal(typeof(res.auroc), "list")
     expect_equal(matrix(res.auroc$Comp1), 
@@ -34,7 +34,7 @@ test_that("(auroc:basic): (s)plsda", {
     
     res.splsda <- splsda(X, Y, ncomp = 2, keepX = choice.keepX)
     
-    res.auroc = auroc(res.splsda, roc.comp = 1, print = FALSE)
+    res.auroc = auroc(res.splsda, print = FALSE)
     
     expect_equal(typeof(res.auroc), "list")
     expect_equal(matrix(res.auroc$Comp1), 
@@ -54,7 +54,7 @@ test_that("(auroc:basic): mint.(s)plsda", {
     # --- MINT.PLS-DA -- # 
     res.mint.plsda <- mint.plsda(X, Y, ncomp = 2, study = s)
     
-    res.auroc = auroc(res.mint.plsda, roc.comp = 1, print = FALSE)
+    res.auroc = .quiet(auroc(res.mint.plsda, roc.comp = 1, print = TRUE))
     
     expect_equal(typeof(res.auroc), "list")
     expect_equal(matrix(res.auroc$Comp1)[c(1,6),1], 
@@ -99,7 +99,7 @@ test_that("(auroc:basic): block.(s)plsda", {
     
     res.block.splsda <- block.splsda(X, Y, design = "full", keepX = choice.keepX)
     
-    res.auroc = auroc(res.block.splsda, roc.comp = 1, print = FALSE)
+    res.auroc = .quiet(auroc(res.block.splsda, roc.comp = 1, print = TRUE))
     
     expect_equal(typeof(res.auroc), "list")
     expect_equal(matrix(res.auroc$miRNA$comp1)[c(1,6),1], 
