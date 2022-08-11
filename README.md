@@ -3,7 +3,7 @@
 
 [![R build
 status](https://github.com/mixOmicsteam/mixOmics/workflows/R-CMD-check/badge.svg)](https://github.com/mixOmicsteam/mixOmics/actions)
-[![](https://img.shields.io/badge/bioc%20release-6.18.1-green.svg)](https://www.bioconductor.org/packages/mixOmics)
+[![](https://img.shields.io/badge/bioc%20release-6.20.0-green.svg)](https://www.bioconductor.org/packages/mixOmics)
 [![](https://app.codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://app.codecov.io/gh/mixOmicsTeam/mixOmics)
 [![download](http://www.bioconductor.org/shields/downloads/release/mixOmics.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
@@ -95,7 +95,7 @@ Click to expand
 
 **Note: this requires root privileges**
 
-1.  Install Docker following instructions at
+1)  Install Docker following instructions at
     <https://docs.docker.com/docker-for-mac/install/>
 
 **if your OS is not compatible with the latest version** download an
@@ -111,13 +111,13 @@ and Command Promot for Windows) for the following steps.
 your root privileges before running any docker commands from the command
 line.
 
-2.  Pull mixOmics container
+2)  Pull mixOmics container
 
 ``` bash
 docker pull mixomicsteam/mixomics
 ```
 
-3.  Ensure it is installed
+3)  Ensure it is installed
 
 The following command lists the running images:
 
@@ -132,7 +132,7 @@ to the following:
       > REPOSITORY                       TAG       IMAGE ID       CREATED         SIZE
       > mixomicsteam/mixomics            latest    e755393ac247   2 weeks ago     4.38GB
 
-4.  Active the container
+4)  Active the container
 
 Running the following command activates the container. You must change
 `your_password` to a custom password of your own. You can also customise
@@ -144,7 +144,7 @@ details.
 docker run -e PASSWORD=your_password --rm -p 8787:8787 mixomicsteam/mixomics
 ```
 
-5.  Run
+5)  Run
 
 In your web browser, go to `http://localhost:8787/` (change port if
 necessary) and login with the following credentials:
@@ -152,7 +152,7 @@ necessary) and login with the following credentials:
 *username*: rstudio  
 *password*: (your_password set in step 4)
 
-6.  Inspect/stop
+6)  Inspect/stop
 
 The following command lists the running containers:
 
@@ -191,6 +191,38 @@ To report a bug (or offer a solution for a bug!) visit:
 <https://github.com/mixOmicsTeam/mixOmics/issues>. We fully welcome and
 appreciate well-formatted and detailed pull requests. Preferably with
 tests on our datasets.
+
+<details>
+<summary>
+Set up development environment
+</summary>
+
+-   Install the latest version of R
+-   Install RStudio
+-   Clone this repo, checkout master branch, pull origin and then run:
+
+``` r
+install.packages("renv", Ncpus=4)
+install.packages("devtools", Ncpus=4)
+
+# restore the renv environment
+renv::restore()
+
+# or to initialise renv
+# renv::init(bioconductor = TRUE)
+
+# update the renv environment if needed
+# renv::snapshot()
+
+# test installation
+devtools::install()
+devtools::test()
+
+# complete package check (takes a while)
+devtools::check()
+```
+
+</details>
 
 ### Discussion forum
 
@@ -260,57 +292,58 @@ Thank you for using `mixOmics`!
 #### March 2022
 
 -   bug fix implemented for [Issue
-    #196](https://github.com/mixOmicsTeam/mixOmics/issues/196). `perf()`
-    can now handle features with a `(s)pls` which have near zero
-    variance.
+    \#196](https://github.com/mixOmicsTeam/mixOmics/issues/196).
+    `perf()` can now handle features with a `(s)pls` which have near
+    zero variance.
 -   bug fix implemented for [Issue
-    #192](https://github.com/mixOmicsTeam/mixOmics/issues/192).
+    \#192](https://github.com/mixOmicsTeam/mixOmics/issues/192).
     `predict()` can now handle when the testing and training data have
     their columns in different orders.
 -   bug fix implemented for [Issue
-    #178](https://github.com/mixOmicsTeam/mixOmics/issues/178). If the
+    \#178](https://github.com/mixOmicsTeam/mixOmics/issues/178). If the
     `indY` parameter is used in `block.spls()`, `circosPlot()` can now
     properly identify the
     ![Y](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Y "Y")
     dataframe.
 -   bug fix implemented for [Issue
-    #172](https://github.com/mixOmicsTeam/mixOmics/issues/172). `perf()`
-    now returns values for the `choice.ncomp` component when `nrepeat`
+    \#172](https://github.com/mixOmicsTeam/mixOmics/issues/172).
+    `perf()` now returns values for the `choice.ncomp` component when
+    `nrepeat`
     ![\< 3](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%3C%203 "< 3")
     whereas before it would just return `NA`s.
 -   bug fix implemented for [Issue
-    #171](https://github.com/mixOmicsTeam/mixOmics/issues/171). `cim()`
+    \#171](https://github.com/mixOmicsTeam/mixOmics/issues/171). `cim()`
     now can take `pca` objects as input.
 -   bug fix implemented for [Issue
-    #161](https://github.com/mixOmicsTeam/mixOmics/issues/161).
+    \#161](https://github.com/mixOmicsTeam/mixOmics/issues/161).
     `tune.spca()` can now handle `NA` values appropriately.
 -   bug fix implemented for [Issue
-    #150](https://github.com/mixOmicsTeam/mixOmics/issues/150). Provided
-    users with a specific error message for when `plotArrow()` is run on
-    a `(mint).(s)plsda` object.
+    \#150](https://github.com/mixOmicsTeam/mixOmics/issues/150).
+    Provided users with a specific error message for when `plotArrow()`
+    is run on a `(mint).(s)plsda` object.
 -   bug fix implemented for [Issue
-    #122](https://github.com/mixOmicsTeam/mixOmics/issues/122). Provided
-    users with a specific error message for when a `splsda` object that
-    has only one sample associated with a given class is passed to
-    `perf()`.
+    \#122](https://github.com/mixOmicsTeam/mixOmics/issues/122).
+    Provided users with a specific error message for when a `splsda`
+    object that has only one sample associated with a given class is
+    passed to `perf()`.
 -   bug fix implemented for [Issue
-    #120](https://github.com/mixOmicsTeam/mixOmics/issues/120).
+    \#120](https://github.com/mixOmicsTeam/mixOmics/issues/120).
     `plotLoadings()` now returns the loading values for features from
     **all** dataframes rather than just the last one when operating on a
     `(mint).(block).(s)plsda` object.
 -   bug fix implemented for [Issue
-    #43](https://github.com/mixOmicsTeam/mixOmics/issues/43).
+    \#43](https://github.com/mixOmicsTeam/mixOmics/issues/43).
     Homogenised the way in which `tune.mint.splsda()` and
     `perf.mint.splsda()` calculate balanced error rate (BER) as there
     was disparity between them. Also made the global BER a weighted
     average of BERs across each study.
 -   enhancement implemented for [Issue
-    #30/#34](https://github.com/mixOmicsTeam/mixOmics/issues/34). The
+    \#30/#34](https://github.com/mixOmicsTeam/mixOmics/issues/34). The
     parameter `verbose.call` was added to most of the methods. This
     parameter allows users to access the specific values input into the
     call of a function from its output.
 -   bug fix implemented for [Issue
-    #24](https://github.com/mixOmicsTeam/mixOmics/issues/24).
+    \#24](https://github.com/mixOmicsTeam/mixOmics/issues/24).
     `background.predict()` can now operate on `mint.splsda` objects and
     can be used as part of `plotIndiv()`.
 
@@ -330,7 +363,7 @@ Thank you for using `mixOmics`!
     customisable. See advanced arguments in `?circosPlot`
 -   new `biplot` function for `pca` and `pls` objects. See
     `?mixOmics::biplot`
--   `plotDiablo` now takes `col.per.group` (see #119)
+-   `plotDiablo` now takes `col.per.group` (see \#119)
 
 #### April 2020
 
