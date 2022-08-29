@@ -181,10 +181,11 @@ network <- function(mat,
                     row.names = TRUE,
                     col.names = TRUE,
                     block.var.names = TRUE,
+                    size.node = NULL,
                     color.node = NULL,
                     shape.node = NULL,
                     alpha.node = 0.85,
-                    cex.node.name = 1,
+                    cex.node.name = NULL,
                     color.edge = color.GreenRed(100),
                     lty.edge = "solid",
                     lwd.edge = 1,
@@ -649,6 +650,17 @@ network <- function(mat,
         }
     }
     
+    #-- size.node
+    if (!is.null(size.node)) {
+      if (!is.finite(size.node) || size.node < 0 || length(size.node)>1) {
+        stop("'size.node' must be a non-negative numerical value.", call. = FALSE)
+      }
+      if (size.node == 0) {
+        shape.node <- "none"
+        size.node <- 1 # prevents error 
+      }
+    }
+    
     #-- color.node
     if(any(class.object %in% object.blocks))
     {
@@ -732,8 +744,13 @@ network <- function(mat,
     }
     
     #-- cex.node.name
-    if (!is.finite(cex.node.name) || cex.node.name < 0 || length(cex.node.name)>1)
+    if (!is.null(cex.node.name)) {
+      if (!is.finite(cex.node.name) || cex.node.name < 0 || length(cex.node.name)>1) {
         stop("'cex.node.name' must be a non-negative numerical value.", call. = FALSE)
+      }
+    }
+    
+        
     
     #-- color.edge
     if (length(color.edge) < 2 && (!is(color.edge, "function")))
@@ -981,28 +998,36 @@ network <- function(mat,
     #-----------------------------------#
     # construction of the initial graph #
     #-----------------------------------#
+
+    nn = vcount(gR)
+    V(gR)$label.cex = ifelse(is.null(cex.node.name), 1, cex.node.name)
+    E(gR)$label.cex = min(2.25 * cex.edge.label/log(nn), 1)
+    cex0 = 2 * V(gR)$label.cex
     
-    if (plot.graph) {
-        nn = vcount(gR)
-        V(gR)$label.cex = min(2.5 * cex.node.name/log(nn), 1)
-        E(gR)$label.cex = min(2.25 * cex.edge.label/log(nn), 1)
-        cex0 = 2 * V(gR)$label.cex
-        
-        def.par = par(no.readonly = TRUE)
-        dev.new()
-        par(pty = "s", mar = c(0, 0, 0, 0),mfrow=c(1,1))
-        plot(1:100, 1:100, type = "n", axes = FALSE, xlab = "", ylab = "")
-        cha = V(gR)$label
-        cha = paste("", cha, "")
-        xh = strwidth(cha, cex = cex0) * 1.5
-        yh = strheight(cha, cex = cex0) * 3
-        
-        V(gR)$size = xh
-        V(gR)$size2 = yh
-        
-        dev.off()
-        
-        if (is.null(layout.fun))
+    def.par = par(no.readonly = TRUE)
+    dev.new()
+    par(pty = "s", mar = c(0, 0, 0, 0),mfrow=c(1,1))
+    plot(1:100, 1:100, type = "n", axes = FALSE, xlab = "", ylab = "")
+    cha = V(gR)$label
+    cha = paste("", cha, "")
+    xh = strwidth(cha, cex = ifelse(is.null(size.node), cex0, size.node*2)) * 1.5
+    yh = strheight(cha, cex = cex0) * 3
+    
+    V(gR)$size = xh
+    V(gR)$size2 = yh
+    
+    dev.off()
+    
+    if (is.null(layout.fun))
+    {
+        l = layout.fruchterman.reingold(gR, weights = (1 - abs(E(gR)$weight)))
+    } else {
+        l = layout.fun(gR)
+    }
+    
+    if (isTRUE(!interactive))
+    {
+        if (isTRUE(show.color.key))
         {
             l = layout.fruchterman.reingold(gR, weights = (1 - abs(E(gR)$weight)))
         } else {
