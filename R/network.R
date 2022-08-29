@@ -181,7 +181,7 @@ network <- function(mat,
                     row.names = TRUE,
                     col.names = TRUE,
                     block.var.names = TRUE,
-                    size.node = NULL,
+                    size.node = 0.5,
                     color.node = NULL,
                     shape.node = NULL,
                     alpha.node = 0.85,
@@ -1010,7 +1010,7 @@ network <- function(mat,
     plot(1:100, 1:100, type = "n", axes = FALSE, xlab = "", ylab = "")
     cha = V(gR)$label
     cha = paste("", cha, "")
-    xh = strwidth(cha, cex = ifelse(is.null(size.node), cex0, size.node*4)) * 1.5
+    xh = strwidth(cha, cex = ifelse(size.node==0.5, cex0, size.node*4)) * 1.5
     yh = strheight(cha, cex = cex0) * 3
     
     V(gR)$size = xh
