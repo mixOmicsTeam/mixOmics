@@ -652,8 +652,8 @@ network <- function(mat,
     
     #-- size.node
     if (!is.null(size.node)) {
-      if (!is.finite(size.node) || size.node < 0 || length(size.node)>1) {
-        stop("'size.node' must be a non-negative numerical value.", call. = FALSE)
+      if (!is.finite(size.node) || size.node < 0 || size.node > 1 || length(size.node)>1) {
+        stop("'size.node' must be a numerical value between 0 - 1.", call. = FALSE)
       }
       if (size.node == 0) {
         shape.node <- "none"
@@ -1010,7 +1010,7 @@ network <- function(mat,
     plot(1:100, 1:100, type = "n", axes = FALSE, xlab = "", ylab = "")
     cha = V(gR)$label
     cha = paste("", cha, "")
-    xh = strwidth(cha, cex = ifelse(is.null(size.node), cex0, size.node*2)) * 1.5
+    xh = strwidth(cha, cex = ifelse(is.null(size.node), cex0, size.node*4)) * 1.5
     yh = strheight(cha, cex = cex0) * 3
     
     V(gR)$size = xh
