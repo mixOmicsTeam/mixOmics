@@ -16,10 +16,12 @@ network(
   row.names = TRUE,
   col.names = TRUE,
   block.var.names = TRUE,
+  graph.scale = 0.5,
+  size.node = 0.5,
   color.node = NULL,
   shape.node = NULL,
   alpha.node = 0.85,
-  cex.node.name = 1,
+  cex.node.name = NULL,
   color.edge = color.GreenRed(100),
   lty.edge = "solid",
   lwd.edge = 1,
@@ -57,6 +59,13 @@ and \eqn{Y}-variables.}
 \item{block.var.names}{either a list of vector components for variable names
 in each block or FALSE for no names. If TRUE, the columns names of the
 blocks are used as names.}
+
+\item{graph.scale}{Numeric between 0 and 1 which alters the scale of the entire
+plot. Increasing the value decreases the size of nodes and increases their distance
+from one another. Defaults to 0.5.}
+
+\item{size.node}{Numeric between 0 and 1 which determines the relative size of nodes.
+Defaults to 0.5.}
 
 \item{color.node}{vector of length two, the colors of the \eqn{X} and
 \eqn{Y} nodes (see Details).}

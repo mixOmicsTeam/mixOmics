@@ -96,6 +96,11 @@
 #' threshold for the relevant associations network (see Details).
 #' @param row.names,col.names character vector containing the names of \eqn{X}-
 #' and \eqn{Y}-variables.
+#' @param graph.scale Numeric between 0 and 1 which alters the scale of the entire
+#' plot. Increasing the value decreases the size of nodes and increases their distance
+#' from one another. Defaults to 0.5.
+#' @param size.node Numeric between 0 and 1 which determines the relative size of nodes.
+#' Defaults to 0.5.
 #' @param color.node vector of length two, the colors of the \eqn{X} and
 #' \eqn{Y} nodes (see Details).
 #' @param shape.node character vector of length two, the shape of the \eqn{X}
