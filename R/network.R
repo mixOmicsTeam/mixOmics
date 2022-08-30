@@ -935,6 +935,9 @@ network <- function(mat,
         {
             V(gR)$color[V(gR)$group == i] = color.node[j]
             V(gR)$shape[V(gR)$group == i] = shape.node[j]
+            if (shape.node[j] == "none") {
+              V(gR)$label.color[V(gR)$group == i] = paste0(substr(color.node[j], 1, 7), "FF")
+            }
             j = j + 1
         }
     } else {
@@ -943,7 +946,14 @@ network <- function(mat,
         V(gR)$color[V(gR)$group == "y"] = color.node[2]
         
         V(gR)$shape = shape.node[1]
+        if (shape.node[1] == "none") {
+          V(gR)$label.color = paste0(substr(color.node[1], 1, 7), "FF")
+        }
         V(gR)$shape[V(gR)$group == "y"] = shape.node[2]
+        if (shape.node[2] == "none") {
+          V(gR)$label.color[V(gR)$group == "y"] = paste0(substr(color.node[1], 1, 7), "FF")
+        }
+        
     }
     
     # edges attributes #
