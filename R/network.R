@@ -735,6 +735,11 @@ network <- function(mat,
     } else {
         if(is.null(shape.node))
             shape.node=c("circle", "rectangle")
+        if (length(shape.node)==1) {
+          if(shape.node=="none") {
+            shape.node=c("none", "none")
+          }
+        }
         
         if (!is.list(shape.node))
         {
@@ -1028,8 +1033,9 @@ network <- function(mat,
     plot(1:upr.bnd, 1:upr.bnd, type = "n", axes = FALSE, xlab = "", ylab = "")
     cha = V(gR)$label
     cha = paste("", cha, "")
-    xh = strwidth(cha, cex = ifelse(size.node==0.5, cex0, size.node*4)) * 1.5
-    yh = strheight(cha, cex = cex0) * 3
+    xh = strwidth(cha, cex = ifelse(size.node==0.5, cex0, size.node*4)) * 1.5 * (2-graph.scale)
+    yh = strheight(cha, cex = ifelse(size.node==0.5, cex0, size.node*4)) * 3 * (2-graph.scale)
+  
     
     V(gR)$size = xh
     V(gR)$size2 = yh
