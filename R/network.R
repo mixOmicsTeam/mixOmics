@@ -653,7 +653,7 @@ network <- function(mat,
     
     #-- size.node
     if (!is.null(size.node)) {
-      if (!is.finite(size.node) || size.node < 0 || size.node > 1 || length(size.node)>1) {
+      if (!is.finite(size.node) || size.node < 0 || size.node > 1) {
         stop("'size.node' must be a numerical value between 0 - 1.", call. = FALSE)
       }
       if (size.node == 0) {
@@ -663,7 +663,7 @@ network <- function(mat,
     }
     
     #-- graph.scale
-    if (!is.finite(graph.scale) || graph.scale < 0 || graph.scale > 1 || length(graph.scale)>1) {
+    if (!is.finite(graph.scale) || graph.scale < 0 || graph.scale > 1) {
       stop("'graph.scale' must be a numerical value between 0 - 1.", call. = FALSE)
     }
     
