@@ -181,6 +181,7 @@ network <- function(mat,
                     row.names = TRUE,
                     col.names = TRUE,
                     block.var.names = TRUE,
+                    graph.scale = 0.5,
                     size.node = 0.5,
                     color.node = NULL,
                     shape.node = NULL,
@@ -661,6 +662,11 @@ network <- function(mat,
       }
     }
     
+    #-- graph.scale
+    if (!is.finite(graph.scale) || graph.scale < 0 || graph.scale > 1 || length(graph.scale)>1) {
+      stop("'graph.scale' must be a numerical value between 0 - 1.", call. = FALSE)
+    }
+    
     #-- color.node
     if(any(class.object %in% object.blocks))
     {
@@ -1007,7 +1013,8 @@ network <- function(mat,
     def.par = par(no.readonly = TRUE)
     dev.new()
     par(pty = "s", mar = c(0, 0, 0, 0),mfrow=c(1,1))
-    plot(1:100, 1:100, type = "n", axes = FALSE, xlab = "", ylab = "")
+    upr.bnd <- 190*(graph.scale^2) + 10
+    plot(1:upr.bnd, 1:upr.bnd, type = "n", axes = FALSE, xlab = "", ylab = "")
     cha = V(gR)$label
     cha = paste("", cha, "")
     xh = strwidth(cha, cex = ifelse(size.node==0.5, cex0, size.node*4)) * 1.5
