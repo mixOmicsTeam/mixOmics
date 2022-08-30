@@ -686,7 +686,8 @@ network <- function(mat,
         }
     } else {
         if(is.null(color.node))
-            color.node=c("white", "white")
+            color.node = brewer.pal(n = 12, name = 'Paired')[c(1,3)]
+            color.node = adjustcolor(color.node, alpha.f = alpha.node)
         
         if (!is.list(color.node))
         {
@@ -951,7 +952,7 @@ network <- function(mat,
         }
         V(gR)$shape[V(gR)$group == "y"] = shape.node[2]
         if (shape.node[2] == "none") {
-          V(gR)$label.color[V(gR)$group == "y"] = paste0(substr(color.node[1], 1, 7), "FF")
+          V(gR)$label.color[V(gR)$group == "y"] = paste0(substr(color.node[2], 1, 7), "FF")
         }
         
     }
