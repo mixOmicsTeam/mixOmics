@@ -198,7 +198,8 @@ cim <-
              mapping = "XY",
              legend = NULL,
              save = NULL,
-             name.save = NULL)
+             name.save = NULL,
+             blocks = NULL)
 
     {
         class.object <- class(mat)
@@ -500,6 +501,36 @@ cim <-
                 ".",
                 call. = FALSE
             )
+        
+        #-- blocks
+        if (any(class.object %in% object.block.pls)) {
+          if (!is.null(blocks)) {
+            if (!is.numeric(blocks) && !is.character(blocks)) {
+              stop("'blocks' must be a numeric or character vector",
+                   call. = FALSE)
+            }
+            if (length(blocks) != 2) {
+              stop("'blocks' must be a vector of length 2",
+                   call. = FALSE)
+            }
+            if (is.numeric(blocks)) {
+              if (any(blocks > length(mat$X))) {
+                stop("All values of 'blocks' must be less than 'length(mat$X)'",
+                     call. = FALSE)
+              }
+              blocks <- mat$names$blocks[blocks]
+            }
+            if (is.character(blocks)) {
+              if (!all(blocks %in% mat$names$blocks)) {
+                stop("All values of 'blocks' must be be found in 'mat$names$blocks'",
+                     call. = FALSE)
+              }
+            }
+          } else {
+            message(paste0("'blocks' defaulting to: '", mat$names$blocks[1], "' and '", mat$names$blocks[2], "'"))
+            blocks <- mat$names$blocks[c(1,2)]
+          }
+        }
         
         #-- if mixOmics class
         if (any(class.object  %in%  object.all))
