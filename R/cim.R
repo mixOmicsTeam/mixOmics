@@ -542,10 +542,17 @@ cim <-
             p = ncol(mat$X)
             q = ncol(mat$Y)
             n = nrow(mat$X)
-            ncomp = mat$ncomp
+            if (any(class.object %in% object.block.pls)) {
+              if (length(unique(mat$ncomp)) != 1) {
+                stop("'ncomp' across blocks need to be consistent.", call. = FALSE)
+              }
+              ncomp = mat$ncomp[[X.block]]
+            } else {
+              ncomp = mat$ncomp
+            }
             #-- comp
             if (is.null(comp)) {
-                comp = 1:mat$ncomp
+                comp = 1:ncomp
             }
             if (length(comp) > 1) {
                 comp = unique(comp)
