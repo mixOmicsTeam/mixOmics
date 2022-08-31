@@ -469,20 +469,20 @@ cim <-
                                 "mixo_splsda",
                                 "mixo_plsda")
         object.rcc = c("rcc")
-        object.pls = c("mixo_pls", "mixo_spls", "mixo_mlspls")
-        object.all = c(
-            "pca",
-            "spca",
-            "ipca",
-            "sipca",
-            "mixo_mlsplsda",
-            "mixo_splsda",
-            "mixo_plsda",
-            "rcc",
-            "mixo_pls",
-            "mixo_spls",
-            "mixo_mlspls"
-        )
+        object.pls = c("mixo_pls", 
+                       "mixo_spls",
+                       "mixo_mlspls")
+        object.all = c("pca",
+                      "spca",
+                      "ipca",
+                      "sipca",
+                      "mixo_mlsplsda",
+                      "mixo_splsda",
+                      "mixo_plsda",
+                      "rcc",
+                      "mixo_pls",
+                      "mixo_spls",
+                      "mixo_mlspls")
         
         if (any(class.object == "block.splsda"))
             stop("Please call the 'cimDiablo' function on your 'block.splsda' object",
