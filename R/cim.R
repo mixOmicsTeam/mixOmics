@@ -531,25 +531,36 @@ cim <-
             blocks <- mat$names$blocks[c(1,2)]
           }
           
-          X.block <- blocks[[1]]
-          Y.block <- blocks[[2]]
+          X.block.name <- blocks[[1]]
+          Y.block.name <- blocks[[2]]
         }
         
         #-- if mixOmics class
         if (any(class.object  %in%  object.all))
         {
             #-- general checks  -------------
-            p = ncol(mat$X)
-            q = ncol(mat$Y)
-            n = nrow(mat$X)
             if (any(class.object %in% object.block.pls)) {
               if (length(unique(mat$ncomp)) != 1) {
                 stop("'ncomp' across blocks need to be consistent.", call. = FALSE)
               }
-              ncomp = mat$ncomp[[X.block]]
+              ncomp = mat$ncomp[[X.block.name]]
+              
+              p = ncol(mat$X[[X.block.name]])
+              q = ncol(mat$X[[Y.block.name]])
+              
+              if (length(unique(sapply(1:length(mat$X), FUN = function(x) { nrow(mat$X[[x]]) }))) != 1) {
+                stop("number of rows of each block needs to be consistent.", call. = FALSE)
+              }
+              
+              n = nrow(mat$X[[X.block.name]])
             } else {
               ncomp = mat$ncomp
+              
+              p = ncol(mat$X)
+              q = ncol(mat$Y)
+              n = nrow(mat$X)
             }
+            
             #-- comp
             if (is.null(comp)) {
                 comp = 1:ncomp
@@ -605,7 +616,7 @@ cim <-
                     if (is.logical(row.names)) {
                         if (isTRUE(row.names))
                             if (any(class.object %in% object.block.pls)) {
-                              row.names = mat$names$colnames[[X.block]]
+                              row.names = mat$names$colnames[[X.block.name]]
                             } else {
                               row.names = mat$names$colnames$X
                             }
@@ -623,7 +634,7 @@ cim <-
                     {
                         if (isTRUE(col.names))
                             if (any(class.object %in% object.block.pls)) {
-                              col.names = mat$names$colnames[[Y.block]]
+                              col.names = mat$names$colnames[[Y.block.name]]
                             } else {
                               col.names = mat$names$colnames$Y
                             }
@@ -685,7 +696,7 @@ cim <-
                     {
                         if (isTRUE(col.names))
                           if (any(class.object %in% object.block.pls)) {
-                            col.names = mat$names$colnames[[X.block]]
+                            col.names = mat$names$colnames[[X.block.name]]
                           } else {
                             col.names = mat$names$colnames$Y
                           }
@@ -749,7 +760,7 @@ cim <-
                     {
                         if (isTRUE(col.names))
                           if (any(class.object %in% object.block.pls)) {
-                            col.names = mat$names$colnames[[Y.block]]
+                            col.names = mat$names$colnames[[Y.block.name]]
                           } else {
                             col.names = mat$names$colnames$Y
                           }
@@ -1224,25 +1235,25 @@ cim <-
                   
                   if (any(class.object %in% c("block.spls")))
                   {
-                    keep.X <- apply(abs(mat$loadings[[X.block]][, comp, drop = FALSE]), 1, sum) > 0
-                    keep.Y <- apply(abs(mat$loadings[[Y.block]][, comp, drop = FALSE]), 1, sum) > 0
+                    keep.X <- apply(abs(mat$loadings[[X.block.name]][, comp, drop = FALSE]), 1, sum) > 0
+                    keep.Y <- apply(abs(mat$loadings[[Y.block.name]][, comp, drop = FALSE]), 1, sum) > 0
                   } else {
-                    keep.X <- apply(abs(mat$loadings[[X.block]]), 1, sum) > 0
-                    keep.Y <- apply(abs(mat$loadings[[Y.block]]), 1, sum) > 0
+                    keep.X <- apply(abs(mat$loadings[[X.block.name]]), 1, sum) > 0
+                    keep.Y <- apply(abs(mat$loadings[[Y.block.name]]), 1, sum) > 0
                   }
                   
                   if (mat$mode == "canonical") {
-                    bisect = mat$variates[[X.block]][, comp] + mat$variates[[Y.block]][, comp]
-                    cord.X = cor(mat$X[[X.block]][, keep.X, drop = FALSE],
+                    bisect = mat$variates[[X.block.name]][, comp] + mat$variates[[Y.block.name]][, comp]
+                    cord.X = cor(mat$X[[X.block.name]][, keep.X, drop = FALSE],
                                  bisect, use = "pairwise")
-                    cord.Y = cor(mat$X[[Y.block]][, keep.Y, drop = FALSE],
+                    cord.Y = cor(mat$X[[Y.block.name]][, keep.Y, drop = FALSE],
                                  bisect, use = "pairwise")
                   }
                   else {
-                    cord.X = cor(mat$X[[X.block]][, keep.X, drop = FALSE],
-                                 mat$variates[[X.block]][, comp], use = "pairwise")
-                    cord.Y = cor(mat$X[[Y.block]][, keep.Y, drop = FALSE],
-                                 mat$variates[[Y.block]][, comp], use = "pairwise")
+                    cord.X = cor(mat$X[[X.block.name]][, keep.X, drop = FALSE],
+                                 mat$variates[[X.block.name]][, comp], use = "pairwise")
+                    cord.Y = cor(mat$X[[Y.block.name]][, keep.Y, drop = FALSE],
+                                 mat$variates[[Y.block.name]][, comp], use = "pairwise")
                   }
                   
                 } else {
@@ -1402,8 +1413,8 @@ cim <-
                     }
                     
                     if (any(class.object %in% object.block.pls)) {
-                      tmp.df <- mat$X[[X.block]][, keep.X]
-                      tmp.var <- mat$variates[[X.block]][, comp]
+                      tmp.df <- mat$X[[X.block.name]][, keep.X]
+                      tmp.var <- mat$variates[[X.block.name]][, comp]
                     } else {
                       tmp.df <- mat$X[, keep.X]
                       tmp.var <- mat$variates$X[, comp]
@@ -1485,8 +1496,8 @@ cim <-
                     }
                   
                     if (any(class.object %in% object.block.pls)) {
-                      tmp.df <- mat$X[[Y.block]][, keep.Y]
-                      tmp.var <- mat$variates[[Y.block]][, comp]
+                      tmp.df <- mat$X[[Y.block.name]][, keep.Y]
+                      tmp.var <- mat$variates[[Y.block.name]][, comp]
                     } else {
                       tmp.df <- mat$Y[, keep.Y]
                       tmp.var <- mat$variates$Y[, comp]
