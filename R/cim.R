@@ -461,16 +461,16 @@ cim <-
         }
         
         
-        object.pca = c("pca",
-                       "spca",
-                       "ipca",
-                       "sipca",
-                       "mixo_mlsplsda",
-                       "mixo_splsda",
-                       "mixo_plsda")
+        object.single.omics = c("pca",
+                                "spca",
+                                "ipca",
+                                "sipca",
+                                "mixo_mlsplsda",
+                                "mixo_splsda",
+                                "mixo_plsda")
         object.rcc = c("rcc")
         object.pls = c("mixo_pls", "mixo_spls", "mixo_mlspls")
-        object.list = c(
+        object.all = c(
             "pca",
             "spca",
             "ipca",
@@ -489,16 +489,16 @@ cim <-
                  call. = FALSE)
         
         
-        if (!any(class.object %in% c(object.list, "matrix")))
+        if (!any(class.object %in% c(object.all, "matrix")))
             stop(
                 "'mat' has to be a matrix or one of the following object: ",
-                paste(object.list, collapse = ", "),
+                paste(object.all, collapse = ", "),
                 ".",
                 call. = FALSE
             )
         
         #-- if mixOmics class
-        if (any(class.object  %in%  object.list))
+        if (any(class.object  %in%  object.all))
         {
             #-- general checks  -------------
             p = ncol(mat$X)
@@ -547,7 +547,7 @@ cim <-
             #-- if c("mixo_pls","mixo_spls","mixo_mlspls") or pls with univarite Y ----
             ## or multivariate but only one Y kept in sparse model
             
-            if (!any(class.object  %in%  object.pca)) {
+            if (!any(class.object  %in%  object.single.omics)) {
                 #-- mapping
                 choices = c("XY", "X", "Y")
                 mapping = choices[pmatch(mapping, choices)]
@@ -730,7 +730,7 @@ cim <-
             }
             
             #-- if NOT c("mixo_pls","mixo_spls","mixo_mlspls") or pls with univarite Y ----
-            if (any(class.object %in%  object.pca))
+            if (any(class.object %in%  object.single.omics))
             {
                 #-- row.sideColors
                 if (!is.null(row.sideColors))
@@ -1747,9 +1747,9 @@ cim <-
                 
                 
             }
-            if (any(class.object %in% object.list) &
+            if (any(class.object %in% object.all) &
                 !any(class.object %in%
-                     object.pca) &
+                     object.single.omics) &
                 mapping == "XY")
                 res$mat.cor = object
             par(opar)
