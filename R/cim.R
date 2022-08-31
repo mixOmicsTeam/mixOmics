@@ -502,37 +502,68 @@ cim <-
                 call. = FALSE
             )
         
-        #-- blocks
+        if (mapping == "multiblock") {
+          if (!any(class.object %in% object.block.pls)) {
+            stop("'mapping' can only equal 'multiblock' if 'mat' is of class 'block.pls' or 'block.spls'",
+                 call. = FALSE)
+          }
+        }
+        
+        #-- checks for parameters when block object in use
         if (any(class.object %in% object.block.pls)) {
-          if (!is.null(blocks)) {
-            if (!is.numeric(blocks) && !is.character(blocks)) {
-              stop("'blocks' must be a numeric or character vector",
-                   call. = FALSE)
-            }
-            if (length(blocks) != 2) {
-              stop("'blocks' must be a vector of length 2",
-                   call. = FALSE)
-            }
-            if (is.numeric(blocks)) {
-              if (any(blocks > length(mat$X))) {
-                stop("All values of 'blocks' must be less than 'length(mat$X)'",
+          
+          if (mapping != "multiblock") {
+            
+            #-- blocks
+            if (!is.null(blocks)) {
+              if (!is.numeric(blocks) && !is.character(blocks)) {
+                stop("'blocks' must be a numeric or character vector when `mapping != 'multiblock'",
                      call. = FALSE)
               }
-              blocks <- mat$names$blocks[blocks]
-            }
-            if (is.character(blocks)) {
-              if (!all(blocks %in% mat$names$blocks)) {
-                stop("All values of 'blocks' must be be found in 'mat$names$blocks'",
+              if (length(blocks) != 2) {
+                stop("'blocks' must be a vector of length 2 when `mapping != 'multiblock'",
                      call. = FALSE)
               }
+            } else {
+              message(paste0("'blocks' defaulting to: '", mat$names$blocks[1], "' and '", mat$names$blocks[2], "'"))
+              blocks <- mat$names$blocks[c(1,2)]
             }
-          } else {
-            message(paste0("'blocks' defaulting to: '", mat$names$blocks[1], "' and '", mat$names$blocks[2], "'"))
-            blocks <- mat$names$blocks[c(1,2)]
+            
+            X.block.name <- blocks[[1]]
+            Y.block.name <- blocks[[2]]
+          } 
+          else {
+            if (is.null(blocks)) {
+              blocks <- mat$names$blocks
+            }
+            
           }
           
-          X.block.name <- blocks[[1]]
-          Y.block.name <- blocks[[2]]
+          if (length(blocks) > length(mat$X)) {
+            stop("'blocks' cannot be longer than 'mat$X'",
+                 call. = FALSE)
+          }
+          
+          if (is.numeric(blocks)) {
+            if (any(blocks > length(mat$X))) {
+              stop("All values of 'blocks' must be less than 'length(mat$X)'",
+                   call. = FALSE)
+            }
+            blocks <- mat$names$blocks[blocks]
+          }
+          if (is.character(blocks)) {
+            if (!all(blocks %in% mat$names$blocks)) {
+              stop("All values of 'blocks' must be be found in 'mat$names$blocks'",
+                   call. = FALSE)
+            }
+          }
+          
+          if (length(blocks) != length(unique(blocks))) {
+            message("Adjusting 'blocks' to contain only unique values.")
+            blocks <- unique(blocks)
+          }
+          
+          
         }
         
         #-- if mixOmics class
@@ -605,11 +636,11 @@ cim <-
             
             if (!any(class.object  %in%  object.single.omics)) {
                 #-- mapping
-                choices = c("XY", "X", "Y")
+                choices = c("XY", "X", "Y", "multiblock")
                 mapping = choices[pmatch(mapping, choices)]
                 
                 if (is.na(mapping))
-                    stop("'mapping' should be one of 'XY', 'X' or 'Y'.", call. = FALSE)
+                    stop("'mapping' should be one of 'XY', 'X', 'Y' or 'multiblock'.", call. = FALSE)
                 
                 if (mapping == "XY")
                 {
@@ -798,6 +829,8 @@ cim <-
                                 call. = FALSE
                             )
                     }
+                  
+                  
                 }
             }
             
