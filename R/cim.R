@@ -530,6 +530,9 @@ cim <-
             message(paste0("'blocks' defaulting to: '", mat$names$blocks[1], "' and '", mat$names$blocks[2], "'"))
             blocks <- mat$names$blocks[c(1,2)]
           }
+          
+          X.block <- blocks[[1]]
+          Y.block <- blocks[[2]]
         }
         
         #-- if mixOmics class
@@ -592,10 +595,13 @@ cim <-
                 
                 if (mapping == "XY")
                 {
-                    if (is.logical(row.names))
-                    {
+                    if (is.logical(row.names)) {
                         if (isTRUE(row.names))
-                            row.names = mat$names$colnames$X
+                            if (any(class.object %in% object.block.pls)) {
+                              row.names = mat$names$colnames[[X.block]]
+                            } else {
+                              row.names = mat$names$colnames$X
+                            }
                         else
                             row.names = rep("", p)
                     } else {
@@ -609,7 +615,12 @@ cim <-
                     if (is.logical(col.names))
                     {
                         if (isTRUE(col.names))
-                            col.names = mat$names$colnames$Y
+                            if (any(class.object %in% object.block.pls)) {
+                              col.names = mat$names$colnames[[Y.block]]
+                            } else {
+                              col.names = mat$names$colnames$Y
+                            }
+                            
                         else
                             col.names = rep("", q)
                     } else {
@@ -666,7 +677,11 @@ cim <-
                     if (is.logical(col.names))
                     {
                         if (isTRUE(col.names))
-                            col.names = mat$names$colnames$X
+                          if (any(class.object %in% object.block.pls)) {
+                            col.names = mat$names$colnames[[X.block]]
+                          } else {
+                            col.names = mat$names$colnames$Y
+                          }
                         else
                             col.names = rep("", p)
                     } else {
@@ -726,7 +741,11 @@ cim <-
                     if (is.logical(col.names))
                     {
                         if (isTRUE(col.names))
+                          if (any(class.object %in% object.block.pls)) {
+                            col.names = mat$names$colnames[[Y.block]]
+                          } else {
                             col.names = mat$names$colnames$Y
+                          }
                         else
                             col.names = rep("", q)
                     } else {
@@ -1192,40 +1211,67 @@ cim <-
                 class(res) = "cim_rcc"
                 
             }
-            else if (any(class.object %in%  object.pls))
+            else if (any(class.object %in%  c(object.pls, object.block.pls)))
             {
-                if (any(class.object %in% c("mixo_spls", "mixo_mlspls")))
-                {
-                    keep.X = apply(abs(mat$loadings$X[, comp, drop = FALSE]), 1,
-                                   sum) > 0
-                    keep.Y = apply(abs(mat$loadings$Y[, comp, drop = FALSE]), 1,
-                                   sum) > 0
-                }
-                else
-                {
-                    keep.X = apply(abs(mat$loadings$X), 1, sum) > 0
-                    keep.Y = apply(abs(mat$loadings$Y), 1, sum) > 0
-                }
-                
-                
-                
-                if (mat$mode == "canonical") {
-                    bisect = mat$variates$X[, comp] + mat$variates$Y[, comp]
-                    cord.X = cor(mat$X[, keep.X, drop = FALSE],
+                if (any(class.object %in% object.block.pls)) {
+                  
+                  if (any(class.object %in% c("block.spls")))
+                  {
+                    keep.X <- apply(abs(mat$loadings[[X.block]][, comp, drop = FALSE]), 1, sum) > 0
+                    keep.Y <- apply(abs(mat$loadings[[Y.block]][, comp, drop = FALSE]), 1, sum) > 0
+                  } else {
+                    keep.X <- apply(abs(mat$loadings[[X.block]]), 1, sum) > 0
+                    keep.Y <- apply(abs(mat$loadings[[Y.block]]), 1, sum) > 0
+                  }
+                  
+                  if (mat$mode == "canonical") {
+                    bisect = mat$variates[[X.block]][, comp] + mat$variates[[Y.block]][, comp]
+                    cord.X = cor(mat$X[[X.block]][, keep.X, drop = FALSE],
                                  bisect, use = "pairwise")
-                    cord.Y = cor(mat$Y[, keep.Y, drop = FALSE],
+                    cord.Y = cor(mat$X[[Y.block]][, keep.Y, drop = FALSE],
                                  bisect, use = "pairwise")
-                }
-                else {
-                    cord.X = cor(mat$X[, keep.X, drop = FALSE],
-                                 mat$variates$X[, comp], use = "pairwise")
-                    cord.Y = cor(mat$Y[, keep.Y, drop = FALSE],
-                                 mat$variates$X[, comp], use = "pairwise")
+                  }
+                  else {
+                    cord.X = cor(mat$X[[X.block]][, keep.X, drop = FALSE],
+                                 mat$variates[[X.block]][, comp], use = "pairwise")
+                    cord.Y = cor(mat$X[[Y.block]][, keep.Y, drop = FALSE],
+                                 mat$variates[[Y.block]][, comp], use = "pairwise")
+                  }
+                  
+                } else {
+                  if (any(class.object %in% c("mixo_spls", "mixo_mlspls")))
+                  {
+                      keep.X = apply(abs(mat$loadings$X[, comp, drop = FALSE]), 1,
+                                     sum) > 0
+                      keep.Y = apply(abs(mat$loadings$Y[, comp, drop = FALSE]), 1,
+                                     sum) > 0
+                  }
+                  else
+                  {
+                      keep.X = apply(abs(mat$loadings$X), 1, sum) > 0
+                      keep.Y = apply(abs(mat$loadings$Y), 1, sum) > 0
+                  }
+                  
+                  
+                  
+                  if (mat$mode == "canonical") {
+                      bisect = mat$variates$X[, comp] + mat$variates$Y[, comp]
+                      cord.X = cor(mat$X[, keep.X, drop = FALSE],
+                                   bisect, use = "pairwise")
+                      cord.Y = cor(mat$Y[, keep.Y, drop = FALSE],
+                                   bisect, use = "pairwise")
+                  }
+                  else {
+                      cord.X = cor(mat$X[, keep.X, drop = FALSE],
+                                   mat$variates$X[, comp], use = "pairwise")
+                      cord.Y = cor(mat$Y[, keep.Y, drop = FALSE],
+                                   mat$variates$X[, comp], use = "pairwise")
+                  }
                 }
                 
                 XY.mat = as.matrix(cord.X %*% t(cord.Y))
                 sample.sideColors = row.sideColors
-                
+                #browser()
                 #-- if mapping = "XY"
                 if (mapping == "XY") {
                     object = XY.mat
@@ -1348,10 +1394,20 @@ cim <-
                             )
                     }
                     
-                    object = scale(mat$X[, keep.X], center = center, scale = scale)
-                    X.mat = as.matrix(mat$variates$X[, comp])
+                    if (any(class.object %in% object.block.pls)) {
+                      tmp.df <- mat$X[[X.block]][, keep.X]
+                      tmp.var <- mat$variates[[X.block]][, comp]
+                    } else {
+                      tmp.df <- mat$X[, keep.X]
+                      tmp.var <- mat$variates$X[, comp]
+                    }
+                  
+                    object = scale(tmp.df, center = center, scale = scale)
+                    X.mat = as.matrix(tmp.var)
                     col.names = col.names[keep.X]
                     
+                    rm(tmp.df)
+                    rm(tmp.var)
                     
                     if (!is.null(col.sideColors))
                         col.sideColors = as.matrix(col.sideColors[keep.X,])
@@ -1420,11 +1476,21 @@ cim <-
                                 call. = FALSE
                             )
                     }
-                    
-                    object = scale(mat$Y[, keep.Y], center = center, scale = scale)
-                    Y.mat = as.matrix(mat$variates$Y[, comp])
+                  
+                    if (any(class.object %in% object.block.pls)) {
+                      tmp.df <- mat$X[[Y.block]][, keep.Y]
+                      tmp.var <- mat$variates[[Y.block]][, comp]
+                    } else {
+                      tmp.df <- mat$Y[, keep.Y]
+                      tmp.var <- mat$variates$Y[, comp]
+                    }
+                  
+                    object = scale(tmp.df, center = center, scale = scale)
+                    Y.mat = as.matrix(tmp.var)
                     col.names = col.names[keep.Y]
                     
+                    rm(tmp.df)
+                    rm(tmp.var)
                     
                     if (!is.null(col.sideColors))
                         col.sideColors = as.matrix(col.sideColors[keep.Y,])
@@ -1498,7 +1564,8 @@ cim <-
                 }
                 class(res) = paste("cim", class.object[1], sep = "_")
             }
-        } else {
+        } 
+        else {
             #-- if matrix class  -------------------------------------
             
             #-- mat
@@ -1640,6 +1707,7 @@ cim <-
             class(res) = "cim_default"
             
         }
+        
         #-- call imageMap  -------------------------------------
         opar = par(no.readonly = TRUE)
         
