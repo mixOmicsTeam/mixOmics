@@ -204,6 +204,33 @@ cim <-
     {
         class.object <- class(mat)
         
+        object.single.omics = c("pca",
+                                "spca",
+                                "ipca",
+                                "sipca",
+                                "mixo_mlsplsda",
+                                "mixo_splsda",
+                                "mixo_plsda")
+        object.rcc = c("rcc")
+        object.pls = c("mixo_pls", 
+                       "mixo_spls",
+                       "mixo_mlspls")
+        object.block.pls = c("block.pls",
+                             "block.spls")
+        object.all = c("pca",
+                       "spca",
+                       "ipca",
+                       "sipca",
+                       "mixo_mlsplsda",
+                       "mixo_splsda",
+                       "mixo_plsda",
+                       "rcc",
+                       "mixo_pls",
+                       "mixo_spls",
+                       "mixo_mlspls",
+                       "block.pls",
+                       "block.spls")
+        
         #-- checking general input parameters -------------------------------------
         #--------------------------------------------------------------------------#
         
@@ -429,6 +456,25 @@ cim <-
                                                 fixed = TRUE))
         }
         
+        
+        #-- mapping
+        if (!any(class.object  %in%  object.single.omics)) {
+          
+          choices = c("XY", "X", "Y", "multiblock")
+          mapping = choices[pmatch(mapping, choices)]
+          
+          if (is.na(mapping)) {
+            stop("'mapping' should be one of 'XY', 'X', 'Y' or 'multiblock'.", call. = FALSE)
+          }
+          
+          if (mapping == "multiblock") {
+            if (!any(class.object %in% object.block.pls)) {
+              stop("'mapping' can only equal 'multiblock' if 'mat' is of class 'block.pls' or 'block.spls'",
+                   call. = FALSE)
+            }
+          }
+        }
+        
         #-- end checking --#
         #------------------#
         if (!is.null(save)) {
@@ -461,34 +507,6 @@ cim <-
             
         }
         
-        
-        object.single.omics = c("pca",
-                                "spca",
-                                "ipca",
-                                "sipca",
-                                "mixo_mlsplsda",
-                                "mixo_splsda",
-                                "mixo_plsda")
-        object.rcc = c("rcc")
-        object.pls = c("mixo_pls", 
-                       "mixo_spls",
-                       "mixo_mlspls")
-        object.block.pls = c("block.pls",
-                             "block.spls")
-        object.all = c("pca",
-                      "spca",
-                      "ipca",
-                      "sipca",
-                      "mixo_mlsplsda",
-                      "mixo_splsda",
-                      "mixo_plsda",
-                      "rcc",
-                      "mixo_pls",
-                      "mixo_spls",
-                      "mixo_mlspls",
-                      "block.pls",
-                      "block.spls")
-        
         if (any(class.object == "block.splsda"))
             stop("Please call the 'cimDiablo' function on your 'block.splsda' object",
                  call. = FALSE)
@@ -502,12 +520,7 @@ cim <-
                 call. = FALSE
             )
         
-        if (mapping == "multiblock") {
-          if (!any(class.object %in% object.block.pls)) {
-            stop("'mapping' can only equal 'multiblock' if 'mat' is of class 'block.pls' or 'block.spls'",
-                 call. = FALSE)
-          }
-        }
+        
         
         #-- checks for parameters when block object in use
         if (any(class.object %in% object.block.pls)) {
@@ -635,12 +648,6 @@ cim <-
             ## or multivariate but only one Y kept in sparse model
             
             if (!any(class.object  %in%  object.single.omics)) {
-                #-- mapping
-                choices = c("XY", "X", "Y", "multiblock")
-                mapping = choices[pmatch(mapping, choices)]
-                
-                if (is.na(mapping))
-                    stop("'mapping' should be one of 'XY', 'X', 'Y' or 'multiblock'.", call. = FALSE)
                 
                 if (mapping == "XY")
                 {
