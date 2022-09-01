@@ -576,7 +576,9 @@ cim <-
             blocks <- unique(blocks)
           }
           
-          
+          rel.blocks.X <- mat$X[blocks]
+          rel.blocks.variates <- mat$variates[blocks]
+          rel.blocks.loadings <- mat$loadings[blocks]
         }
         
         #-- if mixOmics class
@@ -587,16 +589,30 @@ cim <-
               if (length(unique(mat$ncomp)) != 1) {
                 stop("'ncomp' across blocks need to be consistent.", call. = FALSE)
               }
-              ncomp = mat$ncomp[[X.block.name]]
               
-              p = ncol(mat$X[[X.block.name]])
-              q = ncol(mat$X[[Y.block.name]])
+              if (mapping != "multiblock") {
+                ncomp = mat$ncomp[[X.block.name]]
+                p = ncol(mat$X[[X.block.name]])
+                q = ncol(mat$X[[Y.block.name]])
+              } 
+              else {
+                # use first block as all blocks are checked to have equal ncomp
+                ncomp = mat$ncomp[[1]]
+                
+                p = q = sum(sapply(mat$X, ncol))
+              }
               
               if (length(unique(sapply(1:length(mat$X), FUN = function(x) { nrow(mat$X[[x]]) }))) != 1) {
                 stop("number of rows of each block needs to be consistent.", call. = FALSE)
               }
               
-              n = nrow(mat$X[[X.block.name]])
+              if (mapping != "multiblock") {
+                n = nrow(mat$X[[X.block.name]])
+              } else {
+                # use first block as all blocks are checked to have equal nrow
+                n = nrow(mat$X[[1]]) 
+              }
+              
             } else {
               ncomp = mat$ncomp
               
@@ -648,6 +664,20 @@ cim <-
             ## or multivariate but only one Y kept in sparse model
             
             if (!any(class.object  %in%  object.single.omics)) {
+              
+                if (mapping == "multiblock") {
+                  if (is.logical(row.names)) {
+                    if (isTRUE(row.names)) {
+                      row.names <- mat$names$sample
+                    }
+                  }
+                  
+                  if (is.logical(col.names)) {
+                    if (isTRUE(col.names)) {
+                      col.names <- unname(unlist(mat$names$colnames[blocks]))
+                    }
+                  }
+                }
                 
                 if (mapping == "XY")
                 {
@@ -1275,26 +1305,64 @@ cim <-
                   
                   if (any(class.object %in% c("block.spls")))
                   {
-                    keep.X <- apply(abs(mat$loadings[[X.block.name]][, comp, drop = FALSE]), 1, sum) > 0
-                    keep.Y <- apply(abs(mat$loadings[[Y.block.name]][, comp, drop = FALSE]), 1, sum) > 0
+                    if (mapping == "multiblock") {
+                      
+                      num.keep.X <- sapply(rel.blocks.loadings, function(x) {
+                        length(which(apply(abs(x), 1, sum) > 0))
+                      })
+                      
+                      keep.X <- apply(abs(do.call("rbind", rel.blocks.loadings)), 1, sum) > 0
+                    }
+                    else {
+                      keep.X <- apply(abs(mat$loadings[[X.block.name]][, comp, drop = FALSE]), 1, sum) > 0
+                      keep.Y <- apply(abs(mat$loadings[[Y.block.name]][, comp, drop = FALSE]), 1, sum) > 0
+                    }
                   } else {
-                    keep.X <- apply(abs(mat$loadings[[X.block.name]]), 1, sum) > 0
-                    keep.Y <- apply(abs(mat$loadings[[Y.block.name]]), 1, sum) > 0
+                    if (mapping == "multiblock") {
+                      num.keep.X <- sapply(rel.blocks.loadings, function(x) {
+                        length(which(apply(abs(x), 1, sum) > 0))
+                      })
+                      keep.X <- apply(abs(do.call("rbind", rel.blocks.loadings)), 1, sum) > 0
+                    } else {
+                      keep.X <- apply(abs(mat$loadings[[X.block.name]]), 1, sum) > 0
+                      keep.Y <- apply(abs(mat$loadings[[Y.block.name]]), 1, sum) > 0
+                      
+                      num.keep.X <- unname(sapply(block.spls.model$X, ncol))
+                    }
                   }
                   
-                  if (mat$mode == "canonical") {
-                    bisect = mat$variates[[X.block.name]][, comp] + mat$variates[[Y.block.name]][, comp]
-                    cord.X = cor(mat$X[[X.block.name]][, keep.X, drop = FALSE],
-                                 bisect, use = "pairwise")
-                    cord.Y = cor(mat$X[[Y.block.name]][, keep.Y, drop = FALSE],
-                                 bisect, use = "pairwise")
+                  if (mapping  == "multiblock") {
+                    
+                    if (mat$mode == "canonical") {
+                      bisect = rel.blocks.variates[[1]][, comp]
+                      for (b in 2:length(rel.blocks.variates)) { bisect <- bisect + rel.blocks.variates[[b]][, comp] }
+                      
+                      cord.X = cor(do.call("cbind", rel.blocks.X)[, keep.X, drop = FALSE],
+                                   bisect, use = "pairwise")
+                    }
+                    else {
+                      cord.X = cor(do.call("cbind", rel.blocks.X)[, keep.X, drop = FALSE],
+                                   do.call("cbind", rel.blocks.variates)[, comp], use = "pairwise")
+                    }
+                  } else {
+                    if (mat$mode == "canonical") {
+                      bisect = mat$variates[[X.block.name]][, comp] + mat$variates[[Y.block.name]][, comp]
+                      cord.X = cor(mat$X[[X.block.name]][, keep.X, drop = FALSE],
+                                   bisect, use = "pairwise")
+                      cord.Y = cor(mat$X[[Y.block.name]][, keep.Y, drop = FALSE],
+                                   bisect, use = "pairwise")
+                    }
+                    else {
+                      cord.X = cor(mat$X[[X.block.name]][, keep.X, drop = FALSE],
+                                   mat$variates[[X.block.name]][, comp], use = "pairwise")
+                      cord.Y = cor(mat$X[[Y.block.name]][, keep.Y, drop = FALSE],
+                                   mat$variates[[Y.block.name]][, comp], use = "pairwise")
+                    }
                   }
-                  else {
-                    cord.X = cor(mat$X[[X.block.name]][, keep.X, drop = FALSE],
-                                 mat$variates[[X.block.name]][, comp], use = "pairwise")
-                    cord.Y = cor(mat$X[[Y.block.name]][, keep.Y, drop = FALSE],
-                                 mat$variates[[Y.block.name]][, comp], use = "pairwise")
-                  }
+                  
+                  
+                  
+                  
                   
                 } else {
                   if (any(class.object %in% c("mixo_spls", "mixo_mlspls")))
@@ -1327,9 +1395,84 @@ cim <-
                   }
                 }
                 
-                XY.mat = as.matrix(cord.X %*% t(cord.Y))
+                if (mapping != "multiblock") { XY.mat = as.matrix(cord.X %*% t(cord.Y)) }
                 sample.sideColors = row.sideColors
-                #browser()
+                
+                
+                #-- if mapping = "multiblock"
+                if (mapping == "multiblock") {
+                  #-- cheking center and scale
+                  if (!is.logical(center)) {
+                    if (!is.numeric(center) || (length(center) != p))
+                      stop(
+                        "'center' should be either a logical value or a numeric
+                    vector of length equal to the sum number of columns across all blocks.",
+                    call. = FALSE
+                      )
+                  }
+                  if (!is.logical(scale)) {
+                    if (!is.numeric(scale) || (length(scale) != p))
+                      stop(
+                        "'scale' should be either a logical value or a numeric
+                    vector of length equal to the sum number of columns across all blocks",
+                    call. = FALSE
+                      )
+                  }
+                  
+                  
+                  object = scale(do.call("cbind", rel.blocks.X), center = center, scale = scale)
+                  X.mat = as.matrix(do.call("cbind", rel.blocks.variates))
+                  col.names = col.names[keep.X]
+                  
+                  if (!is.null(col.sideColors))
+                    col.sideColors = as.matrix(col.sideColors[keep.X,])
+                  else {
+                    idx <- unlist(c(sapply(1:length(rel.blocks.X), function(x) { rep(x, num.keep.X[[x]]) })))
+                    col.sideColors = brewer.pal(n = 12, name = 'Paired')[seq(2, 12, by = 2)]
+                    col.sideColors = as.matrix(col.sideColors[idx])
+                  }
+                  
+                  if ((cluster == "both") || (cluster == "row")) {
+                    Rowv = rowMeans(X.mat)
+                    
+                    if (dist.method[1] == "correlation")
+                      dist.mat = as.dist(1 - cor(t(as.matrix(
+                        X.mat
+                      )),
+                      method = "pearson"))
+                    else
+                      dist.mat = dist(X.mat, method = dist.method[1])
+                    
+                    hcr = hclust(dist.mat, method = clust.method[1])
+                    ddr = as.dendrogram(hcr)
+                    ddr = reorder(ddr, Rowv)
+                    rowInd = order.dendrogram(ddr)
+                    object = object[rowInd,]
+                    row.names = row.names[rowInd]
+                    
+                    if (!is.null(row.sideColors))
+                      row.sideColors = as.matrix(row.sideColors[rowInd,])
+                  }
+                  
+                  if ((cluster == "both") || (cluster == "column")) {
+                    Colv = rowMeans(cord.X)
+                    
+                    if (dist.method[2] == "correlation")
+                      dist.mat = as.dist(1 - cor(t(cord.X), method = "pearson"))
+                    else
+                      dist.mat = dist(cord.X, method = dist.method[2])
+                    
+                    hcc = hclust(dist.mat, method = clust.method[2])
+                    ddc = as.dendrogram(hcc)
+                    ddc = reorder(ddc, Colv)
+                    colInd = order.dendrogram(ddc)
+                    object = object[, colInd]
+                    col.names = col.names[colInd]
+                    
+                    col.sideColors = as.matrix(col.sideColors[colInd,])
+                  }
+                }
+                
                 #-- if mapping = "XY"
                 if (mapping == "XY") {
                     object = XY.mat
@@ -1804,16 +1947,31 @@ cim <-
                 try_plot$message
             ))
         } else {
+            
             #-- add to plot  -------------------------------------
-            if (!is.null(legend))
+            if (!is.null(legend) || mapping == "multiblock")
             {
+                if (is.null(legend) && mapping == "multiblock") {
+                  legend <- list()
+                }
                 if (is.null(legend$x))
                     legend$x = "topright"
                 if (is.null(legend$bty))
                     legend$bty = "n"
                 if (is.null(legend$cex))
                     legend$cex = 0.8
-                if (any(class.object %in%  c("mixo_splsda", "mixo_plsda")))
+                
+               # browser()
+                if (any(class.object %in% object.block.pls)) {
+                  if (is.null(legend$legend)) {
+                    legend$legend <- blocks
+                  }
+                  if (is.null(legend$col)) {
+                    legend$col <- unique(col.sideColors)
+                  }
+                }
+                
+                else if (any(class.object %in%  c("mixo_splsda", "mixo_plsda")))
                 {
                     if (is.null(legend$legend))
                         legend$legend = mat$names$colnames$Y
@@ -1908,6 +2066,9 @@ cim <-
                 
                 
             }
+          else {
+            
+          }
             if (any(class.object %in% object.all) &
                 !any(class.object %in%
                      object.single.omics) &
