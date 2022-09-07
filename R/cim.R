@@ -1365,7 +1365,7 @@ cim <-
                       keep.X <- apply(abs(mat$loadings[[X.block.name]]), 1, sum) > 0
                       keep.Y <- apply(abs(mat$loadings[[Y.block.name]]), 1, sum) > 0
                       
-                      num.keep.X <- unname(sapply(block.spls.model$X, ncol))
+                      num.keep.X <- unname(sapply(mat$X, ncol))
                     }
                   }
                   
