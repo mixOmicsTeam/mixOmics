@@ -156,10 +156,10 @@ test_that("cim works for block.spls", {
                                               proteomics=c(30,30)),
                                  mode = "regression")
   
-  cim_res <- cim(block.pls.model,
+  cim_res <- cim(block.spls.model,
                  mapping = "multiblock")
   expect_is(cim_res[[1]], "matrix")
-  .expect_numerically_close(cim_res$mat[1,1], 0.159)
+  .expect_numerically_close(cim_res$mat[1,1], 1.003)
 })
 
 unlink(list.files(pattern = "*.pdf"))
