@@ -69,4 +69,97 @@ test_that("CIM works for multilevel", code = {
     expect_is(cim_res[[1]], "matrix")
 })
 
+test_that("cim works for block.pls", {
+  data(breast.TCGA)
+  X = list(miRNA = breast.TCGA$data.train$mirna,
+           mRNA = breast.TCGA$data.train$mrna,
+           proteomics = breast.TCGA$data.train$protein)
+  
+  block.pls.model <- block.pls(X, indY=3)
+  
+  # TESTING DIFFERENT MAPPINGS
+  cim_res <- cim(block.pls.model,
+                 mapping = "multiblock")
+  expect_is(cim_res[[1]], "matrix")
+  .expect_numerically_close(cim_res$mat[1,1], 0.159)
+  
+  
+  cim_res <- suppressMessages(cim(block.pls.model,
+                                  mapping = "XY"))
+  expect_is(cim_res[[1]], "matrix")
+  .expect_numerically_close(cim_res$mat[1,1], 0.543)
+  
+  
+  cim_res <- suppressMessages(cim(block.pls.model,
+                                  mapping = "X"))
+  expect_is(cim_res[[1]], "matrix")
+  .expect_numerically_close(cim_res$mat[1,1], 1.80)
+  
+  
+  cim_res <- suppressMessages(cim(block.pls.model,
+                                  mapping = "Y"))
+  expect_is(cim_res[[1]], "matrix")
+  .expect_numerically_close(cim_res$mat[1,1], 1.01)
+  
+  
+  
+  # TESTING DIFFERENT MODE
+  block.pls.model <- block.pls(X, indY=3,
+                               mode = "regression")
+  
+  cim_res <- cim(block.pls.model,
+                 mapping = "multiblock")
+  expect_is(cim_res[[1]], "matrix")
+  .expect_numerically_close(cim_res$mat[1,1], 0.159)
+  
+}) 
+
+test_that("cim works for block.spls", {
+  data(breast.TCGA)
+  X = list(miRNA = breast.TCGA$data.train$mirna,
+           mRNA = breast.TCGA$data.train$mrna,
+           proteomics = breast.TCGA$data.train$protein)
+  
+  block.spls.model <- block.spls(X, indY=3,
+                                 keepX = list(miRNA=c(30,30),
+                                              mRNA=c(30,30),
+                                              proteomics=c(30,30)))
+  # TESTING DIFFERENT MAPPINGS
+  cim_res <- cim(block.spls.model,
+                 mapping = "multiblock")
+  expect_is(cim_res[[1]], "matrix")
+  .expect_numerically_close(cim_res$mat[1,1], 1.00)
+  
+  
+  cim_res <- suppressMessages(cim(block.spls.model,
+                                  mapping = "XY"))
+  expect_is(cim_res[[1]], "matrix")
+  .expect_numerically_close(cim_res$mat[1,1], 0.752)
+  
+  
+  cim_res <- suppressMessages(cim(block.spls.model,
+                                  mapping = "X"))
+  expect_is(cim_res[[1]], "matrix")
+  .expect_numerically_close(cim_res$mat[1,1], 1.26)
+  
+  
+  cim_res <- suppressMessages(cim(block.spls.model,
+                                  mapping = "Y"))
+  expect_is(cim_res[[1]], "matrix")
+  .expect_numerically_close(cim_res$mat[1,1], 0.54)
+  
+  
+  # TESTING DIFFERENT MODE
+  block.spls.model <- block.spls(X, indY=3,
+                                 keepX = list(miRNA=c(30,30),
+                                              mRNA=c(30,30),
+                                              proteomics=c(30,30)),
+                                 mode = "regression")
+  
+  cim_res <- cim(block.pls.model,
+                 mapping = "multiblock")
+  expect_is(cim_res[[1]], "matrix")
+  .expect_numerically_close(cim_res$mat[1,1], 0.159)
+})
+
 unlink(list.files(pattern = "*.pdf"))
