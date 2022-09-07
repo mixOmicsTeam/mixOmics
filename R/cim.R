@@ -599,7 +599,7 @@ cim <-
                 # use first block as all blocks are checked to have equal ncomp
                 ncomp = mat$ncomp[[1]]
                 
-                p = q = sum(sapply(mat$X, ncol))
+                p = q = sum(sapply(mat$X[blocks], ncol))
               }
               
               if (length(unique(sapply(1:length(mat$X), FUN = function(x) { nrow(mat$X[[x]]) }))) != 1) {
@@ -670,13 +670,50 @@ cim <-
                     if (isTRUE(row.names)) {
                       row.names <- mat$names$sample
                     }
+                  } else {
+                    if (length(row.names) != n)
+                      stop("'row.names' must be a character vector of length ",
+                           n,
+                           ".",
+                           call. = FALSE)
                   }
                   
                   if (is.logical(col.names)) {
                     if (isTRUE(col.names)) {
                       col.names <- unname(unlist(mat$names$colnames[blocks]))
                     }
+                  } else {
+                    if (length(col.names) != p)
+                      stop("'col.names' must be a character vector of length ",
+                           p,
+                           ".",
+                           call. = FALSE)
                   }
+                }
+              
+                if (!is.null(row.sideColors))
+                {
+                  row.sideColors = as.matrix(row.sideColors)
+                  if (nrow(row.sideColors) != n)
+                    stop(
+                      "'row.sideColors' must be a colors character vector
+                      (matrix) of length (nrow) ",
+                      n,
+                      ".",
+                      call. = FALSE
+                    )
+                }
+                if (!is.null(col.sideColors))
+                {
+                  col.sideColors = as.matrix(col.sideColors)
+                  if (nrow(col.sideColors) != p)
+                    stop(
+                      "'col.sideColors' must be a colors character vector
+                      (matrix) of length (nrow) ",
+                      p,
+                      ".",
+                      call. = FALSE
+                    )
                 }
                 
                 if (mapping == "XY")
@@ -1317,7 +1354,8 @@ cim <-
                       keep.X <- apply(abs(mat$loadings[[X.block.name]][, comp, drop = FALSE]), 1, sum) > 0
                       keep.Y <- apply(abs(mat$loadings[[Y.block.name]][, comp, drop = FALSE]), 1, sum) > 0
                     }
-                  } else {
+                  } 
+                  else {
                     if (mapping == "multiblock") {
                       num.keep.X <- sapply(rel.blocks.loadings, function(x) {
                         length(which(apply(abs(x), 1, sum) > 0))
@@ -1421,11 +1459,12 @@ cim <-
                   
                   
                   object = scale(do.call("cbind", rel.blocks.X), center = center, scale = scale)
+                  object = object[, keep.X]
                   X.mat = as.matrix(do.call("cbind", rel.blocks.variates))
                   col.names = col.names[keep.X]
                   
                   if (!is.null(col.sideColors))
-                    col.sideColors = as.matrix(col.sideColors[keep.X,])
+                    col.sideColors = as.matrix(matrix(col.sideColors)[keep.X,])
                   else {
                     idx <- unlist(c(sapply(1:length(rel.blocks.X), function(x) { rep(x, num.keep.X[[x]]) })))
                     col.sideColors = brewer.pal(n = 12, name = 'Paired')[seq(2, 12, by = 2)]
@@ -1436,9 +1475,7 @@ cim <-
                     Rowv = rowMeans(X.mat)
                     
                     if (dist.method[1] == "correlation")
-                      dist.mat = as.dist(1 - cor(t(as.matrix(
-                        X.mat
-                      )),
+                      dist.mat = as.dist(1 - cor(t(as.matrix(X.mat)),
                       method = "pearson"))
                     else
                       dist.mat = dist(X.mat, method = dist.method[1])
@@ -1451,7 +1488,7 @@ cim <-
                     row.names = row.names[rowInd]
                     
                     if (!is.null(row.sideColors))
-                      row.sideColors = as.matrix(row.sideColors[rowInd,])
+                      row.sideColors = as.matrix(matrix(row.sideColors)[rowInd,])
                   }
                   
                   if ((cluster == "both") || (cluster == "column")) {
@@ -1476,6 +1513,7 @@ cim <-
                 #-- if mapping = "XY"
                 if (mapping == "XY") {
                     object = XY.mat
+                    
                     row.names = row.names[keep.X]
                     col.names = col.names[keep.Y]
                     
