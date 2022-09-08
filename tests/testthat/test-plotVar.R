@@ -42,7 +42,7 @@ test_that("plotVar works in block.(s)PLS1 cases", {
                                  keepX = list(miRNA=c(3,3),
                                               mRNA=c(3,3)))
   
-  plotVar.result <- plotVar(block.pls.result)
+  plotVar.result <- plotVar(block.pls.result, plot = FALSE)
   
   expect_equal(as.character(unique(plotVar.result$Block)), c("miRNA", "mRNA"))
 })
