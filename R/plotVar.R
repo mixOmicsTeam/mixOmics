@@ -453,6 +453,11 @@ plotVar <-
         if (any(sapply(cord.X, nrow) == 0))
             stop("No variable selected on at least one block")
         
+        if (any(sapply(cord.X, nrow) == 1)) {
+          cord.X <- cord.X[-which(sapply(cord.X, nrow) == 1)]
+        }
+          
+        
         #-- End: Retrieve variates from object
         
         #-- Names of labels X and Y
