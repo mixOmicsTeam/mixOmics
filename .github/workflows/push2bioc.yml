@@ -28,16 +28,18 @@ jobs:
           ssh-keyscan $BIOC_HOST > ~/.ssh/known_hosts
           cd $wd
           #--- git config
-          git config user.name 'Al J Abadi'
-          git config user.email 'al.jal.abadi@gmail.com'
+          git config user.name '$MAINTAINER_NAME'
+          git config user.email '$MAINTAINER_EMAIL'
           git remote add bioc git@git.bioconductor.org:packages/mixOmics.git
           #--- push
           git fetch --all # for logs in case of failure
           current_branch=${{ github.ref_name }}
           git push bioc $current_branch:$current_branch
         env:
-          SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY_AL }}
+          SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY_BIOC_MAINTAINER }}
           BIOC_HOST: ${{ secrets.BIOC_HOST }}
+          MAINTAINER_NAME: ${{ secrets.MAINTAINER_NAME }}
+          MAINTAINER_EMAIL: ${{ secrets.MAINTAINER_EMAIL }}
 
       - name: Upload Logs
         if: always()
