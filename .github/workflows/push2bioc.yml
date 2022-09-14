@@ -43,7 +43,9 @@ jobs:
           if [  "${{ github.event.inputs.push }}" == "yes" ]; then
             git push bioc $current_branch:$current_branch
           else
-            git diff $current_branch -- bioc/$current_branch
+            # show diffs
+            git log $current_branch..bioc/$current_branch --oneline --decorate
+            git log bioc/$current_branch..$current_branch --oneline --decorate
           fi
         env:
           SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY_BIOC_MAINTAINER }}
