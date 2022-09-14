@@ -1,4 +1,10 @@
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      push:
+        description: "Type 'yes' to push. Otherwise, only diff with remote is shown."
+        required: true
+        default: "show diff only"
 
 name: "Push to Bioconductor"
 
@@ -34,7 +40,11 @@ jobs:
           #--- push
           git fetch --all # for logs in case of failure
           current_branch=${{ github.ref_name }}
-          git push bioc $current_branch:$current_branch
+          if [  "${{ github.event.inputs.push }}" == "yes" ]; then
+            git push bioc $current_branch:$current_branch
+          else
+            git diff $current_branch -- bioc/$current_branch
+          fi
         env:
           SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY_BIOC_MAINTAINER }}
           BIOC_HOST: ${{ secrets.BIOC_HOST }}
