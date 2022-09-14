@@ -1,8 +1,8 @@
 on:
   workflow_dispatch:
     inputs:
-      push:
-        description: "Type 'yes' to push. Otherwise, only diff with remote is shown."
+      action:
+        description: "Type 'push' to push, 'pull' to pull latest changes from Bioconductor's remote. Otherwise, only diff with remote is shown."
         required: true
         default: "show diff only"
 
@@ -37,11 +37,14 @@ jobs:
           git config user.name '$MAINTAINER_NAME'
           git config user.email '$MAINTAINER_EMAIL'
           git remote add bioc git@git.bioconductor.org:packages/mixOmics.git
-          #--- push
+          #---
           git fetch --all # for logs in case of failure
           current_branch=${{ github.ref_name }}
-          if [  "${{ github.event.inputs.push }}" == "yes" ]; then
+          if [  "${{ github.event.inputs.action }}" == "push" ]; then
             git push bioc $current_branch:$current_branch
+          elif [  "${{ github.event.inputs.action }}" == "pull" ]; then
+            git merge -X theirs bioc/$current_branch --no-edit
+            git push origin $current_branch:$current_branch
           else
             # show diffs
             git log $current_branch..bioc/$current_branch --oneline --decorate
