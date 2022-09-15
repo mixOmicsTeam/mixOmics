@@ -96,3 +96,101 @@ test_that("predict.mint.splsda works", code = {
     pred_ref <- readRDS(system.file("testdata", "predict.mint.splsda.rda", package = 'mixOmics'))
     expect_equal(pred_ref, pred)
 })
+
+test_that("(predict:error): catches when colnames(newdata) differs from colnames(X)", {
+    
+    data(breast.TCGA) # load in the data
+
+    # extract data
+    X.train = list(mirna = breast.TCGA$data.train$mirna,
+                   mrna = breast.TCGA$data.train$mrna)
+    
+    X.test = list(mirna = breast.TCGA$data.test$mirna,
+                  mrna = breast.TCGA$data.test$mrna)
+    
+    Y.train = breast.TCGA$data.train$subtype
+    
+    # use optimal values from the case study on mixOmics.org
+    optimal.ncomp = 2
+    optimal.keepX = list(mirna = c(10,5),
+                         mrna = c(26, 16))
+    
+    # set design matrix
+    design = matrix(0.1, ncol = length(X.train), nrow = length(X.train),
+                    dimnames = list(names(X.train), names(X.train)))
+    diag(design) = 0
+    
+    # generate model
+    final.diablo.model = block.splsda(X = X.train, Y = Y.train, ncomp = optimal.ncomp, # set the optimised DIABLO model
+                                      keepX = optimal.keepX, design = design)
+    
+    
+    # create new test data with one dataframe being reordered
+    new.var.order = sample(1:dim(X.test$mrna)[2])
+    X.test.reorder <- X.test
+    X.test.reorder$mrna <- X.test.reorder$mrna[, new.var.order]
+    
+    
+    X.test.new.feat <- X.test
+    colnames(X.test.new.feat$mrna)[1] <- "random.feature.name"
+    
+    # ---------------------------------------------------------------------------- #
+    
+    # should raise error about mismatching ORDERS of features
+    expect_error(predict(final.diablo.model, newdata = X.test.reorder),
+                 "The order of features in 'object$X$mrna' is different to 'newdata$mrna'. Please ensure that you adjust these to the same order",
+                 fixed = T)
+
+    # should raise error about mismatching SETS of features
+    expect_error(predict(final.diablo.model, newdata = X.test.new.feat),
+                 "The set of features in 'object$X$mrna' is different to 'newdata$mrna'. Please ensure they have the same features.",
+                 fixed = T)
+})
+
+
+# test_that("predict.block.splsda works on reordered test data", code = {
+#     data(breast.TCGA) # load in the data
+#     
+#     X.train = list(mirna = breast.TCGA$data.train$mirna,
+#                    mrna = breast.TCGA$data.train$mrna)
+#     
+#     X.test = list(mirna = breast.TCGA$data.test$mirna,
+#                   mrna = breast.TCGA$data.test$mrna)
+#     
+#     Y.train = breast.TCGA$data.train$subtype
+#     Y.test = breast.TCGA$data.test$subtype
+#     
+#     optimal.ncomp = 2
+#     optimal.keepX = list(mirna = c(10,5),
+#                          mrna = c(26, 16))
+#     
+#     design = matrix(0.1, ncol = length(X.train), nrow = length(X.train), 
+#                     dimnames = list(names(X.train), names(X.train)))
+#     diag(design) = 0 
+#     
+#     final.diablo.model = block.splsda(X = X.train, Y = Y.train, ncomp = optimal.ncomp, # set the optimised DIABLO model
+#                                       keepX = optimal.keepX, design = design)
+#     
+#     
+#     # create new test data with one dataframe being reordered
+#     new.var.order = sample(1:dim(X.test$mirna)[2])
+#     
+#     X.test.dup <- X.test
+#     X.test.dup$mirna <- X.test.dup$mirna[, new.var.order]
+#     
+#     predict.diablo = predict(final.diablo.model, newdata = X.test)
+#     predict.diablo.reordered = predict(final.diablo.model, newdata = X.test.dup)
+#     
+#     homogenity <- matrix(NA, nrow = 2, ncol = 3)
+#     colnames(homogenity) <- c("max.dist", "centroids.dist", "mahalanobis.dist")
+#     rownames(homogenity) <- c("mirna", "mrna")
+#     
+#     for (dist in colnames(homogenity)) {
+#         for (block in rownames(homogenity)) {
+#             homogenity[block, dist] = all(predict.diablo$class[[dist]][[block]] == 
+#                                               predict.diablo.reordered$class[[dist]][[block]])
+#         }
+#     }
+#     
+#     expect_true(all(homogenity))
+# })
