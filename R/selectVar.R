@@ -137,6 +137,7 @@ selectVar.rgcca <- selectVar.mixo_pls
 get.name.and.value <- function(x,comp)
 {
     value <- data.frame(value.var = x[,comp])
+    rownames(value) <- rownames(x)
     value <- value[abs(value$value.var) > .Machine$double.eps,,drop=FALSE]
     value <- value[order(-abs(value$value.var)),,drop=FALSE]
     
