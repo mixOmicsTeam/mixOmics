@@ -234,19 +234,10 @@ cim <-
                        "mixo_mlspls")
         object.block.pls = c("block.pls",
                              "block.spls")
-        object.all = c("pca",
-                       "spca",
-                       "ipca",
-                       "sipca",
-                       "mixo_mlsplsda",
-                       "mixo_splsda",
-                       "mixo_plsda",
-                       "rcc",
-                       "mixo_pls",
-                       "mixo_spls",
-                       "mixo_mlspls",
-                       "block.pls",
-                       "block.spls")
+        object.all = c(object.single.omics,
+                       object.rcc,
+                       object.pls,
+                       object.block.pls)
         
         #-- checking general input parameters -------------------------------------
         #--------------------------------------------------------------------------#
