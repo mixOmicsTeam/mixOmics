@@ -148,7 +148,82 @@ auroc.list <-
     ...) 
   {
     
+    # checks
+    base.levels <- levels(objects[[1]]$Y)
+    base.ncomp <- objects[[1]]$ncomp
     
+    if (length(objects) > 6) {
+      stop("Can take a maximum of SIX (s)plsda objects")
+    }
+    
+    for (object in objects) {
+      if (!(any(class(object) %in% c("mix_plsda", "mixo_splsda")))) {
+        stop("Combined auroc can only take 'plsda' and 'splsda' objects",
+             call. = FALSE)
+      }
+      
+      if (length(setdiff(base.levels, levels(object$Y))) != 0) {
+        stop("Combined auroc must have models which utilise the same response variable",
+             call. = FALSE)
+      }
+      
+      if (base.ncomp != object$ncomp) {
+        stop("Combined auroc must have models which have the same ncomp",
+             call. = FALSE)
+      }
+    }
+    
+    if (is.null(roc.comp)) { roc.comp <- base.ncomp }
+    if (length(roc.comp) != 1) { stop("`roc.comp' must be a single integer") }
+    
+    auc.list <- list()
+    df <- data.frame(matrix(NA, nrow=0, ncol=4))
+    
+    for (idx in seq_len(length(objects))) {
+      
+      object <- objects[[idx]]
+      
+      data <- list()
+      statauc.res <- list()
+      
+      newdata <- object$input.X
+      data$outcome <- as.factor(object$Y)
+      
+      res.predict = predict.mixo_spls(object, newdata = newdata,
+                                      dist = "max.dist")$predict
+      data$data <- res.predict[,,roc.comp]
+      temp = statauc(data)
+      auc.list[[names(objects)[idx]]] <- temp[[1]]
+      temp$df[, "model"] <- rep(names(objects)[idx], nrow(temp$df))
+      df <- rbind(df, temp$df)
+    }
+    df$Outcome <- substr(df$Outcome, start = 1, stop=regexpr(":", df$Outcome)-1)
+    
+    if(is.null(title)) {title = paste0("ROC Curve Using Comp(s): ", paste0(seq_len(roc.comp), collapse = ', ')) }
+    
+    linetypes <- c("solid", "dotted", "dotdash", "twodash", "dashed", "longdash")
+    
+    p = ggplot(df, aes(x=Specificity, y=Sensitivity)) + 
+      geom_line(aes(linetype=model, color=Outcome), size = 1.1) +
+      xlab("100 - Specificity (%)") + 
+      ylab("Sensitivity (%)") + 
+      scale_x_continuous(breaks=seq(0, 100, by = 10)) + 
+      scale_y_continuous(breaks=seq(0, 100, by = 10))+
+      scale_linetype_manual(values=linetypes[1:length(objects)])
+    p = p + 
+      geom_abline(intercept = 1) + 
+      theme(legend.key.size = 
+              unit(1.5, "cm"), 
+            plot.title = element_text(lineheight=.8, face="bold"), 
+            legend.title = element_text(size=14, face="bold")) + 
+      ggtitle(title) + 
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    if (plot) { plot(p) }
+    if (print) { print(auc.list) }
+    
+    return(invisible(list(auc=auc.list,
+                          graph=p)))
     
   }
 
