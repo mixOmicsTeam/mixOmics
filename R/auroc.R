@@ -147,7 +147,7 @@ auroc.mixo_splsda <- auroc.mixo_plsda
 #' @export
 auroc.list <- 
   function(
-    objects,
+    object,
     plot = TRUE,
     roc.comp = NULL,
     title = NULL,
@@ -157,30 +157,30 @@ auroc.list <-
     
     # set baseline ncomp and response levels to check all objects against
     # these need to be constant so any deviation from these results in an error
-    base.levels <- levels(objects[[1]]$Y)
-    base.ncomp <- objects[[1]]$ncomp
+    base.levels <- levels(object[[1]]$Y)
+    base.ncomp <- object[[1]]$ncomp
     
     # for the sake of visual clutter as well as distinguishing them via linetypes
     # via ggplot, a maximum of 6 models can be handled
-    if (length(objects) > 6) {
+    if (length(object) > 6) {
       stop("Can take a maximum of SIX (s)plsda objects")
     }
     
     # apply checks on each model
-    for (object in objects) {
+    for (obj in object) {
       
       # check it is a plsda or splsda object
-      if (!(any(class(object) %in% c("mixo_plsda", "mixo_splsda")))) {
+      if (!(any(class(obj) %in% c("mixo_plsda", "mixo_splsda")))) {
         stop("Combined auroc can only take 'plsda' and 'splsda' objects",
              call. = FALSE)
       }
       # check that the levels of the response variable is consistent
-      if (length(setdiff(base.levels, levels(object$Y))) != 0) {
+      if (length(setdiff(base.levels, levels(obj$Y))) != 0) {
         stop("Combined auroc must have models which utilise the same response variable",
              call. = FALSE)
       }
       # check the ncomp is consistent
-      if (base.ncomp != object$ncomp) {
+      if (base.ncomp != obj$ncomp) {
         stop("Combined auroc must have models which have the same ncomp",
              call. = FALSE)
       }
@@ -193,24 +193,25 @@ auroc.list <-
     auc.list <- list()
     df <- data.frame(matrix(NA, nrow=0, ncol=4))
     
-    for (idx in seq_len(length(objects))) { # for each model
+    for (idx in seq_len(length(object))) { # for each model
       
-      object <- objects[[idx]]
+      obj <- object[[idx]]
       
       data <- list()
       statauc.res <- list()
       
       # use all training data as testing data - note this likely results in overestimated efficacy
-      newdata <- object$input.X 
-      data$outcome <- as.factor(object$Y)
+      newdata <- obj$input.X 
+      #browser()
+      data$outcome <- as.factor(obj$Y)
       
       # generate predictions
-      res.predict = predict.mixo_spls(object, newdata = newdata,
+      res.predict = predict.mixo_spls(obj, newdata = newdata,
                                       dist = "max.dist")$predict
       data$data <- res.predict[,,roc.comp] # extract predictions on specified component 
       temp = statauc(data) # generate AUROC data
-      auc.list[[names(objects)[idx]]] <- temp[[1]] # extract auc values
-      temp$df[, "model"] <- rep(names(objects)[idx], nrow(temp$df)) # add model column to df
+      auc.list[[names(object)[idx]]] <- temp[[1]] # extract auc values
+      temp$df[, "model"] <- rep(names(object)[idx], nrow(temp$df)) # add model column to df
       df <- rbind(df, temp$df) # add all plot vertices to df
     }
     # output of statauc has the AUC values included in the Outcome column. This
@@ -231,7 +232,7 @@ auroc.list <-
       ylab("Sensitivity (%)") + 
       scale_x_continuous(breaks=seq(0, 100, by = 10)) + 
       scale_y_continuous(breaks=seq(0, 100, by = 10))+
-      scale_linetype_manual(values=linetypes[1:length(objects)])
+      scale_linetype_manual(values=linetypes[1:length(object)])
     p = p + 
       geom_abline(intercept = 1) + 
       theme(legend.key.size = 

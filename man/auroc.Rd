@@ -39,7 +39,7 @@ auroc(object, ...)
   ...
 )
 
-\method{auroc}{list}(objects, plot = TRUE, roc.comp = NULL, title = NULL, print = TRUE, ...)
+\method{auroc}{list}(object, plot = TRUE, roc.comp = NULL, title = NULL, print = TRUE, ...)
 
 \method{auroc}{mint.plsda}(
   object,
