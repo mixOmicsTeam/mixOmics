@@ -132,6 +132,26 @@ auroc.mixo_plsda <-
 #' @export
 auroc.mixo_splsda <- auroc.mixo_plsda
 
+
+# Multiple (s)PLSDA objects
+# ----------------------
+#' @rdname auroc
+#' @method auroc list
+#' @export
+auroc.list <- 
+  function(
+    objects,
+    plot = TRUE,
+    roc.comp = NULL,
+    title = NULL,
+    print = TRUE,
+    ...) 
+  {
+    
+    
+    
+  }
+
 # MINT object
 # ----------------------
 #' @rdname auroc

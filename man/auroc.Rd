@@ -7,12 +7,15 @@
 \alias{auroc.mint.plsda}
 \alias{auroc.mint.splsda}
 \alias{auroc.sgccda}
+\alias{auroc.list}
 \alias{auroc.mint.block.plsda}
 \alias{auroc.mint.block.splsda}
 \title{Area Under the Curve (AUC) and Receiver Operating Characteristic (ROC)
 curves for supervised classification}
 \usage{
 auroc(object, ...)
+
+\method{auroc}{list}(object, plot = TRUE, roc.comp = NULL, title = NULL, print = TRUE, ...)
 
 \method{auroc}{mixo_plsda}(
   object,
@@ -115,6 +118,16 @@ analysis function: "plsda", "splsda", "mint.plsda", "mint.splsda",
 \item{...}{external optional arguments for plotting - \code{line.col} for
 custom colors and \code{legend.title} for custom legend title}
 
+\item{plot}{Whether the ROC curves should be plotted, by default set to TRUE
+(see details).}
+
+\item{roc.comp}{Specify the component (integer) up to which the ROC
+will be calculated and plotted from the multivariate model, default to 1.}
+
+\item{title}{Character, specifies the title of the plot.}
+
+\item{print}{Logical, specifies whether the output should be printed.}
+
 \item{newdata}{numeric matrix of predictors, by default set to the training
 data set (see details).}
 
@@ -126,16 +139,6 @@ details).}
 multilevel decomposition for repeated measurements is required. A numeric
 matrix or data frame indicating the repeated measures on each individual,
 i.e. the individuals ID. See examples in \code{splsda}.}
-
-\item{plot}{Whether the ROC curves should be plotted, by default set to TRUE
-(see details).}
-
-\item{roc.comp}{Specify the component (integer) up to which the ROC
-will be calculated and plotted from the multivariate model, default to 1.}
-
-\item{title}{Character, specifies the title of the plot.}
-
-\item{print}{Logical, specifies whether the output should be printed.}
 
 \item{study.test}{For MINT objects, grouping factor indicating which samples
 of \code{newdata} are from the same study. Overlap with \code{object$study}
