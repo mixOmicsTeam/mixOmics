@@ -115,21 +115,28 @@ MCVfold.block.splsda <-
         # prediction of all samples for each test.keepX and  nrep at comp fixed
         folds.input = folds
         
+        n = nrow(X[[1]])
+        repeated.measure = 1:n
+        
         #-- define the folds --#
         if (validation ==  "Mfold")
         {
-            n = nrow(X[[1]])
-            repeated.measure = 1:n
             
-            if (is.null(folds) || !is.numeric(folds) || folds < 2 || folds > n)
-            {
-                stop("Invalid number of folds.")
-            } else {
+            if (is.null(folds) || !is.numeric(folds)) {
+                stop("'folds' need to be non-NULL and numeric")
+            } 
+            else if (folds < 2) {
+                stop("'folds' needs to be at least 2")  
+            } 
+            else if (folds > n) {
+                stop("'folds' cannot be greater than the number of input samples") 
+            } 
+            else {
                 M = round(folds)
             }
         } else if (validation ==  "loo") {
             M = n
-            if(nrepeat != 1) stop("nrepeat should be set to 1 with validation='loo'\n")
+            if(nrepeat != 1) { stop("nrepeat should be set to 1 with validation='loo'\n") }
         }
         
         all_folds <- lapply(seq_len(nrepeat), function(nrep) {
