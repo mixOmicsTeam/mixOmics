@@ -199,11 +199,16 @@ mint.block.plsda <- function(X,
         all.outputs = all.outputs
     )
     
+    # calculate weights for each dataset
+    weights = get.weights(result$variates, indY = result$indY)
+    
     # choose the desired output from 'result'
     out = list(
         call = match.call(),
         X = result$A[-result$indY],
         Y = Y.input,
+        indY = result$indY,
+        weights = weights,
         ind.mat = result$A[result$indY][[1]],
         ncomp = result$ncomp,
         mode = result$mode,
