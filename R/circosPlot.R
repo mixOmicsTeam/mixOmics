@@ -104,7 +104,7 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
              ...)
     {
         
-        if (inherits(object, "block.splsda")) {
+        if (inherits(object, c("block.plsda", "block.splsda"))) {
             indY <- object$indY
             object$variates[indY] <- NULL
             object$loadings[indY] <-  NULL
