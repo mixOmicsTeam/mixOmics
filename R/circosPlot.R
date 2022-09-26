@@ -130,8 +130,8 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
         ##############################
         
         # check input object
-        if (!(is(object, "block.splsda") | is(object, "block.spls") ))
-            stop("circosPlot is only available for 'block.spls(da)' objects")
+        if (!(inherits(object, c("block.plsda", "block.splsda", "block.pls", "block.spls"))))
+            stop("circosPlot is only available for 'block.(s)pls(da)' objects")
         
         if (length(object$X) < 2)
             stop("This function is only available when there are more than 3 blocks
