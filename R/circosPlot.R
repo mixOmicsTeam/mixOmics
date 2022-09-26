@@ -12,8 +12,8 @@
 #' If a vector of length 2 is provided, the smaller value will correspond to
 #' a similarity values designated by \code{cutoff} argument, while the 
 #' larger value will be used for a link with perfect similarity (1), if any.
-#' @param object An object of class inheriting from \code{"block.splsda"} or
-#'   \code{"blocks.spls"}.
+#' @param object An object of class inheriting from \code{"block.plsda"},
+#' \code{"block.splsda"}, \code{"block.pls"} or \code{"blocks.spls"}.
 #' @param comp Numeric vector indicating which component to plot. Default to
 #' all
 #' @param cutoff Only shows links with a correlation higher than \code{cutoff}

@@ -54,8 +54,8 @@
 \method{circosPlot}{block.pls}(object, ..., group = NULL, Y.name = "Y")
 }
 \arguments{
-\item{object}{An object of class inheriting from \code{"block.splsda"} or
-\code{"blocks.spls"}.}
+\item{object}{An object of class inheriting from \code{"block.plsda"},
+\code{"block.splsda"}, \code{"block.pls"} or \code{"blocks.spls"}.}
 
 \item{comp}{Numeric vector indicating which component to plot. Default to
 all}
