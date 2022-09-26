@@ -440,6 +440,11 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
 #' @export
 circosPlot.block.splsda <- .circosPlot
 
+#' @method circosPlot block.plsda
+#' @rdname circosPlot
+#' @export
+circosPlot.block.plsda <- .circosPlot
+
 #' @method circosPlot block.spls
 #' @rdname circosPlot
 #' @param group The grouping factor used when \code{line = TRUE}
@@ -469,6 +474,11 @@ circosPlot.block.spls <- function(object, ..., group = NULL, Y.name = 'Y')
         block.names
     .circosPlot(object, ...)
 }
+
+#' @method circosPlot block.pls
+#' @rdname circosPlot
+#' @export
+circosPlot.block.pls <- circosPlot.block.spls
 
 ## ------------- circosPlot utils
 drawIdeogram = function(R, xc=400, yc=400, cir, W,
