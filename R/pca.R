@@ -105,6 +105,7 @@
 #' 325 (2012)
 #' @keywords algebra
 #' @export
+#' @importFrom RSpectra svds
 #' @example ./examples/pca-examples.R
 pca <- function(X,
                 ncomp = 2,
@@ -254,13 +255,13 @@ pca <- function(X,
         if (logratio %in% c('CLR', 'none')) {
             #-- if data is complete use singular value decomposition
             #-- borrowed from 'prcomp' function
-            res = svd(X, nu = 0)
+            res = svds(X, k = ncomp, nu = 0)
             sdev <- res$d
             loadings <- res$v
         } else {
             # if 'ILR', transform data and then back transform in clr space (from RobCompositions package)
             # data have been transformed above
-            res = svd(X, nu = max(1, nrow(X) - 1))
+            res = svds(X, k = ncomp, nu = max(1, nrow(X) - 1))
             sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))  # Note: what differs with RobCompo is that they use: cumsum(eigen(cov(X))$values)/sum(eigen(cov(X))$values)
             # calculate loadings using back transformation to clr-space
             loadings = V %*% res$v[, 1:ncomp, drop = FALSE]
