@@ -251,7 +251,7 @@ pca <- function(X,
         sdev <- res$eig
         loadings <- res$p
     } else {
-        
+        X <- matrix(X, ncol=ncol(X), nrow=nrow(X))
         if (logratio %in% c('CLR', 'none')) {
             #-- if data is complete use singular value decomposition
             #-- borrowed from 'prcomp' function
@@ -261,7 +261,7 @@ pca <- function(X,
         } else {
             # if 'ILR', transform data and then back transform in clr space (from RobCompositions package)
             # data have been transformed above
-            res = svds(X, k = ncomp, nu = max(1, nrow(X) - 1))
+            res = svds(X, k = ncomp, nu = max(1, ncomp))
             sdev = res$d[1:ncomp] / sqrt(max(1, nrow(X) - 1))  # Note: what differs with RobCompo is that they use: cumsum(eigen(cov(X))$values)/sum(eigen(cov(X))$values)
             # calculate loadings using back transformation to clr-space
             loadings = V %*% res$v[, 1:ncomp, drop = FALSE]
