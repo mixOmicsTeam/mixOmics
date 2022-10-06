@@ -83,7 +83,7 @@ test_that("plotLoadings margin errrors is handled properly", code = {
     gene = nutrimouse$gene
     lipid = nutrimouse$lipid
     ## extend feature names
-    suff <- "-a-long-suffix-from-abolutely-nowhere-which-is-gonna-be-longer-than-margins"
+    suff <- "-a-long-suffix-from-abolutely-nowhere-which-is-gonna-be-longer-than-margins-and-you-best-believe-that-this-suffix-is-too-long"
     colnames(gene) <- paste0(colnames(gene), suff)
     colnames(lipid) <- paste0(colnames(lipid), suff)
     data = list(gene = gene, lipid = lipid)
