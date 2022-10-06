@@ -23,7 +23,8 @@ Imports: igraph,
          stats,
          ggrepel,
          BiocParallel,
-         utils
+         utils,
+         RSpectra
 Suggests: BiocStyle, 
           knitr, 
           rmarkdown, 
