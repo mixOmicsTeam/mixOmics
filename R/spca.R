@@ -70,6 +70,7 @@
 #' Multivariate Analysis} \bold{99}, 1015-1034.
 #' @keywords algebra
 #' @export
+#' @importFrom RSpectra svds
 #' @example ./examples/spca-examples.R
 spca <- 
     function(X, 
@@ -257,7 +258,7 @@ spca <-
         for(h in 1:ncomp){
             
             #--computing the SVD--#
-            svd.X = svd(X.temp, nu = 1, nv = 1)
+            svd.X = svds(X.temp, k = h, nu = 1, nv = 1)
             u = svd.X$u[,1]
             loadings = svd.X$v[,1]#svd.X$d[1]*svd.X$v[,1]
             v.stab = FALSE
