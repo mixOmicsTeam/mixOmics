@@ -256,6 +256,8 @@ spca <-
         
         #--loop on h--#
         for(h in 1:ncomp){
+          
+            if (logratio %in% c("CLR", "ILR")) {X.temp <- matrix(X.temp, ncol=ncol(X.temp), nrow=nrow(X.temp))}
             
             #--computing the SVD--#
             svd.X = svds(X.temp, k = h, nu = 1, nv = 1)
