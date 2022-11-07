@@ -199,6 +199,38 @@ We welcome community contributions concordant with [our code of conduct](https:/
 
 To report a bug (or offer a solution for a bug!) visit:  https://github.com/mixOmicsTeam/mixOmics/issues. We fully welcome and appreciate well-formatted and detailed pull requests. Preferably with tests on our datasets.
 
+<details>
+<summary>
+Set up development environment
+</summary>
+
+* Install the latest version of R
+* Install RStudio
+* Clone this repo, checkout master branch, pull origin and then run:
+
+```r
+install.packages("renv", Ncpus=4)
+install.packages("devtools", Ncpus=4)
+
+# restore the renv environment
+renv::restore()
+
+# or to initialise renv
+# renv::init(bioconductor = TRUE)
+
+# update the renv environment if needed
+# renv::snapshot()
+
+# test installation
+devtools::install()
+devtools::test()
+
+# complete package check (takes a while)
+devtools::check()
+```
+
+</details>
+
 ### Discussion forum
 
 We wish to make our discussions transparent so please direct your analysis questions to our discussion forum https://mixomics-users.discourse.group. This forum is aimed to host discussions on choices of multivariate analyses, as well as comments and suggestions to improve the package. We hope to create an active community of users, data analysts, developers and R programmers alike! Thank you!

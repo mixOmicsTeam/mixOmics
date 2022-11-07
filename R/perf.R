@@ -107,25 +107,38 @@
 #' @param cpus Number of cpus to use when running the code in parallel.
 #' @param ... not used
 #' @return For PLS and sPLS models, \code{perf} produces a list with the
-#' following components for every repeat: \item{MSEP}{Mean Square Error
-#' Prediction for each \eqn{Y} variable, only applies to object inherited from
-#' \code{"pls"}, and
-#' \code{"spls"}.} \item{R2}{a matrix of \eqn{R^2} values of the
-#' \eqn{Y}-variables for models with \eqn{1, \ldots ,}\code{ncomp} components,
-#' only applies to object inherited from \code{"pls"}, and \code{"spls"}.}
+#' following components for every repeat: 
+#' \item{MSEP}{Mean Square Error Prediction for each \eqn{Y} variable, only 
+#' applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
+#' available when in regression (s)PLS.} 
+#' \item{RMSEP}{Root Mean Square Error Prediction for each \eqn{Y} variable, only 
+#' applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
+#' available when in regression (s)PLS.} 
+#' \item{R2}{a matrix of \eqn{R^2} values of the \eqn{Y}-variables for models 
+#' with \eqn{1, \ldots ,}\code{ncomp} components, only applies to object
+#' inherited from \code{"pls"}, and \code{"spls"}. Only available when in 
+#' regression (s)PLS.}
 #' \item{Q2}{if \eqn{Y} contains one variable, a vector of \eqn{Q^2} values
 #' else a list with a matrix of \eqn{Q^2} values for each \eqn{Y}-variable.
 #' Note that in the specific case of an sPLS model, it is better to have a look
 #' at the Q2.total criterion, only applies to object inherited from
-#' \code{"pls"}, and \code{"spls"}} \item{Q2.total}{a vector of \eqn{Q^2}-total
-#' values for models with \eqn{1, \ldots ,}\code{ncomp} components, only
-#' applies to object inherited from \code{"pls"}, and \code{"spls"}}
-#' \item{features}{a list of features selected across the folds
-#' (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
-#' \code{keepY} parameters from the input object.} \item{cor.tpred,
-#' cor.upred}{Correlation between the predicted and actual components for X (t)
-#' and Y (u)} \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
-#' predicted and actual components for X (t) and Y (u)} \item{error.rate}{ For
+#' \code{"pls"}, and \code{"spls"}. Only available when in regression (s)PLS.} 
+#' \item{Q2.total}{a vector of \eqn{Q^2}-total values for models with \eqn{1, 
+#' \ldots ,}\code{ncomp} components, only applies to object inherited from 
+#' \code{"pls"}, and \code{"spls"}. Available in both (s)PLS modes.}
+#' \item{RSS}{Residual Sum of Squares across all selected features and the 
+#' components.}
+#' \item{PRESS}{Predicted Residual Error Sum of Squares across all selected 
+#' features and the components.}
+#' \item{features}{a list of features selected across the 
+#' folds (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
+#' \code{keepY} parameters from the input object. Note, this will be \code{NULL} 
+#' if using standard (non-sparse) PLS.} 
+#' \item{cor.tpred, cor.upred}{Correlation between the 
+#' predicted and actual components for X (t) and Y (u)} 
+#' \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
+#' predicted and actual components for X (t) and Y (u)} 
+#' \item{error.rate}{ For
 #' PLS-DA and sPLS-DA models, \code{perf} produces a matrix of classification
 #' error rate estimation. The dimensions correspond to the components in the
 #' model and to the prediction method used, respectively. Note that error rates
@@ -134,7 +147,8 @@
 #' reported for component 3 for \code{keepX = 20} already includes the fitted
 #' model on components 1 and 2 for \code{keepX = 20}). For more advanced usage
 #' of the \code{perf} function, see \url{www.mixomics.org/methods/spls-da/} and
-#' consider using the \code{predict} function.} \item{auc}{Averaged AUC values
+#' consider using the \code{predict} function.} 
+#' \item{auc}{Averaged AUC values
 #' over the \code{nrepeat}}
 #' 
 #' For mint.splsda models, \code{perf} produces the following outputs:
@@ -539,8 +553,8 @@ perf.mixo_spls  <- perf.mixo_pls
             if(sum(is.na(Y.hat))>0) stop('Predicted Y values include NA')  
             
             # replaced h by 1; Y.hat is the prediction of the test samples for all q variable in comp h = 1
-            Ypred[omit, , h] = Y.hat[, , 1]
-            MSEP.mat[omit, , h] = (Y.test - Y.hat[, , 1])^2
+            Ypred[omit, nzv.Y, h] = Y.hat[, , 1]
+            MSEP.mat[omit, nzv.Y, h] = (Y.test[, nzv.Y] - Y.hat[, , 1])^2
             
             
             # Q2 criterion: buidling directly from spls object
@@ -559,7 +573,7 @@ perf.mixo_spls  <- perf.mixo_pls
             t.pred.cv[omit,h] = t.pred    # needed for tuning
             b.pred = crossprod(Y.test, t.pred)
             b.pred.cv = b.pred/ drop(sqrt(crossprod(b.pred)))
-            u.pred.cv[omit,h] = Y.test %*% b.cv  # needed for tuning, changed instead of b.pred.cv
+            u.pred.cv[omit,h] = Y.test[, nzv.Y] %*% b.cv  # needed for tuning, changed instead of b.pred.cv
             
             # predicted reg coeff, could be removed
             e.pred.cv = crossprod(as.matrix(Y.test), Y.test %*% b.pred.cv) / drop(crossprod(Y.test %*% b.pred))
@@ -571,19 +585,19 @@ perf.mixo_spls  <- perf.mixo_pls
             # deflate matrices X      
             #-- mode classic
             if (mode == "classic"){
-                Y.train = Y.train - t.cv %*% t(b.cv)  # could be pred on b
-                Y.test = Y.test - t.pred %*% t(b.cv)
+                Y.train[, nzv.Y] = Y.train[, nzv.Y] - t.cv %*% t(b.cv)  # could be pred on b
+                Y.test[, nzv.Y] = Y.test[, nzv.Y] - t.pred %*% t(b.cv)
             }
             #-- mode regression
             if (mode == "regression"){
                 Y.train = Y.train - t.cv %*% t(d.cv) # could be pred d.pred.cv? does not decrease enough
-                Y.test = Y.test - Y.hat[, , 1]   # == Y.test - t.pred %*% t(d.cv) 
+                Y.test[, nzv.Y] = Y.test[, nzv.Y] - Y.hat[, , 1]   # == Y.test - t.pred %*% t(d.cv) 
             }
             
             #-- mode canonical  ## KA added
             if (mode == "canonical"){
                 Y.train = Y.train - u.cv %*% t(e.cv)  # could be pred on e
-                Y.test = Y.test - (Y.test %*% b.cv) %*% t(e.cv)  # here u.pred = Y.test %*% b.cv (b.pred.cv gives similar results)
+                Y.test = Y.test - (Y.test[, nzv.Y] %*% b.cv) %*% t(e.cv)  # here u.pred = Y.test %*% b.cv (b.pred.cv gives similar results)
             }
             #-- mode invariant: Y is unchanged
             

@@ -1,6 +1,7 @@
 context("auroc")
 
 test_that("auroc works", {
+    
     data(breast.tumors)
     set.seed(1)
     test=sample(1:47,5,replace=FALSE)
@@ -11,7 +12,7 @@ test_that("auroc works", {
     
     res.plsda <- plsda(X, Y, ncomp = 2)
     
-    auc.plsda=auroc(res.plsda,plot = TRUE,roc.comp = 1)
+    auc.plsda=.quiet(auroc(res.plsda,plot = TRUE,roc.comp = 1))
     
     expect_equal(matrix(auc.plsda$Comp1),
     rbind(0.863, 2.473e-05))

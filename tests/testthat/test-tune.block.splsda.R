@@ -69,3 +69,39 @@ test_that("tune.block.splsda works with and without parallel without auc", {
     # expect_equal(tune11$choice.keepX,tune42$choice.keepX)
     
 })
+
+test_that("(tune.block.splsda:error): catches invalid values of 'folds'", {
+    
+    library(mixOmics)
+    
+    data("breast.TCGA")
+    
+    samples <- c(1:3, 50:52, 79:81)
+    data = list(miRNA = breast.TCGA$data.train$mirna[samples,], 
+                mRNA = breast.TCGA$data.train$mrna[samples,], 
+                proteomics = breast.TCGA$data.train$protein[samples,])
+    Y = breast.TCGA$data.train$subtype[samples]
+
+    design = matrix(0.1, ncol = length(data), nrow = length(data), dimnames = list(names(data), names(data)))
+    diag(design) = 0 # set diagonal to 0s
+
+    # set grid of values for each component to test
+    test.keepX = list (mRNA = c(1,2), 
+                       miRNA = c(1,2), 
+                       proteomics = c(1,2))
+    
+    expect_error(tune.block.splsda(X = data, Y = Y, ncomp = 2, 
+                              test.keepX = test.keepX, design = design, folds=10),
+                 "'folds' cannot be greater than the number of input samples",
+                 fixed=T)
+    
+    expect_error(tune.block.splsda(X = data, Y = Y, ncomp = 2, 
+                              test.keepX = test.keepX, design = design, folds=1),
+                 "'folds' needs to be at least 2",
+                 fixed=T)
+    
+    expect_error(tune.block.splsda(X = data, Y = Y, ncomp = 2, 
+                              test.keepX = test.keepX, design = design, folds="random.value"),
+                 "'folds' need to be non-NULL and numeric",
+                 fixed=T)
+})

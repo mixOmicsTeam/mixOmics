@@ -3,10 +3,10 @@
 \name{plot.tune}
 \alias{plot.tune}
 \alias{plot.tune.spls}
-\alias{plot.tune.splsda}
 \alias{plot.tune.block.splsda}
 \alias{plot.tune.spca}
 \alias{plot.tune.spls1}
+\alias{plot.tune.splsda}
 \title{Plot model performance}
 \usage{
 \method{plot}{tune.spls}(
@@ -20,8 +20,6 @@
   sd = NULL,
   ...
 )
-
-\method{plot}{tune.splsda}(x, optimal = TRUE, sd = NULL, col, ...)
 
 \method{plot}{tune.block.splsda}(x, sd = NULL, col, ...)
 
@@ -53,10 +51,10 @@ shows the standard deviation if sd=TRUE}
 
 \item{...}{Not currently used.}
 
-\item{optimal}{If TRUE, highlights the optimal keepX per component}
-
 \item{col}{character (or symbol) color to be used, possibly vector. One
 colour per component.}
+
+\item{optimal}{If TRUE, highlights the optimal keepX per component}
 }
 \value{
 none

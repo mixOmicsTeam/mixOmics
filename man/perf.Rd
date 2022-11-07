@@ -143,25 +143,38 @@ to 0.01.}
 }
 \value{
 For PLS and sPLS models, \code{perf} produces a list with the
-following components for every repeat: \item{MSEP}{Mean Square Error
-Prediction for each \eqn{Y} variable, only applies to object inherited from
-\code{"pls"}, and
-\code{"spls"}.} \item{R2}{a matrix of \eqn{R^2} values of the
-\eqn{Y}-variables for models with \eqn{1, \ldots ,}\code{ncomp} components,
-only applies to object inherited from \code{"pls"}, and \code{"spls"}.}
+following components for every repeat: 
+\item{MSEP}{Mean Square Error Prediction for each \eqn{Y} variable, only 
+applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
+available when in regression (s)PLS.} 
+\item{RMSEP}{Root Mean Square Error Prediction for each \eqn{Y} variable, only 
+applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
+available when in regression (s)PLS.} 
+\item{R2}{a matrix of \eqn{R^2} values of the \eqn{Y}-variables for models 
+with \eqn{1, \ldots ,}\code{ncomp} components, only applies to object
+inherited from \code{"pls"}, and \code{"spls"}. Only available when in 
+regression (s)PLS.}
 \item{Q2}{if \eqn{Y} contains one variable, a vector of \eqn{Q^2} values
 else a list with a matrix of \eqn{Q^2} values for each \eqn{Y}-variable.
 Note that in the specific case of an sPLS model, it is better to have a look
 at the Q2.total criterion, only applies to object inherited from
-\code{"pls"}, and \code{"spls"}} \item{Q2.total}{a vector of \eqn{Q^2}-total
-values for models with \eqn{1, \ldots ,}\code{ncomp} components, only
-applies to object inherited from \code{"pls"}, and \code{"spls"}}
-\item{features}{a list of features selected across the folds
-(\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
-\code{keepY} parameters from the input object.} \item{cor.tpred,
-cor.upred}{Correlation between the predicted and actual components for X (t)
-and Y (u)} \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
-predicted and actual components for X (t) and Y (u)} \item{error.rate}{ For
+\code{"pls"}, and \code{"spls"}. Only available when in regression (s)PLS.} 
+\item{Q2.total}{a vector of \eqn{Q^2}-total values for models with \eqn{1, 
+\ldots ,}\code{ncomp} components, only applies to object inherited from 
+\code{"pls"}, and \code{"spls"}. Available in both (s)PLS modes.}
+\item{RSS}{Residual Sum of Squares across all selected features and the 
+components.}
+\item{PRESS}{Predicted Residual Error Sum of Squares across all selected 
+features and the components.}
+\item{features}{a list of features selected across the 
+folds (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
+\code{keepY} parameters from the input object. Note, this will be \code{NULL} 
+if using standard (non-sparse) PLS.} 
+\item{cor.tpred, cor.upred}{Correlation between the 
+predicted and actual components for X (t) and Y (u)} 
+\item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
+predicted and actual components for X (t) and Y (u)} 
+\item{error.rate}{ For
 PLS-DA and sPLS-DA models, \code{perf} produces a matrix of classification
 error rate estimation. The dimensions correspond to the components in the
 model and to the prediction method used, respectively. Note that error rates
@@ -170,7 +183,8 @@ components for the specified \code{keepX} parameters (e.g. error rate
 reported for component 3 for \code{keepX = 20} already includes the fitted
 model on components 1 and 2 for \code{keepX = 20}). For more advanced usage
 of the \code{perf} function, see \url{www.mixomics.org/methods/spls-da/} and
-consider using the \code{predict} function.} \item{auc}{Averaged AUC values
+consider using the \code{predict} function.} 
+\item{auc}{Averaged AUC values
 over the \code{nrepeat}}
 
 For mint.splsda models, \code{perf} produces the following outputs:

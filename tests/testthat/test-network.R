@@ -39,3 +39,17 @@ test_that("network works for spls", {
 })
 
 unlink(list.files(pattern = "*.pdf"))
+
+
+test_that("network plot.graph parameter does not affect numerical output", {
+  data("nutrimouse")
+  X <- nutrimouse$gene
+  Y <- nutrimouse$lipid
+  
+  pls.obj <- pls(X, Y)
+  
+  network.obj.F <- network(pls.obj, plot.graph = F)
+  network.obj.T <- network(pls.obj, plot.graph = T)
+  
+  expect_equal(network.obj.F$M, network.obj.T$M)
+})

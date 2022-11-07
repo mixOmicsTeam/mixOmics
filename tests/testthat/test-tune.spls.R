@@ -12,7 +12,7 @@ test_that("tune.spls works with and without parallel", code = {
     RNGversion(.mixo_rng()) ## in case RNG changes!
     
     ## ----------- tune.spls works fine ----------- 
-    set.seed(42)
+    set.seed(12)
     tune.spls11 <-
         tune.spls(
             X = X,
@@ -25,11 +25,11 @@ test_that("tune.spls works with and without parallel", code = {
             nrepeat = nrepeat
         )
     expect_is(tune.spls11, "tune.spls")
-    expect_equal(c(comp1 = 5, comp2 = 10), tune.spls11$choice.keepX)
-    expect_equal(c(comp1 = 5, comp2 = 10), tune.spls11$choice.keepY)
+    expect_equal(c(comp1 = 10, comp2 = 5), tune.spls11$choice.keepX)
+    expect_equal(c(comp1 = 5, comp2 = 5), tune.spls11$choice.keepY)
     
     ## ----------- tune(method="spls") same as tune.spls ----------- 
-    set.seed(42)
+    set.seed(12)
     tune.spls12 <-
         tune(
             method = "spls",

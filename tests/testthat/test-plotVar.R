@@ -27,3 +27,22 @@ test_that("plotVar works for pls with var.names", {
   expect_true(all(df$names %in% as.character(unlist(var.names))))
   
 })
+
+test_that("plotVar works in block.(s)PLS1 cases", {
+  
+  data(breast.TCGA)
+  X <- list(miRNA = breast.TCGA$data.train$mirna[,1:10],
+            mRNA = breast.TCGA$data.train$mrna[,1:10])
+  
+  Y <- matrix(breast.TCGA$data.train$protein[,4], ncol=1)
+  rownames(Y) <- rownames(X$miRNA)
+  colnames(Y) <- "response"
+  
+  block.pls.result <- block.spls(X, Y, design = "full",
+                                 keepX = list(miRNA=c(3,3),
+                                              mRNA=c(3,3)))
+  
+  plotVar.result <- plotVar(block.pls.result, plot = FALSE)
+  
+  expect_equal(as.character(unique(plotVar.result$Block)), c("miRNA", "mRNA"))
+})

@@ -10,7 +10,7 @@ test_that("plotLoadings.spls works", code = {
     
     pl_res <- plotLoadings(toxicity.spls)
     
-    expect_is(pl_res, "data.frame")
+    expect_is(pl_res, "list")
     
 })
 
@@ -23,7 +23,7 @@ test_that("plotLoadings.splsda works", code = {
 
     pl_res <- plotLoadings(splsda.liver, comp = 1, method = 'median')
     
-    expect_is(pl_res, "data.frame")
+    expect_is(pl_res, "list")
     
 })
 
@@ -42,7 +42,7 @@ test_that("plotLoadings.block.splsda works", code = {
     
     pl_res <- plotLoadings(nutrimouse.sgccda,block=2)
     
-    expect_is(pl_res, "data.frame")
+    expect_is(pl_res, "list")
     
 })
 
@@ -55,9 +55,27 @@ test_that("plotLoadings.mint.splsda works", code = {
     res = mint.splsda(X = data, Y = type.id, ncomp = 3, keepX = c(10,5,15), study = exp)
     pl_res <- plotLoadings(res, contrib = "max")
     
-    expect_is(pl_res, "data.frame")
+    expect_is(pl_res, "list")
     
 })
+
+
+test_that("plotLoadings.mint.spls works", code = {
+    data(stemcells)
+    samples <- c(1:5,60:64)
+    X <- stemcells$gene[samples, 1:10]
+    Y <- stemcells$gene[samples+5, 1:10]
+    S <- as.character(stemcells$study[samples])
+    
+    res = mint.spls(X = X, Y = Y, ncomp = 3, 
+                    keepX = seq(3, 9, 3), 
+                    keepY = seq(3, 9, 3), 
+                    study = S)
+    pl_res <- plotLoadings(res, contrib = "max")
+    
+    expect_is(pl_res, "list")
+})
+
 
 test_that("plotLoadings margin errrors is handled properly", code = {
     data(nutrimouse)
@@ -65,7 +83,7 @@ test_that("plotLoadings margin errrors is handled properly", code = {
     gene = nutrimouse$gene
     lipid = nutrimouse$lipid
     ## extend feature names
-    suff <- "-a-long-suffix-from-abolutely-nowhere-which-is-gonna-be-longer-than-margins"
+    suff <- "-a-long-suffix-from-abolutely-nowhere-which-is-gonna-be-longer-than-margins-and-you-best-believe-that-this-suffix-is-too-long"
     colnames(gene) <- paste0(colnames(gene), suff)
     colnames(lipid) <- paste0(colnames(lipid), suff)
     data = list(gene = gene, lipid = lipid)
