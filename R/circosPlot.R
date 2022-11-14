@@ -36,6 +36,7 @@
 #' @param size.variables size of the variable labels
 #' @param size.labels size of the block labels
 #' @param legend Logical. Whether the legend should be added. Default is TRUE.
+#' @param legend.title String. Name of the legend. Defaults to "Expression".
 #' @param linkWidth Numeric. Specifies the range of sizes used for lines linking
 #' the correlated variables (see details). Must be of length 2 or 1. Default to c(1). See details.
 #' @param ... For object of class \code{block.splsda}, advanced plot parameters:
