@@ -33,7 +33,7 @@ jobs:
       docker_tag: ${{ steps.setup.outputs.docker_tag }}
     steps:
       - uses: rlespinasse/github-slug-action@v3.x
-      - uses: r-lib/actions/setup-r@master
+      - uses: r-lib/actions/setup-r@v2
       - name: Get R/Bioc versions
         id: setup
         run: |
@@ -91,7 +91,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up R ▶️
-        uses: r-lib/actions/setup-r@master
+        uses: r-lib/actions/setup-r@v2
         if: matrix.config.image == null
         with:
           r-version: ${{ matrix.config.r }}
