@@ -98,6 +98,7 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
              size.variables = 0.25,
              size.labels = 1,
              legend = TRUE,
+             legend.title = "Expression",
              linkWidth = 1,
              ...)
     {
@@ -403,7 +404,7 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
                    col = color.cor, pch = 19, cex=size.legend, bty = "n")
             # Second legend bottom righ corner
             if(line==TRUE)
-                legend(x=figSize-(circleR/3), y = (circleR/3), title="Expression",
+                legend(x=figSize-(circleR/3), y = (circleR/3), title=legend.title,
                        legend=levels(Y),  ## changed PAM50 to Y
                        col = lineCols, pch = 19, cex=size.legend, bty = "n",ncol=ncol.legend)
             # third legend top left corner
