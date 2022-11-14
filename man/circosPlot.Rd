@@ -22,6 +22,7 @@
   size.variables = 0.25,
   size.labels = 1,
   legend = TRUE,
+  legend.title = "Expression",
   linkWidth = 1,
   ...
 )
@@ -67,6 +68,8 @@ see examples.}
 \item{size.labels}{size of the block labels}
 
 \item{legend}{Logical. Whether the legend should be added. Default is TRUE.}
+
+\item{legend.title}{String. Name of the legend. Defaults to "Expression".}
 
 \item{linkWidth}{Numeric. Specifies the range of sizes used for lines linking
 the correlated variables (see details). Must be of length 2 or 1. Default to c(1). See details.}
