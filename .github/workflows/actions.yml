@@ -50,18 +50,18 @@ jobs:
             bioc="devel"
             r="$r_devel"
           fi
-          echo ::set-output name=r::$r
-          echo ::set-output name=bioc::$bioc
+          echo "r=$r" >> $GITHUB_OUTPUT
+          echo "bioc=$bioc" >> $GITHUB_OUTPUT
 
           ## Docker
           # Only Dockerise for 'master' or 'RELEASE_*' branches
           dockerise='false'
           [[ github.event_name != 'schedule' && ($BRANCH_NAME == "master" || $BRANCH_NAME =~ "release_") ]] && dockerise='true'
-          echo ::set-output name=dockerise::$dockerise
+          echo "dockerise=$dockerise" >> $GITHUB_OUTPUT
           # Docker tag is 'github' for master and the branch name for release branches
           docker_tag="github"
           [[ $BRANCH_NAME =~ "release_" ]] && docker_tag=$BRANCH_NAME
-          echo ::set-output name=docker_tag::$docker_tag
+          echo "docker_tag=$docker_tag" >> $GITHUB_OUTPUT
 
   R-CMD-check:
     needs: [gatekeeper, versions]
