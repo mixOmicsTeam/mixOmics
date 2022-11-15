@@ -405,6 +405,9 @@ predict.mixo_pls <-
                     newdata[which(!is.na(ind.match))] = lapply(which(!is.na(ind.match)), function(x){sweep(newdata[[x]], 2, STATS = attr(X[[x]], "scaled:center"))})
                 if (scale)
                     newdata[which(!is.na(ind.match))] = lapply(which(!is.na(ind.match)), function(x){sweep(newdata[[x]], 2, FUN = "/", STATS = attr(X[[x]], "scaled:scale"))})
+                if (any(unlist(lapply(newdata[which(!is.na(ind.match))], function(x){any(is.infinite(x))})))) {
+                  newdata[which(!is.na(ind.match))] <- lapply(which(!is.na(ind.match)), function(x){df <- newdata[[x]]; df[which(is.infinite(df))] <- NaN; return(df)})
+                }
                 
                 means.Y = matrix(attr(Y, "scaled:center"),nrow=nrow(newdata[[1]]),ncol=q,byrow=TRUE);
                 if (scale)
