@@ -471,7 +471,7 @@ internal_graphicModule <-
                 {
                     
                     p = p + geom_path(data = df.ellipse,
-                                      aes_string(x = paste0("Col", 2*(i - 1) + 1),
+                                      aes(x = paste0("Col", 2*(i - 1) + 1),
                                                  y = paste0("Col", 2 * i),
                                                  #label = "Block",
                                                  group = NULL),# shape = NULL),
