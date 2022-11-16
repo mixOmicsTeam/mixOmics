@@ -345,13 +345,14 @@ internal_graphicModule <-
                     if( !is.na(match(paste0("Col", 2*(i - 1) + 1),
                                      colnames(df.ellipse))))
                     {
+                      #browser()
                         p = p + geom_path(data = df.ellipse,
-                                          aes(x = paste0("Col", 2*(i - 1) + 1),
-                                                     y = paste0("Col", 2 * i),
-                                                     #label = "Block",
-                                                     group = NULL),#, shape = NULL),
-                                          color = unique(col.per.group)[i], linewidth =
-                                              point.lwd, inherit.aes = FALSE)
+                                          aes(x = .data[[paste0("Col", 2*(i - 1) + 1)]],
+                                              y = .data[[paste0("Col", 2 * i)]],
+                                              group = NULL),
+                                          color = unique(col.per.group)[i], 
+                                          linewidth = point.lwd, 
+                                          inherit.aes = FALSE)
                     }
                     
                 }
@@ -469,14 +470,14 @@ internal_graphicModule <-
             {
                 for (i in 1 : nlevels(df$group))
                 {
-                    
+                    #browser()
                     p = p + geom_path(data = df.ellipse,
-                                      aes(x = paste0("Col", 2*(i - 1) + 1),
-                                                 y = paste0("Col", 2 * i),
-                                                 #label = "Block",
-                                                 group = NULL),# shape = NULL),
-                                      color = unique(col.per.group)[i], size = point.lwd,
-                                      inherit.aes =FALSE)
+                                      aes(x = .data[[paste0("Col", 2*(i - 1) + 1)]],
+                                          y = .data[[paste0("Col", 2 * i)]],
+                                          group = NULL),
+                                      color = unique(col.per.group)[i], 
+                                      linewidth = point.lwd, 
+                                      inherit.aes = FALSE)
                 }
             }
             
