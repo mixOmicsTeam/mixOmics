@@ -346,11 +346,11 @@ internal_graphicModule <-
                                      colnames(df.ellipse))))
                     {
                         p = p + geom_path(data = df.ellipse,
-                                          aes_string(x = paste0("Col", 2*(i - 1) + 1),
+                                          aes(x = paste0("Col", 2*(i - 1) + 1),
                                                      y = paste0("Col", 2 * i),
                                                      #label = "Block",
                                                      group = NULL),#, shape = NULL),
-                                          color = unique(col.per.group)[i], size =
+                                          color = unique(col.per.group)[i], linewidth =
                                               point.lwd, inherit.aes = FALSE)
                     }
                     
