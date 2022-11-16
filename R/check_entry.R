@@ -663,30 +663,37 @@ Check.entry.wrapper.mint.block = function(X,
         nzv.A = lapply(A, nearZeroVar)
         for(q in 1:length(A))
         {
-            if (length(nzv.A[[q]]$Position) > 0 &&(!DA & q == indY))
-            {
-                names.remove.X = colnames(A[[q]])[nzv.A[[q]]$Position]
-                A[[q]] = A[[q]][, -nzv.A[[q]]$Position, drop=FALSE]
-                #if (verbose)
-                #warning("Zero- or near-zero variance predictors.\n
-                #Reset predictors matrix to not near-zero variance predictors.\n
-                # See $nzv for problematic predictors.")
-                if (ncol(A[[q]]) == 0)
-                    stop(paste0("No more variables in",A[[q]]))
-                
-                #need to check that the keepA[[q]] is now not higher than ncol(A[[q]])
-                if (any(keepA[[q]] > ncol(A[[q]])))
-                {
-                    ind = which(keepA[[q]] > ncol(A[[q]]))
-                    keepA[[q]][ind] = ncol(A[[q]])
-                }
-            }
+          if (length(nzv.A[[q]]$Position) <= 0) { next }
+          if (DA && q == indY) { next }
+          
+          names.remove.X = colnames(A[[q]])[nzv.A[[q]]$Position]
+          A[[q]] = A[[q]][, -nzv.A[[q]]$Position, drop=FALSE]
+          #if (verbose)
+          #warning("Zero- or near-zero variance predictors.\n
+          #Reset predictors matrix to not near-zero variance predictors.\n
+          # See $nzv for problematic predictors.")
+          if (ncol(A[[q]]) == 0)
+              stop(paste0("No more variables in",A[[q]]))
+          
+          #need to check that the keepA[[q]] is now not higher than ncol(A[[q]])
+          if (any(keepA[[q]] > ncol(A[[q]])))
+          {
+              ind = which(keepA[[q]] > ncol(A[[q]]))
+              keepA[[q]][ind] = ncol(A[[q]])
+          }
             
         }
     } else {
         nzv.A=NULL
     }
     
+    for(q in 1:length(A))
+    {
+      vars <- apply(A[[q]], 2, sd)^2
+      if (length(which(vars==0)) >0) {
+        stop(sprintf("There are features with zero variance in block '%s'. If nearZeroVar() function or 'near.zero.var' parameter hasn't been used,  please use it. If you have used one of these, you may need to manually filter out these features.", names(A)[q]), call.=F)
+      }
+    }
     return(list(A=A, ncomp=ncomp, study=study, keepA=keepA,
                 indY=indY, design=design, init=init, nzv.A=nzv.A))
 }
