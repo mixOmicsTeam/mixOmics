@@ -34,11 +34,12 @@ test_that("Safely handles zero var (non-zero center) features", {
   
   list.keepX <- list(block1=c(15, 15), block2=c(30,30))
   
+  set.seed(9425)
   X$block1[,1] <- rep(1, 100)
   model = suppressWarnings(block.splsda(X = X, Y = Y, ncomp = 2,
-                                        keepX = list.keepX, design = "full"))
+                                        keepX = list.keepX, design = "full",
+                                        near.zero.var = T))
   
-  set.seed(9425)
   auc.splsda = .quiet(auroc(model))
   
   .expect_numerically_close(auc.splsda$block1$comp1[[1]], 0.815)
