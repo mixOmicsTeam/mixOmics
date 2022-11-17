@@ -345,7 +345,6 @@ internal_graphicModule <-
                     if( !is.na(match(paste0("Col", 2*(i - 1) + 1),
                                      colnames(df.ellipse))))
                     {
-                      #browser()
                         p = p + geom_path(data = df.ellipse,
                                           aes(x = .data[[paste0("Col", 2*(i - 1) + 1)]],
                                               y = .data[[paste0("Col", 2 * i)]],
@@ -470,7 +469,6 @@ internal_graphicModule <-
             {
                 for (i in 1 : nlevels(df$group))
                 {
-                    #browser()
                     p = p + geom_path(data = df.ellipse,
                                       aes(x = .data[[paste0("Col", 2*(i - 1) + 1)]],
                                           y = .data[[paste0("Col", 2 * i)]],
