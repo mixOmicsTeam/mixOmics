@@ -317,7 +317,14 @@ predict.mixo_pls <-
             # deal with near.zero.var in object, to remove the same variable in newdata as in object$X (already removed in object$X)
             if(!is.null(object$nzv))
             {
-                newdata = lapply(1:(length(object$nzv)-1),function(x){if(length(object$nzv[[x]]$Position>0)) {newdata[[x]][, -object$nzv[[x]]$Position,drop=FALSE]}else{newdata[[x]]}})
+              # for each of the input blocks, checks to see if the nzv features have already been removed
+              # if not, then these features are removed here
+              for (x in 1:length(newdata)) {
+                if (nrow(object$nzv[[x]]$Metrics) == 0) { next }
+                if (all(!(rownames(object$nzv[[x]]$Metrics) %in% colnames(newdata[[x]])))) { next }
+                
+                newdata[[x]] <- newdata[[x]][, -object$nzv[[x]]$Position,drop=FALSE]
+              }
             }
             if(length(newdata)!=length(object$X)) stop("'newdata' must have as many blocks as 'object$X'")
             
@@ -405,6 +412,9 @@ predict.mixo_pls <-
                     newdata[which(!is.na(ind.match))] = lapply(which(!is.na(ind.match)), function(x){sweep(newdata[[x]], 2, STATS = attr(X[[x]], "scaled:center"))})
                 if (scale)
                     newdata[which(!is.na(ind.match))] = lapply(which(!is.na(ind.match)), function(x){sweep(newdata[[x]], 2, FUN = "/", STATS = attr(X[[x]], "scaled:scale"))})
+                if (any(unlist(lapply(newdata[which(!is.na(ind.match))], function(x){any(is.infinite(x))})))) {
+                  newdata[which(!is.na(ind.match))] <- lapply(which(!is.na(ind.match)), function(x){df <- newdata[[x]]; df[which(is.infinite(df))] <- NaN; return(df)})
+                }
                 
                 means.Y = matrix(attr(Y, "scaled:center"),nrow=nrow(newdata[[1]]),ncol=q,byrow=TRUE);
                 if (scale)

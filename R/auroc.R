@@ -93,7 +93,6 @@ auroc.mixo_plsda <-
         print=TRUE,
         ...)
     {
-      message("Generating AUROC...")
         if(dim(newdata)[[1]] != length(outcome.test))
             stop("Factor outcome.test must be a factor with ",dim(newdata)[[1]],
                  " elements.",call. = FALSE)
