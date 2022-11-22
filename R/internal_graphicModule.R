@@ -346,12 +346,12 @@ internal_graphicModule <-
                                      colnames(df.ellipse))))
                     {
                         p = p + geom_path(data = df.ellipse,
-                                          aes_string(x = paste0("Col", 2*(i - 1) + 1),
-                                                     y = paste0("Col", 2 * i),
-                                                     #label = "Block",
-                                                     group = NULL),#, shape = NULL),
-                                          color = unique(col.per.group)[i], size =
-                                              point.lwd, inherit.aes = FALSE)
+                                          aes(x = .data[[paste0("Col", 2*(i - 1) + 1)]],
+                                              y = .data[[paste0("Col", 2 * i)]],
+                                              group = NULL),
+                                          color = unique(col.per.group)[i], 
+                                          linewidth = point.lwd, 
+                                          inherit.aes = FALSE)
                     }
                     
                 }
@@ -469,14 +469,13 @@ internal_graphicModule <-
             {
                 for (i in 1 : nlevels(df$group))
                 {
-                    
                     p = p + geom_path(data = df.ellipse,
-                                      aes_string(x = paste0("Col", 2*(i - 1) + 1),
-                                                 y = paste0("Col", 2 * i),
-                                                 #label = "Block",
-                                                 group = NULL),# shape = NULL),
-                                      color = unique(col.per.group)[i], size = point.lwd,
-                                      inherit.aes =FALSE)
+                                      aes(x = .data[[paste0("Col", 2*(i - 1) + 1)]],
+                                          y = .data[[paste0("Col", 2 * i)]],
+                                          group = NULL),
+                                      color = unique(col.per.group)[i], 
+                                      linewidth = point.lwd, 
+                                      inherit.aes = FALSE)
                 }
             }
             
