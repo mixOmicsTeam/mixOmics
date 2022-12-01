@@ -90,7 +90,7 @@ statauc <- function(data = NULL, plot = FALSE, title = NULL, line.col = NULL, le
       title = "ROC Curve"
     else
       title=title
-    p = ggplot(df, aes(x=Specificity, y=Sensitivity, group = Outcome, colour = Outcome)) + xlab("100 - Specificity (%)") + ylab("Sensitivity (%)") + geom_line(size = 1.5) + scale_x_continuous(breaks=seq(0, 100, by = 10)) + scale_y_continuous(breaks=seq(0, 100, by = 10))
+    p = ggplot(df, aes(x=Specificity, y=Sensitivity, group = Outcome, colour = Outcome)) + xlab("100 - Specificity (%)") + ylab("Sensitivity (%)") + geom_line(linewidth = 1.5) + scale_x_continuous(breaks=seq(0, 100, by = 10)) + scale_y_continuous(breaks=seq(0, 100, by = 10))
     p = p + geom_abline(intercept = 1) + theme(legend.key.size = unit(1.5, "cm"), plot.title = element_text(lineheight=.8, face="bold"), legend.title = element_text(size=14, face="bold")) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5))
     
     if (!is.null(line.col)) {
