@@ -248,6 +248,8 @@ auroc.sgccda <- function(
     # note here: the dist does not matter as we used the predicted scores only
     res.predict  =  predict.block.spls(object, newdata = newdata,
                                        dist = "max.dist", multilevel = multilevel)$predict
+    
+    
     block.all = names(res.predict)
     if (is(roc.block, "numeric")) {
         roc.block <- as.integer(roc.block)
