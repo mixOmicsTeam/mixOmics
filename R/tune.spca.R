@@ -62,6 +62,12 @@ tune.spca <- function(X,
     
     all.keepX <- test.keepX
     names(all.keepX) <- paste0('keepX_', all.keepX)
+    
+    if (any(is.na(X))) {
+      X[which(is.na(X))] <- 0
+      warning("There were NAs present in the input dataframe. These were converted to 0 values. If you don't want these as 0, handle missing values prior to tuning.", call. = F)
+    }
+    
     ## ------ component loop
     for(ncomp in seq_len(ncomp)) {
         iter_keepX <- function(keepX.value) {
