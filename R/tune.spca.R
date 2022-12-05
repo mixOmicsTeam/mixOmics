@@ -84,16 +84,15 @@ tune.spca <- function(X,
                         # loop to calculate deflated matrix and predicted comp
                         # calculate the predicted comp on the fold left out
                         # calculate reg coeff, then deflate
-                        if(k == 1){
-                            t.comp.pred = X.test %*% spca.train$loadings$X[,k]
-                        } else{
-                            # calculate deflation beyond comp 1
-                            # recalculate the loading vector (here c.sub) on the test set (perhaps we could do this instead on the training set by extracting from spca.train$loadings$X[,k]?)
-                            c.sub = crossprod(X.test, t.comp.pred) / drop(crossprod(t.comp.pred)) 
-                            X.test = X.test - t.comp.pred %*% t(c.sub) 
-                            # update predicted comp based on deflated matrix
-                            t.comp.pred = X.test %*% spca.train$loadings$X[,k]
-                        }
+                        if(k != 1){
+                          # calculate deflation beyond comp 1
+                          # recalculate the loading vector (here c.sub) on the test set 
+                          # (perhaps we could do this instead on the training set by extracting from spca.train$loadings$X[,k]?)
+                          c.sub = crossprod(X.test, t.comp.pred) / drop(crossprod(t.comp.pred)) 
+                          X.test = X.test - t.comp.pred %*% t(c.sub) 
+                          # update predicted comp based on deflated matrix
+                        } 
+                      t.comp.pred = X.test %*% spca.train$loadings$X[,k]
                     }
                     # calculate predicted component and compare with component from sPCA on full data on the left out set
                     # cor with the component on the full data, abs value
