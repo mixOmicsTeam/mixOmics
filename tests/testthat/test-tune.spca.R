@@ -1,13 +1,13 @@
 
 test_that("tune.spca works", {
   
-  set.seed(5212)
   
   data(srbct)
   X <- srbct$gene[1:20, 1:200]
   
   grid.keepX <- seq(5, 35, 10)
   
+  set.seed(5212)
   object <- tune.spca(X,ncomp = 2, 
                       folds = 5, 
                       test.keepX = grid.keepX, nrepeat = 3)
@@ -17,8 +17,6 @@ test_that("tune.spca works", {
 })
 
 test_that("tune.spca works with NA input", {
-  
-  set.seed(5212)
   
   data(srbct)
   X <- srbct$gene[1:20, 1:200]
@@ -33,7 +31,8 @@ test_that("tune.spca works with NA input", {
   
   grid.keepX <- seq(5, 35, 10)
   
-  expect_warning({object <- tune.spca(X,ncomp = 2, 
+  expect_warning({set.seed(5212)
+                  object <- tune.spca(X,ncomp = 2, 
                       folds = 5, 
                       test.keepX = grid.keepX, nrepeat = 3)},
                  "NAs present")
