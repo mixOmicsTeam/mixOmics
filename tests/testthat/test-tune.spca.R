@@ -12,8 +12,8 @@ test_that("tune.spca works", {
                       folds = 5, 
                       test.keepX = grid.keepX, nrepeat = 3)
   
-  expect_equal(object$choice.keepX[[1]], 35)
-  expect_equal(object$choice.keepX[[2]], 5)
+  expect_equal(object$choice.keepX[[1]], 25)
+  expect_equal(object$choice.keepX[[2]], 35)
 })
 
 test_that("tune.spca works with NA input", {
@@ -38,5 +38,5 @@ test_that("tune.spca works with NA input", {
                  "NAs present")
   
   expect_equal(object$choice.keepX[[1]], 15)
-  expect_equal(object$choice.keepX[[2]], 5)
+  expect_equal(object$choice.keepX[[2]], 25)
 })
