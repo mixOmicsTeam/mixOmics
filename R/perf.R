@@ -809,6 +809,10 @@ perf.mixo_plsda <- function(object,
         nrepeat = 1
     }
     
+    if (nrepeat < 3 && validation != "loo") {
+        warning("Values in '$choice.ncomp' will reflect component count with the minimum error rate rather than the best based on a one-way t.test")
+    }
+    
     if (!is.logical(progressBar))
         stop("'progressBar' must be either TRUE or FALSE")
     
@@ -818,6 +822,8 @@ perf.mixo_plsda <- function(object,
     if (!(logratio %in% c("none", "CLR")))
         stop("Choose one of the two following logratio transformation: 'none' or 'CLR'")
     #fold is checked in 'MCVfold'
+    
+    
     
     
     #-- check significance threshold
@@ -1011,14 +1017,23 @@ perf.mixo_plsda <- function(object,
     # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
     ncomp_opt = matrix(NA, nrow = length(measure), ncol = length(dist),
                        dimnames = list(measure, dist))
-    if(nrepeat > 2 & ncomp >1)
+    
+    for (measure_i in measure)
     {
-        for (measure_i in measure)
-        {
-            for (ijk in dist)
+        for (ijk in dist) {
+            if(nrepeat > 2 & ncomp >1)
+            {
                 ncomp_opt[measure, ijk] = t.test.process(t(mat.error.rate[[measure_i]][[ijk]]), alpha = signif.threshold)
+            }
+            else
+            {
+                ncomp_opt[measure, ijk] = which(t(rowMeans(mat.error.rate[[measure_i]][[ijk]])) == min(t(rowMeans(mat.error.rate[[measure_i]][[ijk]]))))
+            }
         }
     }
+    
+    
+    
     
     result = list(error.rate = mat.mean.error,
                   error.rate.sd = mat.sd.error,
