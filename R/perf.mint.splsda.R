@@ -218,6 +218,10 @@ perf.mint.plsda <- function (object,
                 auc.mean.study[[comp]][[study_i]] = statauc(data)
             }
             
+            # average of ER and BER across studies, weighted by study sample size
+            global$BER[comp,] <- global$BER[comp,] + study.specific[[study_i]]$BER[comp, ] * table(study)[study_i]/length(study)
+            global$overall[comp,] <- global$overall[comp,] + study.specific[[study_i]]$overall[comp, ] * table(study)[study_i]/length(study)
+            
         } # end study_i 1:M (M folds)
         
         for (ijk in dist)
@@ -226,20 +230,6 @@ perf.mint.plsda <- function (object,
             class.all[[ijk]][,comp] = class.comp[[ijk]][,1]
         }
         prediction.all[[comp]] = prediction.comp
-        
-        
-        # global results
-        #BER
-        global$BER[comp,] = sapply(class.comp, function(x){
-            conf = get.confusion_matrix(truth = factor(Y), predicted = x)
-            get.BER(conf)
-        })
-        
-        #overall
-        global$overall[comp,] = sapply(class.comp, function(x){
-            conf = get.confusion_matrix(truth = factor(Y), predicted = x)
-            out = sum(apply(conf, 1, sum) - diag(conf)) / length(Y)
-        })
         
         #classification for each level of Y
         temp = lapply(class.comp, function(x){
