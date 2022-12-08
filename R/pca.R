@@ -250,7 +250,6 @@ pca <- function(X,
         sdev <- res$eig
         loadings <- res$p
     } else {
-        
         if (logratio %in% c('CLR', 'none')) {
             #-- if data is complete use singular value decomposition
             #-- borrowed from 'prcomp' function
@@ -283,7 +282,8 @@ pca <- function(X,
     result <- c(result, .get_var_stats(X = result$X, sdev = result$sdev))
     expected_output_names <- c("call", "X", "ncomp", "center", "scale", "names", 
                          "sdev", "loadings", "variates", "prop_expl_var", "var.tot",
-                         "cum.var")
+                         "cum.var", "rotation", "x")
+    
     if (names(result) %!=% expected_output_names)
     {
         stop("Unexpected error. Please submit an issue at\n",
@@ -318,6 +318,7 @@ pca <- function(X,
              sdev,
              loadings,
              variates = NULL) {
+        
         ncomp <- result$ncomp
         pc_names <- paste("PC", seq_len(ncomp), sep = "")
         
@@ -333,7 +334,12 @@ pca <- function(X,
         dimnames(loadings) = list(colnames(X), pc_names)
         dimnames(variates) = list(rownames(X), pc_names)
         
-        result[c('sdev', 'loadings', 'variates')] <- list(sdev, list(X=loadings), list(X=variates))
+        result[c('sdev', 'loadings', 'variates', 'x', 'rotation')] <- list(sdev, 
+                                                                      list(X=loadings), 
+                                                                      list(X=variates),
+                                                                      variates,
+                                                                      loadings)
+        
         result
     }
 
