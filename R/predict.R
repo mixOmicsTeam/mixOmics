@@ -167,6 +167,7 @@ NULL
 #' @rdname predict
 #' @method predict mixo_pls
 #' @importFrom methods hasArg is
+#' @importFrom stats setNames
 #' @export
 predict.mixo_pls <-
     function(object,
