@@ -105,7 +105,7 @@ block.pls <- function(X,
     result = internal_wrapper.mint.block(X=X, Y=Y, indY=indY, ncomp=ncomp,
                                          design=design, scheme=scheme, mode=mode, scale=scale,
                                          init=init, tol=tol, max.iter=max.iter ,near.zero.var=near.zero.var,
-                                         all.outputs = all.outputs)
+                                         all.outputs = all.outputs, DA = FALSE)
     
     # calculate weights for each dataset
     weights = get.weights(result$variates, indY = result$indY)
