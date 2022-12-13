@@ -96,6 +96,11 @@
 #' threshold for the relevant associations network (see Details).
 #' @param row.names,col.names character vector containing the names of \eqn{X}-
 #' and \eqn{Y}-variables.
+#' @param graph.scale Numeric between 0 and 1 which alters the scale of the entire
+#' plot. Increasing the value decreases the size of nodes and increases their distance
+#' from one another. Defaults to 0.5.
+#' @param size.node Numeric between 0 and 1 which determines the relative size of nodes.
+#' Defaults to 0.5.
 #' @param color.node vector of length two, the colors of the \eqn{X} and
 #' \eqn{Y} nodes (see Details).
 #' @param shape.node character vector of length two, the shape of the \eqn{X}
@@ -181,10 +186,12 @@ network <- function(mat,
                     row.names = TRUE,
                     col.names = TRUE,
                     block.var.names = TRUE,
+                    graph.scale = 0.5,
+                    size.node = 0.5,
                     color.node = NULL,
                     shape.node = NULL,
                     alpha.node = 0.85,
-                    cex.node.name = 1,
+                    cex.node.name = NULL,
                     color.edge = color.GreenRed(100),
                     lty.edge = "solid",
                     lwd.edge = 1,
@@ -649,6 +656,22 @@ network <- function(mat,
         }
     }
     
+    #-- size.node
+    if (!is.null(size.node)) {
+      if (!is.finite(size.node) || size.node < 0 || size.node > 1) {
+        stop("'size.node' must be a numerical value between 0 - 1.", call. = FALSE)
+      }
+      if (size.node == 0) {
+        shape.node <- "none"
+        size.node <- 1 # prevents error 
+      }
+    }
+    
+    #-- graph.scale
+    if (!is.finite(graph.scale) || graph.scale < 0 || graph.scale > 1) {
+      stop("'graph.scale' must be a numerical value between 0 - 1.", call. = FALSE)
+    }
+    
     #-- color.node
     if(any(class.object %in% object.blocks))
     {
@@ -668,7 +691,8 @@ network <- function(mat,
         }
     } else {
         if(is.null(color.node))
-            color.node=c("white", "white")
+            color.node = brewer.pal(n = 12, name = 'Paired')[c(1,3)]
+            color.node = adjustcolor(color.node, alpha.f = alpha.node)
         
         if (!is.list(color.node))
         {
@@ -716,6 +740,11 @@ network <- function(mat,
     } else {
         if(is.null(shape.node))
             shape.node=c("circle", "rectangle")
+        if (length(shape.node)==1) {
+          if(shape.node=="none") {
+            shape.node=c("none", "none")
+          }
+        }
         
         if (!is.list(shape.node))
         {
@@ -732,8 +761,13 @@ network <- function(mat,
     }
     
     #-- cex.node.name
-    if (!is.finite(cex.node.name) || cex.node.name < 0 || length(cex.node.name)>1)
+    if (!is.null(cex.node.name)) {
+      if (!is.finite(cex.node.name) || cex.node.name < 0 || length(cex.node.name)>1) {
         stop("'cex.node.name' must be a non-negative numerical value.", call. = FALSE)
+      }
+    }
+    
+        
     
     #-- color.edge
     if (length(color.edge) < 2 && (!is(color.edge, "function")))
@@ -912,6 +946,9 @@ network <- function(mat,
         {
             V(gR)$color[V(gR)$group == i] = color.node[j]
             V(gR)$shape[V(gR)$group == i] = shape.node[j]
+            if (shape.node[j] == "none") {
+              V(gR)$label.color[V(gR)$group == i] = paste0(substr(color.node[j], 1, 7), "FF")
+            }
             j = j + 1
         }
     } else {
@@ -920,7 +957,14 @@ network <- function(mat,
         V(gR)$color[V(gR)$group == "y"] = color.node[2]
         
         V(gR)$shape = shape.node[1]
+        if (shape.node[1] == "none") {
+          V(gR)$label.color = paste0(substr(color.node[1], 1, 7), "FF")
+        }
         V(gR)$shape[V(gR)$group == "y"] = shape.node[2]
+        if (shape.node[2] == "none") {
+          V(gR)$label.color[V(gR)$group == "y"] = paste0(substr(color.node[2], 1, 7), "FF")
+        }
+        
     }
     
     # edges attributes #
@@ -981,28 +1025,38 @@ network <- function(mat,
     #-----------------------------------#
     # construction of the initial graph #
     #-----------------------------------#
+
+    nn = vcount(gR)
+    V(gR)$label.cex = ifelse(is.null(cex.node.name), 1, cex.node.name)
+    E(gR)$label.cex = min(2.25 * cex.edge.label/log(nn), 1)
+    cex0 = 2 * V(gR)$label.cex
     
-    if (plot.graph) {
-        nn = vcount(gR)
-        V(gR)$label.cex = min(2.5 * cex.node.name/log(nn), 1)
-        E(gR)$label.cex = min(2.25 * cex.edge.label/log(nn), 1)
-        cex0 = 2 * V(gR)$label.cex
-        
-        def.par = par(no.readonly = TRUE)
-        dev.new()
-        par(pty = "s", mar = c(0, 0, 0, 0),mfrow=c(1,1))
-        plot(1:100, 1:100, type = "n", axes = FALSE, xlab = "", ylab = "")
-        cha = V(gR)$label
-        cha = paste("", cha, "")
-        xh = strwidth(cha, cex = cex0) * 1.5
-        yh = strheight(cha, cex = cex0) * 3
-        
-        V(gR)$size = xh
-        V(gR)$size2 = yh
-        
-        dev.off()
-        
-        if (is.null(layout.fun))
+    def.par = par(no.readonly = TRUE)
+    dev.new()
+    par(pty = "s", mar = c(0, 0, 0, 0),mfrow=c(1,1))
+    upr.bnd <- 190*(graph.scale^2) + 10
+    plot(1:upr.bnd, 1:upr.bnd, type = "n", axes = FALSE, xlab = "", ylab = "")
+    cha = V(gR)$label
+    cha = paste("", cha, "")
+    xh = strwidth(cha, cex = ifelse(size.node==0.5, cex0, size.node*4)) * 1.5 * (2-graph.scale)
+    yh = strheight(cha, cex = ifelse(size.node==0.5, cex0, size.node*4)) * 3 * (2-graph.scale)
+  
+    
+    V(gR)$size = xh
+    V(gR)$size2 = yh
+    
+    dev.off()
+    
+    if (is.null(layout.fun))
+    {
+        l = layout.fruchterman.reingold(gR, weights = (1 - abs(E(gR)$weight)))
+    } else {
+        l = layout.fun(gR)
+    }
+    
+    if (isTRUE(!interactive))
+    {
+        if (isTRUE(show.color.key))
         {
             l = layout.fruchterman.reingold(gR, weights = (1 - abs(E(gR)$weight)))
         } else {
