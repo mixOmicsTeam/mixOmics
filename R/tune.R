@@ -75,8 +75,8 @@
 #' @param tol Numeric, convergence tolerance criteria.
 #' @param light.output if set to FALSE, the prediction/classification of each
 #' sample for each of \code{test.keepX} and each comp is returned.
-#' @param cpus Integer, number of cores to use for parallel processing. 
-#' Currently only available for \code{method = "spls"}
+#' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
+#'   of parallelisation. See examples.
 #' @return Depending on the type of analysis performed and the input arguments,
 #' a list that may contain:
 #' 
@@ -202,7 +202,7 @@ tune <-
               #pca
               light.output = TRUE,
               # mint, splsda
-              cpus = 1
+              BPPARAM = SerialParam()
               
     )
     {
@@ -292,23 +292,12 @@ tune <-
                                   nrepeat = nrepeat,
                                   logratio = logratio,
                                   multilevel = multilevel,
-                                  light.output = light.output,
-                                  cpus = cpus)
+                                  light.output = light.output)
         } else if (method == "spls") {
             if(missing(multilevel))
             {
                 message("Calling 'tune.spls'")
                 
-                if (cpus > 1)
-                {
-                    if (.onUnix()) 
-                        BPPARAM <- BiocParallel::MulticoreParam(workers = cpus) 
-                    else
-                        BPPARAM <- BiocParallel::SnowParam(workers = cpus) 
-                } else 
-                {
-                        BPPARAM <- BiocParallel::SerialParam()
-                }
                 result = tune.spls(X = X,
                                    Y = Y,
                                    test.keepX = test.keepX,
