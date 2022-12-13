@@ -32,7 +32,7 @@ tune(
   max.iter = 100,
   tol = 1e-09,
   light.output = TRUE,
-  cpus = 1
+  BPPARAM = SerialParam()
 )
 }
 \arguments{
@@ -122,8 +122,8 @@ columns of \code{X} can be supplied. The value is passed to
 \item{light.output}{if set to FALSE, the prediction/classification of each
 sample for each of \code{test.keepX} and each comp is returned.}
 
-\item{cpus}{Integer, number of cores to use for parallel processing. 
-Currently only available for \code{method = "spls"}}
+\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
+of parallelisation. See examples.}
 }
 \value{
 Depending on the type of analysis performed and the input arguments,
