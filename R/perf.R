@@ -808,6 +808,12 @@ perf.mixo_plsda <- function(object,
             warning("Leave-One-Out validation does not need to be repeated: 'nrepeat' is set to '1'.")
         nrepeat = 1
     }
+
+    if (any(table(object$Y) <= 1)) {
+        stop(paste("Cannot evaluate performance when a class level ('", 
+                   names(table(object$Y))[which(table(object$Y) == 1)],
+                   "') has only a single assocaited sample.", sep = ""))
+    }
     
     if (nrepeat < 3 && validation != "loo") {
         warning("Values in '$choice.ncomp' will reflect component count with the minimum error rate rather than the best based on a one-way t.test")
