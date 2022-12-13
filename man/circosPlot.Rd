@@ -3,7 +3,9 @@
 \name{circosPlot}
 \alias{circosPlot}
 \alias{circosPlot.block.splsda}
+\alias{circosPlot.block.plsda}
 \alias{circosPlot.block.spls}
+\alias{circosPlot.block.pls}
 \title{circosPlot for DIABLO}
 \usage{
 \method{circosPlot}{block.splsda}(
@@ -27,11 +29,34 @@
   ...
 )
 
+\method{circosPlot}{block.plsda}(
+  object,
+  comp = 1:min(object$ncomp),
+  cutoff,
+  color.Y,
+  blocks = NULL,
+  color.blocks,
+  color.cor,
+  var.names = NULL,
+  showIntraLinks = FALSE,
+  line = FALSE,
+  size.legend = 0.8,
+  ncol.legend = 1,
+  size.variables = 0.25,
+  size.labels = 1,
+  legend = TRUE,
+  legend.title = "Expression",
+  linkWidth = 1,
+  ...
+)
+
 \method{circosPlot}{block.spls}(object, ..., group = NULL, Y.name = "Y")
+
+\method{circosPlot}{block.pls}(object, ..., group = NULL, Y.name = "Y")
 }
 \arguments{
-\item{object}{An object of class inheriting from \code{"block.splsda"} or
-\code{"blocks.spls"}.}
+\item{object}{An object of class inheriting from \code{"block.plsda"},
+\code{"block.splsda"}, \code{"block.pls"} or \code{"blocks.spls"}.}
 
 \item{comp}{Numeric vector indicating which component to plot. Default to
 all}

@@ -12,8 +12,8 @@
 #' If a vector of length 2 is provided, the smaller value will correspond to
 #' a similarity values designated by \code{cutoff} argument, while the 
 #' larger value will be used for a link with perfect similarity (1), if any.
-#' @param object An object of class inheriting from \code{"block.splsda"} or
-#'   \code{"blocks.spls"}.
+#' @param object An object of class inheriting from \code{"block.plsda"},
+#' \code{"block.splsda"}, \code{"block.pls"} or \code{"blocks.spls"}.
 #' @param comp Numeric vector indicating which component to plot. Default to
 #' all
 #' @param cutoff Only shows links with a correlation higher than \code{cutoff}
@@ -104,7 +104,7 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
              ...)
     {
         
-        if (inherits(object, "block.splsda")) {
+        if (inherits(object, c("block.plsda", "block.splsda"))) {
             indY <- object$indY
             object$variates[indY] <- NULL
             object$loadings[indY] <-  NULL
@@ -130,8 +130,8 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
         ##############################
         
         # check input object
-        if (!(is(object, "block.splsda") | is(object, "block.spls") ))
-            stop("circosPlot is only available for 'block.spls(da)' objects")
+        if (!(inherits(object, c("block.plsda", "block.splsda", "block.pls", "block.spls"))))
+            stop("circosPlot is only available for 'block.(s)pls(da)' objects")
         
         if (length(object$X) < 2)
             stop("This function is only available when there are more than 3 blocks
@@ -440,6 +440,11 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
 #' @export
 circosPlot.block.splsda <- .circosPlot
 
+#' @method circosPlot block.plsda
+#' @rdname circosPlot
+#' @export
+circosPlot.block.plsda <- .circosPlot
+
 #' @method circosPlot block.spls
 #' @rdname circosPlot
 #' @param group The grouping factor used when \code{line = TRUE}
@@ -469,6 +474,11 @@ circosPlot.block.spls <- function(object, ..., group = NULL, Y.name = 'Y')
         block.names
     .circosPlot(object, ...)
 }
+
+#' @method circosPlot block.pls
+#' @rdname circosPlot
+#' @export
+circosPlot.block.pls <- circosPlot.block.spls
 
 ## ------------- circosPlot utils
 drawIdeogram = function(R, xc=400, yc=400, cir, W,
