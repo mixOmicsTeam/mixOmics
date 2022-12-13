@@ -21,6 +21,9 @@
 #' @param keepY numeric vector of length \code{ncomp}, the number of variables
 #' @return \code{spls} returns an object of class \code{"spls"}, a list that
 #' contains the following components:
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' \item{X}{the centered and standardized original predictor matrix.}
 #' \item{Y}{the centered and standardized original response vector or matrix.}
 #' \item{ncomp}{the number of components included in the model.}
@@ -101,7 +104,8 @@ spls <- function(X,
                  logratio = "none",
                  # one of "none", "CLR"
                  multilevel = NULL,
-                 all.outputs = TRUE)
+                 all.outputs = TRUE,
+                 verbose.call = FALSE)
 {
     
     
@@ -146,6 +150,13 @@ spls <- function(X,
         input.X = result$input.X,
         mat.c = result$mat.c
     )
+    
+    if (verbose.call) {
+        c <- out$call
+        out$call <- mget(names(formals()))
+        out$call <- append(c, out$call)
+        names(out$call)[1] <- "simple.call"
+    }
     
     
     class(out) = c("mixo_spls")

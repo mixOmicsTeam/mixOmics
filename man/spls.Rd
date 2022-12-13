@@ -17,7 +17,8 @@ spls(
   near.zero.var = FALSE,
   logratio = "none",
   multilevel = NULL,
-  all.outputs = TRUE
+  all.outputs = TRUE,
+  verbose.call = FALSE
 )
 }
 \arguments{
@@ -64,10 +65,17 @@ columns indicate those factors. See examples.}
 
 \item{all.outputs}{Logical. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
+
+\item{verbose.call}{Logical (Default=FALSE), if set to TRUE then the \code{$call}
+component of the returned object will contain the variable values for all 
+parameters. Note that this may cause large memory usage.}
 }
 \value{
 \code{spls} returns an object of class \code{"spls"}, a list that
 contains the following components:
+\item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+If \code{verbose.call = TRUE} then all the inputted values are accessable via
+this component}
 \item{X}{the centered and standardized original predictor matrix.}
 \item{Y}{the centered and standardized original response vector or matrix.}
 \item{ncomp}{the number of components included in the model.}
