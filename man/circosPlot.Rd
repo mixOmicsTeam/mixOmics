@@ -45,6 +45,7 @@
   size.variables = 0.25,
   size.labels = 1,
   legend = TRUE,
+  legend.title = "Expression",
   linkWidth = 1,
   ...
 )
