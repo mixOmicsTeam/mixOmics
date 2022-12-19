@@ -192,6 +192,7 @@ auroc.list <-
     # initialise returned objects
     auc.list <- list()
     df <- data.frame(matrix(NA, nrow=0, ncol=4))
+    Specificity <- Sensitivity <- Outcome <-  model <- NULL
     
     for (idx in seq_len(length(object))) { # for each model
       
