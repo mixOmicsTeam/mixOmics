@@ -4,6 +4,7 @@
 \alias{auroc}
 \alias{auroc.mixo_plsda}
 \alias{auroc.mixo_splsda}
+\alias{auroc.list}
 \alias{auroc.mint.plsda}
 \alias{auroc.mint.splsda}
 \alias{auroc.sgccda}
@@ -37,6 +38,8 @@ auroc(object, ...)
   print = TRUE,
   ...
 )
+
+\method{auroc}{list}(object, plot = TRUE, roc.comp = NULL, title = NULL, print = TRUE, ...)
 
 \method{auroc}{mint.plsda}(
   object,
@@ -110,7 +113,9 @@ auroc(object, ...)
 \arguments{
 \item{object}{Object of class inherited from one of the following supervised
 analysis function: "plsda", "splsda", "mint.plsda", "mint.splsda",
-"block.splsda" or "wrapper.sgccda"}
+"block.splsda" or "wrapper.sgccda". Alternatively, this can be a named list
+of plsda and splsda objects if multiple models are to be compared. Note that 
+these multiple models need to have used the same levels in the response variable.}
 
 \item{...}{external optional arguments for plotting - \code{line.col} for
 custom colors and \code{legend.title} for custom legend title}
@@ -178,6 +183,11 @@ class vs the others.
 External independent data set (\code{newdata}) and outcome
 (\code{outcome.test}) can be input to calculate AUROC. The external data set
 must have the same variables as the training data set (\code{object$X}).
+
+If \code{object} is a named list of multiple \code{plsda} and \code{splsda}
+objects, ensure that these models each have a response variable with the same
+levels. Additionally, \code{newdata} and \code{outcome.test} cannot be passed
+to this form of \code{auroc}. 
 
 If \code{newdata} is not provided, AUROC is calculated from the training
 data set, and may result in overfitting (too optimistic results).

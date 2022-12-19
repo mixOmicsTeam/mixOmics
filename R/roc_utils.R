@@ -108,7 +108,7 @@ statauc <- function(data = NULL, plot = FALSE, title = NULL, line.col = NULL, le
   } else {
     p=NULL
   }
-  return(list(ann_text,graph=p))
+  return(list(ann_text,graph=p,df=df))
   
 }
 

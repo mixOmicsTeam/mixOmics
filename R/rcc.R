@@ -51,6 +51,7 @@
 #' @param lambda1,lambda2 a non-negative real. The regularization parameter for
 #' the \emph{X} and \emph{Y} data. Defaults to \code{lambda1=lambda2=0}. Only
 #' used if \code{method="ridge"}
+#' @template arg/verbose.call
 #' @return \code{rcc} returns a object of class \code{"rcc"}, a list that
 #' contains the following components: \item{X}{the original \eqn{X} data.}
 #' \item{Y}{the original \eqn{Y} data.} \item{cor}{a vector containing the
@@ -63,6 +64,9 @@
 #' individuals and variables.}
 #' \item{prop_expl_var}{Proportion of the explained variance of derived
 #' components, after setting possible missing values to zero.}
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' @author Sébastien Déjean, Ignacio González, Francois Bartolo, Kim-Anh Lê Cao, 
 #' Florian Rohart, Al J Abadi
 #' @seealso \code{\link{summary}}, \code{\link{tune.rcc}},
@@ -121,7 +125,8 @@ rcc <-
            ncomp = 2,
            method = c("ridge", "shrinkage"),
            lambda1 = 0,
-           lambda2 = 0
+           lambda2 = 0,
+           verbose.call = FALSE
   )
   {
     #-- checking general input parameters --------------------------------------#
@@ -303,6 +308,13 @@ rcc <-
     explX=explained_variance(result$X,result$variates$X,ncomp)
     explY=explained_variance(result$Y,result$variates$Y,ncomp)
     result$prop_expl_var=list(X=explX,Y=explY)
+    
+    if (verbose.call) {
+      c <- result$call
+      result$call <- mget(names(formals()))
+      result$call <- append(c, result$call)
+      names(result$call)[1] <- "simple.call"
+    }
     
     
     class(result) = "rcc"

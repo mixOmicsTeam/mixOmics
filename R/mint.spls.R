@@ -45,6 +45,7 @@
 #' \code{X} on each component. By default all variables are kept in the model.
 #' @param keepY numeric vector indicating the number of variables to select in
 #' \code{Y} on each component. By default all variables are kept in the model.
+#' @template arg/verbose.call
 #' @return \code{mint.spls} returns an object of class
 #' \code{"mint.spls","spls"}, a list that contains the following components:
 #' 
@@ -63,7 +64,7 @@
 #' partial variates - partial loadings.} \item{names}{list containing the names
 #' to be used for individuals and variables.} \item{nzv}{list containing the
 #' zero- or near-zero predictors information.} \item{iter}{Number of iterations
-#' of the algorithm for each component} #' \item{prop_expl_var}{The amount
+#' of the algorithm for each component} \item{prop_expl_var}{The amount
 #' of the variance explained by each variate / component divided by the total
 #' variance in the \code{data} for each study (after removing the possible
 #' missing values) using the definition of 'redundancy'. Note that contrary to
@@ -71,6 +72,9 @@
 #' aim of the method is not to maximise the variance, but the covariance between
 #' data sets (including the dummy matrix representation of the outcome variable
 #' in case of the supervised approaches).}
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' @author Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{spls}}, \code{\link{summary}}, \code{\link{plotIndiv}},
 #' \code{\link{plotVar}}, \code{\link{predict}}, \code{\link{perf}},
@@ -115,7 +119,8 @@ mint.spls <- function(X,
                       tol = 1e-06,
                       max.iter = 100,
                       near.zero.var = FALSE,
-                      all.outputs = TRUE)
+                      all.outputs = TRUE,
+                      verbose.call = FALSE)
 {
     
     # call to 'internal_wrapper.mint'
@@ -131,7 +136,8 @@ mint.spls <- function(X,
         keepY = keepY,
         max.iter = max.iter,
         tol = tol,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        DA = FALSE
     )
     
     # choose the desired output from 'result'
@@ -156,6 +162,13 @@ mint.spls <- function(X,
         scale = scale,
         prop_expl_var = result$prop_expl_var
     )
+    
+    if (verbose.call) {
+        c <- out$call
+        out$call <- mget(names(formals()))
+        out$call <- append(c, out$call)
+        names(out$call)[1] <- "simple.call"
+    }
     
     class(out) <- c("mint.spls","mixo_spls")
     return(invisible(out))

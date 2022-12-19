@@ -36,6 +36,7 @@
 #' 
 #' @inheritParams block.plsda
 #' @inheritParams block.spls
+#' @template arg/verbose.call
 #' @return \code{block.splsda} returns an object of class \code{"block.splsda",
 #' "block.spls"}, a list that contains the following components:
 #' 
@@ -52,6 +53,9 @@
 #' between the variate of each block and the variate of the outcome. Used to
 #' weight predictions.} \item{prop_expl_var}{Percentage of explained
 #' variance for each component and each block}
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' @author Florian Rohart, Benoit Gautier, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{plotIndiv}}, \code{\link{plotArrow}},
 #' \code{\link{plotLoadings}}, \code{\link{plotVar}}, \code{\link{predict}},
@@ -97,7 +101,8 @@ block.splsda <- function(X,
                          tol = 1e-06,
                          max.iter = 100,
                          near.zero.var = FALSE,
-                         all.outputs = TRUE)
+                         all.outputs = TRUE,
+                         verbose.call = FALSE)
 {
     # check inpuy 'Y' and transformation in a dummy matrix
     if (!missing(Y))
@@ -189,6 +194,13 @@ block.splsda <- function(X,
         weights = weights,
         prop_expl_var = result$prop_expl_var
     )#[-result$indY])
+    
+    if (verbose.call) {
+        c <- out$call
+        out$call <- mget(names(formals()))
+        out$call <- append(c, out$call)
+        names(out$call)[1] <- "simple.call"
+    }
     
     # give a class
     class(out) = c("block.splsda", "block.spls", "sgccda", "sgcca", "DA")

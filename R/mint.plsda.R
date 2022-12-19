@@ -34,6 +34,7 @@
 #' @inheritParams mint.pls
 #' @param Y A factor or a class vector indicating the discrete outcome of each
 #' sample.
+#' @template arg/verbose.call
 #' @return \code{mint.plsda} returns an object of class \code{"mint.plsda",
 #' "plsda"}, a list that contains the following components:
 #' 
@@ -55,6 +56,9 @@
 #' (note that contrary to PCA, this amount may not decrease as the aim of the
 #' method is not to maximise the variance, but the covariance between X and the
 #' dummy matrix Y).}
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' @author Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{spls}}, \code{\link{summary}}, \code{\link{plotIndiv}},
 #' \code{\link{plotVar}}, \code{\link{predict}}, \code{\link{perf}},
@@ -100,7 +104,8 @@ mint.plsda <- function(X,
                        tol = 1e-06,
                        max.iter = 100,
                        near.zero.var = FALSE,
-                       all.outputs = TRUE)
+                       all.outputs = TRUE,
+                       verbose.call = FALSE)
 {
     #-- validation des arguments --#
     # most of the checks are done in 'internal_wrapper.mint'
@@ -144,7 +149,8 @@ mint.plsda <- function(X,
         mode = 'regression',
         max.iter = max.iter,
         tol = tol,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        DA = TRUE
     )
     
     # choose the desired output from 'result'
@@ -168,6 +174,13 @@ mint.plsda <- function(X,
         scale = result$scale,
         prop_expl_var = result$prop_expl_var
     )
+    
+    if (verbose.call) {
+        c <- out$call
+        out$call <- mget(names(formals()))
+        out$call <- append(c, out$call)
+        names(out$call)[1] <- "simple.call"
+    }
     
     class(out) <- c("mint.plsda", "mixo_plsda", "mixo_pls", "DA")
     return(invisible(out))

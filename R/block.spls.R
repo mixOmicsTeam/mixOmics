@@ -50,6 +50,7 @@
 #' default all variables are kept in the model.
 #' @param keepY Only if Y is provided (and not \code{indY}). Each entry is the number of variables to
 #' select in each of the blocks of Y for each component.
+#' @template arg/verbose.call
 #' @return \code{block.spls} returns an object of class \code{"block.spls"}, a
 #' list that contains the following components:
 #' 
@@ -66,6 +67,9 @@
 #' of the algorithm for each component} \item{prop_expl_var}{Percentage of
 #' explained variance for each component and each block after setting possible
 #' missing values in the centered data to zero}
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' @author Florian Rohart, Benoit Gautier, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{plotIndiv}}, \code{\link{plotArrow}},
 #' \code{\link{plotLoadings}}, \code{\link{plotVar}}, \code{\link{predict}},
@@ -101,7 +105,8 @@ block.spls = function(X,
                       tol = 1e-06,
                       max.iter = 100,
                       near.zero.var = FALSE,
-                      all.outputs = TRUE)
+                      all.outputs = TRUE,
+                      verbose.call = FALSE)
 {
     
     # call to 'internal_wrapper.mint.block'
@@ -120,7 +125,8 @@ block.spls = function(X,
         tol = tol,
         max.iter = max.iter,
         near.zero.var = near.zero.var,
-        all.outputs = all.outputs
+        all.outputs = all.outputs,
+        DA = FALSE
     )
     
     # calculate weights for each dataset
@@ -151,6 +157,13 @@ block.spls = function(X,
         weights = weights,
         prop_expl_var = result$prop_expl_var
     )
+    
+    if (verbose.call) {
+        c <- out$call
+        out$call <- mget(names(formals()))
+        out$call <- append(c, out$call)
+        names(out$call)[1] <- "simple.call"
+    }
     
     # give a class
     class(out) = c("block.spls", "sgcca")

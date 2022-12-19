@@ -34,8 +34,68 @@ test_that("network works for spls", {
           name.save = tmp.file)
   
   expect_equal(names(network.spls.res), c("gR", "M", "cutoff"))
- .expect_numerically_close(sum(network.spls.res$M), 45.6061, digits = 3)
- unlink(tmp.file)
+  .expect_numerically_close(sum(network.spls.res$M), 45.6061, digits = 3)
+  unlink(tmp.file)
+})
+
+test_that("network works when `shape.node` == 'none'", {
+  data(breast.TCGA)
+  X <- list(mRNA = breast.TCGA$data.train$mrna[,1:100],
+            proteomics = breast.TCGA$data.train$protein[,1:100])
+  Y <- breast.TCGA$data.train$subtype
+  
+  model.pls <- pls(X$mRNA, X$proteomics)
+  model.block <- block.splsda(X, Y)
+  
+  tmp.file <- tempfile("network", fileext = ".jpeg")
+  
+  net <- network(model.pls, cutoff = 0.5,
+                 shape.node = c("none", "none"), 
+                 save = "jpeg", 
+                 name.save = tmp.file)
+  expect_equal(names(net), c("gR", "M", "cutoff"))
+  .expect_numerically_close(sum(net$M), 11.17439, digits = 3)
+  unlink(tmp.file)
+  
+  net <- network(model.block, cutoff = 0.5,
+                 shape.node = c("none", "none"), 
+                 save = "jpeg", 
+                 name.save = tmp.file)
+  expect_equal(names(net), c("gR", "M_mRNA_proteomics", "cutoff"))
+  .expect_numerically_close(sum(net$M), 14.35823, digits = 3)
+  unlink(tmp.file)
+})
+
+test_that("catches invalid `graph.scale` values", {
+  data(breast.TCGA)
+  X <- list(mRNA = breast.TCGA$data.train$mrna[,1:100],
+            proteomics = breast.TCGA$data.train$protein[,1:100])
+  Y <- breast.TCGA$data.train$subtype
+  
+  model <- block.splsda(X, Y)
+  
+  expect_error(network(model, cutoff = 0.5,
+                       graph.scale = -1),
+               "graph.scale")
+  expect_error(network(model, cutoff = 0.5,
+                       graph.scale = 2),
+               "graph.scale")
+})
+
+test_that("catches invalid `size.node` values", {
+  data(breast.TCGA)
+  X <- list(mRNA = breast.TCGA$data.train$mrna[,1:100],
+            proteomics = breast.TCGA$data.train$protein[,1:100])
+  Y <- breast.TCGA$data.train$subtype
+  
+  model <- block.splsda(X, Y)
+  
+  expect_error(network(model, cutoff = 0.5,
+                       size.node = -1),
+               "size.node")
+  expect_error(network(model, cutoff = 0.5,
+                       size.node = 2),
+               "size.node")
 })
 
 unlink(list.files(pattern = "*.pdf"))

@@ -23,7 +23,6 @@ test_that("auroc works", {
  })
 
 
-
 test_that("Safely handles zero var (non-zero center) features", {
   
   X1 <- data.frame(matrix(rnorm(100000, 5, 5), nrow = 100))
@@ -46,3 +45,32 @@ test_that("Safely handles zero var (non-zero center) features", {
   .expect_numerically_close(auc.splsda$block2$comp2[[2]], 2.22e-16)
   
 })
+
+
+test_that("combined auroc", {
+  
+  data(breast.TCGA)
+  X <- list(miRNA = breast.TCGA$data.train$mirna,
+            mRNA = breast.TCGA$data.train$mrna,
+            proteomics = breast.TCGA$data.train$protein)
+  Y <- breast.TCGA$data.train$subtype
+  
+  model1 <- splsda(X$miRNA, Y, ncomp=3)
+  model2 <- splsda(X$mRNA, Y, ncomp=3)
+  model3 <- splsda(X$proteomics, Y, ncomp=3)
+  
+  models <- list(miRNA.Model=model1,
+            mRNA.Model=model2,
+            proteomics.Model=model3) 
+  
+  auroc.out <- auroc(models, print = F, plot=F, roc.comp = 3)
+  
+  .expect_numerically_close(auroc.out$auc$miRNA.Model[1],
+                            0.993)
+  
+  .expect_numerically_close(auroc.out$auc$proteomics.Model[1],
+                            0.9945)
+})
+
+dev.off()
+unlink(list.files(pattern = "*.pdf"))

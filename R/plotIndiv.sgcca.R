@@ -218,9 +218,9 @@ plotIndiv.sgcca <-
       
       ## ------ drop explained variance on axes if only average asked
       if (length(unique(df$Block)) == 1) {
-        X.label <- 'variate 1 - average'
-        Y.label <- 'variate 2 - average'
-        Z.label <- 'variate 3 - average'
+        if (grepl("% expl. var", X.label)) { X.label <- 'variate 1 - average' }
+        if (grepl("% expl. var", Y.label)) { Y.label <- 'variate 2 - average' }
+        if (style=="3d") { if (grepl("% expl. var", Z.label)) { Z.label <- 'variate 3 - average' } }
       }
     }
     

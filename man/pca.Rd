@@ -14,7 +14,8 @@ pca(
   logratio = c("none", "CLR", "ILR"),
   ilr.offset = 0.001,
   V = NULL,
-  multilevel = NULL
+  multilevel = NULL,
+  verbose.call = FALSE
 )
 }
 \arguments{
@@ -59,11 +60,17 @@ avoid infinite value after the logratio transform.}
 
 \item{multilevel}{sample information for multilevel decomposition for
 repeated measurements.}
+
+\item{verbose.call}{Logical (Default=FALSE), if set to TRUE then the \code{$call}
+component of the returned object will contain the variable values for all 
+parameters. Note that this may cause large memory usage.}
 }
 \value{
 \code{pca} returns a list with class \code{"pca"} and \code{"prcomp"}
 containing the following components: 
-\item{call}{The function call.}
+\item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+If \code{verbose.call = TRUE} then all the inputted values are accessable via
+this component}
 \item{X}{The input data matrix, possibly scaled and centered.}
 \item{ncomp}{The number of principal components used.}
 \item{center}{The centering used.}

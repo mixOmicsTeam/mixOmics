@@ -54,7 +54,8 @@
 #' \code{'horst'}, see reference.
 #' @param init Mode of initialization use in the algorithm, either by Singular
 #' Value Decomposition of the product of each block of X with Y ('svd') or each
-#' block independently ('svd.single'). Default = \code{svd.single}.
+#' block independently ('svd.single'). Default = \code{svd.single}
+#' @template arg/verbose.call
 #' @return \code{block.pls} returns an object of class \code{'block.pls'}, a
 #' list that contains the following components:
 #' 
@@ -69,6 +70,9 @@
 #' iterations of the algorithm for each component}
 #' \item{prop_expl_var}{Percentage of explained variance for each
 #' component and each block}
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' @author Florian Rohart, Benoit Gautier, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{plotIndiv}}, \code{\link{plotArrow}},
 #' \code{\link{plotLoadings}}, \code{\link{plotVar}}, \code{\link{predict}},
@@ -98,14 +102,15 @@ block.pls <- function(X,
                       tol = 1e-06,
                       max.iter = 100,
                       near.zero.var = FALSE,
-                      all.outputs = TRUE)
+                      all.outputs = TRUE,
+                      verbose.call = FALSE)
 {
     
     # call to 'internal_wrapper.mint.block'
     result = internal_wrapper.mint.block(X=X, Y=Y, indY=indY, ncomp=ncomp,
                                          design=design, scheme=scheme, mode=mode, scale=scale,
                                          init=init, tol=tol, max.iter=max.iter ,near.zero.var=near.zero.var,
-                                         all.outputs = all.outputs)
+                                         all.outputs = all.outputs, DA = FALSE)
     
     # calculate weights for each dataset
     weights = get.weights(result$variates, indY = result$indY)
@@ -131,6 +136,13 @@ block.pls <- function(X,
              scheme = result$scheme,
              weights = weights,
              prop_expl_var = result$prop_expl_var)
+    
+    if (verbose.call) {
+        c <- out$call
+        out$call <- mget(names(formals()))
+        out$call <- append(c, out$call)
+        names(out$call)[1] <- "simple.call"
+    }
     
     # give a class
     class(out) = c("block.pls","sgcca")

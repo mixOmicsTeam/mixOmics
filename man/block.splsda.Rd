@@ -19,7 +19,8 @@ block.splsda(
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
-  all.outputs = TRUE
+  all.outputs = TRUE,
+  verbose.call = FALSE
 )
 
 wrapper.sgccda(
@@ -35,7 +36,8 @@ wrapper.sgccda(
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
-  all.outputs = TRUE
+  all.outputs = TRUE,
+  verbose.call = FALSE
 )
 }
 \arguments{
@@ -73,7 +75,7 @@ means and unit variances (default: TRUE)}
 
 \item{init}{Mode of initialization use in the algorithm, either by Singular
 Value Decomposition of the product of each block of X with Y ('svd') or each
-block independently ('svd.single'). Default = \code{svd.single}.}
+block independently ('svd.single'). Default = \code{svd.single}}
 
 \item{tol}{Positive numeric used as convergence criteria/tolerance during the
 iterative process. Default to \code{1e-06}.}
@@ -87,6 +89,10 @@ computations. Default value is FALSE.}
 
 \item{all.outputs}{Logical. Computation can be faster when some specific
 (and non-essential) outputs are not calculated. Default = \code{TRUE}.}
+
+\item{verbose.call}{Logical (Default=FALSE), if set to TRUE then the \code{$call}
+component of the returned object will contain the variable values for all 
+parameters. Note that this may cause large memory usage.}
 }
 \value{
 \code{block.splsda} returns an object of class \code{"block.splsda",
@@ -105,6 +111,9 @@ iterations of the algorithm for each component} \item{weights}{Correlation
 between the variate of each block and the variate of the outcome. Used to
 weight predictions.} \item{prop_expl_var}{Percentage of explained
 variance for each component and each block}
+\item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+If \code{verbose.call = TRUE} then all the inputted values are accessable via
+this component}
 }
 \description{
 Integration of multiple data sets measured on the same samples or

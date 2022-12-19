@@ -119,269 +119,329 @@
 #' }
 # TODO change this so that it simply wraps perf
 tune.spls <- 
-    function(X,
-             Y,
-             test.keepX = NULL,
-             test.keepY = NULL,
-             ncomp,
-             validation = c('Mfold', 'loo'),
-             nrepeat = 1,
-             folds,
-             mode = c('regression', 'canonical', 'classic'),
-             measure = NULL,
-             BPPARAM = SerialParam(),
-             progressBar = FALSE,
-             limQ2 = 0.0975,
-             ...
-             ) {
-        out = list()
-        mode <- match.arg(mode)
+  function(X,
+           Y,
+           test.keepX = NULL,
+           test.keepY = NULL,
+           ncomp,
+           validation = c('Mfold', 'loo'),
+           nrepeat = 1,
+           folds,
+           mode = c('regression', 'canonical', 'classic'),
+           measure = NULL,
+           BPPARAM = SerialParam(),
+           progressBar = FALSE,
+           limQ2 = 0.0975,
+           ...
+  ) {
+    out = list()
+    mode <- match.arg(mode)
+    
+    X <- .check_numeric_matrix(X, block_name = 'X')
+    Y <- .check_numeric_matrix(Y, block_name = 'Y')
+    
+    check_cv <- .check_cv_args(validation = validation, 
+                               nrepeat = nrepeat, folds = folds, 
+                               N = nrow(X))
+    validation <- check_cv$validation
+    nrepeat <- check_cv$nrepeat
+    folds <- check_cv$folds
+    
+    test.keepX <- .change_if_null(arg = test.keepX, default = ncol(X))
+    test.keepY <- .change_if_null(arg = test.keepY, default = ncol(Y))
+    
+    test.keepX <- unique(test.keepX)
+    test.keepY <- unique(test.keepY)
+    
+    spls.model <- !(length(test.keepX) == 1 & length(test.keepY) == 1)
+    
+    if (ncol(Y) == 1) {
+      res <- tune.spls1(X = X, 
+                        Y = Y,
+                        ncomp = ncomp,
+                        test.keepX = test.keepX,
+                        validation = validation,
+                        folds = folds,
+                        measure = measure, # can do a R2 per Y (correlation, linear regression R2), need to call MSEP (see perf.spls).
+                        progressBar = progressBar,
+                        nrepeat = nrepeat,
+                        ...
+      )
+      ## --- call
+      res$call <- NULL
+      ## eval all but X and Y
+      mc <- mget(names(formals())[-1:-2], sys.frame(sys.nframe()))
+      ## replace function, X and Y with unevaluated call
+      mc <- as.call(c(as.list(match.call())[1:3], mc))
+      res <- c(list(call = mc), res)
+      class(res) <- 'tune.spls1'
+      return(res)
+    }
+    
+    measure <- match.arg(measure, choices = c('cor', 'RSS'))
+    
+    choice.keepX = choice.keepY = NULL
+    measure.table.cols <- c('comp', 'keepX', 'keepY', 'repeat', 't', 'u', 'cor', 'RSS')
+    # if (spls.model)
+    # {
+    measure.pred <- expand.grid(keepX = test.keepX, 
+                                keepY = test.keepY,
+                                V = c('u', 't'),
+                                measure = c('cor', 'RSS'),
+                                comp = seq_len(ncomp),
+                                optimum.keepA = FALSE)
+    # } else {
+    #   # Q2 only
+    #   measure.pred <- expand.grid(
+    #                               comp = seq_len(ncomp),
+    #                               optimum = FALSE)
+    # }
+    measure.pred <- data.frame(measure.pred)
+    measure.pred <- cbind(measure.pred, 
+                          value.v = I(rep(list(data.frame(matrix(NA_real_, ncol= 1, nrow = nrepeat))), 
+                                          times = nrow(measure.pred))),
+                          value.Q2.total = I(rep(list(data.frame(matrix(NA_real_, ncol= 1, nrow = nrepeat))), 
+                                                 times = nrow(measure.pred)))
+    )
+    # measure.pred$value <- lapply(measure.pred$value, as.data.frame)
+    
+    use_progressBar <- progressBar & (is(BPPARAM, 'SerialParam'))
+    n_keepA <- length(test.keepX) * length(test.keepY)
+    
+    ## initialise optimal keepX/Y
+    measure.pred$optimum.keepA <- FALSE 
+    measure.pred[
+      measure.pred$keepX == test.keepX[1] &
+        measure.pred$keepY == test.keepY[1]
+      ,]$optimum.keepA <- TRUE
+    
+    
+    # list of all keepX/keepY passed to this via bplapply. calculates the 
+    # correlation and RSS of components for given input keepX/Y and returns
+    # a subset of measure.pred containing these updated values
+    iter_keep.vals <- function(keep.vals) { # keep.vals = list(keepX, keepY)
+      
+      keepX <- keep.vals$keepX # set keep values
+      keepY <- keep.vals$keepY
+      
+      if (use_progressBar) {
+        n_tested <- n_tested + 1
+        prog_level <- n_tested / n_keepA
+        .progressBar(prog_level, title = 'of features tested')
+      }
+      # generate model using input parameters
+      pls.model <- spls(X = X, Y = Y, 
+                        keepX = c(choice.keepX, keepX), 
+                        keepY = c(choice.keepY, keepY), 
+                        ncomp = comp, mode = mode, ...)
+      
+      # 
+      pls.perf <- perf(pls.model, validation = validation, folds = folds, nrepeat = nrepeat)
+      
+      
+      # ensures the only rows that are returned are those manipulated in this
+      # iteration. otherwise, later component iterations will undo this work
+      adjusted.rows <- c()
+      for (measure_i in c('cor', 'RSS')) # for each measure...
+      {
         
-        X <- .check_numeric_matrix(X, block_name = 'X')
-        Y <- .check_numeric_matrix(Y, block_name = 'Y')
-        
-        check_cv <- .check_cv_args(validation = validation, 
-                                   nrepeat = nrepeat, folds = folds, 
-                                   N = nrow(X))
-        validation <- check_cv$validation
-        nrepeat <- check_cv$nrepeat
-        folds <- check_cv$folds
-        
-        test.keepX <- .change_if_null(arg = test.keepX, default = ncol(X))
-        test.keepY <- .change_if_null(arg = test.keepY, default = ncol(Y))
-        
-        test.keepX <- unique(test.keepX)
-        test.keepY <- unique(test.keepY)
-        
-        spls.model <- !(length(test.keepX) == 1 & length(test.keepY) == 1)
-        
-        if (ncol(Y) == 1) {
-          res <- tune.spls1(X = X, 
-                            Y = Y,
-                            ncomp = ncomp,
-                            test.keepX = test.keepX,
-                            validation = validation,
-                            folds = folds,
-                            measure = measure, # can do a R2 per Y (correlation, linear regression R2), need to call MSEP (see perf.spls).
-                            progressBar = progressBar,
-                            nrepeat = nrepeat,
-                            ...
-          )
-            ## --- call
-            res$call <- NULL
-            ## eval all but X and Y
-            mc <- mget(names(formals())[-1:-2], sys.frame(sys.nframe()))
-            ## replace function, X and Y with unevaluated call
-            mc <- as.call(c(as.list(match.call())[1:3], mc))
-            res <- c(list(call = mc), res)
-            class(res) <- 'tune.spls1'
-            return(res)
-        }
-
-        measure <- match.arg(measure, choices = c('cor', 'RSS'))
-        
-        choice.keepX = choice.keepY = NULL
-        measure.table.cols <- c('comp', 'keepX', 'keepY', 'repeat', 't', 'u', 'cor', 'RSS')
-        # if (spls.model)
-        # {
-          measure.pred <- expand.grid(keepX = test.keepX, 
-                                      keepY = test.keepY,
-                                      V = c('u', 't'),
-                                      measure = c('cor', 'RSS'),
-                                      comp = seq_len(ncomp),
-                                      optimum.keepA = FALSE)
-        # } else {
-        #   # Q2 only
-        #   measure.pred <- expand.grid(
-        #                               comp = seq_len(ncomp),
-        #                               optimum = FALSE)
-        # }
-        measure.pred <- data.frame(measure.pred)
-        measure.pred <- cbind(measure.pred, 
-                              value.v = I(rep(list(data.frame(matrix(NA_real_, ncol= 1, nrow = nrepeat))), 
-                                              times = nrow(measure.pred))),
-                              value.Q2.total = I(rep(list(data.frame(matrix(NA_real_, ncol= 1, nrow = nrepeat))), 
-                                              times = nrow(measure.pred)))
-                              )
-        # measure.pred$value <- lapply(measure.pred$value, as.data.frame)
-        
-        use_progressBar <- progressBar & (is(BPPARAM, 'SerialParam'))
-        n_keepA <- length(test.keepX) * length(test.keepY)
-        
-        ## initialise optimal keepX/Y
-        measure.pred$optimum.keepA <- FALSE 
-        measure.pred[
-          measure.pred$keepX == test.keepX[1] &
-            measure.pred$keepY == test.keepY[1]
-          ,]$optimum.keepA <- TRUE
-        
-            for (comp in seq_len(ncomp)){
-              # TODO tune.pls progressBar should use perf
-                if (use_progressBar) {
-                    n_tested <- 0
-                    cat(sprintf("\ntuning component: %s\n", comp))
-                }
-                    for(keepX in 1:length(test.keepX)){
-                        for(keepY in 1:length(test.keepY)){
-                            if (use_progressBar) {
-                                n_tested <- n_tested + 1
-                                prog_level <- n_tested / n_keepA
-                                .progressBar(prog_level, title = 'of features tested')
-                            }
-                            pls.model <- spls(X = X, Y = Y, 
-                                              keepX = c(choice.keepX, test.keepX[keepX]), 
-                                              keepY = c(choice.keepY, test.keepY[keepY]), 
-                                              ncomp = comp, mode = mode, ...)
-                            
-                            pls.perf <- perf(pls.model, validation = validation, folds = folds, nrepeat = nrepeat)
-                            ## why value.u/t is constant coming out of this?
-                            ## now that measure.pred is different for the two, account for it
-
-                                  for (measure_i in c('cor', 'RSS')) ## calculate both but use measure only
-                                  {
-                                    
-                                    for (v in c('u', 't'))
-                                    {
-                                      ## populate the table for both measures
-                                      measure.vpred <- pls.perf$measures[[sprintf("%s.%spred", measure_i, v)]]$values
-                                      measure.vpred <- measure.vpred[measure.vpred$comp == comp,]
-                                      measure.pred[measure.pred$comp == comp & 
-                                                     measure.pred$keepX == test.keepX[keepX] &
-                                                     measure.pred$keepY == test.keepY[keepY] &
-                                                     measure.pred$V == v &
-                                                     measure.pred$measure == measure_i
-                                                   ,]$value.v[[1]] <- measure.vpred$value
-                                      ## Q2
-                                    value.Q2.total <- pls.perf$measures$Q2.total$values
-                                    value.Q2.total <- filter(value.Q2.total, comp == comp)$value
-                                    measure.pred[measure.pred$comp == comp & 
-                                                   measure.pred$keepX == test.keepX[keepX] &
-                                                   measure.pred$keepY == test.keepY[keepY] &
-                                                   # TODO the following filtering criteria needs review - not sure if Q2 is per c('u' , 't')
-                                                   measure.pred$V == v &
-                                                   measure.pred$measure == measure_i
-                                                 ,]$value.Q2.total[[1]] <- value.Q2.total
-                                    }
-                                    
-                                  }
-                                  ## optimum only uses measure
-                            optimum.u <- measure.pred[measure.pred$comp == comp & 
-                                                        measure.pred$optimum.keepA == TRUE &
-                                                        measure.pred$V == 'u' &
-                                                        measure.pred$measure == measure
-                                                      ,]$value.v[[1]]
-                            optimum.t <- measure.pred[measure.pred$comp == comp & 
-                                                        measure.pred$optimum.keepA == TRUE &
-                                                        measure.pred$V == 't' &
-                                                        measure.pred$measure == measure
-                                                      ,]$value.v[[1]]
-                            value.u <- measure.pred[measure.pred$comp == comp & 
-                                                      measure.pred$keepX == test.keepX[keepX] &
-                                                      measure.pred$keepY == test.keepY[keepY] &
-                                                      measure.pred$V == 'u' &
-                                                      measure.pred$measure == measure
-                                                    ,]$value.v[[1]]
-                            value.t <- measure.pred[measure.pred$comp == comp & 
-                                                      measure.pred$keepX == test.keepX[keepX] &
-                                                      measure.pred$keepY == test.keepY[keepY] &
-                                                      measure.pred$V == 't' &
-                                                      measure.pred$measure == measure
-                                                    ,]$value.v[[1]]
-         
-                                    ## workaround for constant values in t.test # TODO handle it properly
-                                    offset.eps <- seq(1, 2, length.out = length(optimum.u))/1e6
-                                    optimum.t <- optimum.t + offset.eps
-                                    optimum.u <- optimum.u + offset.eps
-                                    value.t <- value.t + offset.eps
-                                    value.u <- value.u + offset.eps
-                                    
-                                    .check_improvement <- function(opt, value, measure, nrepeat) {
-                                      ## output TRUE if value improves opt for cor or RSS, else FALSE
-                                      if (nrepeat > 2) {
-                                        t.test.res <- tryCatch(t.test(x = opt, y = value, alternative = ifelse(measure == 'cor', 'less', 'greater')), error = function(e) e)
-                                        improved <- t.test.res$p.value < 0.05
-                                        } else
-                                        {
-                                          ## compare values
-                                          improved <-  if (measure == 'cor') mean(opt) < mean(value) else mean(opt) > mean(value)
-                                        }
-                                      improved
-                                    }
-                                    
-                                    u.improved <-.check_improvement(opt = optimum.u, value = value.u, measure = measure, nrepeat = nrepeat)
-                                    t.improved <-.check_improvement(opt = optimum.t, value = value.t, measure = measure, nrepeat = nrepeat)
-                                    improved <- if (mode == 'canonical') u.improved & t.improved else u.improved
-                                  if (improved)
-                                  {
-                                      ## set previous to FALSE
-                                      measure.pred[measure.pred$comp == comp
-                                                   ,]$optimum.keepA <- FALSE
-                                      ## update optimum
-                                    measure.pred[measure.pred$comp == comp & 
-                                                   measure.pred$keepX == test.keepX[keepX] &
-                                                   measure.pred$keepY == test.keepY[keepY]
-                                                 ,]$optimum.keepA <- TRUE
-                                  }
-                                
-                        } # end keepY
-                    } #end keepX
-  
-              choice.keepX.ncomp <-  measure.pred[measure.pred$comp == comp & 
-                                                    measure.pred$optimum.keepA == TRUE &
-                                                    measure.pred$measure == measure & 
-                                                    measure.pred$V == 't' ## doesn't matter t or u
-                                                  ,]$keepX
-              choice.keepY.ncomp <-  measure.pred[measure.pred$comp == comp & 
-                                                    measure.pred$optimum.keepA == TRUE &
-                                                    measure.pred$measure == measure &
-                                                    measure.pred$V == 't'
-                                                  ,]$keepY
-              choice.keepX = c(choice.keepX, choice.keepX.ncomp)
-              choice.keepY = c(choice.keepY, choice.keepY.ncomp)
-              
-            } # end comp
-        
-        choice.ncomp <- 1
-        for (comp in seq_len(ncomp))
+        for (v in c('u', 't')) # for each set of components ...
         {
-          Q2.total <- measure.pred[measure.pred$comp == comp & 
-                                     measure.pred$keepX == test.keepX[keepX] &
-                                     measure.pred$keepY == test.keepY[keepY] &
-                                     measure.pred$V == 'u'
-                                   ,]$value.Q2.total[[1]]
-          Q2.opt <- measure.pred[measure.pred$comp == choice.ncomp & 
-                                     measure.pred$keepX == test.keepX[keepX] &
-                                     measure.pred$keepY == test.keepY[keepY] &
-                                   measure.pred$V == 'u'
-                                   ,]$value.Q2.total[[1]]
-          keep.comp <- mean(Q2.total) >= limQ2
-          if (keep.comp)
-            # we want the first component that drops Q2 below limQ2
-            choice.ncomp <- comp + 1
+          ## extract the relevant row index in measure.pred FOR VALUE.V
+          vpred.idx <- rownames(measure.pred[measure.pred$comp == comp & 
+                                               measure.pred$keepX == keepX &
+                                               measure.pred$keepY == keepY &
+                                               measure.pred$V == v &
+                                               measure.pred$measure == measure_i,])
+          
+          # extract relevant values
+          measure.vpred <- pls.perf$measures[[sprintf("%s.%spred", measure_i, v)]]$values
+          measure.vpred <- measure.vpred[measure.vpred$comp == comp,]
+          measure.pred[vpred.idx,]$value.v[[1]] <- measure.vpred$value # adjust measure.pred
+          
+          ## extract the relevant row index in measure.pred FOR Q2
+          Q2.idx <- rownames(measure.pred[measure.pred$comp == comp & 
+                                            measure.pred$keepX == keepX &
+                                            measure.pred$keepY == keepY &
+                                            # TODO the following filtering criteria needs review - not sure if Q2 is per c('u' , 't')
+                                            measure.pred$V == v &
+                                            measure.pred$measure == measure_i
+                                          ,])
+          # extract relevant values
+          value.Q2.total <- pls.perf$measures$Q2.total$values
+          value.Q2.total <- filter(value.Q2.total, comp == comp)$value
+          measure.pred[Q2.idx,]$value.Q2.total[[1]] <- value.Q2.total  # adjust measure.pred
+          
+          adjusted.rows <- c(adjusted.rows, vpred.idx, Q2.idx) # append adjusted rows to list
         }
-        names(choice.keepX) <- names(choice.keepY) <- paste0('comp', seq_len(ncomp))
-        out$choice.keepX = choice.keepX
-        out$choice.keepY = choice.keepY
-        out$choice.ncomp = choice.ncomp
         
-        ## add mean and sd
-        val <- unclass(measure.pred$value.v)
-        measure.pred$mean <- sapply(measure.pred$value.v, function(x){
-          mean(c(as.matrix(x)), na.rm = TRUE)
-        })
+      }
+      return(measure.pred[unique(adjusted.rows),])
+    }
+    
+    # takes in the final measure.preds data.frame and adjusts the optimum.keepA 
+    # feature to reflect the optimal values depending on the t.test
+    DetermineOptimalKeepVals <- function(measure.pred, comp, keep.vals, nrepeat) {
+      
+      ## output TRUE if value improves opt for cor or RSS, else FALSE
+      .check_improvement <- function(opt, value, measure, nrepeat) {
         
-        measure.pred$sd <- sapply(measure.pred$value.v, function(x){
-          sd(c(as.matrix(x)), na.rm = TRUE)
-        })
+        if (nrepeat > 2) {
+          t.test.res <- tryCatch(t.test(x = opt, y = value, alternative = ifelse(measure == 'cor', 'less', 'greater')),
+                                 error = function(e) e)
+          improved <- t.test.res$p.value < 0.05
+        } else
+        {
+          ## compare values
+          improved <-  if (measure == 'cor') mean(opt) < mean(value) else mean(opt) > mean(value)
+        }
+        improved
+      }
+      
+      for (keep.val in keep.vals) {
+        trial.keepX <- keep.val$keepX # set keep values
+        trial.keepY <- keep.val$keepY
         
-        out$measure.pred = measure.pred
-        ### evaluate all for output except X and Y to save memory
-        ## eval all but X and Y
-        mc <- mget(names(formals())[-1:-2], sys.frame(sys.nframe()))
-        ## replace function, X and Y with unevaluated call
-        mc <- as.call(c(as.list(match.call())[1:3], mc))
-        out <- c(list(call = mc), out)
-        class <- c('tune.pls')
-        class(out) <- if (spls.model) class <- c(class, 'tune.spls')
-        return(out)
-    } 
+        # current best for X components
+        optimum.u <- measure.pred[measure.pred$comp == comp & 
+                                    measure.pred$optimum.keepA == TRUE &
+                                    measure.pred$V == 'u' &
+                                    measure.pred$measure == measure
+                                  ,]$value.v[[1]]
+        # current best for Y components
+        optimum.t <- measure.pred[measure.pred$comp == comp &
+                                    measure.pred$optimum.keepA == TRUE &
+                                    measure.pred$V == 't' &
+                                    measure.pred$measure == measure
+                                  ,]$value.v[[1]]
+        # new keepX/Y pair to try for X components
+        value.u <- measure.pred[measure.pred$comp == comp &
+                                  measure.pred$keepX == trial.keepX &
+                                  measure.pred$keepY == trial.keepY &
+                                  measure.pred$V == 'u' &
+                                  measure.pred$measure == measure
+                                ,]$value.v[[1]]
+        # new keepX/Y pair to try for Y components
+        value.t <- measure.pred[measure.pred$comp == comp &
+                                  measure.pred$keepX == trial.keepX &
+                                  measure.pred$keepY == trial.keepY &
+                                  measure.pred$V == 't' &
+                                  measure.pred$measure == measure
+                                ,]$value.v[[1]]
+        
+        ## workaround for constant values in t.test 
+        offset.eps <- seq(1, 2, length.out = length(optimum.u))/1e6
+        optimum.t <- optimum.t + offset.eps
+        optimum.u <- optimum.u + offset.eps
+        value.t <- value.t + offset.eps
+        value.u <- value.u + offset.eps
+        
+        # see if there is significant improvement in measure based on new keepX/Y pair
+        u.improved <-.check_improvement(opt = optimum.u, value = value.u, measure = measure, nrepeat = nrepeat)
+        t.improved <-.check_improvement(opt = optimum.t, value = value.t, measure = measure, nrepeat = nrepeat)
+        improved <- if (mode == 'canonical') u.improved & t.improved else u.improved
+        if (improved) # if so ...
+        {
+          ## set previous to FALSE
+          measure.pred[measure.pred$comp == comp
+                       ,]$optimum.keepA <- FALSE
+          ## update optimum
+          measure.pred[measure.pred$comp == comp &
+                         measure.pred$keepX == trial.keepX &
+                         measure.pred$keepY == trial.keepY
+                       ,]$optimum.keepA <- TRUE
+        }
+      }
+      
+      return(measure.pred)
+    }
+    
+    # generate list of lists containing all keepX/Y pairs to test
+    keep.vals <- list()
+    i <- 1
+    for(keepX in test.keepX){
+      for(keepY in test.keepY){
+        keep.vals[[i]] <- list(keepX = keepX, keepY=keepY)
+        i<-i+1
+      }
+    }
+    
+    for (comp in seq_len(ncomp)){ # for each component to test...
+      if (use_progressBar) {
+        n_tested <- 0
+        cat(sprintf("\ntuning component: %s\n", comp))
+      }
+      
+      # calculate measure values for specific comp, keepX/Y
+      m.p <- bplapply(X=keep.vals, FUN = iter_keep.vals, 
+                      BPPARAM = BPPARAM) 
+      
+      for (d in m.p) { # output will be a list, so adjust global measure.pred
+                       # to contain the desired values
+        measure.pred[rownames(d), ] <- d
+      }
+      
+      # changes measure.pred$optimum.keepA to reflect results of t.tests
+      measure.pred <- DetermineOptimalKeepVals(measure.pred, comp, keep.vals, nrepeat)
+      
+      # extract optimal keepX for this component
+      choice.keepX.ncomp <-  measure.pred[measure.pred$comp == comp & 
+                                            measure.pred$optimum.keepA == TRUE &
+                                            measure.pred$measure == measure & 
+                                            measure.pred$V == 't' ## doesn't matter t or u
+                                          ,]$keepX
+      # extract optimal keepY for this component
+      choice.keepY.ncomp <-  measure.pred[measure.pred$comp == comp & 
+                                            measure.pred$optimum.keepA == TRUE &
+                                            measure.pred$measure == measure &
+                                            measure.pred$V == 't'
+                                          ,]$keepY
+      choice.keepX = c(choice.keepX, choice.keepX.ncomp)
+      choice.keepY = c(choice.keepY, choice.keepY.ncomp)
+      
+    } # end comp
+    
+    choice.ncomp <- 1
+    for (comp in seq_len(ncomp))
+    {
+      Q2.total <- measure.pred[measure.pred$comp == comp & 
+                                 measure.pred$keepX == keepX &
+                                 measure.pred$keepY == keepY &
+                                 measure.pred$V == 'u'
+                               ,]$value.Q2.total[[1]]
+      Q2.opt <- measure.pred[measure.pred$comp == choice.ncomp & 
+                               measure.pred$keepX == keepX &
+                               measure.pred$keepY == keepY &
+                               measure.pred$V == 'u'
+                             ,]$value.Q2.total[[1]]
+      keep.comp <- mean(Q2.total) >= limQ2
+      if (keep.comp)
+        # we want the first component that drops Q2 below limQ2
+        choice.ncomp <- comp + 1
+    }
+    names(choice.keepX) <- names(choice.keepY) <- paste0('comp', seq_len(ncomp))
+    out$choice.keepX = choice.keepX
+    out$choice.keepY = choice.keepY
+    out$choice.ncomp = choice.ncomp
+    
+    ## add mean and sd
+    val <- unclass(measure.pred$value.v)
+    measure.pred$mean <- sapply(measure.pred$value.v, function(x){
+      mean(c(as.matrix(x)), na.rm = TRUE)
+    })
+    
+    measure.pred$sd <- sapply(measure.pred$value.v, function(x){
+      sd(c(as.matrix(x)), na.rm = TRUE)
+    })
+    
+    out$measure.pred = measure.pred
+    ### evaluate all for output except X and Y to save memory
+    ## eval all but X and Y
+    mc <- mget(names(formals())[-1:-2], sys.frame(sys.nframe()))
+    ## replace function, X and Y with unevaluated call
+    mc <- as.call(c(as.list(match.call())[1:3], mc))
+    out <- c(list(call = mc), out)
+    class <- c('tune.pls')
+    class(out) <- if (spls.model) class <- c(class, 'tune.spls')
+    return(out)
+  }

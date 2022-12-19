@@ -40,6 +40,7 @@ plotIndiv.mint.pls <-
              legend.title = "Legend",
              legend.position = "right",
              point.lwd = 1,
+             background = NULL,
              ...
              
     )
@@ -361,8 +362,27 @@ plotIndiv.mint.pls <-
         }
         df = df.final
         
-        if (style == "ggplot2")
+        if (style == "ggplot2") {
             style = "ggplot2-MINT"
+        }
+
+        if(!is.null(background)) {
+            ind.match = match(names(background), levels(df$group))
+            names(background) = adjustcolor(col.per.group[ind.match],alpha.f=0.1)
+
+            # we choose xlim/ylim that fits the points and the background by finding the
+            # average between the extremes of the two. 
+            # 0.5 then added to min of the lim to prevent any uncoloured area showing
+            bg.tmp <- (do.call("rbind", background))
+            if(is.null(xlim))
+                xlim <- (range(df$x) + range(bg.tmp[, "Var1"]))/2 + c(0.5, 0)
+            if(is.null(ylim))
+                ylim <- (range(df$y) + range(bg.tmp[, "Var2"]))/2 + c(0.5, 0)
+            rm(bg.tmp)
+        }
+        
+
+        
         
         #call plot module (ggplot2, lattice, graphics, 3d)
         res = internal_graphicModule(
@@ -383,6 +403,7 @@ plotIndiv.mint.pls <-
             df.ellipse = df.ellipse,
             style = style,
             layout = layout,
+            background = background,
             #missing.col = missing.col,
             #for ggplot2-MINT
             study.levels = study.levels,

@@ -24,6 +24,11 @@
 #' (\code{outcome.test}) can be input to calculate AUROC. The external data set
 #' must have the same variables as the training data set (\code{object$X}).
 #' 
+#' If \code{object} is a named list of multiple \code{plsda} and \code{splsda}
+#' objects, ensure that these models each have a response variable with the same
+#' levels. Additionally, \code{newdata} and \code{outcome.test} cannot be passed
+#' to this form of \code{auroc}. 
+#' 
 #' If \code{newdata} is not provided, AUROC is calculated from the training
 #' data set, and may result in overfitting (too optimistic results).
 #' 
@@ -31,12 +36,14 @@
 #' different from "global", then \code{newdata}), \code{outcome.test} and
 #' \code{sstudy.test} are not used.
 #' 
-#' @aliases auroc auroc.mixo_plsda auroc.mixo_splsda auroc.mint.plsda
+#' @aliases auroc auroc.mixo_plsda auroc.mixo_splsda auroc.list auroc.mint.plsda
 #' auroc.mint.splsda auroc.sgccda
 #' 
 #' @param object Object of class inherited from one of the following supervised
 #' analysis function: "plsda", "splsda", "mint.plsda", "mint.splsda",
-#' "block.splsda" or "wrapper.sgccda"
+#' "block.splsda" or "wrapper.sgccda". Alternatively, this can be a named list
+#' of plsda and splsda objects if multiple models are to be compared. Note that 
+#' these multiple models need to have used the same levels in the response variable.
 #' @param newdata numeric matrix of predictors, by default set to the training
 #' data set (see details).
 #' @param outcome.test Either a factor or a class vector for the discrete
@@ -131,6 +138,118 @@ auroc.mixo_plsda <-
 #' @rdname auroc
 #' @export
 auroc.mixo_splsda <- auroc.mixo_plsda
+
+
+# Multiple (s)PLSDA objects
+# ----------------------
+#' @rdname auroc
+#' @method auroc list
+#' @export
+auroc.list <- 
+  function(
+    object,
+    plot = TRUE,
+    roc.comp = NULL,
+    title = NULL,
+    print = TRUE,
+    ...) 
+  {
+    
+    # set baseline ncomp and response levels to check all objects against
+    # these need to be constant so any deviation from these results in an error
+    base.levels <- levels(object[[1]]$Y)
+    base.ncomp <- object[[1]]$ncomp
+    
+    # for the sake of visual clutter as well as distinguishing them via linetypes
+    # via ggplot, a maximum of 6 models can be handled
+    if (length(object) > 6) {
+      stop("Can take a maximum of SIX (s)plsda objects")
+    }
+    
+    # apply checks on each model
+    for (obj in object) {
+      
+      # check it is a plsda or splsda object
+      if (!(any(class(obj) %in% c("mixo_plsda", "mixo_splsda")))) {
+        stop("Combined auroc can only take 'plsda' and 'splsda' objects",
+             call. = FALSE)
+      }
+      # check that the levels of the response variable is consistent
+      if (length(setdiff(base.levels, levels(obj$Y))) != 0) {
+        stop("Combined auroc must have models which utilise the same response variable",
+             call. = FALSE)
+      }
+      # check the ncomp is consistent
+      if (base.ncomp != obj$ncomp) {
+        stop("Combined auroc must have models which have the same ncomp",
+             call. = FALSE)
+      }
+    }
+    # handle default roc..comp and ensure it is a single value
+    if (is.null(roc.comp)) { roc.comp <- base.ncomp }
+    if (length(roc.comp) != 1) { stop("`roc.comp' must be a single integer") }
+    
+    # initialise returned objects
+    auc.list <- list()
+    df <- data.frame(matrix(NA, nrow=0, ncol=4))
+    Specificity <- Sensitivity <- Outcome <-  model <- NULL
+    
+    for (idx in seq_len(length(object))) { # for each model
+      
+      obj <- object[[idx]]
+      
+      data <- list()
+      statauc.res <- list()
+      
+      # use all training data as testing data - note this likely results in overestimated efficacy
+      newdata <- obj$input.X 
+      #browser()
+      data$outcome <- as.factor(obj$Y)
+      
+      # generate predictions
+      res.predict = predict.mixo_spls(obj, newdata = newdata,
+                                      dist = "max.dist")$predict
+      data$data <- res.predict[,,roc.comp] # extract predictions on specified component 
+      temp = statauc(data) # generate AUROC data
+      auc.list[[names(object)[idx]]] <- temp[[1]] # extract auc values
+      temp$df[, "model"] <- rep(names(object)[idx], nrow(temp$df)) # add model column to df
+      df <- rbind(df, temp$df) # add all plot vertices to df
+    }
+    # output of statauc has the AUC values included in the Outcome column. This
+    # results in them being unique across different models
+    # this line homogenises the Outcome levels so a proper legend can be used
+    df$Outcome <- substr(df$Outcome, start = 1, stop=regexpr(":", df$Outcome)-1)
+    
+    # default scenario for title
+    if(is.null(title)) {title = paste0("ROC Curve Using Comp(s): ", paste0(seq_len(roc.comp), collapse = ', ')) }
+    
+    # set "best" order of line types. if only 2-3 models, these will be easiest to distinguish
+    linetypes <- c("solid", "dotted", "dotdash", "twodash", "dashed", "longdash")
+    
+    # generate plot
+    p = ggplot(df, aes(x=Specificity, y=Sensitivity)) + 
+      geom_line(aes(linetype=model, color=Outcome), size = 1.1) +
+      xlab("100 - Specificity (%)") + 
+      ylab("Sensitivity (%)") + 
+      scale_x_continuous(breaks=seq(0, 100, by = 10)) + 
+      scale_y_continuous(breaks=seq(0, 100, by = 10))+
+      scale_linetype_manual(values=linetypes[1:length(object)])
+    p = p + 
+      geom_abline(intercept = 1) + 
+      theme(legend.key.size = 
+              unit(1.5, "cm"), 
+            plot.title = element_text(lineheight=.8, face="bold"), 
+            legend.title = element_text(size=14, face="bold")) + 
+      ggtitle(title) + 
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    if (plot) { plot(p) } # plot if desired
+    if (print) { print(auc.list) } # print auc stats if desired
+    
+    return(invisible(list(auc=auc.list,
+                          graph=p)))
+    
+  }
 
 # MINT object
 # ----------------------

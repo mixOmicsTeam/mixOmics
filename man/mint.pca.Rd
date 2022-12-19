@@ -4,7 +4,15 @@
 \alias{mint.pca}
 \title{P-integration with Principal Component Analysis}
 \usage{
-mint.pca(X, ncomp = 2, study, scale = TRUE, tol = 1e-06, max.iter = 100)
+mint.pca(
+  X,
+  ncomp = 2,
+  study,
+  scale = TRUE,
+  tol = 1e-06,
+  max.iter = 100,
+  verbose.call = FALSE
+)
 }
 \arguments{
 \item{X}{numeric matrix of predictors combining multiple independent studies
@@ -22,6 +30,10 @@ means and unit variances. Default = \code{TRUE}.}
 \item{tol}{Convergence stopping value.}
 
 \item{max.iter}{integer, the maximum number of iterations.}
+
+\item{verbose.call}{Logical (Default=FALSE), if set to TRUE then the \code{$call}
+component of the returned object will contain the variable values for all 
+parameters. Note that this may cause large memory usage.}
 }
 \value{
 \code{mint.pca} returns an object of class \code{"mint.pca", "pca"},
@@ -41,6 +53,9 @@ principal components.} \item{variates}{same as 'x' to keep the mixOmics
 spirit} \item{prop_expl_var}{Proportion of the explained variance from the multivariate
 model after setting possible missing values to zero in the data.} \item{names}{list containing the names to be used
 for individuals and variables.}
+\item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+If \code{verbose.call = TRUE} then all the inputted values are accessable via
+this component}
 }
 \description{
 Function to integrate and combine multiple independent studies measured on

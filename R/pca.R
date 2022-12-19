@@ -63,9 +63,12 @@
 #' @param V Matrix used in the logratio transformation if provided.
 #' @param multilevel sample information for multilevel decomposition for
 #' repeated measurements.
+#' @template arg/verbose.call
 #' @return \code{pca} returns a list with class \code{"pca"} and \code{"prcomp"}
 #' containing the following components: 
-#' \item{call}{The function call.}
+#' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
+#' If \code{verbose.call = TRUE} then all the inputted values are accessable via
+#' this component}
 #' \item{X}{The input data matrix, possibly scaled and centered.}
 #' \item{ncomp}{The number of principal components used.}
 #' \item{center}{The centering used.}
@@ -115,7 +118,8 @@ pca <- function(X,
                 logratio = c('none','CLR','ILR'),
                 ilr.offset = 0.001,
                 V = NULL,
-                multilevel = NULL)
+                multilevel = NULL,
+                verbose.call = FALSE)
 {
     
     #-- checking general input parameters --------------------------------------#
@@ -250,7 +254,6 @@ pca <- function(X,
         sdev <- res$eig
         loadings <- res$p
     } else {
-        
         if (logratio %in% c('CLR', 'none')) {
             #-- if data is complete use singular value decomposition
             #-- borrowed from 'prcomp' function
@@ -283,7 +286,8 @@ pca <- function(X,
     result <- c(result, .get_var_stats(X = result$X, sdev = result$sdev))
     expected_output_names <- c("call", "X", "ncomp", "center", "scale", "names", 
                          "sdev", "loadings", "variates", "prop_expl_var", "var.tot",
-                         "cum.var")
+                         "cum.var", "rotation", "x")
+    
     if (names(result) %!=% expected_output_names)
     {
         stop("Unexpected error. Please submit an issue at\n",
@@ -293,6 +297,15 @@ pca <- function(X,
     # output multilevel if needed
     if(!is.null(multilevel)) # TODO include in docs returns
         result=c(result, list(Xw = Xw, design = multilevel))
+    
+    
+    
+    if (verbose.call) {
+        c <- result$call
+        result$call <- mget(names(formals()))
+        result$call <- append(c, result$call)
+        names(result$call)[1] <- "simple.call"
+    }
     
     class(result) = c("pca") 
     if(!is.null(multilevel))
@@ -318,6 +331,7 @@ pca <- function(X,
              sdev,
              loadings,
              variates = NULL) {
+        
         ncomp <- result$ncomp
         pc_names <- paste("PC", seq_len(ncomp), sep = "")
         
@@ -333,7 +347,12 @@ pca <- function(X,
         dimnames(loadings) = list(colnames(X), pc_names)
         dimnames(variates) = list(rownames(X), pc_names)
         
-        result[c('sdev', 'loadings', 'variates')] <- list(sdev, list(X=loadings), list(X=variates))
+        result[c('sdev', 'loadings', 'variates', 'x', 'rotation')] <- list(sdev, 
+                                                                      list(X=loadings), 
+                                                                      list(X=variates),
+                                                                      variates,
+                                                                      loadings)
+        
         result
     }
 
