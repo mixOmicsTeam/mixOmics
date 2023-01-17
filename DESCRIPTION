@@ -34,9 +34,9 @@ Authors@R:
       person("Florian", "Rohart", role = "aut"), 
       person("Ignacio", "Gonzalez", role = "aut"),
       person("Sebastien", "Dejean", role = "aut"), 
-      person("Max", "Bladen", role = "aut", email = "mbladen19@gmail.com"), 
       ## key contributors
       person("Al J", "Abadi", role = c("ctb", "cre"), email = "al.jal.abadi@gmail.com"), 
+      person("Max", "Bladen", role = "ctb", email = "mbladen19@gmail.com"), 
       person("Benoit", "Gautier", role = "ctb"), 
       person("Francois", "Bartolo", role = "ctb"), 
       ## also contributions from

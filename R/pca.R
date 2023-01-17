@@ -160,8 +160,8 @@ pca <- function(X,
         stop("use smaller 'ncomp'", call. = FALSE)
     
     #-- log.ratio
-    choices = c('CLR', 'ILR', 'none')
-    logratio = choices[pmatch(logratio, choices)]
+    logratio_choice = c('CLR', 'ILR', 'none')
+    logratio = logratio_choice[pmatch(logratio, logratio_choice)]
     logratio <- match.arg(logratio)
 
     if (logratio != "none" && any(X < 0))
