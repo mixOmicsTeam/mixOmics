@@ -63,8 +63,8 @@ colorize <- function(color, x) {
 }
 
 # The libraries to load
-install.packages(kableExtra)
-library(kableExtra)
+#install.packages(kableExtra)
+#library(kableExtra)
 ```
 
 ```{r 00-header-generation, echo=FALSE, eval=FALSE}
