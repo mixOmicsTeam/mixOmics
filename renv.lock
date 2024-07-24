@@ -401,6 +401,11 @@
       ],
       "Hash": "99b79fcbd6c4d1ce087f5c5c758b384f"
     },
+    "devtools": {
+      "Package": "devtools",
+      "Version": "2.4.5",
+      "Source": "Repository"
+    },
     "diffobj": {
       "Package": "diffobj",
       "Version": "0.3.5",
