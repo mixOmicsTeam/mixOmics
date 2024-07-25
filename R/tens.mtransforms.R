@@ -2,19 +2,23 @@
 # m-transforms for the tensor-tensor m-product algebra
 # ==============================================================================
 
+#' @description
+#' Performs a DCT-II transform using the stats::fft algorithm. Produces 
+#' identical output to the scipy.fft.dct implementation in Python.
+#' @param vec A numeric real vector to transform.
+#' @param ortho Logical, if TRUE the output is orthonormal.
+#' @return A numeric vector representing the DCT-II of the input.
+#' @author Brendan Lu
+#' @seealso docs.scipy.org/doc/scipy/tutorial/fft.html
 #' @examples
-#' \dontrun{
 #' library(microbenchmark)
 #' test <- runif(1000, min = 0, max = 100)
 #' microbenchmark(
 #'   dttpackage = dtt::dct(test) * 2,
 #'   fftapproach = dctii(test)
 #' )
-#' }
-
+#' @export
 dctii <- function(vec, ortho = TRUE) {
-  # perform dct transform using fft algorithm, faster than dtt implementation
-  # produces same results as scipy.fft.dct in Python
   # https://scipy.github.io/devdocs/reference/generated/scipy.fftpack.dct.html
   # https://stackoverflow.com/questions/11215162
   # NOTE: this is dtt output scaled by 2
@@ -34,11 +38,22 @@ dctii <- function(vec, ortho = TRUE) {
   }
 }
 
+#' @description
+#' Performs inverse DCT-II transform using the DDT package. Produces identical
+#' output to the scipy.fft.dct implementation in Python.
+#' @param vec A numeric real vector to transform.
+#' @param ortho Logical, if TRUE the output is orthonormal.
+#' @return A numeric vector representing the DCT-II of the input.
+#' @author Brendan Lu
+#' @seealso docs.scipy.org/doc/scipy/tutorial/fft.html
+#' @examples
+#' idctii(dctii(runif(1000, min = 0, max = 100)))
+#' @export
 idctii <- function(vec, ortho = TRUE) {
   # TODO: find someone smart who can implement this using stats::fft
+  # https://dsp.stackexchange.com/questions/51311
   # modify outputs from dtt R library to be consistent with the definitions
   # found in scipt.fft.idct
-  # https://scipy.github.io/devdocs/reference/generated/scipy.fftpack.dct.html
   n <- length(vec)
   unscaled_res <- dtt::dct(vec, inverted = TRUE) / 2
 
