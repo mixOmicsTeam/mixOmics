@@ -23,12 +23,14 @@ Imports: igraph,
          stats,
          ggrepel,
          BiocParallel,
-         utils
+         utils,
+         dtt
 Suggests: BiocStyle, 
           knitr, 
           rmarkdown, 
           testthat, 
-          rgl
+          rgl,
+          microbenchmark
 Authors@R: 
     c(person("Kim-Anh", "Le Cao", role = "aut", email = "kimanh.lecao@unimelb.edu.au"), 
       person("Florian", "Rohart", role = "aut"), 
