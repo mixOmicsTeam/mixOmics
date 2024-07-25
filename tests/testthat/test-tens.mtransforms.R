@@ -9,7 +9,7 @@ test_that(
     for (ortho_config in ortho_configurations) {
       expect_equal(
         test_vec,
-        dctii(idctii(test_vec, ortho = TRUE), ortho = TRUE)
+        dctii(idctii(test_vec, ortho = ortho_config), ortho = ortho_config)
       )
     }
   }
