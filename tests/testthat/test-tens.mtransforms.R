@@ -7,7 +7,10 @@ test_that(
   code = {
     ortho_configurations <- c(TRUE, FALSE)
     for (ortho_config in ortho_configurations) {
-      expect_equal(test_vec, dctii(idct(test_vec, ortho = TRUE), ortho = TRUE))
+      expect_equal(
+        test_vec,
+        dctii(idctii(test_vec, ortho = TRUE), ortho = TRUE)
+      )
     }
   }
 )
