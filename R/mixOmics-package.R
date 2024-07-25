@@ -28,7 +28,7 @@
 #' Canonical Correlation Analysis and P-integration with variants of multi-group
 #' Partial Least Squares.
 #'
-#' @docType package
+#' @docType _PACKAGE
 #' @name mixOmics-package
 NULL
 
