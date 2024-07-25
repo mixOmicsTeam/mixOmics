@@ -14,3 +14,13 @@ test_that(
     }
   }
 )
+
+test_that(
+  "fast fft-based dctii transform reproducible with dtt library implementation",
+  code = {
+    expect_equal(
+      dtt::dct(test_vec) * 2,
+      dctii(test_vec, ortho = FALSE)
+    )
+  }
+)

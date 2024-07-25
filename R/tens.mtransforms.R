@@ -32,10 +32,10 @@ dctii <- function(vec, ortho = TRUE) {
 }
 
 # library(microbenchmark)
-# test <- runif(1000, min = 0, max = 100)
+# test_vec <- runif(1000, min = 0, max = 100)
 # microbenchmark(
-#   dttpackage = dtt::dct(test) * 2,
-#   fftapproach = dctii(test)
+#   dttpackage = dtt::dct(test_vec) * 2,
+#   fftapproach = dctii(test_vec, ortho = FALSE)
 # )
 
 #' @description
