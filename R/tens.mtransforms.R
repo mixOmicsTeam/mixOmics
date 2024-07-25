@@ -10,13 +10,6 @@
 #' @return A numeric vector representing the DCT-II of the input.
 #' @author Brendan Lu
 #' @seealso docs.scipy.org/doc/scipy/tutorial/fft.html
-#' @examples
-#' library(microbenchmark)
-#' test <- runif(1000, min = 0, max = 100)
-#' microbenchmark(
-#'   dttpackage = dtt::dct(test) * 2,
-#'   fftapproach = dctii(test)
-#' )
 #' @export
 dctii <- function(vec, ortho = TRUE) {
   # https://scipy.github.io/devdocs/reference/generated/scipy.fftpack.dct.html
@@ -38,6 +31,13 @@ dctii <- function(vec, ortho = TRUE) {
   }
 }
 
+# library(microbenchmark)
+# test <- runif(1000, min = 0, max = 100)
+# microbenchmark(
+#   dttpackage = dtt::dct(test) * 2,
+#   fftapproach = dctii(test)
+# )
+
 #' @description
 #' Performs inverse DCT-II transform using the DDT package. Produces identical
 #' output to the scipy.fft.dct implementation in Python.
@@ -46,8 +46,6 @@ dctii <- function(vec, ortho = TRUE) {
 #' @return A numeric vector representing the DCT-II of the input.
 #' @author Brendan Lu
 #' @seealso docs.scipy.org/doc/scipy/tutorial/fft.html
-#' @examples
-#' idctii(dctii(runif(1000, min = 0, max = 100)))
 #' @export
 idctii <- function(vec, ortho = TRUE) {
   # TODO: find someone smart who can implement this using stats::fft
