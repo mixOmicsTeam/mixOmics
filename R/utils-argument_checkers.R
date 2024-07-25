@@ -76,7 +76,6 @@
 #' @return test.keepX, possibly re-ordered by names for list X
 #' @noRd
 #' @keywords Internal
-#' @examples
 #' 
 .check_test.keepX <- function(test.keepX, 
                               X,
