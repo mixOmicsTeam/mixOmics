@@ -171,7 +171,7 @@
 #' \dontrun{
 #' foo <- function(a=TRUE) .check_logical(a)
 #' foo(a = 1)
-#' #> Error: ‘a’ must be a class logical (TRUE or FALSE).
+#' #> Error: 'a' must be a class logical (TRUE or FALSE).
 #' }
 .check_logical <- function(arg)
 {
