@@ -466,13 +466,6 @@
       ],
       "Hash": "fedd9d00c2944ff00a0e2696ccf048ec"
     },
-    "dtt": {
-      "Package": "dtt",
-      "Version": "0.1-2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "c6d92416317cf258f8cc48631d81d68e"
-    },
     "ellipse": {
       "Package": "ellipse",
       "Version": "0.5.0",
@@ -697,6 +690,19 @@
         "utils"
       ],
       "Hash": "7d7f283939f563670a697165b2cf5560"
+    },
+    "gsignal": {
+      "Package": "gsignal",
+      "Version": "0.3-5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "grDevices",
+        "pracma"
+      ],
+      "Hash": "000474ca7aa42533937282b8539b11b7"
     },
     "gtable": {
       "Package": "gtable",
@@ -1070,6 +1076,20 @@
         "Rcpp"
       ],
       "Hash": "6b8177fd19982f0020743fadbfdbd933"
+    },
+    "pracma": {
+      "Package": "pracma",
+      "Version": "2.4.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "grDevices",
+        "graphics",
+        "stats",
+        "utils"
+      ],
+      "Hash": "44bc172d47d1ea0a638d9f299e321203"
     },
     "praise": {
       "Package": "praise",
