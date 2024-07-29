@@ -1,4 +1,5 @@
 context("m-product utilities")
+# bltodo: add tests for matrix inputs
 
 #' @description Use for internal testing.
 #' Performs a DCT-II transform using the stats::fft algorithm. Produces
@@ -112,6 +113,21 @@ test_that(
     expect_equal(
       facewise_product(test_tensor1, test_tensor2, test_tensor3),
       expected_cumulative_fp
+    )
+  }
+)
+
+test_that(
+  "cumulative multi input m product works as expected",
+  code = {
+    test_tensor1 <- array(1:24, dim = c(2, 4, 3))
+    test_tensor2 <- array(1:60, dim = c(4, 5, 3))
+    test_tensor3 <- array(1:90, dim = c(5, 6, 3))
+    mp12 <- m_product(test_tensor1, test_tensor2)
+    expected_cumulative_mp <- m_product(mp12, test_tensor3)
+    expect_equal(
+      m_product(test_tensor1, test_tensor2, test_tensor3),
+      expected_cumulative_mp
     )
   }
 )

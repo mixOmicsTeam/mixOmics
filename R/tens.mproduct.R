@@ -131,17 +131,18 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
   if (is.null(bpparam)) {
     # for-loop algorithm -------------------------------------------------------
     fp_ab <- array(0, dim = c(na, pb, t))
-    for (i in 1:t) {
+    for (i in seq_len(t)) {
       fp_ab[, , i] <- a[, , i] %*% b[, , i]
     }
     return(fp_ab)
     # --------------------------------------------------------------------------
   } else {
     # BiocParallel algorithm ---------------------------------------------------
+    # bltodo: benchmark / investigate preallocation here?
     return(
       simplify2array(
         BiocParallel::bplapply(
-          array(1:t),
+          array(seq_len(t)),
           FUN = function(i) a[, , i] %*% b[, , i],
           BPPARAM = bpparam
         )
