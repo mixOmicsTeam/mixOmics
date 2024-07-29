@@ -189,7 +189,10 @@ m_product <- function(
   } else {
     t <- dim(tensors[[1]])[3]
   }
-  if (xor(is.function(m), is.function(minv))) {
+  if (
+    xor(is.function(m), is.function(minv)) ||
+      xor(is.null(m), is.null(minv))
+  ) {
     stop(
       "If explicitly defined, both m and its inverse must be defined as 
       functions."

@@ -86,6 +86,7 @@ test_that(
 )
 
 test_that(
+  # note this test does tend to throw warning messages on Windows
   "different binary facewise algorithms produce equivalent results",
   code = {
     test_tensor1 <- array(1:24, dim = c(2, 4, 3))
@@ -119,7 +120,7 @@ test_that(
   "m_product() throws appropriate errors",
   code = {
     test_tensor1 <- array(1:24, dim = c(2, 4, 3))
-    dummy_m <- function() NULL
+    dummy_m <- function() 0
     # only defining m without minv
     expect_error(
       m_product(test_tensor1, m = dummy_m),
@@ -127,6 +128,11 @@ test_that(
       functions."
     )
     # accidentally adding () to an input meaning it is not a callable
+    expect_error(
+      m_product(test_tensor1, m = dummy_m()),
+      "If explicitly defined, both m and its inverse must be defined as 
+      functions."
+    )
     expect_error(
       m_product(test_tensor1, m = dummy_m(), minv = dummy_m),
       "If explicitly defined, both m and its inverse must be defined as 
