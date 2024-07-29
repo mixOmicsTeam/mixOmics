@@ -1,13 +1,6 @@
-context("tensor m-transforms")
+context("m-product utilities")
 
-test_vector <- c(19, 3, 6, 11)
-test_tensor1 <- array(1:24, dim = c(2, 4, 3))
-test_tesor2 <- array(1:36, dim = c(4, 3, 3))
-
-#' @description
-#' ========================
-#' Use for internal testing
-#' ========================
+#' @description Use for internal testing.
 #' Performs a DCT-II transform using the stats::fft algorithm. Produces
 #' identical output to the scipy.fft.dct implementation in Python.
 #' @param vec A numeric real vector to transform.
@@ -34,35 +27,56 @@ dctii_scipy_equivalent <- function(vec, ortho = TRUE) {
   }
 }
 
-#' @description
-#' ========================
-#' Use for internal testing
-#' ========================
-naive_facewise_product <- function(a, b) {
-  na <- dim(a)[1]
-  pa <- dim(a)[2]
-  ta <- dim(a)[3]
-
-  nb <- dim(b)[1]
-  pb <- dim(b)[2]
-  tb <- dim(b)[3]
-
-  stopifnot(ta == tb)
-  t <- ta
-
-  stopifnot(pa == nb)
-  fp_ab <- array(0, dim = c(na, pb, t))
-
-  for (i in 1:t) {
-    fp_ab[, , i] <- a[, , i] %*% b[, , i]
+test_that(
+  "gsignal's dct2 is producing the same result as the Scipy algorithm",
+  code = {
+    test_vector <- array(c(19, 3, 6, 11))
+    transforms <- dctii_m_transforms(length(test_vector))
+    m <- transforms$m
+    expect_equal(m(test_vector), matrix(dctii_scipy_equivalent(test_vector)))
   }
+)
 
-  return(fp_ab)
-}
+test_that(
+  "mode-3 product result matches naive nested for-loop algorithm",
+  code = {
+    n <- 2
+    p <- 4
+    t <- 3
+    test_tensor1 <- array(1:(n * p * t), dim = c(2, 4, 3))
+    m_mat <- gsignal::dctmtx(t)
+    expected_result <- array(0, dim = c(2, 4, 3))
+    for (nn in 1:n) {
+      for (pp in 1:p) {
+        expected_result[nn, pp, ] <- m_mat %*% test_tensor1[nn, pp, ]
+      }
+    }
+    transforms <- dctii_m_transforms(t)
+    m <- transforms$m
+    expect_equal(m(test_tensor1), expected_result)
+  }
+)
+
+test_that(
+  "different mode-3 product algorithms produce equivalent results",
+  code = {
+    test_tensor1 <- array(1:24, dim = c(2, 4, 3))
+    t <- dim(test_tensor1)[3]
+    transforms_default <- dctii_m_transforms(t, bpparam = NULL)
+    transforms_parallel <- dctii_m_transforms(
+      t, bpparam = BiocParallel::MulticoreParam()
+    )
+    expect_equal(
+      transforms_default$m(test_tensor1),
+      transforms_parallel$m(test_tensor1)
+    )
+  }
+)
 
 test_that(
   "forward and inverse dctii transforms invert each other",
   code = {
+    test_tensor1 <- array(1:24, dim = c(2, 4, 3))
     transforms <- dctii_m_transforms(dim(test_tensor1)[3])
     m <- transforms$m
     minv <- transforms$minv
@@ -71,11 +85,31 @@ test_that(
 )
 
 test_that(
-  "facewise product works",
+  "different binary facewise algorithms produce equivalent results",
   code = {
+    test_tensor1 <- array(1:24, dim = c(2, 4, 3))
+    test_tensor2 <- array(1:36, dim = c(4, 3, 3))
     expect_equal(
-      naive_facewise_product(test_tensor1, test_tesor2),
-      .binary_facewise(test_tensor1, test_tensor2)
+      facewise_product(test_tensor1, test_tensor2, bpparam = NULL),
+      facewise_product(
+        test_tensor1, test_tensor2,
+        bpparam = BiocParallel::MulticoreParam()
+      )
+    )
+  }
+)
+
+test_that(
+  "cumulative multi-input facewise input works as expected",
+  code = {
+    test_tensor1 <- array(1:24, dim = c(2, 4, 3))
+    test_tensor2 <- array(1:60, dim = c(4, 5, 3))
+    test_tensor3 <- array(1:90, dim = c(5, 6, 3))
+    fp12 <- facewise_product(test_tensor1, test_tensor2)
+    expected_cumulative_fp <- facewise_product(fp12, test_tensor3)
+    expect_equal(
+      facewise_product(test_tensor1, test_tensor2, test_tensor3),
+      expected_cumulative_fp
     )
   }
 )
