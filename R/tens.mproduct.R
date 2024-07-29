@@ -32,7 +32,7 @@
       )
       # permute back to original orientation
       return(aperm(array(transformed_slices, dim = c(t, n, p)), c(2, 3, 1)))
-      #-------------------------------------------------------------------------
+      # ------------------------------------------------------------------------
     } else {
       # BiocParallel algorithm -------------------------------------------------
       transformed_slices <- BiocParallel::bplapply(
@@ -45,7 +45,7 @@
       return(
         aperm(array(unlist(transformed_slices), dim = c(t, n, p)), c(2, 3, 1))
       )
-      #-------------------------------------------------------------------------
+      # ------------------------------------------------------------------------
     }
   } else {
     # error: some array >3D has been inputted
@@ -66,7 +66,6 @@
 #' of a given numerical input array. For 3D tensors it performs the mode-3
 #' product.}
 #' \item{minv}{The inverse of m.}
-#' @author Brendan Lu
 #' @export
 matrix_to_m_transforms <- function(
   m_mat,
@@ -103,7 +102,7 @@ matrix_to_m_transforms <- function(
 #' \item{m}{A function which applies the dct-ii along the last dimension of a
 #' given numerical input array. For 3D tensors it performs the mode-3 product
 #' with the DCT matrix.}
-#' \item{minv}{The inverse of m}
+#' \item{minv}{The inverse of m,}
 #' @export
 dctii_m_transforms <- function(t, bpparam = NULL) {
   return(matrix_to_m_transforms(m_mat = gsignal::dctmtx(t), bpparam = bpparam))
@@ -136,7 +135,7 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
       fp_ab[, , i] <- a[, , i] %*% b[, , i]
     }
     return(fp_ab)
-    #---------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
   } else {
     # BiocParallel algorithm ---------------------------------------------------
     return(
@@ -148,7 +147,7 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
         )
       )
     )
-    #---------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
   }
 }
 
@@ -166,4 +165,43 @@ facewise_product <- function(..., bpparam = NULL) {
       list(...)
     )
   )
+}
+
+#' @description Compute Kilmer's tensor-tensor m-product cumulatively across any
+#' arbitrary number of tensor inputs.
+#' @param ... Arbitrary number of numerical tensor inputs.
+#' @param m A function which applies an orthogonal tensor tubal transform.
+#' @param minv The inverse of m.
+#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
+#' of parallelisation. Does not have any effect if transform functions 
+#' explicitly set using \code{m}, \code{minv}.
+#' @return Cumulative m-product.
+#' @export
+m_product <- function(
+  ...,
+  m = NULL,
+  minv = NULL,
+  bpparam = NULL
+) {
+  tensors <- list(...)
+  if (length(tensors) == 0) {
+    stop("No input tensors provided.")
+  } else {
+    t <- dim(tensors[[1]])[3]
+  }
+  if (!xor(is.function(m), is.function(minv))) {
+    stop("If explicitly defined, both m and its inverse must be defined.")
+  }
+  # use dctii as default transform if user does not specify an explicit one
+  if (is.null(m)) {
+    transforms <- dctii_m_transforms(t, bpparam = bpparam)
+    m <- transforms$m
+    minv <- transforms$minv
+  }
+  return(minv(
+    Reduce(
+      function(a, b) .binary_facewise(a, b, bpparam = NULL),
+      lapply(list(...), m)
+    )
+  ))
 }
