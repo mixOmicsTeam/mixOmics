@@ -81,6 +81,7 @@ test_that(
     m <- transforms$m
     minv <- transforms$minv
     expect_equal(test_tensor1, minv(m(test_tensor1)))
+    expect_equal(test_tensor1, m(minv(test_tensor1)))
   }
 )
 
@@ -100,7 +101,7 @@ test_that(
 )
 
 test_that(
-  "cumulative multi-input facewise input works as expected",
+  "cumulative multi input facewise product works as expected",
   code = {
     test_tensor1 <- array(1:24, dim = c(2, 4, 3))
     test_tensor2 <- array(1:60, dim = c(4, 5, 3))
@@ -110,6 +111,26 @@ test_that(
     expect_equal(
       facewise_product(test_tensor1, test_tensor2, test_tensor3),
       expected_cumulative_fp
+    )
+  }
+)
+
+test_that(
+  "m_product() throws appropriate errors",
+  code = {
+    test_tensor1 <- array(1:24, dim = c(2, 4, 3))
+    dummy_m <- function() NULL
+    # only defining m without minv
+    expect_error(
+      m_product(test_tensor1, m = dummy_m),
+      "If explicitly defined, both m and its inverse must be defined as 
+      functions."
+    )
+    # accidentally adding () to an input meaning it is not a callable
+    expect_error(
+      m_product(test_tensor1, m = dummy_m(), minv = dummy_m),
+      "If explicitly defined, both m and its inverse must be defined as 
+      functions."
     )
   }
 )
