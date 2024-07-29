@@ -3,7 +3,10 @@
 # ==============================================================================
 
 #' @description Apply a function across the last dimension of an input vector,
-#' matrix, or tensor.
+#' matrix, or tensor. This function defines both a parallel algorithm using
+#' BiocParrallel, and also a simple \code{apply} algorithm. Even on Windows
+#' Machines, setting \code{bpparam = BiocParallel::SerialParam()} offers a
+#' notable speedup for larger 3D array inputs.
 #' @param x Numerical array input.
 #' @param mat Function which defines the tubal transform.
 #' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
@@ -21,16 +24,17 @@
     n <- dim(x)[1]
     p <- dim(x)[2]
     t <- dim(x)[3]
-    # use apply approach if no parallel backend is specified, otherwise use
-    # BiocParallel approach with specified backend
     if (is.null(bpparam)) {
+      # apply algorithm --------------------------------------------------------
       transformed_slices <- apply(
         aperm(x, c(3, 1, 2)), c(2, 3), # permuted tensor with mode 3 in front
         function(slice) mat %*% slice # left multiply by transform mat
       )
       # permute back to original orientation
       return(aperm(array(transformed_slices, dim = c(t, n, p)), c(2, 3, 1)))
+      #-------------------------------------------------------------------------
     } else {
+      # BiocParallel algorithm -------------------------------------------------
       transformed_slices <- BiocParallel::bplapply(
         lapply(seq_len(p), function(i) t(x[, i, ])), # a list of t x n matrices
         function(slice) mat %*% slice, # left multiply by transform mat
@@ -41,6 +45,7 @@
       return(
         aperm(array(unlist(transformed_slices), dim = c(t, n, p)), c(2, 3, 1))
       )
+      #-------------------------------------------------------------------------
     }
   } else {
     # error: some array >3D has been inputted
@@ -104,17 +109,61 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
   return(matrix_to_m_transforms(m_mat = gsignal::dctmtx(t), bpparam = bpparam))
 }
 
+#' @description Compute Kilmer's facewise product. Note that the for-loop
+#' implementation is relatively fast, and very readable. There's also a
+#' BiocParralel implementation here, but it lacks significant benchmarking
+#' results.
 #' @keywords internal
-.binary_facewise <- function(a, b, bpparam = BiocParallel::SerialParam()) {
-  t <- dim(a)[3]
+.binary_facewise <- function(a, b, bpparam) {
+  na <- dim(a)[1]
+  pa <- dim(a)[2]
+  ta <- dim(a)[3]
+
+  nb <- dim(b)[1]
+  pb <- dim(b)[2]
+  tb <- dim(b)[3]
+
+  # error: different t for each input
+  stopifnot(ta == tb)
+  t <- ta
+  # error: non-conforming facewise dimensions
+  stopifnot(pa == nb)
+
+  if (is.null(bpparam)) {
+    # for-loop algorithm -------------------------------------------------------
+    fp_ab <- array(0, dim = c(na, pb, t))
+    for (i in 1:t) {
+      fp_ab[, , i] <- a[, , i] %*% b[, , i]
+    }
+    return(fp_ab)
+    #---------------------------------------------------------------------------
+  } else {
+    # BiocParallel algorithm ---------------------------------------------------
+    return(
+      simplify2array(
+        BiocParallel::bplapply(
+          array(1:t),
+          FUN = function(i) a[, , i] %*% b[, , i],
+          BPPARAM = bpparam
+        )
+      )
+    )
+    #---------------------------------------------------------------------------
+  }
+}
+
+#' @description Compute Kilmer's facewise product cumulatively across any
+#' arbitrary number of tensor inputs.
+#' @param ... Arbitrary number of numerical tensor inputs.
+#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
+#' of parallelisation.
+#' @return Cumulative facewise product.
+#' @export
+facewise_product <- function(..., bpparam = NULL) {
   return(
-    array(
-      BiocParallel::bplapply(
-        array(1:t),
-        FUN = function(i) a[, , i] %*% b[, , i],
-        BPPARAM = bpparam
-      ),
-      dim = c(dim(a)[1], dim(b)[2], t)
+    Reduce(
+      function(a, b) .binary_facewise(a, b, bpparam = bpparam),
+      list(...)
     )
   )
 }
