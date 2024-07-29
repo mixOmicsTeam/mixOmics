@@ -8,7 +8,8 @@
 #' @param mat Function which defines the tubal transform.
 #' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
 #' of parallelisation.
-#' @return A tensor of the same size under the specified tubal transform.
+#' @return A tensor of the same size under the specified tubal transform,
+#' denoted \hat{x}.
 #' @author Saritha Kodikara, Brendan Lu
 #' @keywords internal
 .apply_mat_transform <- function(x, mat, bpparam) {
@@ -31,7 +32,7 @@
       return(aperm(array(transformed_slices, dim = c(t, n, p)), c(2, 3, 1)))
     } else {
       transformed_slices <- BiocParallel::bplapply(
-        lapply(1:p, function(i) t(x[, i, ])), # a list of t x n matrices
+        lapply(seq_len(p), function(i) t(x[, i, ])), # a list of t x n matrices
         function(slice) mat %*% slice, # left multiply by transform mat
         BPPARAM = bpparam
       )
@@ -42,6 +43,7 @@
       )
     }
   } else {
+    # error: some array >3D has been inputted
     stop(
       "Only order 1 (vector), 2 (matrix), 3 (3D tensor) arrays are supported"
     )
@@ -97,8 +99,22 @@ matrix_to_m_transforms <- function(
 #' given numerical input array. For 3D tensors it performs the mode-3 product
 #' with the DCT matrix.}
 #' \item{minv}{The inverse of m}
-#' @author Brendan Lu
 #' @export
 dctii_m_transforms <- function(t, bpparam = NULL) {
   return(matrix_to_m_transforms(m_mat = gsignal::dctmtx(t), bpparam = bpparam))
+}
+
+#' @keywords internal
+.binary_facewise <- function(a, b, bpparam = BiocParallel::SerialParam()) {
+  t <- dim(a)[3]
+  return(
+    array(
+      BiocParallel::bplapply(
+        array(1:t),
+        FUN = function(i) a[, , i] %*% b[, , i],
+        BPPARAM = bpparam
+      ),
+      dim = c(dim(a)[1], dim(b)[2], t)
+    )
+  )
 }
