@@ -24,7 +24,7 @@ Imports: igraph,
          ggrepel,
          BiocParallel,
          utils,
-         dtt
+         gsignal
 Suggests: BiocStyle, 
           knitr, 
           rmarkdown, 
