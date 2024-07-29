@@ -173,7 +173,7 @@ facewise_product <- function(..., bpparam = NULL) {
 #' @param m A function which applies an orthogonal tensor tubal transform.
 #' @param minv The inverse of m.
 #' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
-#' of parallelisation. Does not have any effect if transform functions 
+#' of parallelisation. Does not have any effect if transform functions
 #' explicitly set using \code{m}, \code{minv}.
 #' @return Cumulative m-product.
 #' @export
@@ -189,8 +189,11 @@ m_product <- function(
   } else {
     t <- dim(tensors[[1]])[3]
   }
-  if (!xor(is.function(m), is.function(minv))) {
-    stop("If explicitly defined, both m and its inverse must be defined.")
+  if (xor(is.function(m), is.function(minv))) {
+    stop(
+      "If explicitly defined, both m and its inverse must be defined as 
+      functions."
+    )
   }
   # use dctii as default transform if user does not specify an explicit one
   if (is.null(m)) {
