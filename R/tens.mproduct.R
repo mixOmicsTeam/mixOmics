@@ -168,6 +168,18 @@ facewise_product <- function(..., bpparam = NULL) {
   )
 }
 
+#' @description Perform a facewise transpose on an order-3 tensor. 
+#' @param tensor Numerical 3D array input.
+#' @return Facewise transpose of \code{tensor}
+#' @export
+facewise_transpose <- function(tensor) {
+  return(aperm(tensor, c(2, 1, 3)))
+}
+
+#' @describeIn facewise_product Alias for \code{\link{facewise_product}}
+#' @export
+ft <- facewise_transpose
+
 #' @description Compute Kilmer's tensor-tensor m-product cumulatively across any
 #' arbitrary number of tensor inputs.
 #' @param ... Arbitrary number of numerical tensor inputs.
