@@ -1,5 +1,6 @@
 context("m-product utilities")
 # bltodo: add tests for matrix inputs
+# bltodo: run on linux system to test parallel algorithms
 
 #' @description Use for internal testing.
 #' Performs a DCT-II transform using the stats::fft algorithm. Produces

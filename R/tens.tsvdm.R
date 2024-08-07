@@ -21,6 +21,7 @@ tsvdm <- function(
     t <- dim(x)[3]
     k <- min(n, p)
   }
+  # bltodo: bit clumsy repeated code from m_product() function body
   if (
     xor(is.function(m), is.function(minv)) ||
       xor(is.null(m), is.null(minv))
@@ -31,7 +32,6 @@ tsvdm <- function(
     )
   }
   # use dctii as default transform if user does not specify an explicit one
-  # bltodo: this is in m_product() too consider using helper if reused
   if (is.null(m)) {
     transforms <- dctii_m_transforms(t, bpparam = bpparam)
     m <- transforms$m
@@ -43,11 +43,11 @@ tsvdm <- function(
   vhat <- array(0, dim = c(p, p, t))
 
   if (svals_matrix_form) {
-    shat_matrix <- array(0, dim = c(k, t))
+    shat <- array(0, dim = c(k, t))
     for (i in seq_len(t)) {
       facewise_svd <- svd(xhat[, , i])
       uhat[, , i] <- facewise_svd$u
-      shat_matrix[, i] <- facewise_svd$d
+      shat[, i] <- facewise_svd$d
       vhat[, , i] <- facewise_svd$v
     }
   } else {

@@ -1,8 +1,10 @@
 context("tpca")
 
 test_that(
-  "blank",
+  "basic tpca sense checks",
   code = {
-    NULL
+    test_tensor <- array(1:24, dim = c(2, 4, 3))
+    tpca_obj <- tpca(test_tensor)
+    expect_equal(length(tpca_obj$explained_variance), tpca_obj$ncomp)
   }
 )

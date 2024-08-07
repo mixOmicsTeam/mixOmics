@@ -53,12 +53,28 @@ tpca <- function(
     t <- dim(x)[3]
     k <- min(n, p)
   }
-
+  # bltodo: bit clumsy repeated code from m_product() function body
+  if (
+    xor(is.function(m), is.function(minv)) ||
+      xor(is.null(m), is.null(minv))
+  ) {
+    stop(
+      "If explicitly defined, both m and its inverse must be defined as 
+      functions."
+    )
+  }
+  # use dctii as default transform if user does not specify an explicit one
+  if (is.null(m)) {
+    transforms <- dctii_m_transforms(t, bpparam = bpparam)
+    m <- transforms$m
+    minv <- transforms$minv
+  }
   if (center) {
-    x <- apply(x, c(1, 3), mean)
+    mean_slice <- apply(x, c(2, 3), mean)
+    x <- sweep(x, c(2, 3), STATS = mean_slice, FUN = "-")
   }
 
-  # the idea here is to just pass whatever m and minv input has been provided 
+  # the idea here is to just pass whatever m and minv input has been provided
   # in this function call to be handled in the tsvdm call
   # bltodo: adopt this approach in tred
   tsvdm_decomposition <- tsvdm(
@@ -105,13 +121,13 @@ tpca <- function(
   # bltodo: benchmark this against new_data *_M vhat
   x_projected <- facewise_product(
     tsvdm_decomposition$uhat,
-    .singular_vals_mat_to_tens(tsvdm_decomposition$shat)
+    .singular_vals_mat_to_tens(tsvdm_decomposition$shat, dim = c(n, n, t))
   )
 
   # bltodo: compute rho and return?
   return(invisible(list(
     ncomp = ncomp,
-    x = x_projected,
+    x = x,
     variates = x_projected,
     explained_variance = explained_variance_ratio[1:ncomp]
   )))
