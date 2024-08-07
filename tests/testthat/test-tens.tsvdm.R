@@ -1,4 +1,4 @@
-context("m-product utilities")
+context("tsvdm")
 
 test_that(
   "reconstructing original matrix from tsvdm",

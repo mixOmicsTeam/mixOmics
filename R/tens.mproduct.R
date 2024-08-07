@@ -176,7 +176,7 @@ facewise_transpose <- function(tensor) {
   return(aperm(tensor, c(2, 1, 3)))
 }
 
-#' @describeIn facewise_product Alias for \code{\link{facewise_product}}
+#' @describeIn facewise_transpose Alias for \code{\link{facewise_product}}
 #' @export
 ft <- facewise_transpose
 
