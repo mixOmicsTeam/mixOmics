@@ -3,16 +3,14 @@
 # ==============================================================================
 
 #' @description R implementation of np.unravel_index. NOTE: currently only works
-#' for 1D to 2D column-major conversion.
+#' for 1D to 2D column-major conversion, and returns a list of 2D indices.
 #' @keywords internal
 .unravel_index <- function(indices, dim) {
   nrows <- dim[1]
-  return(
-    list(
-      row_indxs = sapply(indices, function(x) (x - 1) %% nrows + 1),
-      col_indxs = sapply(indices, function(x) (x - 1) %/% nrows + 1)
-    )
-  )
+  return(lapply(
+    indices,
+    FUN = function(x) c((x - 1) %% nrows + 1, (x - 1) %/% nrows + 1)
+  ))
 }
 
 #' @description Helper function to convert compressed matrix form of the
@@ -43,6 +41,7 @@ tpca <- function(
   m = NULL,
   minv = NULL,
   center = TRUE,
+  matrix_output = TRUE,
   bpparam = NULL
 ) {
   if (length(dim(x)) != 3) {
@@ -113,18 +112,22 @@ tpca <- function(
   # corresponding to the singular values matrix
   # NOTE: these are the collection if i_h's and j_h's in Mor et al. (2022)
   k_t_flatten_sort <- .unravel_index(
-    k_t_flatten_sort,
+    k_t_flatten_sort[1:ncomp],
     dim(tsvdm_decomposition$shat)
   )
 
   # compute the values of the projected data
-  # bltodo: benchmark this against new_data *_M vhat
+  # bltodo: benchmark this against \eqn{new_data *_M vhat}
   x_projected <- facewise_product(
     tsvdm_decomposition$uhat,
     .singular_vals_mat_to_tens(tsvdm_decomposition$shat, dim = c(n, n, t))
   )
-
-  # bltodo: compute rho and return?
+  if (matrix_output) {
+    x_projected <- cbind(
+      lapply(k_t_flatten_sort, FUN = function(x) x_projected[, x[1], x[2]])
+    )
+  }
+  # bltodo: compute rho as well
   return(invisible(list(
     ncomp = ncomp,
     x = x,
