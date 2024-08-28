@@ -4,12 +4,20 @@
 
 #' @description R implementation of np.unravel_index. NOTE: currently only works
 #' for 1D to 2D column-major conversion, and returns a list of 2D indices.
+#' Returns a matrix output of length(indices) columns, with two rows. The first
+#' row corresponds to the sorted p indices, and the second row contains the
+#' t indices.
 #' @keywords internal
 .unravel_index <- function(indices, dim) {
   nrows <- dim[1]
-  return(lapply(
+  return(sapply(
     indices,
-    FUN = function(x) c((x - 1) %% nrows + 1, (x - 1) %/% nrows + 1)
+    FUN = function(x) {
+      c(
+        (x - 1) %% nrows + 1, # transformed p tensor position
+        (x - 1) %/% nrows + 1 # transformed t tensor position
+      )
+    }
   ))
 }
 
@@ -120,11 +128,14 @@ tpca <- function(
   # bltodo: benchmark this against \eqn{new_data *_M vhat}
   x_projected <- facewise_product(
     tsvdm_decomposition$uhat,
-    .singular_vals_mat_to_tens(tsvdm_decomposition$shat, dim = c(n, n, t))
+    .singular_vals_mat_to_tens(tsvdm_decomposition$shat, dim = c(n, p, t))
   )
   if (matrix_output) {
-    x_projected <- cbind(
-      lapply(k_t_flatten_sort, FUN = function(x) x_projected[, x[1], x[2]])
+    # extract the rows
+    x_projected <- apply(
+      k_t_flatten_sort,
+      2,
+      FUN = function(indices) x_projected[, indices[1], indices[2]]
     )
   }
   # bltodo: compute rho as well
