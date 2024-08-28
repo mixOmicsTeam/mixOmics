@@ -1,4 +1,6 @@
 context("tsvdm")
+# bltodo: add tests for permutations of different configurations and input sizes
+# like the `tred` library
 
 test_that(
   "reconstructing original matrix from tsvdm",

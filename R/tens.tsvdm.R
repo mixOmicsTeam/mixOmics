@@ -39,24 +39,29 @@ tsvdm <- function(
   }
 
   xhat <- m(x)
-  uhat <- array(0, dim = c(n, n, t))
-  vhat <- array(0, dim = c(p, p, t))
+  if (full_frontal_slices) {
+    uhat <- array(0, dim = c(n, n, t))
+    vhat <- array(0, dim = c(p, p, t))
+  } else {
+    uhat <- array(0, dim = c(n, k, t))
+    vhat <- array(0, dim = c(p, k, t))
+  }
 
   if (svals_matrix_form) {
     shat <- array(0, dim = c(k, t))
     for (i in seq_len(t)) {
       facewise_svd <- svd(xhat[, , i])
-      uhat[, , i] <- facewise_svd$u
+      uhat[, 1:k, i] <- facewise_svd$u
       shat[, i] <- facewise_svd$d
-      vhat[, , i] <- facewise_svd$v
+      vhat[, 1:k, i] <- facewise_svd$v
     }
   } else {
     shat <- array(0, dim = c(n, p, t))
     for (i in seq_len(t)) {
       facewise_svd <- svd(xhat[, , i])
-      uhat[, , i] <- facewise_svd$u
+      uhat[, 1:k, i] <- facewise_svd$u
       shat[1:k, 1:k, i] <- diag(facewise_svd$d)
-      vhat[, , i] <- facewise_svd$v
+      vhat[, 1:k, i] <- facewise_svd$v
     }
   }
 
