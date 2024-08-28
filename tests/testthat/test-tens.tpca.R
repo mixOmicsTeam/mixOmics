@@ -1,4 +1,5 @@
 context("tpca")
+# bltodo: bpparam configuration
 
 test_that(
   "basic tpca sense checks",

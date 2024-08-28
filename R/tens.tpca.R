@@ -7,6 +7,7 @@
 #' Returns a matrix output of length(indices) columns, with two rows. The first
 #' row corresponds to the sorted p indices, and the second row contains the
 #' t indices.
+#' @author Brendan Lu
 #' @keywords internal
 .unravel_index <- function(indices, dim) {
   nrows <- dim[1]
@@ -30,7 +31,8 @@
 #'
 #' type of indexing in Numpy
 #' Basically performs tensor compression based on the ordered indices specified
-#' by each column of k_t_indices
+#' by each column of k_t_indices.
+#' @author Brendan Lu
 #' @keywords internal
 .extract_tensor_columns <- function(tensor, k_t_indices) {
   return(apply(
@@ -44,6 +46,7 @@
 #' when computing the transform.
 #' @param mat Matrix s.t. each column contains the f-diagonal singular values
 #' @param dim Dimension of output tensor
+#' @author Brendan Lu
 #' @keywords internal
 .singular_vals_mat_to_tens <- function(mat, dim) {
   n <- dim[1]
@@ -60,6 +63,7 @@
 
 #' @description Tensor analogue of PCA introduced by Mor et al. (2022) based on
 #' Kilmer's m-product algebra and tsvdm
+#' @author Brendan Lu
 #' @export
 tpca <- function(
   x,
@@ -78,35 +82,27 @@ tpca <- function(
     t <- dim(x)[3]
     k <- min(n, p)
   }
-  # bltodo: bit clumsy repeated code from m_product() function body
-  if (
-    xor(is.function(m), is.function(minv)) ||
-      xor(is.null(m), is.null(minv))
-  ) {
-    stop(
-      "If explicitly defined, both m and its inverse must be defined as 
-      functions."
-    )
-  }
+
+  .stop_invalid_transform_input(m, minv)
+
   # use dctii as default transform if user does not specify an explicit one
   if (is.null(m)) {
     transforms <- dctii_m_transforms(t, bpparam = bpparam)
     m <- transforms$m
     minv <- transforms$minv
   }
+  
   if (center) {
     mean_slice <- apply(x, c(2, 3), mean)
     x <- sweep(x, c(2, 3), STATS = mean_slice, FUN = "-")
   }
 
-  # the idea here is to just pass whatever m and minv input has been provided
-  # in this function call to be handled in the tsvdm call
-  # bltodo: adopt this approach in tred
+  # NOTE: this means passing in bpparam configuration is not needed, as any
+  # bpparam specification will already take effect above
   tsvdm_decomposition <- tsvdm(
     x, m, minv,
     keep_hats = TRUE,
-    svals_matrix_form = TRUE,
-    bpparam = bpparam
+    svals_matrix_form = TRUE
   )
 
   # flatten out Fortran column major style, then get sort order

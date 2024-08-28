@@ -13,7 +13,7 @@
 #' of parallelisation.
 #' @return A tensor of the same size under the specified tubal transform,
 #' denoted \hat{x}.
-#' @author Saritha Kodikara, Brendan Lu
+#' @author Brendan Lu
 #' @keywords internal
 .apply_mat_transform <- function(x, mat, bpparam) {
   if (length(dim(x)) == 1) {
@@ -55,6 +55,21 @@
   }
 }
 
+#' @description Validate appropriate 'null-ness' of m, minv inputs.
+#' @author Brendan Lu
+#' @keywords internal
+.stop_invalid_transform_input <- function(m, minv) {
+  if (
+    xor(is.function(m), is.function(minv)) ||
+      xor(is.null(m), is.null(minv))
+  ) {
+    stop(
+      "If explicitly defined, both m and its inverse must be defined as 
+      functions."
+    )
+  }
+}
+
 #' @description Returns functions \code{m} and \code{m_inv} which apply tubal
 #' transforms defined by the matrix \code{m_mat}.
 #' @param mat Function which defines the tubal transform.
@@ -66,6 +81,7 @@
 #' of a given numerical input array. For 3D tensors it performs the mode-3
 #' product.}
 #' \item{minv}{The inverse of m.}
+#' @author Brendan Lu
 #' @export
 matrix_to_m_transforms <- function(
   m_mat,
@@ -103,6 +119,7 @@ matrix_to_m_transforms <- function(
 #' given numerical input array. For 3D tensors it performs the mode-3 product
 #' with the DCT matrix.}
 #' \item{minv}{The inverse of m,}
+#' @author Brendan Lu
 #' @export
 dctii_m_transforms <- function(t, bpparam = NULL) {
   return(matrix_to_m_transforms(m_mat = gsignal::dctmtx(t), bpparam = bpparam))
@@ -112,6 +129,7 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
 #' implementation is relatively fast, and very readable. There's also a
 #' BiocParralel implementation here, but it lacks significant benchmarking
 #' results.
+#' @author Brendan Lu
 #' @keywords internal
 .binary_facewise <- function(a, b, bpparam) {
   na <- dim(a)[1]
@@ -158,6 +176,7 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
 #' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
 #' of parallelisation.
 #' @return Cumulative facewise product.
+#' @author Brendan Lu
 #' @export
 facewise_product <- function(..., bpparam = NULL) {
   return(
@@ -171,6 +190,7 @@ facewise_product <- function(..., bpparam = NULL) {
 #' @description Perform a facewise transpose on an order-3 tensor. 
 #' @param tensor Numerical 3D array input.
 #' @return Facewise transpose of \code{tensor}
+#' @author Brendan Lu
 #' @export
 facewise_transpose <- function(tensor) {
   return(aperm(tensor, c(2, 1, 3)))
@@ -189,6 +209,7 @@ ft <- facewise_transpose
 #' of parallelisation. Does not have any effect if transform functions
 #' explicitly set using \code{m}, \code{minv}.
 #' @return Cumulative m-product.
+#' @author Brendan Lu
 #' @export
 m_product <- function(
   ...,

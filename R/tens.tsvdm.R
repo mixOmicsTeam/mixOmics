@@ -3,6 +3,7 @@
 # ==============================================================================
 
 #' @description Return the t-SVDM decomposition from Kilmer et al. (2021).
+#' @author Brendan Lu
 #' @export
 tsvdm <- function(
   x,
@@ -21,16 +22,9 @@ tsvdm <- function(
     t <- dim(x)[3]
     k <- min(n, p)
   }
-  # bltodo: bit clumsy repeated code from m_product() function body
-  if (
-    xor(is.function(m), is.function(minv)) ||
-      xor(is.null(m), is.null(minv))
-  ) {
-    stop(
-      "If explicitly defined, both m and its inverse must be defined as 
-      functions."
-    )
-  }
+
+  .stop_invalid_transform_input(m, minv)
+
   # use dctii as default transform if user does not specify an explicit one
   if (is.null(m)) {
     transforms <- dctii_m_transforms(t, bpparam = bpparam)
