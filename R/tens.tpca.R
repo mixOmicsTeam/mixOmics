@@ -21,6 +21,24 @@
   ))
 }
 
+#' @description Extract tensor columns specified by .unravel_index output
+#' Effectively achieves:
+#'
+#'     self.loadings_matrix_ = hatV[
+#'         :, self._k_t_flatten_sort[0], self._k_t_flatten_sort[1]
+#'     ].T
+#'
+#' type of indexing in Numpy
+#' Basically performs tensor compression based on the ordered indices specified
+#' by each column of k_t_indices
+#' @keywords internal
+.extract_tensor_columns <- function(tensor, k_t_indices) {
+  return(apply(
+    k_t_indices, 2,
+    FUN = function(index_column) tensor[, index_column[1], index_column[2]]
+  ))
+}
+
 #' @description Helper function to convert compressed matrix form of the
 #' singular values into a sparse tensor; saves another costly call to tsvdm
 #' when computing the transform.
@@ -132,16 +150,16 @@ tpca <- function(
   )
   if (matrix_output) {
     # extract the rows
-    x_projected <- apply(
-      k_t_flatten_sort,
-      2,
-      FUN = function(indices) x_projected[, indices[1], indices[2]]
-    )
+    x_projected <- .extract_tensor_columns(x_projected, k_t_flatten_sort)
   }
   # bltodo: compute rho as well
   return(invisible(list(
     ncomp = ncomp,
     x = x,
+    loadings = .extract_tensor_columns(
+      tsvdm_decomposition$vhat,
+      k_t_flatten_sort
+    ),
     variates = x_projected,
     explained_variance = explained_variance_ratio[1:ncomp]
   )))
