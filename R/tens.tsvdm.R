@@ -9,6 +9,7 @@ tsvdm <- function(
   x,
   m = NULL,
   minv = NULL,
+  transform = TRUE, # differs to tred, control initial transform to m-space
   keep_hats = FALSE,
   full_frontal_slices = TRUE,
   svals_matrix_form = FALSE,
@@ -23,47 +24,57 @@ tsvdm <- function(
     k <- min(n, p)
   }
 
-  .stop_invalid_transform_input(m, minv)
+  if (transform) {
+    .stop_invalid_transform_input(m, minv)
 
-  # use dctii as default transform if user does not specify an explicit one
-  if (is.null(m)) {
-    transforms <- dctii_m_transforms(t, bpparam = bpparam)
-    m <- transforms$m
-    minv <- transforms$minv
+    # use dctii as default transform if user does not specify an explicit one
+    if (is.null(m)) {
+      transforms <- dctii_m_transforms(t, bpparam = bpparam)
+      m <- transforms$m
+      minv <- transforms$minv
+    }
+
+    x <- m(x)
   }
 
-  xhat <- m(x)
   if (full_frontal_slices) {
-    uhat <- array(0, dim = c(n, n, t))
-    vhat <- array(0, dim = c(p, p, t))
+    u <- array(0, dim = c(n, n, t))
+    v <- array(0, dim = c(p, p, t))
   } else {
-    uhat <- array(0, dim = c(n, k, t))
-    vhat <- array(0, dim = c(p, k, t))
+    u <- array(0, dim = c(n, k, t))
+    v <- array(0, dim = c(p, k, t))
   }
 
   if (svals_matrix_form) {
-    shat <- array(0, dim = c(k, t))
+    s <- array(0, dim = c(k, t))
     for (i in seq_len(t)) {
-      facewise_svd <- svd(xhat[, , i])
-      uhat[, 1:k, i] <- facewise_svd$u
-      shat[, i] <- facewise_svd$d
-      vhat[, 1:k, i] <- facewise_svd$v
+      facewise_svd <- svd(x[, , i])
+      u[, 1:k, i] <- facewise_svd$u
+      s[, i] <- facewise_svd$d
+      v[, 1:k, i] <- facewise_svd$v
     }
   } else {
-    shat <- array(0, dim = c(n, p, t))
+    s <- array(0, dim = c(n, p, t))
     for (i in seq_len(t)) {
-      facewise_svd <- svd(xhat[, , i])
-      uhat[, 1:k, i] <- facewise_svd$u
-      shat[1:k, 1:k, i] <- diag(facewise_svd$d)
-      vhat[, 1:k, i] <- facewise_svd$v
+      facewise_svd <- svd(x[, , i])
+      u[, 1:k, i] <- facewise_svd$u
+      s[1:k, 1:k, i] <- diag(facewise_svd$d)
+      v[, 1:k, i] <- facewise_svd$v
     }
   }
 
-  if (keep_hats) {
-    return(list(uhat = uhat, shat = shat, vhat = vhat))
+  if (transform && keep_hats) {
+    # make clear to the user they have 
+    return(list(uhat = u, shat = s, vhat = v))
   } else {
-    output <- lapply(list(uhat, shat, vhat), minv)
-    names(output) <- c("u", "s", "v")
-    return(output)
+    if (transform) {
+      # minv will work on s regardless of what form it is in
+      output <- lapply(list(u, s, v), minv)
+      names(output) <- c("u", "s", "v")
+      return(output)
+    } else {
+      output <- list(u = u, s = s, v = v)
+      return(output)
+    }
   }
 }
