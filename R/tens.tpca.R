@@ -29,7 +29,8 @@
 #'         :, self._k_t_flatten_sort[0], self._k_t_flatten_sort[1]
 #'     ].T
 #'
-#' type of indexing in Numpy
+#' type of indexing in Numpy.
+#'
 #' Basically performs tensor compression based on the ordered indices specified
 #' by each column of k_t_indices.
 #' @author Brendan Lu
@@ -42,8 +43,7 @@
 }
 
 #' @description Helper function to convert compressed matrix form of the
-#' singular values into a sparse tensor; saves another costly call to tsvdm
-#' when computing the transform.
+#' singular values into a sparse tensor.
 #' @param mat Matrix s.t. each column contains the f-diagonal singular values
 #' @param dim Dimension of output tensor
 #' @author Brendan Lu
@@ -62,7 +62,7 @@
 }
 
 #' @description Tensor analogue of PCA introduced by Mor et al. (2022) based on
-#' Kilmer's m-product algebra and tsvdm
+#' Kilmer's m-product algebra and tsvdm.
 #' @author Brendan Lu
 #' @export
 tpca <- function(
@@ -97,8 +97,8 @@ tpca <- function(
     x <- sweep(x, c(2, 3), STATS = mean_slice, FUN = "-")
   }
 
-  # NOTE: this means passing in bpparam configuration is not needed, as any
-  # bpparam specification will already take effect above
+  # NOTE: passing in bpparam configuration is not needed, as any
+  # bpparam specification will already take effect above in the transforms
   tsvdm_decomposition <- tsvdm(
     x, m, minv,
     keep_hats = TRUE,
@@ -145,7 +145,7 @@ tpca <- function(
     .singular_vals_mat_to_tens(tsvdm_decomposition$shat, dim = c(n, p, t))
   )
   if (matrix_output) {
-    # extract the rows
+    # extract the columns in compressed form
     x_projected <- .extract_tensor_columns(x_projected, k_t_flatten_sort)
   }
   # bltodo: compute rho as well
