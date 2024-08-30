@@ -91,7 +91,7 @@ tpca <- function(
     m <- transforms$m
     minv <- transforms$minv
   }
-  
+
   if (center) {
     mean_slice <- apply(x, c(2, 3), mean)
     x <- sweep(x, c(2, 3), STATS = mean_slice, FUN = "-")
@@ -102,6 +102,7 @@ tpca <- function(
   tsvdm_decomposition <- tsvdm(
     x, m, minv,
     keep_hats = TRUE,
+    full_frontal_slices = FALSE,
     svals_matrix_form = TRUE
   )
 
@@ -116,7 +117,7 @@ tpca <- function(
   total_var <- sum(squared_singular_values)
   explained_variance_ratio <- squared_singular_values / total_var
 
-  # process n_components input
+  # process ncomp input
   if (is.null(ncomp)) {
     ncomp <- k * t
   } else if (ncomp > 0 && ncomp < 1) {
