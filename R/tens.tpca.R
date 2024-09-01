@@ -103,7 +103,6 @@ tpca <- function(
   tsvdm_decomposition <- tsvdm(
     x, m, minv,
     keep_hats = TRUE,
-    full_frontal_slices = FALSE,
     svals_matrix_form = TRUE
   )
 

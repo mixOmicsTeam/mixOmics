@@ -91,9 +91,7 @@ tpls <- function(
   tsvdm_decomposition_xty <- tsvdm(
     ft(m(x)) %fp% m(y),
     transform = FALSE,
-    full_frontal_slices = FALSE,
-    svals_matrix_form = TRUE,
-    facewise_truncate = k
+    svals_matrix_form = TRUE
   )
 
   # process ncomp input, much simpler than tpca as we only accept integer input

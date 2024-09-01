@@ -40,6 +40,26 @@ test_that(
 )
 
 test_that(
+  "facewise product works the same as the naive algorithm",
+  code = {
+    n <- 2
+    p <- 4
+    t <- 3
+    set.seed(1)
+    test_tensor1 <- array(rnorm(n * p * t), dim = c(n, p, t))
+    test_tensor2 <- ft(test_tensor1)
+    expected_result <- array(0, dim = c(n, n, t))
+    for (i in 1:t) {
+      expected_result[, , i] <- test_tensor1[, , i] %*% test_tensor2[, , i]
+    }
+    expect_equal(
+      test_tensor1 %fp% test_tensor2,
+      expected_result
+    )
+  }
+)
+
+test_that(
   "mode-3 product result matches naive nested for-loop algorithm",
   code = {
     n <- 2

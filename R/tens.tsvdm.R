@@ -11,9 +11,7 @@ tsvdm <- function(
   minv = NULL,
   transform = TRUE, # differs to tred, control initial transform to m-space
   keep_hats = FALSE,
-  full_frontal_slices = TRUE,
   svals_matrix_form = FALSE,
-  facewise_truncate = NULL,
   bpparam = NULL
 ) {
   if (length(dim(x)) != 3) {
@@ -23,14 +21,6 @@ tsvdm <- function(
     p <- dim(x)[2]
     t <- dim(x)[3]
     k <- min(n, p)
-  }
-
-  if (!is.null(facewise_truncate)) {
-    if (is.integer(facewise_truncate)) {
-      k <- facewise_truncate
-    } else {
-      stop("Please input an integer or NULL for facewise_truncate parameter")
-    }
   }
 
   if (transform) {
@@ -46,29 +36,25 @@ tsvdm <- function(
     x <- m(x)
   }
 
-  if (full_frontal_slices) {
-    u <- array(0, dim = c(n, n, t))
-    v <- array(0, dim = c(p, p, t))
-  } else {
-    u <- array(0, dim = c(n, k, t))
-    v <- array(0, dim = c(p, k, t))
-  }
+  u <- array(0, dim = c(n, k, t))
+  v <- array(0, dim = c(p, k, t))
 
+  # bltodo: less ugly way to write this?
   if (svals_matrix_form) {
     s <- array(0, dim = c(k, t))
     for (i in seq_len(t)) {
       facewise_svd <- svd(x[, , i])
-      u[, 1:k, i] <- facewise_svd$u
+      u[, , i] <- facewise_svd$u
       s[, i] <- facewise_svd$d
-      v[, 1:k, i] <- facewise_svd$v
+      v[, , i] <- facewise_svd$v
     }
   } else {
-    s <- array(0, dim = c(n, p, t))
+    s <- array(0, dim = c(k, k, t))
     for (i in seq_len(t)) {
       facewise_svd <- svd(x[, , i])
-      u[, 1:k, i] <- facewise_svd$u
-      s[1:k, 1:k, i] <- diag(facewise_svd$d)
-      v[, 1:k, i] <- facewise_svd$v
+      u[, , i] <- facewise_svd$u
+      s[, , i] <- diag(facewise_svd$d)
+      v[, , i] <- facewise_svd$v
     }
   }
 
