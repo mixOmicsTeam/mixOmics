@@ -92,6 +92,7 @@ tpca <- function(
     minv <- transforms$minv
   }
 
+  # bltodo: add scaling as well?
   if (center) {
     mean_slice <- apply(x, c(2, 3), mean)
     x <- sweep(x, c(2, 3), STATS = mean_slice, FUN = "-")
@@ -141,23 +142,30 @@ tpca <- function(
 
   # compute the values of the projected data
   # bltodo: benchmark this against \eqn{new_data *_M vhat}
-  x_projected <- facewise_product(
-    tsvdm_decomposition$uhat,
+  # bltodo: zero out uhat first? svd truncates it to rank already, but can
+  # further truncate to ncomp columns?
+  x_projected <- tsvdm_decomposition$uhat %fp%
     .singular_vals_mat_to_tens(tsvdm_decomposition$shat, dim = c(n, p, t))
-  )
+
+  loadings <- tsvdm_decomposition$vhat
+
+  # extract the columns in compressed form
   if (matrix_output) {
-    # extract the columns in compressed form
     x_projected <- .extract_tensor_columns(x_projected, k_t_flatten_sort)
+    loadings <- .extract_tensor_columns(
+      tsvdm_decomposition$vhat,
+      k_t_flatten_sort
+    )
   }
-  # bltodo: compute rho as well
+
+  # bltodo: (to add in) zero out and compute rho as well
+  # see _rank_q_truncation_zero_out() in `tred`
+
   return(invisible(list(
     ncomp = ncomp,
     x = x,
-    loadings = .extract_tensor_columns(
-      tsvdm_decomposition$vhat,
-      k_t_flatten_sort
-    ),
-    variates = x_projected,
+    loadings = loadings,
+    variates = x_projected, # bltodo: maybe just adopt a different name here?
     explained_variance = explained_variance_ratio[1:ncomp]
   )))
 }

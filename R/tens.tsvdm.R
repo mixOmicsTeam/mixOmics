@@ -13,6 +13,7 @@ tsvdm <- function(
   keep_hats = FALSE,
   full_frontal_slices = TRUE,
   svals_matrix_form = FALSE,
+  facewise_truncate = NULL,
   bpparam = NULL
 ) {
   if (length(dim(x)) != 3) {
@@ -22,6 +23,14 @@ tsvdm <- function(
     p <- dim(x)[2]
     t <- dim(x)[3]
     k <- min(n, p)
+  }
+
+  if (!is.null(facewise_truncate)) {
+    if (is.integer(facewise_truncate)) {
+      k <- facewise_truncate
+    } else {
+      stop("Please input an integer or NULL for facewise_truncate parameter")
+    }
   }
 
   if (transform) {
@@ -64,7 +73,7 @@ tsvdm <- function(
   }
 
   if (transform && keep_hats) {
-    # make clear to the user they have 
+    # make clear returning in hat space
     return(list(uhat = u, shat = s, vhat = v))
   } else {
     if (transform) {

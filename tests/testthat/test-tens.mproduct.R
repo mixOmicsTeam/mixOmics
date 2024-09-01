@@ -104,7 +104,8 @@ test_that(
 )
 
 test_that(
-  "cumulative multi input facewise product works as expected",
+  "cumulative multi input facewise product works as expected compared to 
+  custom operator",
   code = {
     test_tensor1 <- array(1:24, dim = c(2, 4, 3))
     test_tensor2 <- array(1:60, dim = c(4, 5, 3))
@@ -113,6 +114,10 @@ test_that(
     expected_cumulative_fp <- facewise_product(fp12, test_tensor3)
     expect_equal(
       facewise_product(test_tensor1, test_tensor2, test_tensor3),
+      expected_cumulative_fp
+    )
+    expect_equal(
+      test_tensor1 %fp% test_tensor2 %fp% test_tensor3,
       expected_cumulative_fp
     )
   }
@@ -142,18 +147,18 @@ test_that(
     expect_error(
       m_product(test_tensor1, m = dummy_m),
       "If explicitly defined, both m and its inverse must be defined as 
-      functions."
+      functions"
     )
     # accidentally adding () to an input meaning it is not a callable
     expect_error(
       m_product(test_tensor1, m = dummy_m()),
       "If explicitly defined, both m and its inverse must be defined as 
-      functions."
+      functions"
     )
     expect_error(
       m_product(test_tensor1, m = dummy_m(), minv = dummy_m),
       "If explicitly defined, both m and its inverse must be defined as 
-      functions."
+      functions"
     )
   }
 )
