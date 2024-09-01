@@ -1,6 +1,7 @@
 # ==============================================================================
 # utilities and functions for Kilmer's m product
 # ==============================================================================
+# bltodo: use classes for m and minv?
 
 #' @description Apply a function across the last dimension of an input vector,
 #' matrix, or tensor. This function defines both a parallel algorithm using
@@ -65,7 +66,7 @@
   ) {
     stop(
       "If explicitly defined, both m and its inverse must be defined as 
-      functions."
+      functions"
     )
   }
 }
@@ -129,6 +130,7 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
 #' implementation is relatively fast, and very readable. There's also a
 #' BiocParralel implementation here, but it lacks significant benchmarking
 #' results.
+#' bltodo: the parallel algorithm is probably stupid remove sometime?
 #' @author Brendan Lu
 #' @keywords internal
 .binary_facewise <- function(a, b, bpparam) {
@@ -187,7 +189,11 @@ facewise_product <- function(..., bpparam = NULL) {
   )
 }
 
-#' @description Perform a facewise transpose on an order-3 tensor. 
+#' @describeIn facewise_product Custom facewise product operator
+#' @export
+`%fp%` <- function(a, b) .binary_facewise(a, b, bpparam = NULL)
+
+#' @description Perform a facewise transpose on an order-3 tensor.
 #' @param tensor Numerical 3D array input.
 #' @return Facewise transpose of \code{tensor}
 #' @author Brendan Lu
