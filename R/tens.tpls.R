@@ -183,14 +183,14 @@ tpls <- function(
 
       # perform deflation
       curr_x_reg_coef <- crossprod(xhat[, , k_t_top[2]], curr_x_projected) /
-        crossprod(x_projected, x_projected)
+        crossprod(curr_x_projected, curr_x_projected)
 
       xhat[, , k_t_top[2]] <- xhat[, , k_t_top[2]] -
         tcrossprod(curr_x_projected, curr_x_reg_coef)
 
       if (mode == "canonical") {
         curr_y_reg_coef <- crossprod(yhat[, , k_t_top[2]], curr_y_projected) /
-          crossprod(y_projected, y_projected)
+          crossprod(curr_y_projected, curr_y_projected)
 
         yhat[, , k_t_top[2]] <- yhat[, , k_t_top[2]] -
           tcrossprod(curr_y_projected, curr_y_reg_coef)
@@ -198,7 +198,7 @@ tpls <- function(
 
       if (mode == "regression") {
         curr_y_reg_coef <- crossprod(yhat[, , k_t_top[2]], curr_x_projected) /
-          crossprod(x_projected, x_projected)
+          crossprod(curr_x_projected, curr_x_projected)
 
         yhat[, , k_t_top[2]] <- yhat[, , k_t_top[2]] -
           tcrossprod(curr_x_projected, curr_y_reg_coef)
@@ -219,7 +219,7 @@ tpls <- function(
       x_projected = x_projected,
       y_projected = y_projected
     )))
-  
+
   } else {
     stop("Unexpected error in tpls, check 'mode' parameter input")
   }
