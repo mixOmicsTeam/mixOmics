@@ -624,7 +624,7 @@
     },
     "ggrepel": {
       "Package": "ggrepel",
-      "Version": "0.9.5",
+      "Version": "0.9.6",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -636,7 +636,7 @@
         "scales",
         "withr"
       ],
-      "Hash": "613a6d62c3b55eab82c93c149edc3490"
+      "Hash": "3d4156850acc1161f2f24bc61c9217c1"
     },
     "gh": {
       "Package": "gh",
@@ -693,7 +693,7 @@
     },
     "gsignal": {
       "Package": "gsignal",
-      "Version": "0.3-5",
+      "Version": "0.3-6",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -702,7 +702,7 @@
         "grDevices",
         "pracma"
       ],
-      "Hash": "000474ca7aa42533937282b8539b11b7"
+      "Hash": "89717f7be39bd2d35a7a78dcfae516bd"
     },
     "gtable": {
       "Package": "gtable",
@@ -921,13 +921,13 @@
     },
     "matrixStats": {
       "Package": "matrixStats",
-      "Version": "1.3.0",
+      "Version": "1.4.1",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "R"
       ],
-      "Hash": "4b3ea27a19d669c0405b38134d89a9d1"
+      "Hash": "8885ffb1f46e820dede6b2ca9442abca"
     },
     "memoise": {
       "Package": "memoise",

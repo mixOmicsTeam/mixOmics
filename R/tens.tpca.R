@@ -5,8 +5,8 @@
 #' @description R implementation of np.unravel_index. NOTE: currently only works
 #' for 1D to 2D column-major conversion, and returns a list of 2D indices.
 #' Returns a matrix output of length(indices) columns, with two rows. The first
-#' row corresponds to the sorted p indices, and the second row contains the
-#' t indices.
+#' row corresponds to the sorted k indices, and the second row contains the
+#' sorted t indices.
 #' @author Brendan Lu
 #' @keywords internal
 .unravel_index <- function(indices, dim) {
@@ -15,7 +15,7 @@
     indices,
     FUN = function(x) {
       c(
-        (x - 1) %% nrows + 1, # transformed p tensor position
+        (x - 1) %% nrows + 1, # transformed k tensor position
         (x - 1) %/% nrows + 1 # transformed t tensor position
       )
     }
@@ -157,8 +157,9 @@ tpca <- function(
     )
   }
 
-  # bltodo: (to add in) zero out and compute rho as well
+  # BLTODO: (to add in) zero out and compute rho as well
   # see _rank_q_truncation_zero_out() in `tred`
+  # need to use this for tensor output to be appropriate
 
   return(invisible(list(
     ncomp = ncomp,

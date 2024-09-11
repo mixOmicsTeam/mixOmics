@@ -8,22 +8,18 @@ test_that(
     # problems. that being said, this test here is probably still useful as a
     # sense check.
     #
-    # problem 1: we perform the tsvdm decomposition in the hat-space ('m' space)
-    # so the tsvdm of ft(m(x)) %fp% m(x) "XtX" really has nothing to do with the
-    # tsvdm decomposition of m(X) "X" directly anymore.
+    # problem 1: squaring the singular values means that the k_t_flatten_sort
+    # compression is different and picks out a different compressed matrix. Sort
+    # order of the squared values is not necessarily the same.
     #
-    # problem 2: even if it did (by using m == identity), squaring the singular
-    # values means that the k_t_flatten_sort compression is different and picks
-    # out a different compressed matrix.
-    #
-    # problem 3: loadings (and therefore projections) may differ in sign, think
+    # problem 2: loadings (and therefore projections) may differ in sign, think
     # this is dependent on the svd solver implementation?
     #
-    # problem 4: if you use centering (on for tpca and tpls by default), the
+    # problem 3: if you use centering (on for tpca and tpls by default), the
     # faces of each tensor loses one rank, so only rank - 1 columns of each face
     # in the loadings tensor ("v") will match.
     #
-    # problem 5: tpls computes the svd on XtX, which is rank-deficient if X is
+    # problem 4: tpls computes the svd on XtX, which is rank-deficient if X is
     # non-square. this means that the last few columns of "v" are absolutely
     # crap and should not be compared. these columns may not even exist in
     # tpca depending on the input dimensions.
@@ -38,8 +34,7 @@ test_that(
     set.seed(1)
     test_tensor <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
 
-    # just use the identity as m transform to get over problem 1
-    transforms <- matrix_to_m_transforms(diag(t))
+    transforms <- dctii_m_transforms(t)
     m <- transforms$m
     minv <- transforms$minv
 
@@ -48,9 +43,9 @@ test_that(
       ncomp = ncomp_input,
       m = m,
       minv = minv,
-      # turn off centering to get over problem 4
+      # turn off centering to get over problem 3
       center = FALSE,
-      # return full tensors to get over problem 2
+      # return full tensors to get over problem 1
       matrix_output = FALSE
     )
 
@@ -60,16 +55,16 @@ test_that(
       m = m,
       minv = minv,
       mode = "tsvdm",
-      # turn off centering to get over problem 4
+      # turn off centering to get over problem 3
       center = FALSE,
-      # return full tensors to get over problem 2
+      # return full tensors to get over problem 1
       matrix_output = FALSE
     )
 
-    # compare elementwise absolute values to get over problem 3
+    # compare elementwise absolute values to get over problem 2
     expect_equal(
       abs(tpca_obj$loadings),
-      # only compare k columns to get over problem 5
+      # only compare k columns to get over problem 4
       abs(tpls_obj$y_loadings[, 1:k, ])
     )
 
