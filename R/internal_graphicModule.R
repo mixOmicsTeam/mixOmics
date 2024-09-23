@@ -117,7 +117,9 @@ internal_graphicModule <-
                 group.pch = "different"
         }
         
-        df$pch.levels = factor(as.character(df$pch.levels)) #forced to be character,
+        # removed code to force as.character below because pch.levels should never be reordered, always the same (1, 2, 3, 4..) and they should always match the order of df$group levels
+        df$pch.levels = factor(as.numeric(df$pch.levels))
+        #df$pch.levels = factor(as.character(df$pch.levels)) #forced to be character,
         #   so that the order of the levels is the same all the time
         #   (1, 10, 11, 12, 2, 3...), instead of changing between ggplot2 and
         #   the rest
@@ -233,7 +235,7 @@ internal_graphicModule <-
             } else {
                 # if pch different factor, then second legend
                 p = p + scale_shape_manual(values = values.pch,
-                    name = legend.title.pch, labels = levels(df$pch.levels))
+                    name = legend.title.pch, labels = values.pch)
             }
             
             p = p + #labs(list(title = title, x = X.label, y = Y.label)) +
@@ -297,7 +299,7 @@ internal_graphicModule <-
                     if (length(group.shape) > 1)
                     {
                         # keep order of df$group levels the same
-                        names(group.shape) <- levels(df$group)
+                        names(group.shape) <- levels(df$pch.legend)
                     }
                 }
                 
