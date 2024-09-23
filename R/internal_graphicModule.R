@@ -224,8 +224,7 @@ internal_graphicModule <-
             
             if(group.pch == "same")
             {
-                p = p + scale_shape_manual(values = values.pch[match(
-                    levels(factor(as.character(df$pch.levels))),levels(df$pch.levels))],
+                p = p + scale_shape_manual(values = values.pch,
                     name = legend.title, labels = levels(factor(df$group)),
                     guide = "none")
                 #match(..) reorder the values as the values of pch.levels,
@@ -233,8 +232,7 @@ internal_graphicModule <-
                 #different than values 1, 10, 11, 2, 3, etc
             } else {
                 # if pch different factor, then second legend
-                p = p + scale_shape_manual(values = values.pch[match(
-                    levels(factor(as.character(df$pch.levels))),levels(df$pch.levels))],
+                p = p + scale_shape_manual(values = values.pch,
                     name = legend.title.pch, labels = levels(df$pch.levels))
             }
             
@@ -293,12 +291,13 @@ internal_graphicModule <-
                 if (display.names | any(class.object%in%object.mint) ) {
                     group.shape <- 19
                 } else {
-                    group.shape <- unique(df$pch.legend)
+                    # keep order of pch.levels the same
+                    group.shape <- as.numeric(levels(df$pch.levels))
                     
                     if (length(group.shape) > 1)
                     {
-                        names(group.shape) <- unique(df$group)
-                        group.shape <- group.shape[sort(names(group.shape))]
+                        # keep order of df$group levels the same
+                        names(group.shape) <- levels(df$group)
                     }
                 }
                 
@@ -397,8 +396,7 @@ internal_graphicModule <-
             }
             
             #-- Modify scale colour - Change X/Ylabel - split plots into Blocks
-            p = p + scale_colour_manual(values = unique(col.per.group)[match(
-                levels(factor(as.character(df$group))), levels(df$group))],
+            p = p + scale_colour_manual(values = unique(col.per.group),
                 name = legend.title) +
                 labs(shape = "Study")#levels(object$study)[study.ind])
             
