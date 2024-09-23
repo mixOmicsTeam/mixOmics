@@ -218,9 +218,8 @@ internal_graphicModule <-
             
             
             #-- Modify scale colour - Change X/Ylabel - split plots into Blocks
-            p = p + scale_color_manual(values = unique(col.per.group)[match(
-                levels(factor(as.character(df$group))), levels(df$group))],
-                name = legend.title)
+            ## order of 'col.per.group' will correspond to order of levels in 'df$group'
+            p = p + scale_color_manual(values = col.per.group, name = legend.title)
             
             
             if(group.pch == "same")
