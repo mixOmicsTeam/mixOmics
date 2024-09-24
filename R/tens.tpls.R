@@ -66,9 +66,9 @@ tpls <- function(
   if (length(dim(y)) != 3) {
     stop("Please ensure y input tensor is an order-3 array")
   } else {
-    n2 <- dim(x)[1]
-    q <- dim(x)[2]
-    t2 <- dim(x)[3]
+    n2 <- dim(y)[1]
+    q <- dim(y)[2]
+    t2 <- dim(y)[3]
   }
 
   if (n != n2) {
@@ -178,19 +178,23 @@ tpls <- function(
 
       # note that only one face of xhat and yhat is relevant per iteration
       # using k_t_top[2] we can basically just work in matrix world for a bit
-      curr_x_projected <- xhat[, k_t_top[1], k_t_top[2]] %*% curr_x_loadings
-      curr_y_projected <- yhat[, k_t_top[1], k_t_top[2]] %*% curr_y_loadings
+      curr_x_projected <- xhat[, , k_t_top[2]] %*% curr_x_loadings
+      curr_y_projected <- yhat[, , k_t_top[2]] %*% curr_y_loadings
 
       # perform deflation
+      # the calculation of the x regression coefficient and deflation step of
+      # xhat is the same regardless of pls mode
       curr_x_reg_coef <- crossprod(xhat[, , k_t_top[2]], curr_x_projected) /
-        crossprod(curr_x_projected, curr_x_projected)
+        as.numeric(crossprod(curr_x_projected, curr_x_projected))
 
       xhat[, , k_t_top[2]] <- xhat[, , k_t_top[2]] -
         tcrossprod(curr_x_projected, curr_x_reg_coef)
 
+      # the calculation of the y regression coefficient and deflation step of
+      # yhat differs depending on the pls mode
       if (mode == "canonical") {
         curr_y_reg_coef <- crossprod(yhat[, , k_t_top[2]], curr_y_projected) /
-          crossprod(curr_y_projected, curr_y_projected)
+          as.numeric(crossprod(curr_y_projected, curr_y_projected))
 
         yhat[, , k_t_top[2]] <- yhat[, , k_t_top[2]] -
           tcrossprod(curr_y_projected, curr_y_reg_coef)
@@ -198,7 +202,7 @@ tpls <- function(
 
       if (mode == "regression") {
         curr_y_reg_coef <- crossprod(yhat[, , k_t_top[2]], curr_x_projected) /
-          crossprod(curr_x_projected, curr_x_projected)
+          as.numeric(crossprod(curr_x_projected, curr_x_projected))
 
         yhat[, , k_t_top[2]] <- yhat[, , k_t_top[2]] -
           tcrossprod(curr_x_projected, curr_y_reg_coef)
