@@ -1,6 +1,6 @@
 context("tpls")
 
-#' @description Unnames and ensures the top row a matrix-type output is all
+#' @description Unnames and ensures the top row in a matrix-type output is all
 #' positive. This allows for comparison between pls results that are the same
 #' but just differ by a negative sign due to svd solver or other implementation
 #' detail.
