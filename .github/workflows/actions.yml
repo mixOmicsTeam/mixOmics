@@ -124,6 +124,9 @@ jobs:
           key: ${{ runner.os }}-r-${{ matrix.config.r }}-bioc-${{ matrix.config.bioc }}-${{ hashFiles('depends.Rds') }}
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-bioc-${{ matrix.config.bioc }}-
 
+      - name: Update CA Certificates
+        run: sudo apt-get update && sudo apt-get install -y ca-certificates
+
       - name: Install system dependencies 🔧
         if: runner.os == 'Linux'
         env:
