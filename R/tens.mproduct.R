@@ -205,7 +205,9 @@ facewise_transpose <- function(tensor) {
 
 #' @describeIn facewise_transpose Alias for \code{\link{facewise_product}}
 #' @export
-ft <- facewise_transpose
+ft <- function(tensor) {
+  return(facewise_transpose(tensor))
+}
 
 #' @description Compute Kilmer's tensor-tensor m-product cumulatively across any
 #' arbitrary number of tensor inputs.
