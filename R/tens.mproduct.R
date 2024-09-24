@@ -197,6 +197,7 @@ facewise_product <- function(..., bpparam = NULL) {
 #' @param tensor Numerical 3D array input.
 #' @return Facewise transpose of \code{tensor}
 #' @author Brendan Lu
+#' @aliases ft facewise_transpose
 #' @export
 facewise_transpose <- function(tensor) {
   return(aperm(tensor, c(2, 1, 3)))
