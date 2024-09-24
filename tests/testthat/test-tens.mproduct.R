@@ -85,16 +85,16 @@ test_that(
     test_tensor1 <- array(1:24, dim = c(2, 4, 3))
     t <- dim(test_tensor1)[3]
     transforms_default <- dctii_m_transforms(t, bpparam = NULL)
-    # suppress warning "MulticoreParam() not supported on Windows, use
-    # SnowParam()" when running tests on Windows
-    suppressWarnings(
-      transforms_parallel <- dctii_m_transforms(
-        t, bpparam = BiocParallel::MulticoreParam()
-      )
+    transforms_parallel <- dctii_m_transforms(
+      t, bpparam = BiocParallel::MulticoreParam()
     )
     expect_equal(
       transforms_default$m(test_tensor1),
-      transforms_parallel$m(test_tensor1)
+      # suppress warning "MulticoreParam() not supported on Windows, use
+      # SnowParam()" when running tests on Windows
+      suppressWarnings(
+        transforms_parallel$m(test_tensor1)
+      )
     )
   }
 )
