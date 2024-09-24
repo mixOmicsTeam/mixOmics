@@ -85,8 +85,12 @@ test_that(
     test_tensor1 <- array(1:24, dim = c(2, 4, 3))
     t <- dim(test_tensor1)[3]
     transforms_default <- dctii_m_transforms(t, bpparam = NULL)
-    transforms_parallel <- dctii_m_transforms(
-      t, bpparam = BiocParallel::MulticoreParam()
+    # suppress warning "MulticoreParam() not supported on Windows, use
+    # SnowParam()" when running tests on Windows
+    suppressWarnings(
+      transforms_parallel <- dctii_m_transforms(
+        t, bpparam = BiocParallel::MulticoreParam()
+      )
     )
     expect_equal(
       transforms_default$m(test_tensor1),
@@ -115,9 +119,13 @@ test_that(
     test_tensor2 <- array(1:36, dim = c(4, 3, 3))
     expect_equal(
       facewise_product(test_tensor1, test_tensor2, bpparam = NULL),
-      facewise_product(
-        test_tensor1, test_tensor2,
-        bpparam = BiocParallel::MulticoreParam()
+      # suppress warning "MulticoreParam() not supported on Windows, use
+      # SnowParam()" when running tests on Windows
+      suppressWarnings(
+        facewise_product(
+          test_tensor1, test_tensor2,
+          bpparam = BiocParallel::MulticoreParam()
+        )
       )
     )
   }
