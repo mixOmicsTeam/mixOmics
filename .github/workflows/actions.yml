@@ -76,8 +76,8 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # - { os: windows-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
-          # - { os: macOS-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
+          - { os: windows-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
+          - { os: macOS-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
           - { os: ubuntu-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}', image: 'bioconductor/bioconductor_docker:${{ needs.versions.outputs.bioc }}'}
 
     env:
