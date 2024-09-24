@@ -91,7 +91,7 @@ test_that(
 )
 
 test_that(
-  "tpls agrees with MixOmics pls",
+  "canonical: tpls agrees with MixOmics pls",
   code = {
     n <- 4
     p <- 5
@@ -104,12 +104,16 @@ test_that(
     test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
     test_y <- array(rnorm(n * q * t, mean = 0, sd = 3), dim = c(n, q, t))
 
-    mixomics_pls <- pls(
-      test_x[, , 1],
-      test_y[, , 1],
-      ncomp = ncomp_input,
-      scale = FALSE,
-      mode = "canonical"
+    # suppress the warning here "At least one study has less than 5 samples,
+    # mean centering might not do as expected"
+    suppressWarnings(
+      mixomics_pls <- pls(
+        test_x[, , 1],
+        test_y[, , 1],
+        ncomp = ncomp_input,
+        scale = FALSE,
+        mode = "canonical"
+      )
     )
 
     transforms <- matrix_to_m_transforms(diag(1))
@@ -120,6 +124,64 @@ test_that(
       m = transforms$m,
       minv = transforms$minv,
       mode = "canonical"
+    )
+
+    expect_equal(
+      .make_signs_consistent(mixomics_pls$loadings$X),
+      .make_signs_consistent(tensor_pls$x_loadings)
+    )
+
+    expect_equal(
+      .make_signs_consistent(mixomics_pls$loadings$Y),
+      .make_signs_consistent(tensor_pls$y_loadings)
+    )
+
+    expect_equal(
+      .make_signs_consistent(mixomics_pls$variates$X),
+      .make_signs_consistent(tensor_pls$x_projected)
+    )
+
+    expect_equal(
+      .make_signs_consistent(mixomics_pls$variates$Y),
+      .make_signs_consistent(tensor_pls$y_projected)
+    )
+  }
+)
+
+test_that(
+  "regression: tpls agrees with MixOmics pls",
+  code = {
+    n <- 4
+    p <- 5
+    q <- 7
+    t <- 1
+    k <- min(n, p, q)
+    ncomp_input <- 2
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
+    test_y <- array(rnorm(n * q * t, mean = 0, sd = 3), dim = c(n, q, t))
+
+    # suppress the warning here "At least one study has less than 5 samples,
+    # mean centering might not do as expected"
+    suppressWarnings(
+      mixomics_pls <- pls(
+        test_x[, , 1],
+        test_y[, , 1],
+        ncomp = ncomp_input,
+        scale = FALSE,
+        mode = "regression"
+      )
+    )
+
+    transforms <- matrix_to_m_transforms(diag(1))
+    tensor_pls <- tpls(
+      test_x,
+      test_y,
+      ncomp = ncomp_input,
+      m = transforms$m,
+      minv = transforms$minv,
+      mode = "regression"
     )
 
     expect_equal(
