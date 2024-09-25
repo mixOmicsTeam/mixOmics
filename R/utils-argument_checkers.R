@@ -76,7 +76,6 @@
 #' @return test.keepX, possibly re-ordered by names for list X
 #' @noRd
 #' @keywords Internal
-#' @examples
 #' 
 .check_test.keepX <- function(test.keepX, 
                               X,
@@ -172,7 +171,7 @@
 #' \dontrun{
 #' foo <- function(a=TRUE) .check_logical(a)
 #' foo(a = 1)
-#' #> Error: ‘a’ must be a class logical (TRUE or FALSE).
+#' #> Error: 'a' must be a class logical (TRUE or FALSE).
 #' }
 .check_logical <- function(arg)
 {
