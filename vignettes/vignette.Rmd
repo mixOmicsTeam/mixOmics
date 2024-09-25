@@ -65,10 +65,16 @@ colorize <- function(color, x) {
 # The libraries to load
 #install.packages(kableExtra)
 #library(kableExtra)
+
+# load BiocStyle if needed
 if (requireNamespace("BiocStyle", quietly = TRUE)) {
   BiocStyle::html_document()
 } else {
   rmarkdown::html_document()
+}
+# load magick if needed
+if (!requireNamespace("magick", quietly = TRUE)) {
+  stop("Package 'magick' is needed to build the vignette. Please install it.")
 }
 ```
 
