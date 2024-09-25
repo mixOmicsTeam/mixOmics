@@ -16,7 +16,7 @@ context("tpls")
 }
 
 test_that(
-  "tpls: tsvdm-tpls mode agrees with tpca",
+  "tsvdm-tpls mode agrees with tpca",
   code = {
     # it actually takes a lot of coercing to make these two outputs comparable
     # because their default configurations are aimed at completely different

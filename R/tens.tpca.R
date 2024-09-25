@@ -83,14 +83,10 @@ tpca <- function(
     k <- min(n, p)
   }
 
-  .stop_invalid_transform_input(m, minv)
-
   # use dctii as default transform if user does not specify an explicit one
-  if (is.null(m)) {
-    transforms <- dctii_m_transforms(t, bpparam = bpparam)
-    m <- transforms$m
-    minv <- transforms$minv
-  }
+  validated_transforms <- .stop_invalid_transform_input(m, minv, t, bpparam)
+  m <- validated_transforms$m
+  minv <- validated_transforms$minv
 
   # bltodo: add scaling as well?
   if (center) {

@@ -56,10 +56,11 @@
   }
 }
 
-#' @description Validate appropriate 'null-ness' of m, minv inputs.
+#' @description Validate appropriate 'null-ness' of m, minv inputs, and apply
+#' default transform as needed.
 #' @author Brendan Lu
 #' @keywords internal
-.stop_invalid_transform_input <- function(m, minv) {
+.stop_invalid_transform_input <- function(m, minv, t, bpparam) {
   if (
     xor(is.function(m), is.function(minv)) ||
       xor(is.null(m), is.null(minv))
@@ -69,6 +70,20 @@
       functions"
     )
   }
+
+  # due to above checks, the code below executes when both m and minv are NULL
+  # and returns the calling state the default transform used in this library
+  # which is currently the dct-ii transform
+  if (is.null(m)) {
+    transforms <- dctii_m_transforms(t, bpparam = bpparam)
+    m <- transforms$m
+    minv <- transforms$minv
+  }
+
+  return(list(
+    m = m,
+    minv = minv
+  ))
 }
 
 #' @description Returns functions \code{m} and \code{m_inv} which apply tubal
@@ -205,9 +220,7 @@ facewise_transpose <- function(tensor) {
 
 #' @describeIn facewise_transpose Alias for \code{\link{facewise_product}}
 #' @export
-ft <- function(tensor) {
-  return(facewise_transpose(tensor))
-}
+ft <- function(tensor) facewise_transpose(tensor)
 
 #' @description Compute Kilmer's tensor-tensor m-product cumulatively across any
 #' arbitrary number of tensor inputs.
