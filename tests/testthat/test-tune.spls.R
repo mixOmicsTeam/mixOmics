@@ -27,7 +27,7 @@ test_that("tune.spls works in parallel", code = {
                                       test.keepX = seq(1, 5, 1),
                                       test.keepY = seq(3, 6, 3), measure = "cor",
                                       folds = 5, nrepeat = 3, progressBar = F,
-                                      BPPARAM = SnowParam(RNGseed = 5212, workers = 4)))
+                                      BPPARAM = SnowParam(RNGseed = 5212, workers = max(parallel::detectCores()-1, 2))))
     
     expect_equal(class(tune.spls.res), c("tune.pls", "tune.spls"))
     expect_equal(unname(tune.spls.res$choice.keepX), c(1,1,1))
