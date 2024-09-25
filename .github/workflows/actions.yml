@@ -125,6 +125,7 @@ jobs:
           key: ${{ runner.os }}-r-${{ matrix.config.r }}-bioc-${{ matrix.config.bioc }}-${{ hashFiles('depends.Rds') }}
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-bioc-${{ matrix.config.bioc }}-
 
+## the below step doesn't work anymore because 'sysreqs' API is archived
       # - name: Install system dependencies 🔧
       #   if: runner.os == 'Linux'
       #   env:
@@ -135,12 +136,17 @@ jobs:
       #     sudo -s eval "$sysreqs"
       #     sudo apt-get update && sudo apt-get -y install libcurl4-openssl-dev
 
-      - name: Install curl for linux
-        if: runner.os == 'Linux'
-        env:
-          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
-        run: |
-          sudo apt-get update && sudo apt-get -y install libcurl4-openssl-dev
+      - name: Install system and package dependencies 🔧
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-repositories: 'https://cloud.r-project.org'
+
+      # - name: Install curl for linux
+      #   if: runner.os == 'Linux'
+      #   env:
+      #     RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
+      #   run: |
+      #     sudo apt-get update && sudo apt-get -y install libcurl4-openssl-dev
 
       - name: Install dependencies 🔨
         run: |
