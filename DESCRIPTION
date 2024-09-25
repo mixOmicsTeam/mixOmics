@@ -25,9 +25,9 @@ Imports:
     ggrepel,
     BiocParallel,
     utils,
-    gsignal,
-    BiocStyle
+    gsignal
 Suggests: 
+    BiocStyle,
     knitr,
     rmarkdown,
     testthat,
