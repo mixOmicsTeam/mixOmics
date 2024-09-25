@@ -65,6 +65,11 @@ colorize <- function(color, x) {
 # The libraries to load
 #install.packages(kableExtra)
 #library(kableExtra)
+if (requireNamespace("BiocStyle", quietly = TRUE)) {
+  BiocStyle::html_document()
+} else {
+  rmarkdown::html_document()
+}
 ```
 
 ```{r 00-header-generation, echo=FALSE, eval=FALSE}
