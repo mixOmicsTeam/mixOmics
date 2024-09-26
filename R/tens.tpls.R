@@ -3,9 +3,10 @@
 # on Kilmer's tensor m-product algebra
 # ==============================================================================
 
-#' @description Convert a singular values tensor (in compressed matrix form) to
-#' a set of indices corresponding to the (column,face) pairs of the top `ncomp`
-#' singular values. NEEDS singular values to be in matrix form.
+#' Convert a singular values tensor (in compressed matrix form) to a set of
+#' indices corresponding to the (column,face) pairs of the top `ncomp` singular
+#' values. NEEDS singular values to be in matrix form.
+#'
 #' @author Brendan Lu
 #' @keywords internal
 .obtain_k_t_flatten_sort <- function(s_mat, ncomp) {
@@ -18,9 +19,10 @@
   )
 }
 
-#' @description Get the k, t index corresponding to the largest singular value.
-#' Mirrors .unravel_index() but more efficient as we only care about the largest
+#' Get the k, t index corresponding to the largest singular value. Mirrors
+#' .unravel_index() but more efficient as we only care about the largest
 #' singular value in tpls.
+#'
 #' @author Brendan Lu
 #' @keywords internal
 .obtain_k_t_top <- function(s_mat) {
@@ -32,7 +34,10 @@
   ))
 }
 
+#' Run some sense checks on x and y tensor inputs for tpls
+#'
 #' @author Brendan Lu
+#' @keywords internal
 .validate_tpls_x_y_dim <- function(x, y) {
   if (length(dim(x)) != 3) {
     stop("Please ensure x input tensor is an order-3 array")
@@ -67,6 +72,10 @@
   ))
 }
 
+#' Tensor PLS-like regression
+#'
+#' Developed @ Melbourne Integrative Genomics
+#'
 #' @author Brendan Lu
 #' @export
 tpls <- function(

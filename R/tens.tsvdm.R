@@ -2,7 +2,10 @@
 # Kilmer's t-SVD decomposition for order-3 tensors
 # ==============================================================================
 
-#' @description Return the t-SVDM decomposition from Kilmer et al. (2021).
+#' Tensor SVD-like decomposition algorithm
+#'
+#' Return the t-SVDM decomposition from Kilmer et al. (2021).
+#'
 #' @author Brendan Lu
 #' @export
 tsvdm <- function(

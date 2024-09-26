@@ -3,7 +3,6 @@
 # ==============================================================================
 # bltodo: use classes for m and minv?
 
-#' @noRd
 #' Apply a function across the last dimension of an input vector,
 #' matrix, or tensor. This function defines both a parallel algorithm using
 #' BiocParrallel, and also a simple \code{apply} algorithm. Even on Windows
@@ -58,7 +57,6 @@
   }
 }
 
-#' @noRd
 #' Validate appropriate 'null-ness' of m, minv inputs, and apply default
 #' transform as needed.
 #'
@@ -151,7 +149,6 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
   return(matrix_to_m_transforms(m_mat = gsignal::dctmtx(t), bpparam = bpparam))
 }
 
-#' @noRd
 #' Compute Kilmer's facewise product. Note that the for-loop implementation is
 #' relatively fast, and very readable. There's also a BiocParralel
 #' implementation here, but it lacks significant benchmarking results.
