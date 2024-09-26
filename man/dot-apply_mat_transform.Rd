@@ -20,7 +20,7 @@ of parallelisation.}
 }
 \value{
 A tensor of the same size under the specified tubal transform,
-denoted \hat{x}.
+denoted \eqn{\hat{x}}.
 }
 \description{
 Apply a function across the last dimension of an input vector,

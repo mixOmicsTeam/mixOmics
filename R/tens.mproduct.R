@@ -14,7 +14,7 @@
 #' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
 #' of parallelisation.
 #' @return A tensor of the same size under the specified tubal transform,
-#' denoted \hat{x}.
+#' denoted \eqn{\hat{x}}.
 #' @author Brendan Lu
 #' @keywords internal
 .apply_mat_transform <- function(x, mat, bpparam) {
