@@ -154,6 +154,12 @@ jobs:
         run: |
           sudo apt-get install pandoc-citeproc
 
+      - name: Install extra dependencies for Windows
+        if: runner.os == 'windows'
+        run: |
+          Rscript -e "if (!requireNamespace('tinytex', quietly = TRUE)) install.packages('tinytex')"
+          Rscript -e "tinytex::install_tinytex()"
+
       - name: Install dependencies 🔨
         run: |
           options(repos = c(CRAN = "https://cran.r-project.org"))
