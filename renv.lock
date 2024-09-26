@@ -3,28 +3,8 @@
     "Version": "4.4.1",
     "Repositories": [
       {
-        "Name": "BioCsoft",
-        "URL": "https://bioconductor.org/packages/3.15/bioc"
-      },
-      {
-        "Name": "BioCann",
-        "URL": "https://bioconductor.org/packages/3.15/data/annotation"
-      },
-      {
-        "Name": "BioCexp",
-        "URL": "https://bioconductor.org/packages/3.15/data/experiment"
-      },
-      {
-        "Name": "BioCworkflows",
-        "URL": "https://bioconductor.org/packages/3.15/workflows"
-      },
-      {
-        "Name": "BioCbooks",
-        "URL": "https://bioconductor.org/packages/3.15/books"
-      },
-      {
         "Name": "CRAN",
-        "URL": "https://cran.r-project.org"
+        "URL": "https://cloud.r-project.org"
       }
     ]
   },
@@ -52,7 +32,8 @@
     "BiocParallel": {
       "Package": "BiocParallel",
       "Version": "1.30.4",
-      "Source": "Bioconductor",
+      "Source": "Repository",
+      "Repository": "https://bioconductor.org/packages/3.15/bioc",
       "Requirements": [
         "BH",
         "R",
@@ -69,7 +50,8 @@
     "BiocStyle": {
       "Package": "BiocStyle",
       "Version": "2.24.0",
-      "Source": "Bioconductor",
+      "Source": "Repository",
+      "Repository": "https://bioconductor.org/packages/3.15/bioc",
       "Requirements": [
         "BiocManager",
         "bookdown",
@@ -84,7 +66,8 @@
     "BiocVersion": {
       "Package": "BiocVersion",
       "Version": "3.15.2",
-      "Source": "Bioconductor",
+      "Source": "Repository",
+      "Repository": "https://bioconductor.org/packages/3.15/bioc",
       "Requirements": [
         "R"
       ],
@@ -908,6 +891,18 @@
         "rlang"
       ],
       "Hash": "b8552d117e1b808b09a832f589b79035"
+    },
+    "magick": {
+      "Package": "magick",
+      "Version": "2.8.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "Rcpp",
+        "curl",
+        "magrittr"
+      ],
+      "Hash": "9bba16130de599cfe8e6a644911d7f32"
     },
     "magrittr": {
       "Package": "magrittr",
