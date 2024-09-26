@@ -136,17 +136,16 @@ jobs:
       #     sudo -s eval "$sysreqs"
       #     sudo apt-get update && sudo apt-get -y install libcurl4-openssl-dev
 
-      - name: Install system and package dependencies 🔧
+      - name: Install system and package dependencies using github action 🔧
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-repositories: 'https://cloud.r-project.org'
 
-      # - name: Install curl for linux
-      #   if: runner.os == 'Linux'
-      #   env:
-      #     RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
-      #   run: |
-      #     sudo apt-get update && sudo apt-get -y install libcurl4-openssl-dev
+      - name: Install extra dependencies for macOS
+        if: runner.os == 'macOS'
+        run: |
+          brew install --cask xquartz
+          brew install gcc
 
       - name: Install dependencies 🔨
         run: |
