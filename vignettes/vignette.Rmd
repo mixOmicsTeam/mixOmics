@@ -915,6 +915,16 @@ The optimal parameters can be output, along with a plot showing the tuning resul
 list.keepX <- c(seq(5, 50, 5))
 list.keepY <- c(3:10)
 
+# added this to avoid errors where num_workers exceeded limits set by devtools::check()
+    chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+    if (nzchar(chk) && chk == "TRUE") {
+      # use 2 cores in CRAN/Travis/AppVeyor
+      num_workers <- 2L
+    } else {
+      # use all cores in devtools::test()
+      num_workers <- parallel::detectCores()
+    }
+
 set.seed(33)  # For reproducibility with this handbook, remove otherwise
 tune.spls.liver <- tune.spls(X, Y, test.keepX = list.keepX, 
                              test.keepY = list.keepY, ncomp = 2, 
@@ -922,7 +932,7 @@ tune.spls.liver <- tune.spls(X, Y, test.keepX = list.keepX,
                              measure = 'cor', 
                             #   the following uses two CPUs for faster computation
                             # it can be commented out
-                            BPPARAM = BiocParallel::SnowParam(workers = 14)
+                            BPPARAM = BiocParallel::SnowParam(workers = num_workers)
                             )
 
 plot(tune.spls.liver)
