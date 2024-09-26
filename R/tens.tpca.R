@@ -2,11 +2,12 @@
 # Tensor pca based on Mor's TCAM algorithm
 # ==============================================================================
 
-#' @description R implementation of np.unravel_index. NOTE: currently only works
-#' for 1D to 2D column-major conversion, and returns a list of 2D indices.
-#' Returns a matrix output of length(indices) columns, with two rows. The first
-#' row corresponds to the sorted k indices, and the second row contains the
-#' sorted t indices.
+#' @noRd
+#' R implementation of np.unravel_index. NOTE: currently only works for 1D to 2D
+#' column-major conversion, and returns a list of 2D indices. Returns a matrix
+#' output of length(indices) columns, with two rows. The first row corresponds
+#' to the sorted k indices, and the second row contains the sorted t indices.
+#'
 #' @author Brendan Lu
 #' @keywords internal
 .unravel_index <- function(indices, dim) {
@@ -22,7 +23,8 @@
   ))
 }
 
-#' @description Extract tensor columns specified by .unravel_index output
+#' @noRd
+#' Extract tensor columns specified by .unravel_index output.
 #' Effectively achieves:
 #'
 #'     self.loadings_matrix_ = hatV[
@@ -31,8 +33,9 @@
 #'
 #' type of indexing in Numpy.
 #'
-#' Basically performs tensor compression based on the ordered indices specified
-#' by each column of k_t_indices.
+#' This is the 'tensor compression' based on the ordered indices specified
+#' by each column of k_t_indices as described in Mor's TCAM.
+#'
 #' @author Brendan Lu
 #' @keywords internal
 .extract_tensor_columns <- function(tensor, k_t_indices) {
@@ -42,8 +45,10 @@
   ))
 }
 
-#' @description Helper function to convert compressed matrix form of the
-#' singular values into a sparse tensor.
+#' @noRd
+#' Helper function to convert compressed matrix form of the singular values into
+#' a sparse tensor.
+#'
 #' @param mat Matrix s.t. each column contains the f-diagonal singular values
 #' @param dim Dimension of output tensor
 #' @author Brendan Lu
@@ -61,8 +66,11 @@
   return(tens)
 }
 
-#' @description Tensor analogue of PCA introduced by Mor et al. (2022) based on
-#' Kilmer's m-product algebra and tsvdm.
+#' Tensor PCA-like dimensionality reduction
+#'
+#' Tensor analogue of PCA introduced by Mor et al. (2022) based on Kilmer's
+#' m-product algebra and tsvdm.
+#'
 #' @author Brendan Lu
 #' @export
 tpca <- function(
