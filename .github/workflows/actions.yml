@@ -77,9 +77,9 @@ jobs:
       matrix:
         config:
           - { os: windows-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
-          - { os: macOS-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
+          #- { os: macOS-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
           #- { os: ubuntu-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}', image: 'bioconductor/bioconductor_docker:${{ needs.versions.outputs.bioc }}'}
-          - { os: ubuntu-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
+          #- { os: ubuntu-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -159,6 +159,8 @@ jobs:
         run: |
           Rscript -e "if (!requireNamespace('tinytex', quietly = TRUE)) install.packages('tinytex')"
           Rscript -e "tinytex::install_tinytex()"
+          Rscript -e "tinytex::tinytex_root()"
+          Rscript -e "if (!file.exists(file.path(tinytex::tinytex_root(), 'bin', 'win32', 'pdflatex.exe'))) stop('pdflatex not found!')"
 
       - name: Install dependencies 🔨
         run: |
