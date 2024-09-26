@@ -3,9 +3,10 @@
 # on Kilmer's tensor m-product algebra
 # ==============================================================================
 
-#' @description Check if y input is a vector, matrix or tensor that can be
-#' inferred as classes across all time points, if so return these classes in
-#' in consistent form as a vector
+#' Check if y input is a vector, matrix or tensor that can be inferred as
+#' classes across all time points, if so return these classes in consistent form
+#' as a vector.
+#'
 #' @keywords internal
 .y_to_vec <- function(y) {
   if (is.null(dim(y))) {
@@ -31,6 +32,10 @@
   NULL
 }
 
+#' Run tensor PLSDA-like analysis
+#'
+#' Developed @ Melbourne Integrative Genomics
+#'
 #' @author Brendan Lu
 #' @export
 tplsda <- function(
