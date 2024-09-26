@@ -147,6 +147,13 @@ jobs:
           brew install --cask xquartz
           brew install gcc
 
+      - name: Install extra dependencies for linux
+        if: runner.os == 'Linux'
+        env:
+          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
+        run: |
+          sudo apt-get install pandoc-citeproc
+
       - name: Install dependencies 🔨
         run: |
           options(repos = c(CRAN = "https://cran.r-project.org"))
