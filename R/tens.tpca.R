@@ -2,7 +2,6 @@
 # Tensor pca based on Mor's TCAM algorithm
 # ==============================================================================
 
-#' @noRd
 #' R implementation of np.unravel_index. NOTE: currently only works for 1D to 2D
 #' column-major conversion, and returns a list of 2D indices. Returns a matrix
 #' output of length(indices) columns, with two rows. The first row corresponds
@@ -23,7 +22,6 @@
   ))
 }
 
-#' @noRd
 #' Extract tensor columns specified by .unravel_index output.
 #' Effectively achieves:
 #'
@@ -45,7 +43,6 @@
   ))
 }
 
-#' @noRd
 #' Helper function to convert compressed matrix form of the singular values into
 #' a sparse tensor.
 #'
