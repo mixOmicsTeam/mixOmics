@@ -3,11 +3,12 @@
 # ==============================================================================
 # bltodo: use classes for m and minv?
 
-#' @description Apply a function across the last dimension of an input vector,
+#' Apply a function across the last dimension of an input vector,
 #' matrix, or tensor. This function defines both a parallel algorithm using
 #' BiocParrallel, and also a simple \code{apply} algorithm. Even on Windows
 #' Machines, setting \code{bpparam = BiocParallel::SerialParam()} offers a
 #' notable speedup for larger 3D array inputs.
+#'
 #' @param x Numerical array input.
 #' @param mat Function which defines the tubal transform.
 #' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
@@ -56,8 +57,9 @@
   }
 }
 
-#' @description Validate appropriate 'null-ness' of m, minv inputs, and apply
-#' default transform as needed.
+#' Validate appropriate 'null-ness' of m, minv inputs, and apply default
+#' transform as needed.
+#'
 #' @author Brendan Lu
 #' @keywords internal
 .stop_invalid_transform_input <- function(m, minv, t, bpparam) {
@@ -86,8 +88,11 @@
   ))
 }
 
-#' @description Returns functions \code{m} and \code{m_inv} which apply tubal
-#' transforms defined by the matrix \code{m_mat}.
+#' Create m-transform functions as defined by a matrix
+#'
+#' Returns functions \code{m} and \code{m_inv} which apply tubal transforms
+#' defined by the matrix \code{m_mat}.
+#'
 #' @param mat Function which defines the tubal transform.
 #' @param m_inv_mat Function which defines inverse tubal transform
 #' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
@@ -124,9 +129,12 @@ matrix_to_m_transforms <- function(
   ))
 }
 
-#' @description Returns functions \code{m} and \code{m_inv} which apply tubal
-#' transforms defined by the Discrete Cosine Transform (DCT-II variant). This
-#' is equivalent to Scipys DCTI-ii algorithm with \code{norm='ortho'}.
+#' Create m-transform functions to apply the Discrete Cosine Transform 2
+#'
+#' Returns functions \code{m} and \code{m_inv} which apply tubal transforms
+#' defined by the Discrete Cosine Transform (DCT-II variant). This is equivalent
+#' to Scipys DCTI-ii algorithm with \code{norm='ortho'}.
+#'
 #' @param t The length of the transform.
 #' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
 #' of parallelisation.
@@ -141,11 +149,11 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
   return(matrix_to_m_transforms(m_mat = gsignal::dctmtx(t), bpparam = bpparam))
 }
 
-#' @description Compute Kilmer's facewise product. Note that the for-loop
-#' implementation is relatively fast, and very readable. There's also a
-#' BiocParralel implementation here, but it lacks significant benchmarking
-#' results.
+#' Compute Kilmer's facewise product. Note that the for-loop implementation is
+#' relatively fast, and very readable. There's also a BiocParralel
+#' implementation here, but it lacks significant benchmarking results.
 #' bltodo: the parallel algorithm is probably stupid remove sometime?
+#'
 #' @author Brendan Lu
 #' @keywords internal
 .binary_facewise <- function(a, b, bpparam) {
@@ -187,8 +195,11 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
   }
 }
 
-#' @description Compute Kilmer's facewise product cumulatively across any
-#' arbitrary number of tensor inputs.
+#' Tensor facewise product
+#'
+#' Compute Kilmer's facewise product cumulatively across any arbitrary number of
+#' tensor inputs.
+#'
 #' @param ... Arbitrary number of numerical tensor inputs.
 #' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
 #' of parallelisation.
@@ -208,7 +219,8 @@ facewise_product <- function(..., bpparam = NULL) {
 #' @export
 `%fp%` <- function(a, b) .binary_facewise(a, b, bpparam = NULL)
 
-#' @description Perform a facewise transpose on an order-3 tensor.
+#' Facewise transpose an order-3 tensor
+#'
 #' @param tensor Numerical 3D array input.
 #' @return Facewise transpose of \code{tensor}
 #' @author Brendan Lu
@@ -222,8 +234,11 @@ facewise_transpose <- function(tensor) {
 #' @export
 ft <- function(tensor) facewise_transpose(tensor)
 
-#' @description Compute Kilmer's tensor-tensor m-product cumulatively across any
-#' arbitrary number of tensor inputs.
+#' Kilmer's tensor-tensor m-product
+#'
+#' This function works cumulatively across any arbitrary number of tensor
+#' inputs.
+#'
 #' @param ... Arbitrary number of numerical tensor inputs.
 #' @param m A function which applies an orthogonal tensor tubal transform.
 #' @param minv The inverse of m.
