@@ -93,9 +93,9 @@ test_that(
 test_that(
   "canonical: tpls agrees with MixOmics pls",
   code = {
-    n <- 4
-    p <- 5
-    q <- 7
+    n <- 6
+    p <- 7
+    q <- 9
     t <- 1
     k <- min(n, p, q)
     ncomp_input <- 2
@@ -104,18 +104,15 @@ test_that(
     test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
     test_y <- array(rnorm(n * q * t, mean = 0, sd = 3), dim = c(n, q, t))
 
-    # suppress the warning here "At least one study has less than 5 samples,
-    # mean centering might not do as expected"
-    suppressWarnings(
-      mixomics_pls <- pls(
-        test_x[, , 1],
-        test_y[, , 1],
-        ncomp = ncomp_input,
-        scale = FALSE,
-        mode = "canonical"
-      )
+    mixomics_pls <- pls(
+      test_x[, , 1],
+      test_y[, , 1],
+      ncomp = ncomp_input,
+      scale = FALSE,
+      mode = "canonical"
     )
 
+    # bltodo: we do not even need to specify identity transforms here right?
     transforms <- matrix_to_m_transforms(diag(1))
     tensor_pls <- tpls(
       test_x,
@@ -151,9 +148,9 @@ test_that(
 test_that(
   "regression: tpls agrees with MixOmics pls",
   code = {
-    n <- 4
-    p <- 5
-    q <- 7
+    n <- 5
+    p <- 8
+    q <- 10
     t <- 1
     k <- min(n, p, q)
     ncomp_input <- 2
@@ -162,18 +159,15 @@ test_that(
     test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
     test_y <- array(rnorm(n * q * t, mean = 0, sd = 3), dim = c(n, q, t))
 
-    # suppress the warning here "At least one study has less than 5 samples,
-    # mean centering might not do as expected"
-    suppressWarnings(
-      mixomics_pls <- pls(
-        test_x[, , 1],
-        test_y[, , 1],
-        ncomp = ncomp_input,
-        scale = FALSE,
-        mode = "regression"
-      )
+    mixomics_pls <- pls(
+      test_x[, , 1],
+      test_y[, , 1],
+      ncomp = ncomp_input,
+      scale = FALSE,
+      mode = "regression"
     )
 
+    # bltodo: we do not even need to specify identity transforms here right?
     transforms <- matrix_to_m_transforms(diag(1))
     tensor_pls <- tpls(
       test_x,

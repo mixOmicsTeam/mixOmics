@@ -98,6 +98,7 @@ tplsda <- function(
       # unmap conveniently allows us to manually control the total sets of
       # groups (class measurements) our input sample is drawn from
       y[, , i] <- unmap(factors_list[[i]], unique_levels)
+      # bltodo: preserve names, see below
     }
   } else {
     y_vec <- .y_to_vec(y)
