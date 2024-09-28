@@ -3,6 +3,26 @@
     "Version": "4.4.1",
     "Repositories": [
       {
+        "Name": "BioCsoft",
+        "URL": "https://bioconductor.org/packages/3.15/bioc"
+      },
+      {
+        "Name": "BioCann",
+        "URL": "https://bioconductor.org/packages/3.15/data/annotation"
+      },
+      {
+        "Name": "BioCexp",
+        "URL": "https://bioconductor.org/packages/3.15/data/experiment"
+      },
+      {
+        "Name": "BioCworkflows",
+        "URL": "https://bioconductor.org/packages/3.15/workflows"
+      },
+      {
+        "Name": "BioCbooks",
+        "URL": "https://bioconductor.org/packages/3.15/books"
+      },
+      {
         "Name": "CRAN",
         "URL": "https://cloud.r-project.org"
       }
@@ -32,8 +52,7 @@
     "BiocParallel": {
       "Package": "BiocParallel",
       "Version": "1.30.4",
-      "Source": "Repository",
-      "Repository": "https://bioconductor.org/packages/3.15/bioc",
+      "Source": "Bioconductor",
       "Requirements": [
         "BH",
         "R",
@@ -50,8 +69,7 @@
     "BiocStyle": {
       "Package": "BiocStyle",
       "Version": "2.24.0",
-      "Source": "Repository",
-      "Repository": "https://bioconductor.org/packages/3.15/bioc",
+      "Source": "Bioconductor",
       "Requirements": [
         "BiocManager",
         "bookdown",
@@ -66,8 +84,7 @@
     "BiocVersion": {
       "Package": "BiocVersion",
       "Version": "3.15.2",
-      "Source": "Repository",
-      "Repository": "https://bioconductor.org/packages/3.15/bioc",
+      "Source": "Bioconductor",
       "Requirements": [
         "R"
       ],
