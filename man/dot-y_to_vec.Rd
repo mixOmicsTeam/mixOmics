@@ -2,15 +2,18 @@
 % Please edit documentation in R/tens.tplsda.R
 \name{.y_to_vec}
 \alias{.y_to_vec}
-\title{Check if y input is a vector, matrix or tensor that can be inferred as
-classes across all time points, if so return these classes in consistent form
-as a vector.}
+\title{Check if y input is a vector, matrix or tensor that can be inferred as fixed
+class labels for each sample across all time points; if so return these
+classes in consistent form as a vector.}
 \usage{
 .y_to_vec(y)
 }
 \description{
-Check if y input is a vector, matrix or tensor that can be inferred as
-classes across all time points, if so return these classes in consistent form
-as a vector.
+Check if y input is a vector, matrix or tensor that can be inferred as fixed
+class labels for each sample across all time points; if so return these
+classes in consistent form as a vector.
+}
+\author{
+Brendan Lu
 }
 \keyword{internal}
