@@ -693,7 +693,7 @@
     },
     "gsignal": {
       "Package": "gsignal",
-      "Version": "0.3-6",
+      "Version": "0.3-7",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -702,7 +702,7 @@
         "grDevices",
         "pracma"
       ],
-      "Hash": "89717f7be39bd2d35a7a78dcfae516bd"
+      "Hash": "2699c091614fc1e0920b503185e6064d"
     },
     "gtable": {
       "Package": "gtable",
