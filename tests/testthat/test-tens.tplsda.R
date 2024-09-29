@@ -1,9 +1,8 @@
 context("tplsda")
 
-#' @description Unnames and ensures the top row in a matrix-type output is all
-#' positive. This allows for comparison between pls results that are the same
-#' but just differ by a negative sign due to svd solver or other implementation
-#' detail.
+#' Unnames and ensures the top row in a matrix-type output is all positive. This
+#' allows for comparison between pls results that are the same but just differ
+#' by a negative sign due to svd solver or other implementation detail.
 .make_signs_consistent <- function(mat) {
   mat <- unname(mat)
   ncols <- dim(mat)[2]
