@@ -14,6 +14,10 @@ a \%fp\% b
 
 \item{bpparam}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation.}
+
+\item{a}{Tensor input.}
+
+\item{b}{Tensor input.}
 }
 \value{
 Cumulative facewise product.

@@ -7,12 +7,12 @@
 matrix_to_m_transforms(m_mat, m_inv_mat = NULL, bpparam = NULL)
 }
 \arguments{
+\item{m_mat}{Function which defines the tubal transform.}
+
 \item{m_inv_mat}{Function which defines inverse tubal transform}
 
 \item{bpparam}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation.}
-
-\item{mat}{Function which defines the tubal transform.}
 }
 \value{
 \item{m}{A function which applies the matrix m_mat along the last dimension
