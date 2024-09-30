@@ -3,9 +3,10 @@
 # on Kilmer's tensor m-product algebra
 # ==============================================================================
 
-#' @description Convert a singular values tensor (in compressed matrix form) to
-#' a set of indices corresponding to the (column,face) pairs of the top `ncomp`
-#' singular values. NEEDS singular values to be in matrix form.
+#' Convert a singular values tensor (in compressed matrix form) to a set of
+#' indices corresponding to the (column,face) pairs of the top `ncomp` singular
+#' values. NEEDS singular values to be in matrix form.
+#'
 #' @author Brendan Lu
 #' @keywords internal
 .obtain_k_t_flatten_sort <- function(s_mat, ncomp) {
@@ -18,9 +19,10 @@
   )
 }
 
-#' @description Get the k, t index corresponding to the largest singular value.
-#' Mirrors .unravel_index() but more efficient as we only care about the largest
+#' Get the k, t index corresponding to the largest singular value. Mirrors
+#' .unravel_index() but more efficient as we only care about the largest
 #' singular value in tpls.
+#'
 #' @author Brendan Lu
 #' @keywords internal
 .obtain_k_t_top <- function(s_mat) {
@@ -32,29 +34,11 @@
   ))
 }
 
+#' Run some sense checks on x and y tensor inputs for tpls
+#'
 #' @author Brendan Lu
-#' @export
-tpls <- function(
-  x,
-  y,
-  ncomp = NULL,
-  m = NULL,
-  minv = NULL,
-  mode = "regression",
-  center = TRUE,
-  matrix_output = TRUE, # FALSE only takes effect for tsvdm method?
-  bpparam = NULL
-) {
-  # allowed modes mirror sklearn's 2D PLS models
-  # scikit-learn.org/stable/modules/cross_decomposition.html#cross-decomposition
-  allowed_modes <- c("canonical", "regression", "tsvdm")
-  if (!(mode %in% allowed_modes)) {
-    stop(paste(
-      "Please ensure mode is one of: ",
-      paste(allowed_modes, collapse = ", ")
-    ))
-  }
-
+#' @keywords internal
+.validate_tpls_x_y_dim <- function(x, y) {
   if (length(dim(x)) != 3) {
     stop("Please ensure x input tensor is an order-3 array")
   } else {
@@ -80,19 +64,55 @@ tpls <- function(
     points")
   }
 
+  return(list(
+    n = n,
+    p = p,
+    q = q,
+    t = t
+  ))
+}
+
+#' Tensor PLS-like regression
+#'
+#' Developed @ Melbourne Integrative Genomics
+#'
+#' @author Brendan Lu
+#' @export
+tpls <- function(
+  x,
+  y,
+  ncomp = NULL,
+  m = NULL,
+  minv = NULL,
+  mode = "regression",
+  center = TRUE,
+  matrix_output = TRUE, # FALSE only takes effect for tsvdm method
+  bpparam = NULL
+) {
+  # allowed modes mirror sklearn's 2D PLS models
+  # see https://scikit-learn.org/stable/modules/cross_decomposition.html
+  allowed_modes <- c("canonical", "regression", "tsvdm")
+  if (!(mode %in% allowed_modes)) {
+    stop(paste(
+      "Please ensure mode is one of: ",
+      paste(allowed_modes, collapse = ", ")
+    ))
+  }
+
+  dims <- .validate_tpls_x_y_dim(x, y)
+  n <- dims$n
+  p <- dims$p
+  q <- dims$q
+  t <- dims$t
   k <- min(n, p, q)
   # maximum number of non-zero entries in the f-diagonal singular values tensor
-  # of tsvdm(XtY)
+  # of tsvdm(XtY) is k * t
   max_rank <- k * t
 
-  .stop_invalid_transform_input(m, minv)
-
   # use dctii as default transform if user does not specify an explicit one
-  if (is.null(m)) {
-    transforms <- dctii_m_transforms(t, bpparam = bpparam)
-    m <- transforms$m
-    minv <- transforms$minv
-  }
+  validated_transforms <- .stop_invalid_transform_input(m, minv, t, bpparam)
+  m <- validated_transforms$m
+  minv <- validated_transforms$minv
 
   if (center) {
     mean_slice_x <- apply(x, c(2, 3), mean)

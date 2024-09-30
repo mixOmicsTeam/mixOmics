@@ -1,9 +1,8 @@
 context("tpls")
 
-#' @description Unnames and ensures the top row in a matrix-type output is all
-#' positive. This allows for comparison between pls results that are the same
-#' but just differ by a negative sign due to svd solver or other implementation
-#' detail.
+#' Unnames and ensures the top row in a matrix-type output is all positive. This
+#' allows for comparison between pls results that are the same but just differ
+#' by a negative sign due to svd solver or other implementation detail.
 .make_signs_consistent <- function(mat) {
   mat <- unname(mat)
   ncols <- dim(mat)[2]
@@ -16,7 +15,7 @@ context("tpls")
 }
 
 test_that(
-  "tpls: tsvdm-tpls mode agrees with tpca",
+  "tsvdm-tpls mode agrees with tpca",
   code = {
     # it actually takes a lot of coercing to make these two outputs comparable
     # because their default configurations are aimed at completely different
@@ -93,9 +92,9 @@ test_that(
 test_that(
   "canonical: tpls agrees with MixOmics pls",
   code = {
-    n <- 4
-    p <- 5
-    q <- 7
+    n <- 6
+    p <- 7
+    q <- 9
     t <- 1
     k <- min(n, p, q)
     ncomp_input <- 2
@@ -104,18 +103,15 @@ test_that(
     test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
     test_y <- array(rnorm(n * q * t, mean = 0, sd = 3), dim = c(n, q, t))
 
-    # suppress the warning here "At least one study has less than 5 samples,
-    # mean centering might not do as expected"
-    suppressWarnings(
-      mixomics_pls <- pls(
-        test_x[, , 1],
-        test_y[, , 1],
-        ncomp = ncomp_input,
-        scale = FALSE,
-        mode = "canonical"
-      )
+    mixomics_pls <- pls(
+      test_x[, , 1],
+      test_y[, , 1],
+      ncomp = ncomp_input,
+      scale = FALSE,
+      mode = "canonical"
     )
 
+    # bltodo: we do not even need to specify identity transforms here right?
     transforms <- matrix_to_m_transforms(diag(1))
     tensor_pls <- tpls(
       test_x,
@@ -151,9 +147,9 @@ test_that(
 test_that(
   "regression: tpls agrees with MixOmics pls",
   code = {
-    n <- 4
-    p <- 5
-    q <- 7
+    n <- 5
+    p <- 8
+    q <- 10
     t <- 1
     k <- min(n, p, q)
     ncomp_input <- 2
@@ -162,18 +158,15 @@ test_that(
     test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
     test_y <- array(rnorm(n * q * t, mean = 0, sd = 3), dim = c(n, q, t))
 
-    # suppress the warning here "At least one study has less than 5 samples,
-    # mean centering might not do as expected"
-    suppressWarnings(
-      mixomics_pls <- pls(
-        test_x[, , 1],
-        test_y[, , 1],
-        ncomp = ncomp_input,
-        scale = FALSE,
-        mode = "regression"
-      )
+    mixomics_pls <- pls(
+      test_x[, , 1],
+      test_y[, , 1],
+      ncomp = ncomp_input,
+      scale = FALSE,
+      mode = "regression"
     )
 
+    # bltodo: we do not even need to specify identity transforms here right?
     transforms <- matrix_to_m_transforms(diag(1))
     tensor_pls <- tpls(
       test_x,

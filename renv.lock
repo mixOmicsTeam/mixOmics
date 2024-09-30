@@ -24,7 +24,7 @@
       },
       {
         "Name": "CRAN",
-        "URL": "https://cran.r-project.org"
+        "URL": "https://cloud.r-project.org"
       }
     ]
   },
@@ -693,7 +693,7 @@
     },
     "gsignal": {
       "Package": "gsignal",
-      "Version": "0.3-6",
+      "Version": "0.3-7",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -702,7 +702,7 @@
         "grDevices",
         "pracma"
       ],
-      "Hash": "89717f7be39bd2d35a7a78dcfae516bd"
+      "Hash": "2699c091614fc1e0920b503185e6064d"
     },
     "gtable": {
       "Package": "gtable",
@@ -908,6 +908,18 @@
         "rlang"
       ],
       "Hash": "b8552d117e1b808b09a832f589b79035"
+    },
+    "magick": {
+      "Package": "magick",
+      "Version": "2.8.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "Rcpp",
+        "curl",
+        "magrittr"
+      ],
+      "Hash": "9bba16130de599cfe8e6a644911d7f32"
     },
     "magrittr": {
       "Package": "magrittr",
