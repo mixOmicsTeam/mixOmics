@@ -154,13 +154,14 @@ jobs:
         run: |
           sudo apt-get install pandoc-citeproc
 
-      - name: Install extra dependencies for Windows
-        if: runner.os == 'windows'
-        run: |
-          Rscript -e "if (!requireNamespace('tinytex', quietly = TRUE)) install.packages('tinytex')"
-          Rscript -e "tinytex::install_tinytex()"
-          Rscript -e "tinytex::tinytex_root()"
-          Rscript -e "if (!file.exists(file.path(tinytex::tinytex_root(), 'bin', 'win32', 'pdflatex.exe'))) stop('pdflatex not found!')"
+      # Doesn't work - 'error: pdflatex not found!'
+      # - name: Install extra dependencies for Windows
+      #  if: runner.os == 'windows'
+      #   run: |
+      #     Rscript -e "if (!requireNamespace('tinytex', quietly = TRUE)) install.packages('tinytex')"
+      #     Rscript -e "tinytex::install_tinytex()"
+      #     Rscript -e "tinytex::tinytex_root()"
+      #     Rscript -e "if (!file.exists(file.path(tinytex::tinytex_root(), 'bin', 'win32', 'pdflatex.exe'))) stop('pdflatex not found!')"
 
       - name: Install dependencies 🔨
         run: |
@@ -189,6 +190,7 @@ jobs:
           _R_CHECK_CRAN_INCOMING_: false
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran", "--ignore-vignettes", "--run-dontrun"), error_on = "never", check_dir = "check/asCRAN", build_args = c("--no-build-vignettes"))
         shell: Rscript {0}
+
 #       - name: BiocCheck 🧬 ✅
 #         if: github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics'
 #         run: |
