@@ -14,6 +14,27 @@ tsvdm(
   bpparam = NULL
 )
 }
+\arguments{
+\item{x}{Tensor input.}
+
+\item{m}{A function which applies an orthogonal tensor tubal transform.}
+
+\item{minv}{The inverse of m.}
+
+\item{transform}{Set to FALSE if the input is already in a m-transformed
+space, and you just want a facewise svd returned (this is used in tpls).}
+
+\item{keep_hats}{Set to TRUE if you do not want minv to be applied to the
+output (this is used in tpca), i.e. return outputs in the hat-space.}
+
+\item{svals_matrix_form}{Setting to TRUE will return a compressed version of
+the singular values tensor S, where the singular values of each f-diagonal
+frontal slice becomes the column of a matrix, with t columns in total.}
+
+\item{bpparam}{A \linkS4class{BiocParallelParam} object indicating the type
+of parallelisation. Does not have any effect if transform functions
+explicitly set using \code{m}, \code{minv}.}
+}
 \description{
 Return the t-SVDM decomposition from Kilmer et al. (2021).
 }
