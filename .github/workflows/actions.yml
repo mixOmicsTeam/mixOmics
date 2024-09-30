@@ -182,9 +182,11 @@ jobs:
       - name: Check ✅ 
         if: (!contains(github.event.head_commit.message, 'skip-check'))
         # run: rcmdcheck::rcmdcheck(args = c("--no-manual"), error_on = "warning", check_dir = "check")
+        # rcmdcheck::rcmdcheck(args = c("--no-manual"), check_dir = "check")
         run: |
+          remotes::install_cran("devtools", Ncpus=2)
           devtools::install()
-          rcmdcheck::rcmdcheck(args = c("--no-manual"), check_dir = "check")
+          devtools::check()
         shell: Rscript {0}
 
       - name: Check --as-cran ✅ ✅ 
