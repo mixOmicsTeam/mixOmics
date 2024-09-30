@@ -59,10 +59,26 @@
   ")
 }
 
-#' Run tensor PLSDA-like analysis
+#' Run tensor PLSDA-like analysis. Note this always returns a compressed-matrix
+#' form output.
 #'
 #' Developed @ Melbourne Integrative Genomics
 #'
+#' @param x Tensor input.
+#' @param y Tensor input.
+#' @param multilevel Set to TRUE if y contains repeated class measurements
+#' across the t timepoints specified in the x tensor.
+#' @param ncomp The estimated number of components. ncomp must be explicitly set
+#' as an integer in tpls.
+#' @param m A function which applies an orthogonal tensor tubal transform.
+#' @param minv The inverse of m.
+#' @param center If set to false, the data tensor will not be centralized into
+#' Mean Deviation Form (see Mor et al. 2022). By default, the mean horizontal
+#' slice of the input tensor(s) are subtracted, so that all of the horizontal
+#' slices sum to 0, analgous to centering matrix data.
+#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
+#' of parallelisation. Does not have any effect if transform functions
+#' explicitly set using \code{m}, \code{minv}.
 #' @author Brendan Lu
 #' @export
 tplsda <- function(

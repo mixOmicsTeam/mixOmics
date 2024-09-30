@@ -93,7 +93,7 @@
 #' Returns functions \code{m} and \code{m_inv} which apply tubal transforms
 #' defined by the matrix \code{m_mat}.
 #'
-#' @param mat Function which defines the tubal transform.
+#' @param m_mat Function which defines the tubal transform.
 #' @param m_inv_mat Function which defines inverse tubal transform
 #' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
 #' of parallelisation.
@@ -216,6 +216,8 @@ facewise_product <- function(..., bpparam = NULL) {
 }
 
 #' @describeIn facewise_product Custom facewise product operator
+#' @param a Tensor input.
+#' @param b Tensor input.
 #' @export
 `%fp%` <- function(a, b) .binary_facewise(a, b, bpparam = NULL)
 

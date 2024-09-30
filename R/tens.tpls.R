@@ -76,6 +76,26 @@
 #'
 #' Developed @ Melbourne Integrative Genomics
 #'
+#' @param x Tensor input.
+#' @param y Tensor input.
+#' @param ncomp The estimated number of components. ncomp must be explicitly set
+#' as an integer in tpls.
+#' @param m A function which applies an orthogonal tensor tubal transform.
+#' @param minv The inverse of m.
+#' @param mode Currently supports tensor analogues of canonical, regression,
+#' and svd PLS modes. Defaults to "regression" mode.
+#' @param center If set to false, the data tensor will not be centralized into
+#' Mean Deviation Form (see Mor et al. 2022). By default, the mean horizontal
+#' slice of the input tensor(s) are subtracted, so that all of the horizontal
+#' slices sum to 0, analgous to centering matrix data.
+#' @param matrix_output Note: ONLY AFFECTS THE OUTPUT IN "tsvdm" MODE.
+#' Collects the top singular vectors across the tensor, organized by the
+#' magnitude of the corresponding singular vector, and place them into the
+#' columns of a matrix. Corresponds to the 'matrix compression' type of scheme
+#' described in Mor et al. 2022.
+#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
+#' of parallelisation. Does not have any effect if transform functions
+#' explicitly set using \code{m}, \code{minv}.
 #' @author Brendan Lu
 #' @export
 tpls <- function(
