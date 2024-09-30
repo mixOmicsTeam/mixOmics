@@ -2,7 +2,10 @@
 # Kilmer's t-SVD decomposition for order-3 tensors
 # ==============================================================================
 
-#' @description Return the t-SVDM decomposition from Kilmer et al. (2021).
+#' Tensor SVD-like decomposition algorithm
+#'
+#' Return the t-SVDM decomposition from Kilmer et al. (2021).
+#'
 #' @author Brendan Lu
 #' @export
 tsvdm <- function(
@@ -24,14 +27,10 @@ tsvdm <- function(
   }
 
   if (transform) {
-    .stop_invalid_transform_input(m, minv)
-
     # use dctii as default transform if user does not specify an explicit one
-    if (is.null(m)) {
-      transforms <- dctii_m_transforms(t, bpparam = bpparam)
-      m <- transforms$m
-      minv <- transforms$minv
-    }
+    validated_transforms <- .stop_invalid_transform_input(m, minv, t, bpparam)
+    m <- validated_transforms$m
+    minv <- validated_transforms$minv
 
     x <- m(x)
   }

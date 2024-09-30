@@ -1,4 +1,4 @@
-context("tpca")
+context("tplsda")
 
 #' Unnames and ensures the top row in a matrix-type output is all positive. This
 #' allows for comparison between pls results that are the same but just differ
@@ -15,49 +15,54 @@ context("tpca")
 }
 
 test_that(
-  "basic tpca sense checks",
+  "tplsda agrees with mixOmics plsda",
   code = {
-    n <- 4
-    p <- 5
-    t <- 3
-    ncomp_input <- 2
-    test_tensor <- array(1:(n * p * t), dim = c(n, p, t))
-    tpca_obj <- tpca(test_tensor, ncomp = ncomp_input)
-    expect_equal(length(tpca_obj$explained_variance), ncomp_input)
-    expect_equal(dim(tpca_obj$variates), c(n, ncomp_input))
-    expect_equal(dim(tpca_obj$loadings), c(p, ncomp_input))
-  }
-)
-
-test_that(
-  "tpca agrees with mixOmics pca",
-  code = {
-    n <- 3
-    p <- 10
+    n <- 6
+    p <- 7
+    q <- 9
     t <- 1
-    k <- min(n, p)
+    k <- min(n, p, q)
     ncomp_input <- 2
 
     set.seed(1)
     test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
+    test_y <- letters[1:n]
 
-    mixomics_pca <- pca(
+    mixomics_plsda <- plsda(
       test_x[, , 1],
-      ncomp = ncomp_input
+      test_y,
+      ncomp = ncomp_input,
+      scale = FALSE
     )
 
     # bltodo: we do not even need to specify identity transforms here right?
     transforms <- matrix_to_m_transforms(diag(1))
-    tensor_pca <- tpca(
+    tensor_plsda <- tplsda(
       test_x,
+      test_y,
       ncomp = ncomp_input,
       m = transforms$m,
       minv = transforms$minv
     )
 
     expect_equal(
-      .make_signs_consistent(mixomics_pca$loadings$X),
-      .make_signs_consistent(tensor_pca$loadings)
+      .make_signs_consistent(mixomics_plsda$loadings$X),
+      .make_signs_consistent(tensor_plsda$x_loadings)
+    )
+
+    expect_equal(
+      .make_signs_consistent(mixomics_plsda$loadings$Y),
+      .make_signs_consistent(tensor_plsda$y_loadings)
+    )
+
+    expect_equal(
+      .make_signs_consistent(mixomics_plsda$variates$X),
+      .make_signs_consistent(tensor_plsda$x_projected)
+    )
+
+    expect_equal(
+      .make_signs_consistent(mixomics_plsda$variates$Y),
+      .make_signs_consistent(tensor_plsda$y_projected)
     )
   }
 )
