@@ -79,7 +79,6 @@ jobs:
           - { os: windows-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
           - { os: macOS-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
           - { os: ubuntu-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}', image: 'bioconductor/bioconductor_docker:${{ needs.versions.outputs.bioc }}'}
-          #- { os: ubuntu-latest, r: '${{ needs.versions.outputs.r }}', bioc: '${{ needs.versions.outputs.bioc }}'}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -156,16 +155,7 @@ jobs:
           sudo apt-get install -y pandoc-citeproc
           sudo apt-get install -y qpdf
 
-      # Doesn't work - 'error: pdflatex not found!'
-      # - name: Install extra dependencies for Windows
-      #  if: runner.os == 'windows'
-      #   run: |
-      #     Rscript -e "if (!requireNamespace('tinytex', quietly = TRUE)) install.packages('tinytex')"
-      #     Rscript -e "tinytex::install_tinytex()"
-      #     Rscript -e "tinytex::tinytex_root()"
-      #     Rscript -e "if (!file.exists(file.path(tinytex::tinytex_root(), 'bin', 'win32', 'pdflatex.exe'))) stop('pdflatex not found!')"
-
-      - name: Install dependencies 🔨
+      - name: Install R dependencies 🔨
         run: |
           options(repos = c(CRAN = "https://cran.r-project.org"))
           remotes::install_deps(dependencies = TRUE, repos = BiocManager::repositories(), Ncpus=2)
@@ -227,18 +217,18 @@ jobs:
           tags: ${{ needs.versions.outputs.docker_tag }}
           build_args: BIOC_VERSION=${{ needs.versions.outputs.bioc }} 
 
-      # - name: Test coverage 🔍
-      #   # if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
-      #   # the commands between 'set +e' and 'set -e' are run without throwing any error
-      #   run: |
-      #     set +e
-      #     Rscript -e "covr::codecov(type = c('tests', 'examples'))"
-      #     set -e
+      - name: Test coverage 🔍
+        # if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
+        # the commands between 'set +e' and 'set -e' are run without throwing any error
+        run: |
+          set +e
+          Rscript -e "covr::codecov(type = c('tests', 'examples'))"
+          set -e
 
-      # - name: Notify Slack 📣
-      #   uses: 8398a7/action-slack@v3
-      #   with:
-      #     status: ${{ job.status }}
-      #     fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
-      #   env:
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # set in rep's setting >> secrets
+      - name: Notify Slack 📣
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # set in rep's setting >> secrets
