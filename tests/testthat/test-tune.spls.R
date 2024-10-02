@@ -22,12 +22,22 @@ test_that("tune.spls works in parallel", code = {
     X <- nutrimouse$gene
     Y <- nutrimouse$lipid
     
+    ## added this to avoid errors where num_workers exceeded limits set by devtools::check()
+    chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+    if (nzchar(chk) && chk == "TRUE") {
+      # use 2 cores in CRAN/Travis/AppVeyor
+      num_workers <- 2L
+    } else {
+      # use all cores in devtools::test()
+      num_workers <- parallel::detectCores()
+    }
+
     set.seed(42)
     tune.spls.res = suppressWarnings(tune.spls(X, Y, ncomp = 3,
                                       test.keepX = seq(1, 5, 1),
                                       test.keepY = seq(3, 6, 3), measure = "cor",
                                       folds = 5, nrepeat = 3, progressBar = F,
-                                      BPPARAM = SnowParam(RNGseed = 5212, workers = 4)))
+                                      BPPARAM = SnowParam(RNGseed = 5212, workers = num_workers)))
     
     expect_equal(class(tune.spls.res), c("tune.pls", "tune.spls"))
     expect_equal(unname(tune.spls.res$choice.keepX), c(1,1,1))

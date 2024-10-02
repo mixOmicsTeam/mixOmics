@@ -34,3 +34,11 @@ combine multiple data sets: N-integration with variants of Generalised
 Canonical Correlation Analysis and P-integration with variants of multi-group
 Partial Least Squares.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{http://www.mixOmics.org}
+  \item Report bugs at \url{https://github.com/mixOmicsTeam/mixOmics/issues/}
+}
+
+}
