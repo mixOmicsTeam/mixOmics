@@ -15,11 +15,11 @@
     return(y)
   }
   # input is a matrix with a single column
-  if (length(dim(y)) == 2 && dim(y)[2] != 1) {
+  if (length(dim(y)) == 2 && dim(y)[2] == 1) {
     return(c(y))
   }
   # input is a tensor with a single column
-  if (length(dim(y)) == 3 && dim(y)[2] == 1 && dim(y)[3] != 1) {
+  if (length(dim(y)) == 3 && dim(y)[2] == 1 && dim(y)[3] == 1) {
     return(c(y))
   }
   stop("
@@ -65,7 +65,8 @@
 #' Developed @ Melbourne Integrative Genomics
 #'
 #' @param x Tensor input.
-#' @param y Tensor input.
+#' @param y A vector / column matrix / column tensor with n class labels, or a
+#' n x t matrix / n x 1 x t tensor if multilevel = TRUE.
 #' @param multilevel Set to TRUE if y contains repeated class measurements
 #' across the t timepoints specified in the x tensor.
 #' @param ncomp The estimated number of components. ncomp must be explicitly set
