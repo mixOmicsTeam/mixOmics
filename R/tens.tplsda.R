@@ -108,6 +108,9 @@ tplsda <- function(
     # repeated observations for all samples
     factors_list <- lapply(array(seq_len(t)), function(i) factor(y_tens[, , i]))
     unique_levels <- unique(unlist(lapply(factors_list, levels)))
+    if (length(unique_levels) == 1) {
+      stop("y should contain 2 or more distinct classes")
+    }
 
     y <- array(0, dim = c(n, length(unique_levels), t))
     for (i in seq_len(t)) {
