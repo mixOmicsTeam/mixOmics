@@ -217,18 +217,18 @@ jobs:
           tags: ${{ needs.versions.outputs.docker_tag }}
           build_args: BIOC_VERSION=${{ needs.versions.outputs.bioc }} 
 
-      - name: Test coverage 🔍
-        # if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
-        # the commands between 'set +e' and 'set -e' are run without throwing any error
-        run: |
-          set +e
-          Rscript -e "covr::codecov(type = c('tests', 'examples'))"
-          set -e
+      # - name: Test coverage 🔍
+      #   # if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
+      #   # the commands between 'set +e' and 'set -e' are run without throwing any error
+      #   run: |
+      #     set +e
+      #     Rscript -e "covr::codecov(type = c('tests', 'examples'))"
+      #     set -e
 
-      - name: Notify Slack 📣
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # set in rep's setting >> secrets
+      # - name: Notify Slack 📣
+      #   uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: ${{ job.status }}
+      #     fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # set in rep's setting >> secrets
