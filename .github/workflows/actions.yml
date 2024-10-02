@@ -217,13 +217,13 @@ jobs:
           tags: ${{ needs.versions.outputs.docker_tag }}
           build_args: BIOC_VERSION=${{ needs.versions.outputs.bioc }} 
 
-      # - name: Test coverage 🔍
-      #   # if: (matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release')
-      #   # the commands between 'set +e' and 'set -e' are run without throwing any error
-      #   run: |
-      #     set +e
-      #     Rscript -e "covr::codecov(type = c('tests', 'examples'))"
-      #     set -e
+      - name: Test coverage 🔍
+        if: github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics'
+        # the commands between 'set +e' and 'set -e' are run without throwing any error
+        run: |
+          set +e
+          Rscript -e "covr::codecov(type = c('tests', 'examples'))"
+          set -e
 
       # - name: Notify Slack 📣
       #   uses: 8398a7/action-slack@v3
