@@ -74,7 +74,11 @@
 
 #' Tensor PLS-like regression
 #'
-#' Developed @ Melbourne Integrative Genomics
+#' Developed @ Melbourne Integrative Genomics. Intuition: Fourier-based m
+#' transforms compact the data across time points, but preserve the information
+#' association for each sample and each feature. In doing so, pls works by
+#' calculating the singular vectors associated with a 'global' (across time
+#' points) top singular value, and deflating just the 
 #'
 #' @param x Tensor input.
 #' @param y Tensor input.
@@ -160,7 +164,7 @@ tpls <- function(
     # simplest algorithm - just uses everything from the tsvdm call of XtY based
     # without any deflation steps
     tsvdm_decomposition_xty <- tsvdm(
-      ft(xhat) %fp% yhat,
+      facewise_crossproduct(xhat, yhat),
       transform = FALSE,
       svals_matrix_form = TRUE
     )
@@ -205,8 +209,11 @@ tpls <- function(
     for (i in seq_len(ncomp)) {
       # compute tsvdm
       # BLTODO: tensor crossprod to speed up?
+      # bltodo: minor as ncomp is usually small, but we technically do not need
+      # to recalculate the whole tsvdmm, we only need svd re-done on the face
+      # that was deflated as everything else is still the same
       tsvdm_decomposition_xty <- tsvdm(
-        ft(xhat) %fp% yhat,
+        facewise_crossproduct(xhat, yhat),
         transform = FALSE,
         svals_matrix_form = TRUE
       )

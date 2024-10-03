@@ -47,7 +47,11 @@ of parallelisation. Does not have any effect if transform functions
 explicitly set using \code{m}, \code{minv}.}
 }
 \description{
-Developed @ Melbourne Integrative Genomics
+Developed @ Melbourne Integrative Genomics. Intuition: Fourier-based m
+transforms compact the data across time points, but preserve the information
+association for each sample and each feature. In doing so, pls works by
+calculating the singular vectors associated with a 'global' (across time
+points) top singular value, and deflating just the
 }
 \author{
 Brendan Lu

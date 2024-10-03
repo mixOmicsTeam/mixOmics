@@ -190,3 +190,19 @@ test_that(
     )
   }
 )
+
+test_that(
+  "facewise_crossproduct works as intended",
+  code = {
+    n <- 2
+    p <- 4
+    t <- 3
+    set.seed(1)
+    test_tensor1 <- array(rnorm(n * p * t), dim = c(n, p, t))
+
+    expect_equal(
+      facewise_crossproduct(test_tensor1, test_tensor1),
+      ft(test_tensor1) %fp% test_tensor1
+    )
+  }
+)
