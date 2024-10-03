@@ -279,6 +279,7 @@ m_product <- function(
   }
   return(minv(
     Reduce(
+      # bpparam MUST be NULL here to prevent double parallelisation!
       function(a, b) .binary_facewise(a, b, bpparam = NULL),
       lapply(list(...), m)
     )
