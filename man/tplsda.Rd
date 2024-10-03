@@ -19,7 +19,8 @@ tplsda(
 \arguments{
 \item{x}{Tensor input.}
 
-\item{y}{Tensor input.}
+\item{y}{A vector / column matrix / column tensor with n class labels, or a
+n x t matrix / n x 1 x t tensor if multilevel = TRUE.}
 
 \item{multilevel}{Set to TRUE if y contains repeated class measurements
 across the t timepoints specified in the x tensor.}

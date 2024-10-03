@@ -284,3 +284,34 @@ m_product <- function(
     )
   ))
 }
+
+#' Tensor cross product
+#'
+#' Compute the equivalent of ft(a) %fp% b
+#'
+#' @param a Tensor input.
+#' @param b Tensor input.
+#' @return Tensor facewise cross product.
+#' @author Brendan Lu
+#' @export
+facewise_crossproduct <- function(a, b) {
+  na <- dim(a)[1]
+  pa <- dim(a)[2]
+  ta <- dim(a)[3]
+
+  nb <- dim(b)[1]
+  pb <- dim(b)[2]
+  tb <- dim(b)[3]
+
+  # error: different t for each input
+  stopifnot(ta == tb)
+  t <- ta
+  # error: non-conforming facewise dimensions
+  stopifnot(na == nb)
+
+  fcp_ab <- array(0, dim = c(pa, pb, t))
+  for (i in seq_len(t)) {
+    fcp_ab[, , i] <- crossprod(a[, , i], b[, , i])
+  }
+  return(fcp_ab)
+}

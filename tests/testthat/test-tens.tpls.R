@@ -41,7 +41,6 @@ test_that(
     p <- 5
     t <- 3
     k <- min(n, p)
-    ncomp_input <- 2
 
     # this test fails if `test_tensor` is rank deficient, as is the case if we
     # use array(1:24, dim = c(3, 4, 2))
@@ -54,7 +53,6 @@ test_that(
 
     tpca_obj <- tpca(
       test_tensor,
-      ncomp = ncomp_input,
       m = m,
       minv = minv,
       # turn off centering to get over problem 3
@@ -65,7 +63,6 @@ test_that(
 
     tpls_obj <- tpls(
       test_tensor, test_tensor,
-      ncomp = ncomp_input,
       m = m,
       minv = minv,
       mode = "tsvdm",
@@ -97,7 +94,7 @@ test_that(
     q <- 9
     t <- 1
     k <- min(n, p, q)
-    ncomp_input <- 2
+    ncomp_input <- 4
 
     set.seed(1)
     test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
@@ -152,7 +149,7 @@ test_that(
     q <- 10
     t <- 1
     k <- min(n, p, q)
-    ncomp_input <- 2
+    ncomp_input <- 4
 
     set.seed(1)
     test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
