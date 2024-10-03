@@ -208,7 +208,7 @@ jobs:
         shell: bash
 
       - name: Push to DockerHub 📦
-        if: needs.versions.outputs.dockerise == 'true' && !contains(github.event.head_commit.message, 'skip-docker')
+        if: runner.os == 'Linux' && needs.versions.outputs.dockerise == 'true' && !contains(github.event.head_commit.message, 'skip-docker')
         uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
