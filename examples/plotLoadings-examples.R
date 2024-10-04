@@ -58,7 +58,7 @@ name.var = name.var, size.name = 0.5,complete.name.var=TRUE, contrib = "max")
 # look at the contribution (median) for each variable
 plot.contrib = plotLoadings(splsda.liver, comp = 2, method = 'median', plot = FALSE,
 contrib = "max")
-head(plot.contrib[,1:4])
+head(plot.contrib[[1]][,1:4])
 # change the title of the legend and title name
 plotLoadings(splsda.liver, comp = 2, method = 'median', legend.title = 'Time',
 title = 'Contribution plot', contrib = "max")

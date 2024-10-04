@@ -25,13 +25,13 @@ Imports:
     ggrepel,
     BiocParallel,
     utils,
-    gsignal
+    gsignal,
+    rgl
 Suggests: 
     BiocStyle,
     knitr,
     rmarkdown,
     testthat,
-    rgl,
     microbenchmark,
     magick
 Authors@R: 

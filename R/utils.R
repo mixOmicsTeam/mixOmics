@@ -472,9 +472,9 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     if (!all(is.list(X) && length(unique(names(X))) == length(X)))
         stop("'X' must be a named list. See documentation.", call. = FALSE)
     
-    if ((missing(indY) || is.null(indY)) ) {
+    if ( missing(indY) || is.null(indY) || isTRUE(tryCatch(is.integer(as.integer(indY)) && indY > length(X))) ){
         indY <- length(X) + 1
-        X <- c(X, list(Y = matrix())) ## just so we have Y in X for design
+        X <- c(X, list(Y = matrix())) ## just so we have Y in X for design, ind
     }
     
     blocks <- names(X)
