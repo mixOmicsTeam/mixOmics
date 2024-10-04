@@ -67,6 +67,7 @@ plotIndiv(splsda.liver, ind.names = Y, ellipse = TRUE, legend = TRUE)
 ## Fifth example: 16S data with multilevel decomposion and log ratio transformation
 # ------------------------------------------------
 
+data(diverse.16S)
 splsda.16S = splsda(
 X = diverse.16S$data.TSS,  # TSS normalised data
 Y =  diverse.16S$bodysite,
