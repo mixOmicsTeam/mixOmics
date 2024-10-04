@@ -474,7 +474,7 @@ nearZeroVar = function (x, freqCut = 95/5, uniqueCut = 10)
     
     if ( missing(indY) || is.null(indY) || isTRUE(tryCatch(is.integer(as.integer(indY)) && indY > length(X))) ){
         indY <- length(X) + 1
-        X <- c(X, list(Y = matrix())) ## just so we have Y in X for design, indY may be > X as has already been used to extract Y in wrapper function e.g. in tune.block.splda
+        X <- c(X, list(Y = matrix())) ## just so we have Y in X for design, ind
     }
     
     blocks <- names(X)
