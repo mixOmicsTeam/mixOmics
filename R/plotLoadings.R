@@ -466,9 +466,8 @@ plotLoadings.mixo_plsda <-
                                title = paste(legend.title),
                                cex = size.legend)
                     }
-                    
-                    contrib.df <- c(contrib.df, list(df))
                 } # end if plot
+                contrib.df <- c(contrib.df, list(df))
             }
             
             names(contrib.df) <- block
