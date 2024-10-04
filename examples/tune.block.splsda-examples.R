@@ -28,8 +28,11 @@ subset <- mixOmics:::stratified.subsampling(breast.TCGA$data.train$subtype, fold
 data <- lapply(data, function(omic) omic[subset,])
 Y <- breast.TCGA$data.train$subtype[subset]
 ## ---- run
-## setup cluster - use SnowParam() on Widnows
-BPPARAM <- BiocParallel::MulticoreParam(workers = parallel::detectCores()-1)
+# Check if the environment variable exists (during R CMD check) and limit cores accordingly
+max_cores <- if (Sys.getenv("_R_CHECK_LIMIT_CORES_") != "") 2 else parallel::detectCores() - 1
+# Setup the parallel backend with the appropriate number of workers
+BPPARAM <- BiocParallel::MulticoreParam(workers = max_cores)
+
 tune <- tune.block.splsda(
     X = data,
     Y = Y,
