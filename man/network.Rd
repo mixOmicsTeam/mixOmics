@@ -252,10 +252,12 @@ show.edge.labels = FALSE)
 dev.off()
 
 
-## interactive 'cutoff'
-
-network(nutri.res, comp = 1:3, cutoff = 0.55, interactive = TRUE)
-## select the 'cutoff' and "see" the new network
+## interactive 'cutoff' - select the 'cutoff' and "see" the new network
+## only run this during an interactive session
+if (interactive()) {
+    network(nutri.res, comp = 1:3, cutoff = 0.55, interactive = TRUE)
+}
+dev.off()
 
 ## network representation for objects of class 'spls'
 data(liver.toxicity)

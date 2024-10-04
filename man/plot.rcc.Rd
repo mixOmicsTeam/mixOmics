@@ -26,10 +26,10 @@ Y <- nutrimouse$gene
 nutri.res <- rcc(X, Y, lambda1 = 0.064, lambda2 = 0.008)
 
 ## 'pointplot' type scree
-plot(nutri.res) #(default)
+plot(nutri.res, type = "point") #(default)
 
 \dontrun{
-plot(nutri.res, pch = 19, cex = 1.2,
+plot(nutri.res, type = "point", pch = 19, cex = 1.2,
 col = c(rep("red", 3), rep("darkblue", 18)))
 
 ## 'barplot' type scree
