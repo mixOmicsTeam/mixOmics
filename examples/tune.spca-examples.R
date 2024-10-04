@@ -12,9 +12,10 @@ tune.spca.res
 plot(tune.spca.res)
 \dontrun{
 ## parallel processing using BiocParallel on repeats with more workers (cpus)
-## You can use BiocParallel::MulticoreParam() on non_Windows machines 
-## for faster computation
-BPPARAM <- BiocParallel::SnowParam(workers = max(parallel::detectCores()-1, 2))
+# Check if the environment variable exists (during R CMD check) and limit cores accordingly
+max_cores <- if (Sys.getenv("_R_CHECK_LIMIT_CORES_") != "") 2 else parallel::detectCores() - 1
+# Setup the parallel backend with the appropriate number of workers
+BPPARAM <- BiocParallel::MulticoreParam(workers = max_cores)
 tune.spca.res <- tune.spca(
     X = nutrimouse$lipid,
     ncomp = 2,
