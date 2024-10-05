@@ -628,22 +628,25 @@ perf.sgccda <-
       if (progressBar ==  TRUE) {
         message("progressBar unavailable in parallel computing mode for perf.block.splsda ...")
       }
-      
-      ## for some reason, FORK freezes when auc == TRUE
-      if (.onUnix()) {
-        cl <- makeForkCluster(cpus)
-      } else {
-        cl <- makePSOCKcluster(cpus)
-      }
-      
-      on.exit(stopCluster(cl))
-      clusterEvalQ(cl, library(mixOmics))
-      clusterExport(cl, ls(), environment())
-      if (!is.null(list(...)$seed)) { ## for unit tests purpose
-        RNGversion(.mixo_rng()) ## bc different R versions can have different RNGs and we want reproducible unit tests
-        clusterSetRNGStream(cl = cl, iseed = list(...)$seed)
-      }
-      repeat_cv_perf.diablo_res <- parLapply(cl, nrep_list, function(nrep) repeat_cv_perf.diablo(nrep))
+
+      # process seed input as before and set RNGversion, for unit test purposes
+      seed <- list(...)$seed
+      RNGversion(.mixo_rng())
+
+      # let BiocParallel manage the cluster, and just configure a bpparam here
+      bpparam <- BiocParallel::SnowParam(
+        workers = cpus,
+        type = "SOCK",
+        RNGseed = seed,
+        exportglobals = TRUE,
+        exportvariables = TRUE
+      )
+
+      repeat_cv_perf.diablo_res <- bplapply(
+        nrep_list,
+        function(nrep) repeat_cv_perf.diablo(nrep),
+        BPPARAM = bpparam
+      )
     } else {
       repeat_cv_perf.diablo_res <- lapply(nrep_list, function(nrep) {
         repeat_cv_perf.diablo(nrep)
