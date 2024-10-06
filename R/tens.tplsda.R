@@ -15,11 +15,11 @@
     return(y)
   }
   # input is a matrix with a single column
-  if (length(dim(y)) == 2 && dim(y)[2] != 1) {
+  if (length(dim(y)) == 2 && dim(y)[2] == 1) {
     return(c(y))
   }
   # input is a tensor with a single column
-  if (length(dim(y)) == 3 && dim(y)[2] == 1 && dim(y)[3] != 1) {
+  if (length(dim(y)) == 3 && dim(y)[2] == 1 && dim(y)[3] == 1) {
     return(c(y))
   }
   stop("
@@ -65,7 +65,8 @@
 #' Developed @ Melbourne Integrative Genomics
 #'
 #' @param x Tensor input.
-#' @param y Tensor input.
+#' @param y A vector / column matrix / column tensor with n class labels, or a
+#' n x t matrix / n x 1 x t tensor if multilevel = TRUE.
 #' @param multilevel Set to TRUE if y contains repeated class measurements
 #' across the t timepoints specified in the x tensor.
 #' @param ncomp The estimated number of components. ncomp must be explicitly set
@@ -108,6 +109,9 @@ tplsda <- function(
     # repeated observations for all samples
     factors_list <- lapply(array(seq_len(t)), function(i) factor(y_tens[, , i]))
     unique_levels <- unique(unlist(lapply(factors_list, levels)))
+    if (length(unique_levels) == 1) {
+      stop("y should contain 2 or more distinct classes")
+    }
 
     y <- array(0, dim = c(n, length(unique_levels), t))
     for (i in seq_len(t)) {

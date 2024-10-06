@@ -66,3 +66,30 @@ test_that(
     )
   }
 )
+
+test_that(
+  "tplsda multilevel y transformation is appropriate",
+  code = {
+    n <- 6
+    p <- 7
+    q <- 9
+    t <- 3
+    ncomp_input <- 2
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
+    test_y_mat <- array(letters[1:(n * t)], dim = c(n, t))
+    test_y_tens <- array(letters[1:(n * t)], dim = c(n, 1, t))
+
+    tplsda_mat <- tplsda(test_x, test_y_mat, multilevel = TRUE)
+    tplsda_tens <- tplsda(test_x, test_y_tens, multilevel = TRUE)
+
+    # both multilevel y inputs should lead to the same underlying tpls call
+    expect_equal(tplsda_mat$y, tplsda_tens$y)
+
+    # the y tensor that goes into the tpls call should have the appropriate
+    # number of columns corresponding to all unique categories found across
+    # all timepoints specified in y
+    expect_equal(dim(tplsda_mat$y), c(n, n * t, 3))
+  }
+)
