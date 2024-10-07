@@ -228,7 +228,7 @@ scale.function_old <- function(temp, scale = TRUE)
 }
 
 # --------------------------------------
-# scaling, using colSds from library(matrixStats),
+# scaling, using colSds from matrixStats library,
 # used in mean_centering_per_study (below)
 # --------------------------------------
 #' @importFrom matrixStats colSds 
