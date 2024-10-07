@@ -16,8 +16,7 @@ test_that("tune.spls works ", code = {
 })
 
 test_that("tune.spls works in parallel", code = {
-    
-    library(BiocParallel)
+
     data("nutrimouse")
     X <- nutrimouse$gene
     Y <- nutrimouse$lipid
