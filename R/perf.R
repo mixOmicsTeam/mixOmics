@@ -561,7 +561,7 @@ perf.mixo_spls  <- perf.mixo_pls
             u.cv = spls.res$variates$Y[, 1]
             t.cv = spls.res$variates$X[, 1]
             a.cv = spls.res$loadings$X[, 1]
-            b.cv = spls.res$loadings$Y[, 1, drop = F]
+            b.cv = spls.res$loadings$Y[, 1, drop = FALSE]
             
             # reg coefficients:
             c.cv = crossprod(X.train, u.cv) / drop(crossprod(u.cv)) 
