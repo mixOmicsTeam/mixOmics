@@ -10,15 +10,15 @@
 #' @author Brendan Lu
 #' @keywords internal
 .y_to_vec <- function(y) {
-  # input is already a vector
+  # input is already a n x 1 vector
   if (is.null(dim(y))) {
     return(y)
   }
-  # input is a matrix with a single column
+  # input is a n x 1 matrix
   if (length(dim(y)) == 2 && dim(y)[2] == 1) {
     return(c(y))
   }
-  # input is a tensor with a single column
+  # input is a n x 1 x 1 tensor
   if (length(dim(y)) == 3 && dim(y)[2] == 1 && dim(y)[3] == 1) {
     return(c(y))
   }
