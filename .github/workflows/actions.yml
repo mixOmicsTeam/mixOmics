@@ -219,7 +219,7 @@ jobs:
           build_args: BIOC_VERSION=${{ needs.versions.outputs.bioc }} 
 
       - name: Test coverage 🔍
-        if: (github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
+        if: (runner.os == 'Linux' && github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (runner.os == 'Linux' && github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
         # the commands between 'set +e' and 'set -e' are run without throwing any error
         run: |
           set +e
