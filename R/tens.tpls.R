@@ -86,8 +86,9 @@
 #' as an integer in tpls.
 #' @param m A function which applies an orthogonal tensor tubal transform.
 #' @param minv The inverse of m.
-#' @param mode Currently supports tensor analogues of canonical, regression,
-#' and svd PLS modes. Defaults to "regression" mode.
+#' @param mode Currently supports tensor analogues of canonical ("canonical"),
+#' regression ("regression"), and svd ("tsvdm") PLS variants. Defaults to
+#' "regression".
 #' @param center If set to false, the data tensor will not be centralized into
 #' Mean Deviation Form (see Mor et al. 2022). By default, the mean horizontal
 #' slice of the input tensor(s) are subtracted, so that all of the horizontal
@@ -267,6 +268,7 @@ tpls <- function(
       ncomp = ncomp,
       x = x,
       y = y,
+      mode = mode,
       x_loadings = x_loadings,
       y_loadings = y_loadings,
       x_projected = x_projected,
