@@ -9,6 +9,7 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .unravel_index <- function(indices, dim) {
   nrows <- dim[1]
   return(sapply(
@@ -36,6 +37,7 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .extract_tensor_columns <- function(tensor, k_t_indices) {
   return(apply(
     k_t_indices, 2,
@@ -50,6 +52,7 @@
 #' @param dim Dimension of output tensor
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .singular_vals_mat_to_tens <- function(mat, dim) {
   n <- dim[1]
   p <- dim[2]

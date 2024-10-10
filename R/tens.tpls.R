@@ -9,6 +9,7 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .obtain_k_t_flatten_sort <- function(s_mat, ncomp) {
   # bltodo: if ultimately only use once just place it in function body directly
   return(
@@ -25,6 +26,7 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .obtain_k_t_top <- function(s_mat) {
   flat_index <- which.max(as.vector(s_mat))
   nrows <- dim(s_mat)[1]
@@ -38,6 +40,7 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .validate_tpls_x_y_dim <- function(x, y) {
   if (length(dim(x)) != 3) {
     stop("Please ensure x input tensor is an order-3 array")
@@ -86,8 +89,9 @@
 #' as an integer in tpls.
 #' @param m A function which applies an orthogonal tensor tubal transform.
 #' @param minv The inverse of m.
-#' @param mode Currently supports tensor analogues of canonical, regression,
-#' and svd PLS modes. Defaults to "regression" mode.
+#' @param mode Currently supports tensor analogues of canonical ("canonical"),
+#' regression ("regression"), and svd ("tsvdm") PLS variants. Defaults to
+#' "regression".
 #' @param center If set to false, the data tensor will not be centralized into
 #' Mean Deviation Form (see Mor et al. 2022). By default, the mean horizontal
 #' slice of the input tensor(s) are subtracted, so that all of the horizontal
@@ -267,6 +271,7 @@ tpls <- function(
       ncomp = ncomp,
       x = x,
       y = y,
+      mode = mode,
       x_loadings = x_loadings,
       y_loadings = y_loadings,
       x_projected = x_projected,
