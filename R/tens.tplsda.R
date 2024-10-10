@@ -9,6 +9,7 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .y_to_vec <- function(y) {
   # input is already a n x 1 vector
   if (is.null(dim(y))) {
@@ -41,6 +42,7 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .y_to_tens <- function(y) {
   # input is a n x t matrix
   if (length(dim(y)) == 2) {

@@ -12,11 +12,13 @@
 #' @param y Tensor input.
 #' @param ncomp The estimated number of components. ncomp must be explicitly set
 #' as an integer in tpls.
-#' @param desgin Numeric matrix of size length(x) x length(x) with values
+#' @param design Numeric matrix of size length(x) x length(x) with values
 #' between 0 and 1; the i,j entry in the matrix indicates the strength of the
 #' relationship to be modelled between the i-th and j-th blocks. A value of 0
 #' indicates no relationship, with 1 being the maximum. Alternatively, one can
-#' input "null" for a fully disconnected 
+#' input "null" for a fully disconnected design, or "full" for a fully connected
+#' design, or a single scalar value between 0 and which will designate all
+#' off-diagonal elements of a fully connected design.
 #' @param m A function which applies an orthogonal tensor tubal transform.
 #' @param minv The inverse of m.
 #' @param mode Currently supports tensor analogues of canonical, regression,
@@ -34,11 +36,13 @@ block_tpls <- function(
   x,
   y,
   ncomp = NULL,
+  design,
   m = NULL,
   minv = NULL,
   mode = "regression",
   center = TRUE,
   bpparam = NULL
 ) {
+  # bltodo: add docs link to existing block.pls for user reference
   NULL
 }
