@@ -49,7 +49,7 @@ jobs:
           git fetch --all # for logs in case of failure
           
           source_branch=${{ github.event.inputs.source_branch }}
-          bioc_branch=${{ github.event.inputs.target_branch }}
+          bioc_branch=${{ github.event.inputs.bioc_branch }}
           
           if [  "${{ github.event.inputs.action }}" == "push" ]; then
             git push bioc $source_branch:$bioc_branch
