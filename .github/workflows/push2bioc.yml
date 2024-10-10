@@ -59,7 +59,7 @@ jobs:
           else
             # show diffs
             git checkout -b tmp
-            git reset --hard tmp bioc/$bioc_branch
+            git reset --hard bioc/$bioc_branch
 
             echo "source vs bioc:\n\n"
             git log $source_branch..tmp --oneline --decorate
