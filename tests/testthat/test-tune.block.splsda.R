@@ -72,8 +72,6 @@ test_that("tune.block.splsda works with and without parallel without auc", {
 
 test_that("(tune.block.splsda:error): catches invalid values of 'folds'", {
     
-    library(mixOmics)
-    
     data("breast.TCGA")
     
     samples <- c(1:3, 50:52, 79:81)

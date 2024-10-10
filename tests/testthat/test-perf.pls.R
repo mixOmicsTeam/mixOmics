@@ -1,7 +1,6 @@
 context("perf.pls")
 
 test_that("perf() works on pls object", code = {
-  library(mixOmics)
   
   data("liver.toxicity")
   
@@ -22,7 +21,6 @@ test_that("perf() works on pls object", code = {
 })
 
 test_that("perf() works on pls with nzv features (all modes)", code = {
-  library(mixOmics)
   
   data("liver.toxicity")
   

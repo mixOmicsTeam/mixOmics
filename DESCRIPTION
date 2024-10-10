@@ -1,7 +1,7 @@
 Package: mixOmics
 Type: Package
 Title: Omics Data Integration Project
-Version: 6.25.1
+Version: 6.29.1
 Depends: R (>= 3.5.0), 
          MASS, 
          lattice, 
@@ -40,8 +40,13 @@ Authors@R:
       person("Ignacio", "Gonzalez", role = "aut"),
       person("Sebastien", "Dejean", role = "aut"), 
       ## key contributors
+<<<<<<< HEAD
       person("Al J", "Abadi", role = c("ctb"), email = "al.jal.abadi@gmail.com"), 
       person("Max", "Bladen", role = c("ctb"), email = "mbladen19@gmail.com"), 
+=======
+      person("Al J", "Abadi", role = "ctb", email = "al.jal.abadi@gmail.com"), 
+      person("Max", "Bladen", role = "ctb", email = "mbladen19@gmail.com"), 
+>>>>>>> c3059149021bcb2016847fbf69321acef98f7db0
       person("Benoit", "Gautier", role = "ctb"), 
       person("Francois", "Bartolo", role = "ctb"), 
       ## also contributions from
