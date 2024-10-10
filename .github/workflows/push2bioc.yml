@@ -58,11 +58,14 @@ jobs:
             git push origin $source_branch:$bioc_branch
           else
             # show diffs
+            git checkout -b tmp
+            git reset --hard tmp bioc/$bioc_branch
+
             echo "source vs bioc:\n\n"
-            git log $source_branch..bioc/$bioc_branch --oneline --decorate
+            git log $source_branch..tmp --oneline --decorate
 
             echo "bioc vs source:\n\n"
-            git log bioc/$bioc_branch..$source_branch --oneline --decorate
+            git log tmp..$source_branch --oneline --decorate
           fi
         env:
           SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY_BIOC_MAINTAINER }}
