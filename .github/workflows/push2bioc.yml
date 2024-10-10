@@ -5,8 +5,16 @@ on:
         description: "Type 'push' to push, 'pull' to pull latest changes from Bioconductor's remote. Otherwise, only diff with remote is shown."
         required: true
         default: "show diff only"
+      source_branch:
+        description: "The source branch from GitHub"
+        required: true
+        default: "devel"
+      bioc_branch:
+        description: "The target branch from Bioc"
+        required: true
+        default: "devel"
 
-name: "Push to Bioconductor"
+name: "Connect to Bioconductor Repository"
 
 jobs:
   push:
@@ -17,7 +25,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Push to Bioconductor
+      - name: Connect to Bioconductor Repository
         run: |
           wd=$PWD
           #--- log setup: log everything in log/log.out
