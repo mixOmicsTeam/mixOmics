@@ -169,6 +169,13 @@ jobs:
           devtools::check(args = c("--no-manual"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
+      - name: BiocCheck 🧬 ✅
+        if: (!contains(github.event.head_commit.message, 'skip-check'))
+        run: |
+          BiocManager::install("BiocCheck", Ncpus=2)
+          BiocCheck::BiocCheck(".")
+        shell: Rscript {0}
+
       - name: Check --as-cran ✅ ✅ 
         if: (github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
         env:
@@ -176,13 +183,6 @@ jobs:
         run: |
           options(devtools.check.dir = "check/asCRAN", devtools.check.warning = "never")
           devtools::check(args = c("--no-manual", "--as-cran", "--ignore-vignettes", "--run-dontrun"), build_args = c("--no-build-vignettes"))
-        shell: Rscript {0}
-
-      - name: BiocCheck 🧬 ✅
-        if: (github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
-        run: |
-          BiocManager::install("BiocCheck", Ncpus=2)
-          BiocCheck::BiocCheck(".")
         shell: Rscript {0}
 
       - name: Upload check results ⬆️
