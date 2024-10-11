@@ -228,7 +228,7 @@ auroc.list <-
     
     # generate plot
     p = ggplot(df, aes(x=Specificity, y=Sensitivity)) + 
-      geom_line(aes(linetype=model, color=Outcome), size = 1.1) +
+      geom_line(aes(linetype=model, color=Outcome), linewidth = 1.1) +
       xlab("100 - Specificity (%)") + 
       ylab("Sensitivity (%)") + 
       scale_x_continuous(breaks=seq(0, 100, by = 10)) + 

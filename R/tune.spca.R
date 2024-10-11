@@ -65,7 +65,7 @@ tune.spca <- function(X,
     
     if (any(is.na(X))) {
       X[which(is.na(X))] <- 0
-      warning("There were NAs present in the input dataframe. These were converted to 0 values. If you don't want these as 0, handle missing values prior to tuning.", call. = F)
+      warning("There were NAs present in the input dataframe. These were converted to 0 values. If you don't want these as 0, handle missing values prior to tuning.", call. = FALSE)
     }
     
     ## ------ component loop

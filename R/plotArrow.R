@@ -204,11 +204,12 @@ plotArrow <- function(object,
         y <- paste0('y_', block)
         df <- variates[,c(x, y, 'group')]
         df$pch <- block
-        p <- p + geom_point(data = df, aes_string(x = x, 
-                                                  y = y,
-                                                  col =  'group',
-                                                  shape = 'pch'),
-                            size = pch.size)
+        # Convert variable names from strings to symbols
+        p <- p + geom_point(data = df, aes(x = !!sym(x), 
+                                               y = !!sym(y),
+                                               col = !!sym('group'),
+                                               shape = !!sym('pch')),
+                                size = pch.size)
     }
     p <- p + scale_color_manual(values = col.per.group, guide = if (isTRUE(legend)) guide_legend(title = legend.title) else NULL)
     p <- p +  scale_shape_manual(values = pch, guide = if (pch.legend) guide_legend(title = 'Block') else NULL)
@@ -232,9 +233,9 @@ plotArrow <- function(object,
         
         
         p <- p + 
-            geom_text(mapping = aes_string(x = x_label,
-                                           y = y_label,
-                                           label = 'ind.names'
+            geom_text(mapping = aes(x = !!sym(x_label),
+                                    y = !!sym(y_label),
+                                    label = !!sym('ind.names')
             ), 
             size = ind.names.size,
             show.legend = FALSE, vjust=-0.1, hjust=-0.1)
@@ -260,7 +261,7 @@ plotArrow <- function(object,
                                   ),
                                   alpha = arrow.alpha,
                                   arrow = arrow(type='closed', angle = 30, length = unit(arrow.length, "cm"), ends = 'last'),
-                                  size = arrow.size,
+                                  linewidth = arrow.size,
                                   show.legend = FALSE
             )
         }

@@ -193,7 +193,6 @@ panel.ellipses = function(x, y, Y = Y, pch = par("pch"), col.lm = "red", axes = 
     cdg = lapply(matrice, colMeans)
     variance = lapply(matrice, var)
     
-    #library(ellipse)
     coord.ellipse = lapply(1:nlevels(Y), function(x){ellipse(variance[[x]], centre = cdg[[x]], ellipse.level = 0.95)})
     max.ellipse = sapply(coord.ellipse, function(x){apply(x, 2, max)})
     min.ellipse = sapply(coord.ellipse, function(x){apply(x, 2, min)})

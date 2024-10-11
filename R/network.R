@@ -927,7 +927,7 @@ network <- function(mat,
     
     # Generation of the graph with all the significant edges #
     #--------------------------------------------------------#
-    gR = graph.data.frame(relations, directed = FALSE, vertices = nodes)
+    gR = graph_from_data_frame(relations, directed = FALSE, vertices = nodes)
     
     # nodes attributes #
     #------------------#
@@ -987,7 +987,7 @@ network <- function(mat,
     E(gR)$width[E(gR)$weight < 0] = lwd.edge[2]
     
     
-    gR = delete.vertices(gR, which(degree(gR) == 0))
+    gR = delete_vertices(gR, which(degree(gR) == 0))
     
     # plot attributes #
     #-----------------#

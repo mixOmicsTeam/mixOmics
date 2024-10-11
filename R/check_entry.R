@@ -728,7 +728,7 @@ Check.entry.wrapper.mint.block = function(X,
     {
       vars <- apply(A[[q]], 2, sd)^2
       if (length(which(vars==0)) >0) {
-        stop(sprintf("There are features with zero variance in block '%s'. If nearZeroVar() function or 'near.zero.var' parameter hasn't been used,  please use it. If you have used one of these, you may need to manually filter out these features.", names(A)[q]), call.=F)
+        stop(sprintf("There are features with zero variance in block '%s'. If nearZeroVar() function or 'near.zero.var' parameter hasn't been used,  please use it. If you have used one of these, you may need to manually filter out these features.", names(A)[q]), call.=FALSE)
       }
     }
     return(list(A=A, ncomp=ncomp, study=study, keepA=keepA,

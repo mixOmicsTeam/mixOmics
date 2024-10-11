@@ -1,7 +1,7 @@
 # -----------------------------------------
 # --- small example but see help file
 # ----------------------------------------
-#library(mixOmics)
+
 #data(liver.toxicity)
 #X <- liver.toxicity$gene
 #Y <- liver.toxicity$clinic

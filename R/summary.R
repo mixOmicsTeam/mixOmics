@@ -176,7 +176,7 @@ summary.mixo_pls <-
         #-- valeurs sortantes --#
         result$what = what
         result$digits = digits
-        if(class(object)[1] == "pls") {
+        if(is(object, "pls")) {
             result$method = 'pls'
         } 
         else {
