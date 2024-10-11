@@ -17,7 +17,6 @@
 #' denoted \eqn{\hat{x}}.
 #' @author Brendan Lu
 #' @keywords internal
-#' @noRd
 .apply_mat_transform <- function(x, mat, bpparam) {
   if (length(dim(x)) == 1) {
     return(mat %*% x)
@@ -63,7 +62,6 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
-#' @noRd
 .stop_invalid_transform_input <- function(m, minv, t, bpparam) {
   if (
     xor(is.function(m), is.function(minv)) ||
@@ -158,7 +156,6 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
 #'
 #' @author Brendan Lu
 #' @keywords internal
-#' @noRd
 .binary_facewise <- function(a, b, bpparam) {
   na <- dim(a)[1]
   pa <- dim(a)[2]
