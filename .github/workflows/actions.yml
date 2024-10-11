@@ -179,7 +179,7 @@ jobs:
         shell: Rscript {0}
 
       - name: BiocCheck 🧬 ✅
-        if: github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics'
+        if: (github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
         run: |
           BiocManager::install("BiocCheck", Ncpus=2)
           BiocCheck::BiocCheck(".")
