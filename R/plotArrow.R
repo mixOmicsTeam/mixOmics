@@ -260,7 +260,7 @@ plotArrow <- function(object,
                                   ),
                                   alpha = arrow.alpha,
                                   arrow = arrow(type='closed', angle = 30, length = unit(arrow.length, "cm"), ends = 'last'),
-                                  size = arrow.size,
+                                  linewidth = arrow.size,
                                   show.legend = FALSE
             )
         }
