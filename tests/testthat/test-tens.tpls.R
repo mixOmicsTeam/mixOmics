@@ -31,7 +31,8 @@ test_that(
     #
     # problem 3: if you use centering (on for tpca and tpls by default), the
     # faces of each tensor loses one rank, so only rank - 1 columns of each face
-    # in the loadings tensor ("v") will match.
+    # in the loadings tensor ("v") will match. for tsvdm mode this means we get
+    # one less column to compare.
     #
     # problem 4: tpls computes the svd on XtX, which is rank-deficient if X is
     # non-square. this means that the last few columns of "v" are absolutely
@@ -41,7 +42,6 @@ test_that(
     p <- 5
     t <- 3
     k <- min(n, p)
-    ncomp_input <- 2
 
     # this test fails if `test_tensor` is rank deficient, as is the case if we
     # use array(1:24, dim = c(3, 4, 2))
@@ -54,7 +54,6 @@ test_that(
 
     tpca_obj <- tpca(
       test_tensor,
-      ncomp = ncomp_input,
       m = m,
       minv = minv,
       # turn off centering to get over problem 3
@@ -63,9 +62,8 @@ test_that(
       matrix_output = FALSE
     )
 
-    tpls_obj <- tpls(
+    tpls_tsvdm <- tpls(
       test_tensor, test_tensor,
-      ncomp = ncomp_input,
       m = m,
       minv = minv,
       mode = "tsvdm",
@@ -79,13 +77,59 @@ test_that(
     expect_equal(
       abs(tpca_obj$loadings),
       # only compare k columns to get over problem 4
-      abs(tpls_obj$y_loadings[, 1:k, ])
+      abs(tpls_tsvdm$y_loadings[, 1:k, ])
     )
 
     expect_equal(
       abs(tpca_obj$variates),
-      abs(tpls_obj$y_projected)
+      abs(tpls_tsvdm$y_projected)
     )
+  }
+)
+
+test_that(
+  "the first component of tpls regression and canonical match tpca",
+  code = {
+    n <- 4
+    p <- 5
+    t <- 3
+    k <- min(n, p)
+
+    set.seed(1)
+    test_tensor <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
+
+    transforms <- dctii_m_transforms(t)
+    m <- transforms$m
+    minv <- transforms$minv
+
+    tpca_obj <- tpca(
+      test_tensor,
+      m = m,
+      minv = minv
+    )
+
+    tpls_regression <- tpls(
+      test_tensor, test_tensor,
+      m = m,
+      minv = minv,
+      mode = "regression",
+    )
+
+    expect_equal(tpls_regression$y_loadings[, 1], tpca_obj$loadings[, 1])
+
+    expect_equal(
+      .make_signs_consistent(tpls_regression$y_loadings[, 1:3]),
+      .make_signs_consistent(tpca_obj$loadings[, 1:3])
+    )
+
+    tpls_canonical <- tpls(
+      test_tensor, test_tensor,
+      m = m,
+      minv = minv,
+      mode = "canonical",
+    )
+
+    expect_equal(tpls_canonical$y_loadings[, 1], tpca_obj$loadings[, 1])
   }
 )
 
@@ -97,7 +141,7 @@ test_that(
     q <- 9
     t <- 1
     k <- min(n, p, q)
-    ncomp_input <- 2
+    ncomp_input <- 4
 
     set.seed(1)
     test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
@@ -152,7 +196,7 @@ test_that(
     q <- 10
     t <- 1
     k <- min(n, p, q)
-    ncomp_input <- 2
+    ncomp_input <- 4
 
     set.seed(1)
     test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))

@@ -9,6 +9,7 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .obtain_k_t_flatten_sort <- function(s_mat, ncomp) {
   # bltodo: if ultimately only use once just place it in function body directly
   return(
@@ -25,6 +26,7 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .obtain_k_t_top <- function(s_mat) {
   flat_index <- which.max(as.vector(s_mat))
   nrows <- dim(s_mat)[1]
@@ -38,6 +40,7 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .validate_tpls_x_y_dim <- function(x, y) {
   if (length(dim(x)) != 3) {
     stop("Please ensure x input tensor is an order-3 array")
@@ -74,7 +77,11 @@
 
 #' Tensor PLS-like regression
 #'
-#' Developed @ Melbourne Integrative Genomics
+#' Developed @ Melbourne Integrative Genomics. Intuition: Fourier-based m
+#' transforms compact the data across time points, but preserve the information
+#' association for each sample and each feature. In doing so, pls works by
+#' calculating the singular vectors associated with a 'global' (across time
+#' points) top singular value, and deflating just that relevant face.
 #'
 #' @param x Tensor input.
 #' @param y Tensor input.
@@ -82,8 +89,9 @@
 #' as an integer in tpls.
 #' @param m A function which applies an orthogonal tensor tubal transform.
 #' @param minv The inverse of m.
-#' @param mode Currently supports tensor analogues of canonical, regression,
-#' and svd PLS modes. Defaults to "regression" mode.
+#' @param mode Currently supports tensor analogues of canonical ("canonical"),
+#' regression ("regression"), and svd ("tsvdm") PLS variants. Defaults to
+#' "regression".
 #' @param center If set to false, the data tensor will not be centralized into
 #' Mean Deviation Form (see Mor et al. 2022). By default, the mean horizontal
 #' slice of the input tensor(s) are subtracted, so that all of the horizontal
@@ -160,6 +168,7 @@ tpls <- function(
     # simplest algorithm - just uses everything from the tsvdm call of XtY based
     # without any deflation steps
     tsvdm_decomposition_xty <- tsvdm(
+      # bltodo: change to facewise_crossproduct when this is improved
       ft(xhat) %fp% yhat,
       transform = FALSE,
       svals_matrix_form = TRUE
@@ -205,7 +214,11 @@ tpls <- function(
     for (i in seq_len(ncomp)) {
       # compute tsvdm
       # BLTODO: tensor crossprod to speed up?
+      # bltodo: minor as ncomp is usually small, but we technically do not need
+      # to recalculate the whole tsvdmm, we only need svd re-done on the face
+      # that was deflated as everything else is still the same
       tsvdm_decomposition_xty <- tsvdm(
+        # bltodo: change to facewise_crossproduct when this is improved
         ft(xhat) %fp% yhat,
         transform = FALSE,
         svals_matrix_form = TRUE
@@ -258,6 +271,7 @@ tpls <- function(
       ncomp = ncomp,
       x = x,
       y = y,
+      mode = mode,
       x_loadings = x_loadings,
       y_loadings = y_loadings,
       x_projected = x_projected,

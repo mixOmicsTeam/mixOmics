@@ -17,6 +17,7 @@
 #' denoted \eqn{\hat{x}}.
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .apply_mat_transform <- function(x, mat, bpparam) {
   if (length(dim(x)) == 1) {
     return(mat %*% x)
@@ -62,6 +63,7 @@
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .stop_invalid_transform_input <- function(m, minv, t, bpparam) {
   if (
     xor(is.function(m), is.function(minv)) ||
@@ -156,6 +158,7 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
 #'
 #' @author Brendan Lu
 #' @keywords internal
+#' @noRd
 .binary_facewise <- function(a, b, bpparam) {
   na <- dim(a)[1]
   pa <- dim(a)[2]
@@ -279,8 +282,40 @@ m_product <- function(
   }
   return(minv(
     Reduce(
+      # bpparam MUST be NULL here to prevent double parallelisation!
       function(a, b) .binary_facewise(a, b, bpparam = NULL),
       lapply(list(...), m)
     )
   ))
+}
+
+#' Tensor cross product
+#'
+#' Compute the equivalent of ft(a) %fp% b
+#'
+#' @param a Tensor input.
+#' @param b Tensor input.
+#' @return Tensor facewise cross product.
+#' @author Brendan Lu
+#' @export
+facewise_crossproduct <- function(a, b) {
+  na <- dim(a)[1]
+  pa <- dim(a)[2]
+  ta <- dim(a)[3]
+
+  nb <- dim(b)[1]
+  pb <- dim(b)[2]
+  tb <- dim(b)[3]
+
+  # error: different t for each input
+  stopifnot(ta == tb)
+  t <- ta
+  # error: non-conforming facewise dimensions
+  stopifnot(na == nb)
+
+  fcp_ab <- array(0, dim = c(pa, pb, t))
+  for (i in seq_len(t)) {
+    fcp_ab[, , i] <- crossprod(a[, , i], b[, , i])
+  }
+  return(fcp_ab)
 }

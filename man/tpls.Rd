@@ -28,8 +28,9 @@ as an integer in tpls.}
 
 \item{minv}{The inverse of m.}
 
-\item{mode}{Currently supports tensor analogues of canonical, regression,
-and svd PLS modes. Defaults to "regression" mode.}
+\item{mode}{Currently supports tensor analogues of canonical ("canonical"),
+regression ("regression"), and svd ("tsvdm") PLS variants. Defaults to
+"regression".}
 
 \item{center}{If set to false, the data tensor will not be centralized into
 Mean Deviation Form (see Mor et al. 2022). By default, the mean horizontal
@@ -47,7 +48,11 @@ of parallelisation. Does not have any effect if transform functions
 explicitly set using \code{m}, \code{minv}.}
 }
 \description{
-Developed @ Melbourne Integrative Genomics
+Developed @ Melbourne Integrative Genomics. Intuition: Fourier-based m
+transforms compact the data across time points, but preserve the information
+association for each sample and each feature. In doing so, pls works by
+calculating the singular vectors associated with a 'global' (across time
+points) top singular value, and deflating just that relevant face.
 }
 \author{
 Brendan Lu
