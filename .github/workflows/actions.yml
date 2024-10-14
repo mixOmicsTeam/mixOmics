@@ -207,15 +207,41 @@ jobs:
           tags: ${{ needs.versions.outputs.docker_tag }}
           build_args: BIOC_VERSION=${{ needs.versions.outputs.bioc }} 
 
-      - name: Create coverage report 🔍
+      - name: Test coverage
         if: (runner.os == 'Linux' && github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (runner.os == 'Linux' && github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
-        # the commands between 'set +e' and 'set -e' are run without throwing any error
         run: |
-          set +e
-          Rscript -e "covr::codecov(type = c('tests', 'examples'))"
-          set -e
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          cov <- covr::package_coverage(
+            quiet = FALSE,
+            clean = FALSE,
+            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+          )
+          print("Coverage calculated!")
+          print(cov)
+          covr::to_cobertura(cov)
+        shell: Rscript {0}
+  
+      - uses: codecov/codecov-action@v4
+        if: (runner.os == 'Linux' && github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (runner.os == 'Linux' && github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
+        with:
+          file: ./cobertura.xml
+          plugin: noop
+          disable_search: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      # - name: Create coverage report 🔍
+      #   if: (runner.os == 'Linux' && github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (runner.os == 'Linux' && github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
+      #   # the commands between 'set +e' and 'set -e' are run without throwing any error
+      #   run: |
+      #     set +e
+      #     echo "Checking if covr is installed..."
+      #     Rscript -e "if (!requireNamespace('covr', quietly = TRUE)) install.packages('covr')"
+      #     echo "Generating coverage report..."
+      #     Rscript -e "cov <- covr::package_coverage(type = c('tests', 'examples')); print(cov)"
+      #     echo "Uploading coverage report..."
+      #     Rscript -e "covr::codecov(coverage = cov)"
+      #     set -e
+      #   env:
+      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       # - name: Notify Slack 📣
       #   uses: 8398a7/action-slack@v3
