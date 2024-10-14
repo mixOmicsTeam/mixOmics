@@ -207,26 +207,63 @@ jobs:
       #     tags: ${{ needs.versions.outputs.docker_tag }}
       #     build_args: BIOC_VERSION=${{ needs.versions.outputs.bioc }} 
 
-      - name: Test coverage
+      - name: Create coverage report 🔍
         if: (runner.os == 'Linux' && github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (runner.os == 'Linux' && github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
         run: |
-          cov <- covr::package_coverage(
-            quiet = FALSE,
-            clean = FALSE,
-            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
-          )
-          print("Coverage calculated!")
-          print(cov)
-          covr::to_cobertura(cov)
-        shell: Rscript {0}
-  
-      - uses: codecov/codecov-action@v4
+          set +e
+          echo "Checking if covr is installed..."
+          Rscript -e "if (!requireNamespace('covr', quietly = TRUE)) install.packages('covr')"
+
+          echo "Generating and saving coverage report..."
+          # Print RUNNER_TEMP path for debugging
+          echo "RUNNER_TEMP path: $RUNNER_TEMP"
+
+          # Generate coverage object, print temp installation path, and save it
+          Rscript -e "
+            install_path <- file.path(normalizePath(Sys.getenv('RUNNER_TEMP'), winslash = '/'), 'package')
+            print(paste('Installation path:', install_path))
+            cov <- covr::package_coverage(
+              quiet = FALSE,
+              clean = FALSE,
+              install_path = install_path
+            )
+            print('Coverage calculated!')
+            saveRDS(cov, 'coverage.rds')
+            print(cov)"
+          set -e
+
+      - name: Upload coverage report to Codecov
         if: (runner.os == 'Linux' && github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (runner.os == 'Linux' && github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
-        with:
-          file: ./cobertura.xml
-          plugin: noop
-          disable_search: true
-          token: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          set +e
+          echo "Uploading coverage report to Codecov..."
+          # Load coverage object from saved file and upload to Codecov
+          Rscript -e "cov <- readRDS('coverage.rds'); covr::codecov(coverage = cov)"
+          set -e
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+
+      # - name: Test coverage
+      #   if: (runner.os == 'Linux' && github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (runner.os == 'Linux' && github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
+      #   run: |
+      #     cov <- covr::package_coverage(
+      #       quiet = FALSE,
+      #       clean = FALSE,
+      #       install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+      #     )
+      #     print("Coverage calculated!")
+      #     print(cov)
+      #     covr::to_cobertura(cov)
+      #   shell: Rscript {0}
+  
+      # - uses: codecov/codecov-action@v4
+      #   if: (runner.os == 'Linux' && github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (runner.os == 'Linux' && github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
+      #   with:
+      #     file: ./cobertura.xml
+      #     plugin: noop
+      #     disable_search: true
+      #     token: ${{ secrets.CODECOV_TOKEN }}
 
       # - name: Create coverage report 🔍
       #   if: (runner.os == 'Linux' && github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (runner.os == 'Linux' && github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
