@@ -230,15 +230,22 @@ jobs:
             print('Coverage calculated!')
             saveRDS(cov, 'coverage.rds')
             print(cov)"
+          echo "Files in current directory:"
+          ls -l
           set -e
 
       - name: Upload coverage report to Codecov
         if: (runner.os == 'Linux' && github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (runner.os == 'Linux' && github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
         run: |
           set +e
-          echo "Uploading coverage report to Codecov..."
-          # Load coverage object from saved file and upload to Codecov
-          Rscript -e "cov <- readRDS('coverage.rds'); covr::codecov(coverage = cov)"
+          echo "Checking for coverage.rds file before uploading..."
+          if [ -f "coverage.rds" ]; then
+            echo "coverage.rds found, proceeding with upload..."
+            Rscript -e "cov <- readRDS('coverage.rds'); covr::codecov(coverage = cov)"
+          else
+            echo "Error: coverage.rds not found!"
+            exit 1
+          fi
           set -e
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
