@@ -207,31 +207,48 @@ jobs:
       #     tags: ${{ needs.versions.outputs.docker_tag }}
       #     build_args: BIOC_VERSION=${{ needs.versions.outputs.bioc }} 
 
+      - name: Check and Install covr
+        run: |
+          Rscript -e "
+            if (!requireNamespace('covr', quietly = TRUE)) {
+              install.packages('covr')
+              message('covr package was not installed and has been installed.')
+            } else {
+              message('covr package is already installed.')
+            }
+          "
+
       - name: Create coverage report 🔍
         if: (runner.os == 'Linux' && github.event_name == 'schedule' && github.repository == 'mixOmicsTeam/mixOmics') || (runner.os == 'Linux' && github.event_name == 'workflow_dispatch' && github.repository == 'mixOmicsTeam/mixOmics')
         run: |
-          set +e
-          echo "Checking if covr is installed..."
-          Rscript -e "if (!requireNamespace('covr', quietly = TRUE)) install.packages('covr')"
-
-          echo "Generating and saving coverage report..."
-          # Print RUNNER_TEMP path for debugging
-          echo "RUNNER_TEMP path: $RUNNER_TEMP"
-
-          # Generate coverage object, print temp installation path, and save it
           Rscript -e "
-            install_path <- file.path(normalizePath(Sys.getenv('RUNNER_TEMP'), winslash = '/'), 'package')
-            print(paste('Installation path:', install_path))
+          install_path <- file.path(normalizePath(Sys.getenv('RUNNER_TEMP'), winslash = '/'), 'package')
+          print(paste('Installation path:', install_path))
+          
+          # Enable verbose output and print details during coverage collection
+          options(covr.verbose = TRUE)
+          
+          # Wrap in try-catch to handle and print errors
+          tryCatch({
             cov <- covr::package_coverage(
               quiet = FALSE,
               clean = FALSE,
-              install_path = install_path
+              install_path = install_path,
+              type = "tests"
             )
-            print('Coverage calculated!')
-            saveRDS(cov, 'coverage.rds')
-            print(cov)"
-          echo "Files in current directory:"
-          ls -l
+            print('Coverage successfully generated:')
+            print(cov)
+            saveRDS(cov, file.path(Sys.getenv('RUNNER_TEMP'), 'coverage.rds'))
+          }, error = function(e) {
+            print('Error during package_coverage:')
+            print(e)
+            traceback()
+            stop(e)  # Re-raise the error to halt the process
+          })
+          "
+
+          echo "Files in RUNNER_TEMP directory:"
+          ls $RUNNER_TEMP
           set -e
 
       - name: Upload coverage report to Codecov
