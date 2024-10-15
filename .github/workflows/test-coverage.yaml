@@ -47,6 +47,7 @@ jobs:
           plugin: noop
           disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
+          commit_parent: "false"
 
       - name: Show testthat output
         if: always()
