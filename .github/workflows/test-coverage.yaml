@@ -1,5 +1,6 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+
 on:
   push:
     branches-ignore: 
@@ -32,13 +33,42 @@ jobs:
 
       - name: Test coverage
         run: |
-          cov <- covr::package_coverage(
-            quiet = FALSE,
-            clean = FALSE,
-            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
-          )
-          covr::to_cobertura(cov)
+          # Set covr verbose mode for detailed debugging
+          options(covr.verbose = TRUE)
+          
+          # Try-catch to capture errors and print traceback
+          tryCatch({
+            cov <- covr::package_coverage(
+              quiet = FALSE,
+              clean = TRUE,  # Ensures fresh environment for coverage
+              type = "tests",
+              install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+            )
+            print("covr::package_coverage run successfully!")
+            
+            # Save coverage results
+            covr::to_cobertura(cov)
+          }, error = function(e) {
+            print("Error during package_coverage:")
+            print(e)
+            traceback()
+            stop(e)  # Re-raise the error to stop the process
+          })
         shell: Rscript {0}
+
+      - name: Show testthat output
+        if: always()  # Always show the testthat output
+        run: |
+          ## Find and display testthat output (testthat.Rout)
+          find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
+
+      - name: Upload test results (if failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-test-failures
+          path: ${{ runner.temp }}/package
 
       - uses: codecov/codecov-action@v4
         with:
@@ -47,17 +77,3 @@ jobs:
           plugin: noop
           disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Show testthat output
-        if: always()
-        run: |
-          ## --------------------------------------------------------------------
-          find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
-
-      - name: Upload test results
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-test-failures
-          path: ${{ runner.temp }}/package
