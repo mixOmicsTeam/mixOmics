@@ -56,20 +56,6 @@ jobs:
           })
         shell: Rscript {0}
 
-      - name: Show testthat output
-        if: always()  # Always show the testthat output
-        run: |
-          ## Find and display testthat output (testthat.Rout)
-          find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
-
-      - name: Upload test results (if failure)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-test-failures
-          path: ${{ runner.temp }}/package
-
       - uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: ${{ github.event_name != 'pull_request' && true || false }}
@@ -77,3 +63,4 @@ jobs:
           plugin: noop
           disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
+          commit_parent: "false"
