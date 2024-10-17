@@ -1,6 +1,3 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
-# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
-
 on:
   push:
     branches-ignore: 
@@ -48,25 +45,27 @@ jobs:
           tryCatch({
             # Check if cache exists
             if (!file.exists('coverage_cache/covr_cache.rds')) {
-            print("No cache found, calculating coverage...") # No cache found, so calculate coverage
-            cov <- covr::package_coverage(
-              quiet = FALSE,
-              clean = TRUE,  # Ensures fresh environment for coverage
-              type = "tests",
-              install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
-            )
-            print("covr::package_coverage run successfully!")
-            # Save coverage to cache
-            saveRDS(cov, file = 'coverage_cache/covr_cache.rds')
-            print("Coverage calculated and saved to cache.")
-           } else {
-            # Load cached coverage
-            cov <- readRDS('coverage_cache/covr_cache.rds')
-            print("Cached coverage loaded successfully!")
+              # No cache found, so calculate coverage
+              cov <- covr::package_coverage(
+                quiet = FALSE,
+                clean = TRUE,  # Ensures fresh environment for coverage
+                type = "tests",
+                install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+              )
+              # Save coverage to cache
+              saveRDS(cov, file = 'coverage_cache/covr_cache.rds')
+              print("Coverage calculated and saved to cache.")
+            } else {
+              # Load cached coverage
+              cov <- readRDS('coverage_cache/covr_cache.rds')
+              print("Cached coverage loaded successfully!")
             }
             
-            # Save coverage results
+            # Save coverage results to Cobertura format
             covr::to_cobertura(cov)
+
+            # Generate an HTML report for local viewing
+            covr::coveralls(cov, output = "coverage_report")
           }, error = function(e) {
             print("Error during package_coverage:")
             print(e)
@@ -75,6 +74,15 @@ jobs:
           })
         shell: Rscript {0}
 
+      # Save cache after the coverage is calculated
+      - name: Save coverage to cache
+        uses: actions/cache@v3
+        with:
+          path: coverage_cache
+          key: coverage-${{ runner.os }}-${{ hashFiles('**/*') }}
+          # Ensure that the cache is only updated if there were no errors
+          if: success()
+
       - uses: codecov/codecov-action@v4
         with:
           file: ./cobertura.xml
@@ -82,3 +90,13 @@ jobs:
           disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
           commit_parent: "false"
+
+      # Optionally, display coverage HTML report if the upload fails
+      - name: Display Coverage Report
+        run: |
+          if [ -f coverage_report/index.html ]; then
+            echo "Coverage report generated. You can view it at:"
+            echo "$(pwd)/coverage_report/index.html"
+          else
+            echo "No coverage report found."
+          fi
