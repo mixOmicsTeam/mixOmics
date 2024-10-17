@@ -28,6 +28,11 @@ jobs:
           extra-packages: any::covr, any::xml2
           needs: coverage
 
+      # Create cache directory if it doesn't exist
+      - name: Create coverage cache directory
+        run: |
+          mkdir -p coverage_cache
+
       # Restore cached coverage (if available)
       - name: Restore cached coverage
         id: cache-coverage
@@ -43,6 +48,7 @@ jobs:
           
           # Try-catch to capture errors and print traceback
           tryCatch({
+
             # Check if cache exists
             if (!file.exists('coverage_cache/covr_cache.rds')) {
               # No cache found, so calculate coverage
@@ -52,9 +58,12 @@ jobs:
                 type = "tests",
                 install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
               )
+              print("Coverage calculated!")
+
               # Save coverage to cache
               saveRDS(cov, file = 'coverage_cache/covr_cache.rds')
-              print("Coverage calculated and saved to cache.")
+              print("Coverage saved to cache.")
+
             } else {
               # Load cached coverage
               cov <- readRDS('coverage_cache/covr_cache.rds')
@@ -66,6 +75,7 @@ jobs:
 
             # Generate an HTML report for local viewing
             covr::coveralls(cov, output = "coverage_report")
+            
           }, error = function(e) {
             print("Error during package_coverage:")
             print(e)
