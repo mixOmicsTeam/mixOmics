@@ -69,18 +69,10 @@ jobs:
               cov <- readRDS('coverage_cache/covr_cache.rds')
               print("Cached coverage loaded successfully!")
             }
-            
-            # Normalize paths for Cobertura output and HTML report
-            cobertura_file <- normalizePath('cobertura.xml', winslash = "/")
-            html_report_dir <- normalizePath('coverage_report', winslash = "/")
 
             # Save coverage results to Cobertura format
-            covr::to_cobertura(cov, file = cobertura_file)
+            covr::to_cobertura(cov, file = normalizePath('cobertura.xml', winslash = "/"))
             print("Coverage results saved to cobertuna format")
-
-            # Generate an HTML report for local viewing
-            covr::coveralls(cov, output = html_report_dir)
-            print("Coverage results saved to html format")
 
           }, error = function(e) {
             print("Error during package_coverage:")
@@ -96,16 +88,7 @@ jobs:
       - name: List files in cache directory
         run: ls -R coverage_cache  # Recursively list all files in the coverage_cache directory (if it exists)
 
-      # Save cache after the coverage is calculated
-      - name: Save coverage to cache
-        uses: actions/cache@v3
-        with:
-          path: coverage_cache
-          key: coverage-${{ runner.os }}-${{ hashFiles('**/*') }}
-          # Ensure that the cache is only updated if there were no errors
-          if: success()
-
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v3
         with:
           file: ./cobertura.xml
           plugin: noop
@@ -131,3 +114,12 @@ jobs:
             cobertura.xml
             coverage_report/
             coverage_cache/covr_cache.rds
+
+      # Save cache after the coverage is calculated
+      - name: Save coverage to cache
+        uses: actions/cache@v3
+        with:
+          path: coverage_cache
+          key: coverage-${{ runner.os }}-${{ hashFiles('**/*') }}
+          # Ensure that the cache is only updated if there were no errors
+          if: success()
