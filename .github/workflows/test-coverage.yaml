@@ -31,6 +31,14 @@ jobs:
           extra-packages: any::covr, any::xml2
           needs: coverage
 
+      # Restore cached coverage (if available)
+      - name: Restore cached coverage
+        id: cache-coverage
+        uses: actions/cache@v3
+        with:
+          path: coverage_cache
+          key: coverage-${{ runner.os }}-${{ hashFiles('**/*') }}
+
       - name: Test coverage
         run: |
           # Set covr verbose mode for detailed debugging
@@ -38,6 +46,9 @@ jobs:
           
           # Try-catch to capture errors and print traceback
           tryCatch({
+            # Check if cache exists
+            if (!file.exists('coverage_cache/covr_cache.rds')) {
+            print("No cache found, calculating coverage...") # No cache found, so calculate coverage
             cov <- covr::package_coverage(
               quiet = FALSE,
               clean = TRUE,  # Ensures fresh environment for coverage
@@ -45,6 +56,14 @@ jobs:
               install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
             )
             print("covr::package_coverage run successfully!")
+            # Save coverage to cache
+            saveRDS(cov, file = 'coverage_cache/covr_cache.rds')
+            print("Coverage calculated and saved to cache.")
+           } else {
+            # Load cached coverage
+            cov <- readRDS('coverage_cache/covr_cache.rds')
+            print("Cached coverage loaded successfully!")
+            }
             
             # Save coverage results
             covr::to_cobertura(cov)
