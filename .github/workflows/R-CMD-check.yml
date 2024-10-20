@@ -9,7 +9,7 @@ on:
   schedule:
     - cron: '0 8 * * 4'
 
-name: R-CMD-check
+name: R-CMD-check.yml
 
 jobs:
   ## pre-job to determine if a job has been run for the same SHA (e.g. on a different branch)
