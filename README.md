@@ -1,7 +1,7 @@
 
 <!-- PLEASE DO NOT EDIT ./README.md BY HAND, EDIT ./inst/README.Rmd AND RENDER TO CREATE ./README.md -->
 
-[![R-CMD-check](https://github.com/mixOmicsteam/mixOmics/workflows/R-CMD-check/badge.svg?event=pull_request)](https://github.com/mixOmicsteam/mixOmics/actions)
+[![R-CMD-check](https://github.com/mixOmicsteam/mixOmics/workflows/actions.yml/badge.svg?event=pull_request)](https://github.com/mixOmicsteam/mixOmics/actions)
 [![bioc release](https://img.shields.io/badge/bioc%20release-6.20.0-green.svg)](https://www.bioconductor.org/packages/mixOmics)
 [![BioC status](http://www.bioconductor.org/shields/build/release/bioc/mixOmics.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/mixOmics)
 [![codecov](https://codecov.io/github/mixOmicsTeam/mixOmics/graph/badge.svg?token=PzhCBOuU8o)](https://codecov.io/github/mixOmicsTeam/mixOmics)
