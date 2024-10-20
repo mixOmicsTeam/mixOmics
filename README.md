@@ -4,7 +4,7 @@
 [![R-CMD-check](https://github.com/mixOmicsteam/mixOmics/workflows/R-CMD-check/badge.svg?branch=master)](https://github.com/mixOmicsteam/mixOmics/actions)
 [![bioc release](https://img.shields.io/badge/bioc%20release-6.20.0-green.svg)](https://www.bioconductor.org/packages/mixOmics)
 [![BioC status](http://www.bioconductor.org/shields/build/release/bioc/mixOmics.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/mixOmics)
-[![Codecov](https://app.codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://app.codecov.io/gh/mixOmicsTeam/mixOmics)
+[![codecov](https://codecov.io/github/mixOmicsTeam/mixOmics/graph/badge.svg?token=PzhCBOuU8o)](https://codecov.io/github/mixOmicsTeam/mixOmics)
 [![download](http://www.bioconductor.org/shields/downloads/release/mixOmics.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![last commit](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
 [![license](https://img.shields.io/badge/license-GPL%20(%3E=%202)-lightgrey.svg)](https://choosealicense.com/)
