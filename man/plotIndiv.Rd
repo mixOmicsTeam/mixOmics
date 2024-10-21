@@ -358,7 +358,8 @@ data set to represent needs to be specified.}
 \item{group}{factor indicating the group membership for each sample, useful
 for ellipse plots. Coded as default for the supervised methods \code{PLS-DA,
 SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
-\code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}}
+\code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. Order of levels will reflect
+order in legends and correspond to any set colours.}
 
 \item{col.per.group}{character (or symbol) color to be used when 'group' is
 defined. Vector of the same length as the number of groups.}
