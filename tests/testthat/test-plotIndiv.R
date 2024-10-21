@@ -1,4 +1,5 @@
 context("plotIndiv")
+
 ## ------------------------------------------------------------------------ ##
 ## Input checking
 
@@ -271,27 +272,31 @@ test_that("ind.names validation", {
   expect_silent(plotIndiv(nutri.res, ind.names = nutri.res$sample_names))
 })
 
-
-
 ## ------------------------------------------------------------------------ ##
+## Test that outputs are correct when running default style = "ggplot2"
 
 test_that("plotIndiv works for rcc", {
   data(nutrimouse)
   X <- nutrimouse$lipid
   Y <- nutrimouse$gene
   nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
-
+  
   pl.res <- plotIndiv(nutri.res)
+  # check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], 0.87088852)
   
   pl.res <- plotIndiv(nutri.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
                       legend = TRUE)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], 0.8270997)
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(nutrimouse$genotype)))
 })
-
-## ------------------------------------------------------------------------ ##
-## Test that outputs are correct
 
 test_that("plotIndiv works for (s)pca", {
   data(srbct)
@@ -305,6 +310,8 @@ test_that("plotIndiv works for (s)pca", {
   
   # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], 10.13857)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
   # check colour assignments are correct
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "RMS"]), "red")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "NB"]), "blue")
@@ -312,6 +319,9 @@ test_that("plotIndiv works for (s)pca", {
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "BL"]), "black")
   # check right number of samples
   expect_equal(dim(pca.srbct$X)[1], dim(pl.res$df)[1])
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(groups)))
   
 })
 
@@ -332,6 +342,8 @@ test_that("plotIndiv works for (s)pls", {
   
   # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], 4.146771)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
   # check colour assignments are correct
   expect_equal(unique(pl.res$df$col[pl.res$df$group == 6]), "red")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == 18]), "blue")
@@ -339,10 +351,12 @@ test_that("plotIndiv works for (s)pls", {
   expect_equal(unique(pl.res$df$col[pl.res$df$group == 48]), "black")
   # check right number of samples
   expect_equal(dim(toxicity.spls$X)[1], dim(pl.res$df)[1])
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(liver.toxicity$treatment$Time.Group)))
   
 })
 
-## ------------------------------------------------------------------------ ##
 test_that("plotIndiv works for (s)plsda", {
   data(breast.tumors)
   X <- breast.tumors$gene.exp
@@ -352,6 +366,8 @@ test_that("plotIndiv works for (s)plsda", {
   pl.res <- plotIndiv(splsda.breast)
   # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], -1.075222)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
   # check colours
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "BE"]), "#F68B33")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "AF"]), "#388ECC")
@@ -359,7 +375,6 @@ test_that("plotIndiv works for (s)plsda", {
   expect_equal(dim(splsda.breast$X)[1], dim(pl.res$df)[1])
 })
 
-## ------------------------------------------------------------------------ ##
 test_that("plotIndiv works for (s)plsda and ellipses", {
   data(srbct)
   X <- srbct$gene
@@ -373,6 +388,8 @@ test_that("plotIndiv works for (s)plsda and ellipses", {
   
   # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], -6.83832)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
   # check colours
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "RMS"]), "red")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "NB"]), "blue")
@@ -382,9 +399,11 @@ test_that("plotIndiv works for (s)plsda and ellipses", {
   expect_equal(dim(srbct.splsda$X)[1], dim(pl.res$df)[1])
   # check ellipses
   expect_false(is.null(pl.res$df.ellipse))
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(groups)))
 })
 
-## ------------------------------------------------------------------------ ##
 test_that("plotIndiv works for (s)plsda and backgrounds", {
   data(srbct)
   X <- srbct$gene
@@ -399,39 +418,28 @@ test_that("plotIndiv works for (s)plsda and backgrounds", {
   
   # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], -6.83832)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
   # check right number of samples
   expect_equal(dim(srbct.splsda$X)[1], dim(pl.res$df)[1])
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(groups)))
 })
 
-## ------------------------------------------------------------------------ ##
-test_that("plotIndiv works for (s)pls", {
-  data(liver.toxicity)
-  X <- liver.toxicity$gene
-  Y <- liver.toxicity$clinic
-  toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
-                        keepY = c(10, 10, 10))
-  
-  pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
-                      group = liver.toxicity$treatment[, 'Time.Group'],
-                      pch = as.numeric(factor(liver.toxicity$treatment$Dose.Group)), 
-                      pch.levels =liver.toxicity$treatment$Dose.Group,
-                      legend = TRUE)
-  # check coordinates
-  .expect_numerically_close(pl.res$graph$data$x[1], 4.146771)
-  # check right number of samples
-  expect_equal(dim(toxicity.spls$X)[1], dim(pl.res$df)[1])
-  
-})
-## ------------------------------------------------------------------------ ##
 test_that("plotIndiv works for mint.(s)plsda", {
   data(stemcells)
   res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2, keepX = c(10, 5),
                     study = stemcells$study)
-  
   pl.res <-   plotIndiv(res)
+  # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], -1.543685)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "graph"))
+  # check right number of samples
+  expect_equal(dim(res$X)[1], dim(pl.res$df)[1])
 })
-## ------------------------------------------------------------------------ ##
+
 test_that("plotIndiv works for sgcca and rgcca", {
   data(nutrimouse)
   Y = unmap(nutrimouse$diet)
@@ -444,10 +452,14 @@ test_that("plotIndiv works for sgcca and rgcca", {
                                     scheme = "horst")
   
   pl.res <-  plotIndiv(nutrimouse.sgcca)
+  # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], 3.319955)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check right number of samples - here have 40 samples across 3 modalities (gene, lipid, Y)
+  expect_equal(dim(nutrimouse.sgcca$X$gene)[1] + dim(nutrimouse.sgcca$X$lipid)[1] + dim(nutrimouse.sgcca$X$Y)[1], dim(pl.res$df)[1])
 })
 
-## ------------------------------------------------------------------------ ##
 test_that("plotIndiv works for sgccda", {
   data(nutrimouse)
   Y = nutrimouse$diet
@@ -461,9 +473,16 @@ test_that("plotIndiv works for sgccda", {
                                        keepX = list(gene = c(10,10), lipid = c(15,15)),
                                        scheme = "centroid")
   pl.res <- plotIndiv(nutrimouse.sgccda1)
-  
+  # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], 2.448086)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check right number of samples - here have 40 samples across 2 modalities (gene, lipid)
+  expect_equal(dim(nutrimouse.sgccda1$X$gene)[1] + dim(nutrimouse.sgccda1$X$lipid)[1], dim(pl.res$df)[1])
+  
 })
+
+## ------------------------------------------------------------------------ ##
 
 test_that("plotIndiv.rcc works without ind.names", code = {
     data(nutrimouse)
@@ -475,8 +494,6 @@ test_that("plotIndiv.rcc works without ind.names", code = {
     
     expect_is(plotIndiv.res$graph, "ggplot")
 })
-
-## ------------------------------------------------------------------------ ##
 
 test_that("plotIndiv.sgcca(..., blocks = 'average') works", code = {
     data(nutrimouse)
