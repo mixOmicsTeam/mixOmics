@@ -291,6 +291,30 @@ test_that("plotIndiv works for rcc", {
 })
 
 ## ------------------------------------------------------------------------ ##
+## Test that outputs are correct
+
+test_that("plotIndiv works for (s)pca", {
+  data(srbct)
+  X <- srbct$gene
+  Y <- srbct$class
+  pca.srbct = pca(X, ncomp = 10, center = TRUE, scale = TRUE)
+  groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
+  pl.res <- plotIndiv(pca.srbct, group = groups, ind.names = FALSE, # plot the samples projected
+            legend = TRUE, title = 'PCA on SRBCT, comp 1 - 2',
+            col.per.group = c("red", "blue", "green", "black")) # onto the PCA subspace
+  
+  # check coordinates
+  .expect_numerically_close(pl.res$graph$data$x[1], 10.13857)
+  # check colour assignments are correct
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "RMS"]), "red")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "NB"]), "blue")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "EWS"]), "green")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "BL"]), "black")
+  # check right number of samples
+  expect_equal(dim(pca.srbct$X)[1], dim(pl.res$df)[1])
+  
+})
+
 test_that("plotIndiv works for (s)pls", {
   data(liver.toxicity)
   X <- liver.toxicity$gene
@@ -299,11 +323,23 @@ test_that("plotIndiv works for (s)pls", {
                         keepY = c(10, 10, 10))
   
   pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
-                      group = liver.toxicity$treatment[, 'Time.Group'],
-                      pch = as.numeric(factor(liver.toxicity$treatment$Dose.Group)), 
-                      pch.levels =liver.toxicity$treatment$Dose.Group,
+                      group = factor(liver.toxicity$treatment$Time.Group),
+                      legend.title = 'Time',
+                      col.per.group = c("red", "blue", "green", "black"),
+                      pch = factor(liver.toxicity$treatment$Dose.Group),
+                      legend.title.pch = 'Dose',
                       legend = TRUE)
+  
+  # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], 4.146771)
+  # check colour assignments are correct
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 6]), "red")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 18]), "blue")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 24]), "green")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 48]), "black")
+  # check right number of samples
+  expect_equal(dim(toxicity.spls$X)[1], dim(pl.res$df)[1])
+  
 })
 
 ## ------------------------------------------------------------------------ ##
@@ -311,11 +347,60 @@ test_that("plotIndiv works for (s)plsda", {
   data(breast.tumors)
   X <- breast.tumors$gene.exp
   Y <- breast.tumors$sample$treatment
-  
-  splsda.breast <- splsda(X, Y,keepX=c(10,10),ncomp=2)
+  splsda.breast <- splsda(X, Y,keepX=c(10,10), ncomp=2)
   
   pl.res <- plotIndiv(splsda.breast)
+  # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], -1.075222)
+  # check colours
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "BE"]), "#F68B33")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "AF"]), "#388ECC")
+  # check right number of samples
+  expect_equal(dim(splsda.breast$X)[1], dim(pl.res$df)[1])
+})
+
+## ------------------------------------------------------------------------ ##
+test_that("plotIndiv works for (s)plsda and ellipses", {
+  data(srbct)
+  X <- srbct$gene
+  Y <- srbct$class
+  srbct.splsda <- splsda(X, Y, ncomp = 10)
+  groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
+  pl.res <- plotIndiv(srbct.splsda , comp = 1:2, col.per.group = c("red", "blue", "green", "black"),
+            group = groups, ind.names = FALSE,  # colour points by class
+            ellipse = TRUE, # include 95% confidence ellipse for each class
+            legend = TRUE, title = '(a) PLSDA with confidence ellipses')
+  
+  # check coordinates
+  .expect_numerically_close(pl.res$graph$data$x[1], -6.83832)
+  # check colours
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "RMS"]), "red")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "NB"]), "blue")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "EWS"]), "green")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "BL"]), "black")
+  # check right number of samples
+  expect_equal(dim(srbct.splsda$X)[1], dim(pl.res$df)[1])
+  # check ellipses
+  expect_false(is.null(pl.res$df.ellipse))
+})
+
+## ------------------------------------------------------------------------ ##
+test_that("plotIndiv works for (s)plsda and backgrounds", {
+  data(srbct)
+  X <- srbct$gene
+  Y <- srbct$class
+  srbct.splsda <- splsda(X, Y, ncomp = 10)
+  groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
+  background = background.predict(srbct.splsda, comp.predicted=2, dist = "max.dist")
+  pl.res <- plotIndiv(srbct.splsda, comp = 1:2,
+            group = srbct$class, ind.names = FALSE, # colour points by class
+            background = background, # include prediction background for each class
+            legend = TRUE, title = " (b) PLSDA with prediction background")
+  
+  # check coordinates
+  .expect_numerically_close(pl.res$graph$data$x[1], -6.83832)
+  # check right number of samples
+  expect_equal(dim(srbct.splsda$X)[1], dim(pl.res$df)[1])
 })
 
 ## ------------------------------------------------------------------------ ##
@@ -331,7 +416,11 @@ test_that("plotIndiv works for (s)pls", {
                       pch = as.numeric(factor(liver.toxicity$treatment$Dose.Group)), 
                       pch.levels =liver.toxicity$treatment$Dose.Group,
                       legend = TRUE)
+  # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], 4.146771)
+  # check right number of samples
+  expect_equal(dim(toxicity.spls$X)[1], dim(pl.res$df)[1])
+  
 })
 ## ------------------------------------------------------------------------ ##
 test_that("plotIndiv works for mint.(s)plsda", {
