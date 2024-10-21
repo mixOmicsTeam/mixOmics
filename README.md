@@ -1,19 +1,18 @@
 
 <!-- PLEASE DO NOT EDIT ./README.md BY HAND, EDIT ./inst/README.Rmd AND RENDER TO CREATE ./README.md -->
 
-![version](https://img.shields.io/badge/version-1.2.3-blue)
-[![R-CMD-check](https://github.com/mixOmicsteam/mixOmics/workflows/R-CMD-check.yml/badge.svg?branch=master)](https://github.com/mixOmicsteam/mixOmics/actions)
-[![bioc release](https://img.shields.io/badge/bioc%20release-6.20.0-green.svg)](https://www.bioconductor.org/packages/mixOmics)
-[![BioC status](http://www.bioconductor.org/shields/build/release/bioc/mixOmics.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/mixOmics)
-[![codecov](https://codecov.io/github/mixOmicsTeam/mixOmics/graph/badge.svg?token=PzhCBOuU8o)](https://codecov.io/github/mixOmicsTeam/mixOmics)
+[![](https://img.shields.io/badge/release%20version-6.28.0-green.svg)](https://www.bioconductor.org/packages/mixOmics)
 [![download](http://www.bioconductor.org/shields/downloads/release/mixOmics.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
-[![last commit](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
+[![R build
+status](https://github.com/mixOmicsteam/mixOmics/workflows/R-CMD-check.yml/badge.svg)](https://github.com/mixOmicsteam/mixOmics/actions)
+[![](https://img.shields.io/github/last-commit/mixOmicsTeam/mixOmics.svg)](https://github.com/mixOmicsTeam/mixOmics/commits/master)
+[![](https://codecov.io/gh/mixOmicsTeam/mixOmics/branch/master/graph/badge.svg)](https://app.codecov.io/gh/mixOmicsTeam/mixOmics)
 [![license](https://img.shields.io/badge/license-GPL%20(%3E=%202)-lightgrey.svg)](https://choosealicense.com/)
 [![dependencies](http://bioconductor.org/shields/dependencies/release/mixOmics.svg)](http://bioconductor.org/packages/release/bioc/html/mixOmics.html#since)
 
 ![](http://mixomics.org/wp-content/uploads/2019/07/MixOmics-Logo-1.png)
 
-This repository contains the `R` package [now hosted on
+This repository contains the `R` package which is [hosted on
 Bioconductor](http://bioconductor.org/packages/release/bioc/html/mixOmics.html)
 and our stable and development `GitHub` versions.
 
@@ -22,72 +21,51 @@ and our stable and development `GitHub` versions.
 (**macOS users only:** Ensure you have installed
 [XQuartz](https://www.xquartz.org/) first.)
 
+### From Bioconductor
+
+The best way to install `mixOmics` is using `Bioconductor`. You can see
+the landing page for the release version of `mixOmics` on Bioconductor
+[here](https://bioconductor.org/packages/release/bioc/html/mixOmics.html).
+
 Make sure you have the latest R version and the latest `BiocManager`
 package installed following [these
-instructions](https://www.bioconductor.org/install/) (if you use legacy
-R versions (\<=3.5.0) refer to the instructions at the end of the
-mentioned page).
+instructions](https://www.bioconductor.org/install/).
 
 ``` r
 ## install BiocManager if not installed
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-```
 
-Ensure the following returns `TRUE`, or follow the guidelines provided
-by the output.
-
-``` r
-BiocManager::valid()
-```
-
-For installation in R, see options a) and b). For Docker containers, see
-c).
-
-#### a) Latest `Bioconductor` Release
-
-You can then install `mixOmics` using the following code:
-
-``` r
 ## install mixOmics
 BiocManager::install('mixOmics')
-```
 
-#### b) `GitHub` Versions
-
-##### Stable version
-
-Install the latest stable version (see below for latest
-[development](https://github.com/ajabadi/mixOmics#development-version)
-version) of `mixOmics` from `GitHub` (as bug-free as it can be):
-
-``` r
-BiocManager::install("mixOmicsTeam/mixOmics") 
-```
-
-Check after installation that the following code does not throw any
-error (especially Mac users - refer to [installation
-instructions](#installation)) and that the welcome message confirms you
-have installed [the latest
-version](https://github.com/mixOmicsTeam/mixOmics/blob/master/DESCRIPTION#L4):
-
-``` r
+## load mixOmics
 library(mixOmics) 
-#> Loaded mixOmics ?.?.?
 ```
 
-##### Development version
+### From Github
+
+Bioconductor versions are updated twice a year, between these updates
+you can downlod the latest stable version of `mixOmics` from `Github`
+using:
+
+``` r
+BiocManager::install('mixOmicsTeam/mixOmics')
+```
 
 You can also install the [development
-version](https://github.com/mixOmicsTeam/mixOmics/blob/devel/DESCRIPTION#L4)
-for new features yet to be widely tested (see [What’s
-New](/https://github.com/ajabadi/mixOmics#whats-new)):
+version](https://github.com/mixOmicsTeam/mixOmics/tree/development) for
+new features yet to be widely tested:
 
 ``` r
-BiocManager::install("mixOmicsTeam/mixOmics@devel")
+BiocManager::install("mixOmicsTeam/mixOmics@development")
 ```
 
-#### c) `Docker` container of the stable GitHub version
+### From `Docker` container
+
+You can install our latest stable Github version of `mixOmics` via our
+Docker container. You can do this by downloading and using the Docker
+desktop application or via the command line as described below.
 
 <details>
 <summary>
@@ -102,8 +80,8 @@ Click to expand
 **if your OS is not compatible with the latest version** download an
 older version of Docker from the following link:
 
--   MacOS: <https://docs.docker.com/docker-for-mac/release-notes/>
--   Windows: <https://docs.docker.com/docker-for-windows/release-notes/>
+- MacOS: <https://docs.docker.com/docker-for-mac/release-notes/>
+- Windows: <https://docs.docker.com/docker-for-windows/release-notes/>
 
 Then open your system’s command line interface (e.g. Terminal for MacOS
 and Command Promot for Windows) for the following steps.
@@ -133,7 +111,7 @@ to the following:
       > REPOSITORY                       TAG       IMAGE ID       CREATED         SIZE
       > mixomicsteam/mixomics            latest    e755393ac247   2 weeks ago     4.38GB
 
-4)  Active the container
+4)  Activate the container
 
 Running the following command activates the container. You must change
 `your_password` to a custom password of your own. You can also customise
@@ -198,9 +176,9 @@ tests on our datasets.
 Set up development environment
 </summary>
 
--   Install the latest version of R
--   Install RStudio
--   Clone this repo, checkout master branch, pull origin and then run:
+- Install the latest version of R
+- Install RStudio
+- Clone this repo, checkout master branch, pull origin and then run:
 
 ``` r
 install.packages("renv", Ncpus=4)
@@ -292,95 +270,89 @@ Thank you for using `mixOmics`!
 
 #### March 2022
 
--   bug fix implemented for [Issue
-    \#196](https://github.com/mixOmicsTeam/mixOmics/issues/196).
-    `perf()` can now handle features with a `(s)pls` which have near
-    zero variance.
--   bug fix implemented for [Issue
-    \#192](https://github.com/mixOmicsTeam/mixOmics/issues/192).
-    `predict()` can now handle when the testing and training data have
-    their columns in different orders.
--   bug fix implemented for [Issue
-    \#178](https://github.com/mixOmicsTeam/mixOmics/issues/178). If the
-    `indY` parameter is used in `block.spls()`, `circosPlot()` can now
-    properly identify the
-    ![Y](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Y "Y")
-    dataframe.
--   bug fix implemented for [Issue
-    \#172](https://github.com/mixOmicsTeam/mixOmics/issues/172).
-    `perf()` now returns values for the `choice.ncomp` component when
-    `nrepeat`
-    ![\< 3](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%3C%203 "< 3")
-    whereas before it would just return `NA`s.
--   bug fix implemented for [Issue
-    \#171](https://github.com/mixOmicsTeam/mixOmics/issues/171). `cim()`
-    now can take `pca` objects as input.
--   bug fix implemented for [Issue
-    \#161](https://github.com/mixOmicsTeam/mixOmics/issues/161).
-    `tune.spca()` can now handle `NA` values appropriately.
--   bug fix implemented for [Issue
-    \#150](https://github.com/mixOmicsTeam/mixOmics/issues/150).
-    Provided users with a specific error message for when `plotArrow()`
-    is run on a `(mint).(s)plsda` object.
--   bug fix implemented for [Issue
-    \#122](https://github.com/mixOmicsTeam/mixOmics/issues/122).
-    Provided users with a specific error message for when a `splsda`
-    object that has only one sample associated with a given class is
-    passed to `perf()`.
--   bug fix implemented for [Issue
-    \#120](https://github.com/mixOmicsTeam/mixOmics/issues/120).
-    `plotLoadings()` now returns the loading values for features from
-    **all** dataframes rather than just the last one when operating on a
-    `(mint).(block).(s)plsda` object.
--   bug fix implemented for [Issue
-    \#43](https://github.com/mixOmicsTeam/mixOmics/issues/43).
-    Homogenised the way in which `tune.mint.splsda()` and
-    `perf.mint.splsda()` calculate balanced error rate (BER) as there
-    was disparity between them. Also made the global BER a weighted
-    average of BERs across each study.
--   enhancement implemented for [Issue
-    \#30/#34](https://github.com/mixOmicsTeam/mixOmics/issues/34). The
-    parameter `verbose.call` was added to most of the methods. This
-    parameter allows users to access the specific values input into the
-    call of a function from its output.
--   bug fix implemented for [Issue
-    \#24](https://github.com/mixOmicsTeam/mixOmics/issues/24).
-    `background.predict()` can now operate on `mint.splsda` objects and
-    can be used as part of `plotIndiv()`.
+- bug fix implemented for [Issue
+  \#196](https://github.com/mixOmicsTeam/mixOmics/issues/196). `perf()`
+  can now handle features with a `(s)pls` which have near zero variance.
+- bug fix implemented for [Issue
+  \#192](https://github.com/mixOmicsTeam/mixOmics/issues/192).
+  `predict()` can now handle when the testing and training data have
+  their columns in different orders.
+- bug fix implemented for [Issue
+  \#178](https://github.com/mixOmicsTeam/mixOmics/issues/178). If the
+  `indY` parameter is used in `block.spls()`, `circosPlot()` can now
+  properly identify the $Y$ dataframe.
+- bug fix implemented for [Issue
+  \#172](https://github.com/mixOmicsTeam/mixOmics/issues/172). `perf()`
+  now returns values for the `choice.ncomp` component when `nrepeat`
+  $< 3$ whereas before it would just return `NA`s.
+- bug fix implemented for [Issue
+  \#171](https://github.com/mixOmicsTeam/mixOmics/issues/171). `cim()`
+  now can take `pca` objects as input.
+- bug fix implemented for [Issue
+  \#161](https://github.com/mixOmicsTeam/mixOmics/issues/161).
+  `tune.spca()` can now handle `NA` values appropriately.
+- bug fix implemented for [Issue
+  \#150](https://github.com/mixOmicsTeam/mixOmics/issues/150). Provided
+  users with a specific error message for when `plotArrow()` is run on a
+  `(mint).(s)plsda` object.
+- bug fix implemented for [Issue
+  \#122](https://github.com/mixOmicsTeam/mixOmics/issues/122). Provided
+  users with a specific error message for when a `splsda` object that
+  has only one sample associated with a given class is passed to
+  `perf()`.
+- bug fix implemented for [Issue
+  \#120](https://github.com/mixOmicsTeam/mixOmics/issues/120).
+  `plotLoadings()` now returns the loading values for features from
+  **all** dataframes rather than just the last one when operating on a
+  `(mint).(block).(s)plsda` object.
+- bug fix implemented for [Issue
+  \#43](https://github.com/mixOmicsTeam/mixOmics/issues/43). Homogenised
+  the way in which `tune.mint.splsda()` and `perf.mint.splsda()`
+  calculate balanced error rate (BER) as there was disparity between
+  them. Also made the global BER a weighted average of BERs across each
+  study.
+- enhancement implemented for [Issue
+  \#30/#34](https://github.com/mixOmicsTeam/mixOmics/issues/34). The
+  parameter `verbose.call` was added to most of the methods. This
+  parameter allows users to access the specific values input into the
+  call of a function from its output.
+- bug fix implemented for [Issue
+  \#24](https://github.com/mixOmicsTeam/mixOmics/issues/24).
+  `background.predict()` can now operate on `mint.splsda` objects and
+  can be used as part of `plotIndiv()`.
 
 #### July 2021
 
--   new function `plotMarkers` to visualise the selected features in
-    block analyses (see
-    <https://github.com/mixOmicsTeam/mixOmics/issues/134>)
--   `tune.spls` now able to tune the selected variables on both `X` and
-    `Y`. See `?tune.spls`
--   new function `impute.nipals` to impute missing values using the
-    nipals algorithm
--   new function `tune.spca` to tune the number of selected variables
-    for pca components
--   `circosPlot` now has methods for `block.spls` objects. It can now
-    handle similar feature names across blocks. It is also much more
-    customisable. See advanced arguments in `?circosPlot`
--   new `biplot` function for `pca` and `pls` objects. See
-    `?mixOmics::biplot`
--   `plotDiablo` now takes `col.per.group` (see \#119)
+- new function `plotMarkers` to visualise the selected features in block
+  analyses (see <https://github.com/mixOmicsTeam/mixOmics/issues/134>)
+- `tune.spls` now able to tune the selected variables on both `X` and
+  `Y`. See `?tune.spls`
+- new function `impute.nipals` to impute missing values using the nipals
+  algorithm
+- new function `tune.spca` to tune the number of selected variables for
+  pca components
+- `circosPlot` now has methods for `block.spls` objects. It can now
+  handle similar feature names across blocks. It is also much more
+  customisable. See advanced arguments in `?circosPlot`
+- new `biplot` function for `pca` and `pls` objects. See
+  `?mixOmics::biplot`
+- `plotDiablo` now takes `col.per.group` (see \#119)
 
 #### April 2020
 
--   weighted consensus plots for DIABLO objects now consider
-    per-component weights
+- weighted consensus plots for DIABLO objects now consider per-component
+  weights
 
 #### March 2020
 
--   `plotIndiv` now supports (weighted) consensus plots for block
-    analyses. See the example in [this
-    issue](https://github.com/mixOmicsTeam/mixOmics/issues/57)
--   `plotIndiv(..., ind.names=FALSE)` [warning
-    issue](https://github.com/mixOmicsTeam/mixOmics/issues/59) now fixed
+- `plotIndiv` now supports (weighted) consensus plots for block
+  analyses. See the example in [this
+  issue](https://github.com/mixOmicsTeam/mixOmics/issues/57)
+- `plotIndiv(..., ind.names=FALSE)` [warning
+  issue](https://github.com/mixOmicsTeam/mixOmics/issues/59) now fixed
 
 #### January 2020
 
--   `perf.block.splsda` now supports calculation of combined AUC
--   `block.splsda` bug which could drop some classes with
-    `near.zero.variance=TRUE` now fixed
+- `perf.block.splsda` now supports calculation of combined AUC
+- `block.splsda` bug which could drop some classes with
+  `near.zero.variance=TRUE` now fixed
