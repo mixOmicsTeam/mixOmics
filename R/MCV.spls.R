@@ -74,13 +74,12 @@ MCVfold.spls <- function(
     near.zero.var = FALSE,
     progressBar = FALSE,
     class.object,
-    cl,
     scale,
     misdata,
     is.na.A,
     #ind.NA,
     #ind.NA.col,
-    parallel
+    BPPARAM
 )
 {    #-- checking general input parameters --------------------------------------#
     #---------------------------------------------------------------------------#
@@ -438,17 +437,14 @@ MCVfold.spls <- function(
             #result.all[[j]] = list(class.comp.j = class.comp.j,  prediction.comp.j = prediction.comp.j, features = features.j, omit = omit)
             
         } # end fonction.j.folds
-        
-        if (parallel == TRUE)
-        {
-            clusterExport(cl, c("folds","choice.keepX","ncomp"),envir=environment())
-            #clusterExport(cl, ls(), envir=environment())
-            #print(clusterEvalQ(cl,ls()))
-            
-            result.all = parLapply(cl, seq_len(M), fonction.j.folds)
+
+        # Use BPPARAM if available, otherwise default to serial execution
+        if (!is.null(BPPARAM)) {
+            # Parallel execution using BiocParallel
+            result.all = bplapply(seq_len(M), fonction.j.folds, BPPARAM = BPPARAM)
         } else {
+            # Serial execution
             result.all = lapply(seq_len(M), fonction.j.folds)
-            
         }
         #---------------------------#
         #--- combine the results ---#
