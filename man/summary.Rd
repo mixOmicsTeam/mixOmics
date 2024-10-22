@@ -59,7 +59,7 @@ The function \code{summary} returns a list with components:
 \item{ncomp}{the number of components in the model.} \item{cor}{the
 canonical correlations.} \item{cutoff}{the cutoff used.}
 \item{keep.var}{list containing the name of the variables selected.}
-\item{mode}{the algoritm used in \code{pls} or \code{spls}.} \item{Cm}{list
+\item{mode}{the algorithm used in \code{pls} or \code{spls}.} \item{Cm}{list
 containing the communalities.} \item{Rd}{list containing the redundancy.}
 \item{VIP}{matrix of VIP coefficients.} \item{what}{subset of
 \code{c("all"}, \code{"communalities"}, \code{"redundancy"}, \code{"VIP"}).}
