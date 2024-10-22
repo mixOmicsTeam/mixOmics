@@ -69,7 +69,8 @@
 #' @param group factor indicating the group membership for each sample, useful
 #' for ellipse plots. Coded as default for the supervised methods \code{PLS-DA,
 #' SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
-#' \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}
+#' \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. Order of levels will reflect
+#' order in legends and correspond to any set colours. 
 #' @template arg/col.per.group
 #' @param style argument to be set to either \code{'graphics'},
 #' \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
