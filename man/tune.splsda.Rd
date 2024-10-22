@@ -25,7 +25,7 @@ tune.splsda(
   multilevel = NULL,
   light.output = TRUE,
   signif.threshold = 0.01,
-  cpus = 1
+  BPPARAM = SerialParam()
 )
 }
 \arguments{
@@ -89,7 +89,8 @@ sample for each of \code{test.keepX} and each comp is returned.}
 threshold required for improvement in error rate of the components. Default
 to 0.01.}
 
-\item{cpus}{Number of cpus to use when running the code in parallel.}
+\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
+of parallelisation. See examples in \code{?tune.spca}.}
 }
 \value{
 Depending on the type of analysis performed, a list that contains:
