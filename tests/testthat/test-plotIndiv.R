@@ -513,6 +513,7 @@ test_that("plotIndiv.sgcca(..., blocks = 'average') works", code = {
 })
 
 ## ------------------------------------------------------------------------ ##
+## Edge cases
 
 test_that("plotIndiv.sgccda(..., blocks = 'average') works with ind.names and ell", code = {
     data("breast.TCGA")
@@ -529,8 +530,6 @@ test_that("plotIndiv.sgccda(..., blocks = 'average') works with ind.names and el
     diablo_plot <- plotIndiv(TCGA.block.splsda, ind.names = FALSE, blocks = blocks)
     expect_true(all(unique(diablo_plot$df$Block) %in% c('average', 'Block: mrna', 'average (weighted)')))
 })
-
-## ------------------------------------------------------------------------ ##
 
 test_that("plotIndiv.sgccda(..., blocks = 'average') works with ellipse=TRUE", code = {
     data("breast.TCGA")
@@ -565,6 +564,332 @@ test_that("mint.splsda can be visualised with predicted background", {
   output <- plotIndiv(model, background = bgp, style = "ggplot2")
 
   expect_equal(dim(output$df), c(125, 9))
+})
+
+## ------------------------------------------------------------------------ ##
+## Plotting with 'lattice' style
+
+test_that("plotIndiv works for rcc (lattice style)", {
+  data(nutrimouse)
+  X <- nutrimouse$lipid
+  Y <- nutrimouse$gene
+  nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
+  
+  pl.res <- plotIndiv(nutri.res, style = "lattice")
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 0.87088852)
+  
+  pl.res <- plotIndiv(nutri.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
+                      legend = TRUE, style = "lattice")
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 0.8270997)
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(nutrimouse$genotype)))
+})
+
+test_that("plotIndiv works for (s)pca (lattice style)", {
+  data(srbct)
+  X <- srbct$gene
+  Y <- srbct$class
+  pca.srbct = pca(X, ncomp = 10, center = TRUE, scale = TRUE)
+  groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
+  pl.res <- plotIndiv(pca.srbct, group = groups, ind.names = FALSE, # plot the samples projected
+                      legend = TRUE, title = 'PCA on SRBCT, comp 1 - 2',
+                      col.per.group = c("red", "blue", "green", "black"),
+                      style = "lattice") # onto the PCA subspace
+  
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 10.13857)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check colour assignments are correct
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "RMS"]), "red")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "NB"]), "blue")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "EWS"]), "green")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "BL"]), "black")
+  # check right number of samples
+  expect_equal(dim(pca.srbct$X)[1], dim(pl.res$df)[1])
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(groups)))
+  
+})
+
+test_that("plotIndiv works for (s)pls (lattice style)", {
+  data(liver.toxicity)
+  X <- liver.toxicity$gene
+  Y <- liver.toxicity$clinic
+  toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
+                        keepY = c(10, 10, 10))
+  
+  pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
+                      group = factor(liver.toxicity$treatment$Time.Group),
+                      legend.title = 'Time',
+                      col.per.group = c("red", "blue", "green", "black"),
+                      pch = factor(liver.toxicity$treatment$Dose.Group),
+                      legend.title.pch = 'Dose',
+                      legend = TRUE, style = "lattice")
+  
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 4.146771)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check colour assignments are correct
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 6]), "red")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 18]), "blue")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 24]), "green")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 48]), "black")
+  # check right number of samples
+  expect_equal(dim(toxicity.spls$X)[1], dim(pl.res$df)[1])
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(liver.toxicity$treatment$Time.Group)))
+  
+})
+
+test_that("plotIndiv works for (s)plsda (lattice style)", {
+  data(breast.tumors)
+  X <- breast.tumors$gene.exp
+  Y <- breast.tumors$sample$treatment
+  splsda.breast <- splsda(X, Y,keepX=c(10,10), ncomp=2)
+  
+  pl.res <- plotIndiv(splsda.breast, style = "lattice")
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], -1.075222)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check colours
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "BE"]), "#F68B33")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "AF"]), "#388ECC")
+  # check right number of samples
+  expect_equal(dim(splsda.breast$X)[1], dim(pl.res$df)[1])
+})
+
+## ------------------------------------------------------------------------ ##
+## Plotting with 'graphics' style
+
+test_that("plotIndiv works for rcc (graphics style)", {
+  data(nutrimouse)
+  X <- nutrimouse$lipid
+  Y <- nutrimouse$gene
+  nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
+  
+  pl.res <- plotIndiv(nutri.res, style = "graphics")
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 0.87088852)
+  
+  pl.res <- plotIndiv(nutri.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
+                      legend = TRUE, style = "lattice")
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 0.8270997)
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(nutrimouse$genotype)))
+})
+
+test_that("plotIndiv works for (s)pca (graphics style)", {
+  data(srbct)
+  X <- srbct$gene
+  Y <- srbct$class
+  pca.srbct = pca(X, ncomp = 10, center = TRUE, scale = TRUE)
+  groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
+  pl.res <- plotIndiv(pca.srbct, group = groups, ind.names = FALSE, # plot the samples projected
+                      legend = TRUE, title = 'PCA on SRBCT, comp 1 - 2',
+                      col.per.group = c("red", "blue", "green", "black"),
+                      style = "graphics") # onto the PCA subspace
+  
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 10.13857)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check colour assignments are correct
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "RMS"]), "red")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "NB"]), "blue")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "EWS"]), "green")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "BL"]), "black")
+  # check right number of samples
+  expect_equal(dim(pca.srbct$X)[1], dim(pl.res$df)[1])
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(groups)))
+  
+})
+
+test_that("plotIndiv works for (s)pls (graphics style)", {
+  data(liver.toxicity)
+  X <- liver.toxicity$gene
+  Y <- liver.toxicity$clinic
+  toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
+                        keepY = c(10, 10, 10))
+  
+  pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
+                      group = factor(liver.toxicity$treatment$Time.Group),
+                      legend.title = 'Time',
+                      col.per.group = c("red", "blue", "green", "black"),
+                      pch = factor(liver.toxicity$treatment$Dose.Group),
+                      legend.title.pch = 'Dose',
+                      legend = TRUE, style = "graphics")
+  
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 4.146771)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check colour assignments are correct
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 6]), "red")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 18]), "blue")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 24]), "green")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 48]), "black")
+  # check right number of samples
+  expect_equal(dim(toxicity.spls$X)[1], dim(pl.res$df)[1])
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(liver.toxicity$treatment$Time.Group)))
+  
+})
+
+test_that("plotIndiv works for (s)plsda (graphics style)", {
+  data(breast.tumors)
+  X <- breast.tumors$gene.exp
+  Y <- breast.tumors$sample$treatment
+  splsda.breast <- splsda(X, Y,keepX=c(10,10), ncomp=2)
+  
+  pl.res <- plotIndiv(splsda.breast, style = "graphics")
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], -1.075222)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check colours
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "BE"]), "#F68B33")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "AF"]), "#388ECC")
+  # check right number of samples
+  expect_equal(dim(splsda.breast$X)[1], dim(pl.res$df)[1])
+})
+
+## ------------------------------------------------------------------------ ##
+## Plotting with '3d' style
+
+test_that("plotIndiv works for rcc (3d style)", {
+  data(nutrimouse)
+  X <- nutrimouse$lipid
+  Y <- nutrimouse$gene
+  nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
+  
+  pl.res <- plotIndiv(nutri.res, style = "3d")
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 0.87088852)
+  
+  pl.res <- plotIndiv(nutri.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
+                      legend = TRUE, style = "3d")
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 0.8270997)
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(nutrimouse$genotype)))
+})
+
+test_that("plotIndiv works for (s)pca (3d style)", {
+  data(srbct)
+  X <- srbct$gene
+  Y <- srbct$class
+  pca.srbct = pca(X, ncomp = 10, center = TRUE, scale = TRUE)
+  groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
+  pl.res <- plotIndiv(pca.srbct, group = groups, ind.names = FALSE, # plot the samples projected
+                      legend = TRUE, title = 'PCA on SRBCT, comp 1 - 2',
+                      col.per.group = c("red", "blue", "green", "black"),
+                      style = "3d") # onto the PCA subspace
+  
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 10.13857)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check colour assignments are correct
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "RMS"]), "red")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "NB"]), "blue")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "EWS"]), "green")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "BL"]), "black")
+  # check right number of samples
+  expect_equal(dim(pca.srbct$X)[1], dim(pl.res$df)[1])
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(groups)))
+  
+})
+
+test_that("plotIndiv works for (s)pls (3d style)", {
+  data(liver.toxicity)
+  X <- liver.toxicity$gene
+  Y <- liver.toxicity$clinic
+  toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
+                        keepY = c(10, 10, 10))
+  
+  # expect error when passing numbers as pch argument, informative message about what pch levels can be passed for 3d plot
+  expect_error(plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
+                      group = factor(liver.toxicity$treatment$Time.Group),
+                      legend.title = 'Time',
+                      col.per.group = c("red", "blue", "green", "black"),
+                      pch = factor(liver.toxicity$treatment$Dose.Group),
+                      legend.title.pch = 'Dose',
+                      legend = TRUE, style = "3d"),
+               "pch' must be a simple character or character vector from {'sphere', 'tetra', 'cube', 'octa', 'icosa', 'dodeca'}.",
+               fixed = TRUE)
+  
+  # plot runs when the correct pch values are used for 3d plot, though not sure if it will be used much as not very informative plot
+  pchs <- factor(liver.toxicity$treatment$Dose.Group)
+  levels(pchs) <- c("sphere", "tetra", "octa", "icosa")
+  pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
+                      group = factor(liver.toxicity$treatment$Time.Group),
+                      legend.title = 'Time',
+                      col.per.group = c("red", "blue", "green", "black"),
+                      pch = pchs,
+                      legend.title.pch = 'Dose',
+                      legend = TRUE, style = "3d")
+  
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], 4.146771)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check colour assignments are correct
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 6]), "red")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 18]), "blue")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 24]), "green")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == 48]), "black")
+  # check right number of samples
+  expect_equal(dim(toxicity.spls$X)[1], dim(pl.res$df)[1])
+  # check groups
+  expect_true(!is.null(pl.res$df$group))
+  expect_equal(length(unique(pl.res$df$group)), length(unique(liver.toxicity$treatment$Time.Group)))
+  
+})
+
+test_that("plotIndiv works for (s)plsda (3d style)", {
+  data(breast.tumors)
+  X <- breast.tumors$gene.exp
+  Y <- breast.tumors$sample$treatment
+  splsda.breast <- splsda(X, Y,keepX=c(10,10), ncomp=3)
+  
+  pl.res <- plotIndiv(splsda.breast, style = "3d")
+  # check coordinates
+  .expect_numerically_close(pl.res$df[1,1], -1.075222)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check colours
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "BE"]), "#F68B33")
+  expect_equal(unique(pl.res$df$col[pl.res$df$group == "AF"]), "#388ECC")
+  # check right number of samples
+  expect_equal(dim(splsda.breast$X)[1], dim(pl.res$df)[1])
 })
 
 unlink(list.files(pattern = "*.pdf"))
