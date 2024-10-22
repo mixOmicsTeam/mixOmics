@@ -811,9 +811,11 @@ internal_graphicModule <-
                              lwd=point.lwd)#,...)
                     } else {
                         points(x = df[df$col == i & other, "x"],
-                               y = df[df$col == i & other, "y"],
-                               col = df[df$col == i, ]$col, cex = df[df$col == i, ]$cex,
-                               pch = df[df$col == i, ]$pch,lwd=point.lwd)#,...)
+                        y = df[df$col == i & other, "y"],
+                        col = df[df$col == i, ]$col, 
+                        cex = df[df$col == i, ]$cex,
+                        pch = as.numeric(df[df$col == i, ]$pch.levels),
+                        lwd=point.lwd)#,...)
                     }
                 }
                 
