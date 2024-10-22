@@ -43,7 +43,7 @@
 #' \item{ncomp}{the number of components in the model.} \item{cor}{the
 #' canonical correlations.} \item{cutoff}{the cutoff used.}
 #' \item{keep.var}{list containing the name of the variables selected.}
-#' \item{mode}{the algoritm used in \code{pls} or \code{spls}.} \item{Cm}{list
+#' \item{mode}{the algorithm used in \code{pls} or \code{spls}.} \item{Cm}{list
 #' containing the communalities.} \item{Rd}{list containing the redundancy.}
 #' \item{VIP}{matrix of VIP coefficients.} \item{what}{subset of
 #' \code{c("all"}, \code{"communalities"}, \code{"redundancy"}, \code{"VIP"}).}
@@ -108,9 +108,9 @@ summary.mixo_pls <-
             gp.Y = 1:q
         }
         
-        #-- communaut? --#
+        #-- communalities --#
         if (any(what == "all") || any(what == "communalities")) {
-            # communaut? inter-groupe #
+            # communalities inter-group #
             #-------------------------#
             Cm.XvsV = cor(object$X[, gp.X], object$variate$Y[, 1:ncomp], use = "pairwise")
             Cm.XvsV = t(apply(Cm.XvsV^2, 1, cumsum))
@@ -120,7 +120,7 @@ summary.mixo_pls <-
             Cm.YvsU = t(apply(Cm.YvsU^2, 1, cumsum))
             colnames(Cm.YvsU) = paste("comp", 1:ncomp)
             
-            # communaut? intra-groupe #
+            # communalities intra-group #
             #-------------------------#
             Cm.XvsU = cor(object$X[, gp.X], object$variates$X[, 1:ncomp], use = "pairwise")
             Cm.XvsU = t(apply(Cm.XvsU^2, 1, cumsum))
@@ -134,7 +134,7 @@ summary.mixo_pls <-
             result$Cm.Y = list(own = Cm.YvsV, opp = Cm.YvsU)
         }
         
-        #-- redondance --#
+        #-- redundancy --#
         if (any(what == "all") || any(what == "redundancy")) {
             Rd.XvsU = cor(object$X[, gp.X], object$variates$X[, 1:ncomp], use = "pairwise")
             Rd.XvsU = apply(Rd.XvsU^2, 2, sum)/p
