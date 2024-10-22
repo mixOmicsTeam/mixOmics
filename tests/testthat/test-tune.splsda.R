@@ -16,7 +16,8 @@ test_that("tune.splsda works", {
 
     set.seed(100)
     tune2 = tune.splsda(X, Y, ncomp = 2, nrepeat = 3, logratio = "none",
-                       test.keepX = c(5, 10, 15), folds = 3, dist = "max.dist", cpus = 2)
+                       test.keepX = c(5, 10, 15), folds = 3, dist = "max.dist", 
+                       BPPARAM = MulticoreParam(workers = 2))
     .almost_identical(tune, tune2)
     
 })
