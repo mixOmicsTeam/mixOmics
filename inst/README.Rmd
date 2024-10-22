@@ -219,7 +219,7 @@ The project started at the _Institut de Mathématiques de Toulouse_ in France, a
 
 www.mixOmics.org (tutorials and resources)
 
-Our latest bookdown vignette: https://mixomicsteam.github.io/Bookdown/.
+Our latest bookdown vignette: https://mixomicsteam.github.io/mixOmics-Vignette/
 
 ## Different types of methods
 
