@@ -250,7 +250,7 @@ studies to gain more insight into ’omics biological studies.
 www.mixOmics.org (tutorials and resources)
 
 Our latest bookdown vignette:
-<https://mixomicsteam.github.io/Bookdown/>.
+<https://mixomicsteam.github.io/mixOmics-Vignette/>
 
 ## Different types of methods
 
