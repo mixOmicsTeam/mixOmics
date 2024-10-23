@@ -7,7 +7,7 @@ test_that("tune.spls works ", code = {
     tune.spls.res = suppressWarnings(tune.spls(X, Y, ncomp = 3,
                               test.keepX = seq(5, 10, 5),
                               test.keepY = seq(3, 6, 3), measure = "cor",
-                              folds = 5, nrepeat = 3, progressBar = F,
+                              folds = 5, nrepeat = 3, progressBar = FALSE,
                               BPPARAM = SerialParam(RNGseed = 5212)))
     
     expect_equal(class(tune.spls.res), c("tune.pls", "tune.spls"))
@@ -35,12 +35,36 @@ test_that("tune.spls works in parallel", code = {
     tune.spls.res = suppressWarnings(tune.spls(X, Y, ncomp = 3,
                                       test.keepX = seq(1, 5, 1),
                                       test.keepY = seq(3, 6, 3), measure = "cor",
-                                      folds = 5, nrepeat = 3, progressBar = F,
+                                      folds = 5, nrepeat = 3, progressBar = FALSE,
                                       BPPARAM = BiocParallel::SnowParam(RNGseed = 5212, workers = num_workers)))
     
     expect_equal(class(tune.spls.res), c("tune.pls", "tune.spls"))
     expect_equal(unname(tune.spls.res$choice.keepX), c(1,1,1))
     expect_equal(unname(tune.spls.res$choice.keepY), c(3,3,3))
+})
+
+test_that("tune.spls works faster in parallel", {
+  data("nutrimouse")
+  X <- nutrimouse$gene
+  Y <- nutrimouse$lipid
+  set.seed(42)
+  test.keepX <- c(1, 2, 3)
+  test.keepY <- c(1, 2, 3)
+  # Serial execution
+  serial_time <- system.time(
+    tune.spls.res.serial <- suppressWarnings(tune.spls(X, Y, ncomp = 3, test.keepX = test.keepX,
+                                               test.keepY = test.keepY, measure = "cor",
+                                               folds = 5, nrepeat = 20, progressBar = FALSE,
+                                               BPPARAM = BiocParallel::SerialParam(RNGseed = 5212)))
+  )
+  # Serial execution - 2 cores
+  parallel_time_2_cores <- system.time(
+    tune.spls.res.parallel <- suppressWarnings(tune.spls(X, Y, ncomp = 3,test.keepX = test.keepX,
+                                                       test.keepY = test.keepY, measure = "cor",
+                                                       folds = 5, nrepeat = 20, progressBar = FALSE,
+                                                       BPPARAM = BiocParallel::SnowParam(workers = 2, RNGseed = 5212)))
+  )
+  expect_true(serial_time[3] > parallel_time_2_cores[3])
 })
 
 test_that("tune.spls and tune(method='spls') are equivalent", {
@@ -53,13 +77,13 @@ test_that("tune.spls and tune(method='spls') are equivalent", {
     tune.spls.res.1 = suppressWarnings(tune.spls(X, Y, ncomp = 3,
                                       test.keepX = seq(1, 2, 1),
                                       test.keepY = seq(3, 6, 3),
-                                      folds = 5, nrepeat = 3, progressBar = F,
+                                      folds = 5, nrepeat = 3, progressBar = FALSE,
                                       BPPARAM = SerialParam(RNGseed = 5212)))
     
     tune.spls.res.2 = suppressWarnings(tune(method = "spls", X, Y, ncomp = 3,
                                       test.keepX = seq(1, 2, 1),
                                       test.keepY = seq(3, 6, 3),
-                                      folds = 5, nrepeat = 3, progressBar = F,
+                                      folds = 5, nrepeat = 3, progressBar = FALSE,
                                       BPPARAM = SerialParam(RNGseed = 5212)))
     
     expect_equal(tune.spls.res.1$measure.pred, tune.spls.res.2$measure.pred)
