@@ -1,3 +1,5 @@
+context("tune.spca")
+library(BiocParallel)
 
 test_that("tune.spca works in serial and parallel", {
   data(srbct)

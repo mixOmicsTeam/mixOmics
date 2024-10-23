@@ -1,3 +1,6 @@
+context("tune.spls")
+library(BiocParallel)
+
 test_that("tune.spls works ", code = {
     data("nutrimouse")
     X <- nutrimouse$gene

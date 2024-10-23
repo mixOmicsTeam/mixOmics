@@ -1,4 +1,5 @@
 context("tune.splsda")
+library(BiocParallel)
 
 test_that("tune.splsda works ", code = {
   data(breast.tumors)
