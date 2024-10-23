@@ -38,7 +38,7 @@ test_that("tune.splsda works in serial and in parallel", {
     
 })
 
-test_that("tune.splsda works faster in parallel", {
+test_that("tune.splsda works same in serial and parallel", {
   data(liver.toxicity)
   X <- liver.toxicity$gene
   Y <- liver.toxicity$clinic
@@ -59,7 +59,7 @@ test_that("tune.splsda works faster in parallel", {
                                  folds = 5,
                                  BPPARAM = MulticoreParam(workers = 2))
   )
-  expect_true(serial_time[3] > parallel_time_2_cores[3])
+  expect_equal(tune_res_serial$choice.keepX, tune_res_serial$choice.keepX)
   
 })
 

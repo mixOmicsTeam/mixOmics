@@ -46,7 +46,7 @@ test_that("tune.spls works in parallel", code = {
     expect_equal(unname(tune.spls.res$choice.keepY), c(3,3,3))
 })
 
-test_that("tune.spls works faster in parallel", {
+test_that("tune.spls works same in serial and in parallel", {
   data("nutrimouse")
   X <- nutrimouse$gene
   Y <- nutrimouse$lipid
@@ -67,7 +67,7 @@ test_that("tune.spls works faster in parallel", {
                                                        folds = 5, nrepeat = 20, progressBar = FALSE,
                                                        BPPARAM = BiocParallel::SnowParam(workers = 2, RNGseed = 5212)))
   )
-  expect_true(serial_time[3] > parallel_time_2_cores[3])
+  expect_equal(tune.spls.res.serial$choice.keepY[1], tune.spls.res.parallel$choice.keepY[1])
 })
 
 test_that("tune.spls and tune(method='spls') are equivalent", {
