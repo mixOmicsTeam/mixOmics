@@ -64,3 +64,20 @@ test_that("tune.spca works with NA input", {
   expect_equal(object$choice.keepX[[1]], 15)
   expect_equal(object$choice.keepX[[2]], 5)
 })
+
+test_that("tune.spca and tune(method='spca') are equivalent", {
+  data(srbct)
+  X <- srbct$gene[1:20, 1:200]
+  grid.keepX <- seq(5, 35, 10)
+  set.seed(5212) # set here although this actually doesnt affect tune.spca
+  object1 <- tune.spca(X, ncomp = 2, folds = 5, test.keepX = grid.keepX, nrepeat = 3,
+                             BPPARAM = SerialParam(RNGseed = 5212))
+  set.seed(5212)
+  object2 <- tune(method = "spca",X, ncomp = 2, folds = 5, test.keepX = grid.keepX, nrepeat = 3,
+                  BPPARAM = SerialParam(RNGseed = 5212))
+  # expect results the same
+  expect_equal(object1$choice.keepX[[1]], object2$choice.keepX[[1]])
+  expect_equal(object1$choice.keepX[[2]], object2$choice.keepX[[2]])
+  .expect_numerically_close(object1$cor.comp$comp1[3,3], object2$cor.comp$comp1[3,3])
+})
+  
