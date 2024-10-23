@@ -105,8 +105,7 @@
 #' the individuals ID. See Details.
 #' @param light.output if set to FALSE, the prediction/classification of each
 #' sample for each of \code{test.keepX} and each comp is returned.
-#' @param cpus Number of cpus to use. If greater than 1, the code is run in
-#' parallel.
+#' @template arg/BPPARAM
 #' @return A list that contains: \item{error.rate}{returns the prediction error
 #' for each \code{test.keepX} on each component, averaged across all repeats
 #' and subsampling folds. Standard deviation is also output. All error rates
@@ -185,7 +184,7 @@ tune.spls1 <- #TODO naming for tune.spls1 is wrong. it should hint the block whe
               nrepeat = 1,
               multilevel = NULL,
               light.output = TRUE,
-              cpus = 1
+              BPPARAM = SerialParam()
     )
     {    #-- checking general input parameters --------------------------------------#
         #---------------------------------------------------------------------------#
@@ -255,26 +254,6 @@ tune.spls1 <- #TODO naming for tune.spls1 is wrong. it should hint the block whe
         #-- test.keepX
         if (is.null(test.keepX) | length(test.keepX) == 1 | !is.numeric(test.keepX))
             stop("'test.keepX' must be a numeric vector with more than two entries", call. = FALSE)
-        
-        #-- cpus
-        cpus <- .check_cpus(cpus)
-        parallel <- cpus > 1
-        
-        if (parallel)
-        {
-            if (.onUnix()) {
-                cl <- makeForkCluster(cpus)
-            } else {
-                cl <- makePSOCKcluster(cpus)
-            }
-            
-            on.exit(stopCluster(cl))
-            clusterEvalQ(cl, library(mixOmics))
-            
-            if(progressBar == TRUE)
-                message(paste("As code is running in parallel, the progressBar will only show 100% upon completion of each nrepeat/ component.",sep=""))
-            
-        }
         
         # add colnames and rownames if missing
         X.names = dimnames(X)[[2]]
@@ -363,9 +342,6 @@ tune.spls1 <- #TODO naming for tune.spls1 is wrong. it should hint the block whe
             
             class.object="mixo_spls"
             
-            if (parallel)
-                clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
-            
             # successively tune the components until ncomp: comp1, then comp2, ...
             for(comp in seq_len(length(comp.real)))
             {
@@ -377,7 +353,7 @@ tune.spls1 <- #TODO naming for tune.spls1 is wrong. it should hint the block whe
                                       choice.keepX = already.tested.X,
                                       test.keepX = test.keepX, test.keepY = ncol(Y), measure = measure, dist = NULL, auc=FALSE, scale=scale,
                                       near.zero.var = near.zero.var, progressBar = progressBar, tol = tol, max.iter = max.iter,
-                                      cl = cl, parallel = parallel,
+                                      BPPARAM,
                                       misdata = misdata, is.na.A = is.na.A, class.object=class.object)
                 
                 #save(list=ls(),file="temp.Rdata")
