@@ -267,7 +267,8 @@ tune <-
                                folds = folds,
                                test.keepX = test.keepX,
                                center = center,
-                               scale = scale)
+                               scale = scale,
+                               BPPARAM = BPPARAM)
             
             
         } else if (method == "splsda") {
