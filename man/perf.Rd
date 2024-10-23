@@ -68,7 +68,7 @@ perf(object, ...)
   auc = FALSE,
   progressBar = FALSE,
   signif.threshold = 0.01,
-  BPPARAM = SerialParam(),
+  cpus = 1,
   ...
 )
 
