@@ -68,7 +68,7 @@ perf(object, ...)
   auc = FALSE,
   progressBar = FALSE,
   signif.threshold = 0.01,
-  cpus = 1,
+  BPPARAM = SerialParam(),
   ...
 )
 
@@ -402,7 +402,7 @@ plot(error)
 # parallel code
 set.seed(45)
 error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", auc = TRUE, cpus =2)
+dist = "all", auc = TRUE, BPPARAM = SnowParam(workers = 2, RNGseed = 45))
 
 # with 5 components and nrepeat=5, to get a $choice.ncomp
 ncomp = 5
