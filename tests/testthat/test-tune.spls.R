@@ -91,3 +91,101 @@ test_that("tune.spls and tune(method='spls') are equivalent", {
     
     expect_equal(tune.spls.res.1$measure.pred, tune.spls.res.2$measure.pred)
 })
+
+## If ncol(Y) == 1 tune.spls calls tune.spls1
+## checking these cases where spls1 method is called
+# test setup copied from vignette 04-spls1-tuning
+# for tune.spls1 need to have seed set globally and in BPPARAM
+
+test_that("tune.spls.1 works and is reproducible", code = {
+  data(liver.toxicity)
+  X <- liver.toxicity$gene
+  y <- liver.toxicity$clinic[, "ALB.g.dL."]
+  list.keepX <- c(5:10, seq(15, 50, 5))     
+  
+  set.seed(33)
+  tune.spls1.MAE.1 <- tune.spls(X, y, ncomp= 2, 
+                              test.keepX = list.keepX, 
+                              validation = 'Mfold', 
+                              folds = 7,
+                              nrepeat = 7, 
+                              progressBar = FALSE, 
+                              measure = 'MAE',
+                              BPPARAM = SerialParam(RNGseed = 33))
+  set.seed(33)
+  tune.spls1.MAE.2 <- tune.spls(X, y, ncomp= 2, 
+                              test.keepX = list.keepX, 
+                              validation = 'Mfold', 
+                              folds = 7,
+                              nrepeat = 7, 
+                              progressBar = FALSE, 
+                              measure = 'MAE',
+                              BPPARAM = SerialParam(RNGseed = 33))
+  
+  expect_equal(tune.spls1.MAE.1$choice.keepX, tune.spls1.MAE.2$choice.keepX)
+  expect_equal(class(tune.spls1.MAE.1), "tune.spls1")
+  expect_equal(unname(tune.spls1.MAE.1$choice.keepX), c(20, 45))
+})
+
+test_that("tune.spls.1 and tune(method='spls') are equivalent", code = {
+  data(liver.toxicity)
+  X <- liver.toxicity$gene
+  y <- liver.toxicity$clinic[, "ALB.g.dL."]
+  list.keepX <- c(5:10, seq(15, 50, 5))     
+  
+  set.seed(33)
+  tune.spls1.MAE.1 <- tune.spls(X, y, ncomp= 2, 
+                              test.keepX = list.keepX, 
+                              validation = 'Mfold', 
+                              folds = 6,
+                              nrepeat = 3, 
+                              progressBar = FALSE, 
+                              measure = 'MAE',
+                              BPPARAM = SerialParam(RNGseed = 33))
+  
+  expect_equal(class(tune.spls1.MAE.1), "tune.spls1")
+  expect_equal(unname(tune.spls1.MAE.1$choice.keepX), c(20, 25))
+  
+  set.seed(33)
+  tune.spls1.MAE.2 <- tune(method = "spls",
+                           X, y, ncomp= 2, 
+                           test.keepX = list.keepX, 
+                           validation = 'Mfold', 
+                           folds = 6,
+                           nrepeat = 3, 
+                           progressBar = FALSE, 
+                           measure = 'MAE',
+                           BPPARAM = SerialParam(RNGseed = 33))
+  expect_equal(class(tune.spls1.MAE.2), "tune.spls1")
+  expect_equal(unname(tune.spls1.MAE.2$choice.keepX), c(20, 25))
+})
+
+test_that("tune.spls.1 works in serial and in parallel", code = {
+  data(liver.toxicity)
+  X <- liver.toxicity$gene
+  y <- liver.toxicity$clinic[, "ALB.g.dL."]
+  list.keepX <- c(5:10, seq(15, 50, 5))     
+  
+  set.seed(22)
+  tune.spls1.MAE.1 <- tune.spls(X, y, ncomp= 2, 
+                                test.keepX = list.keepX, 
+                                validation = 'Mfold', 
+                                folds = 10,
+                                nrepeat = 10, 
+                                progressBar = FALSE, 
+                                measure = 'MAE',
+                                BPPARAM = SerialParam(RNGseed = 22))
+  set.seed(22)
+  # avoids multiple warnings of 'package:stats' may not be available when loading' 
+  tune.spls1.MAE.2 <- suppressWarnings(
+    tune.spls(X, y, ncomp= 2, test.keepX = list.keepX, validation = 'Mfold', 
+              folds = 10, nrepeat = 10, progressBar = FALSE, measure = 'MAE',
+              BPPARAM = SnowParam(workers = 2, RNGseed = 2, exportglobals = TRUE))
+  )
+  
+  expect_equal(tune.spls1.MAE.1$choice.keepX, tune.spls1.MAE.2$choice.keepX)
+  expect_equal(class(tune.spls1.MAE.1), "tune.spls1")
+  expect_equal(unname(tune.spls1.MAE.1$choice.keepX), c(20, 40))
+})
+
+
