@@ -72,7 +72,7 @@ test_that("perf.diablo works with and without parallelisation with progress bar"
   data(nutrimouse)
   Y = nutrimouse$diet
   data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
-  
+
   nutrimouse.sgccda <- block.splsda(X=data,
                                     Y = Y,
                                     design = 'full',
@@ -80,13 +80,17 @@ test_that("perf.diablo works with and without parallelisation with progress bar"
                                     ncomp = 2,
                                     scheme = "horst")
   class(nutrimouse.sgccda) # "block.splsda" "block.spls"   "sgccda"       "sgcca"        "DA"
-  
+
   # serial
   set.seed(100)
+  sink(tempfile()) # added to hide progress bars during testing
   perf <- perf(nutrimouse.sgccda, folds = 6, BPPARAM = SerialParam(RNGseed = 100), progressBar = TRUE)
+  sink()
   # parallel
   set.seed(100)
+  sink(tempfile()) # added to hide progress bars during testing
   perf.parallel <- perf(nutrimouse.sgccda, folds = 6, BPPARAM = SnowParam(workers = 2, RNGseed = 100), progressBar = TRUE)
+  sink()
   # check result same
   expect_equal(perf$weights, perf.parallel$weights)
 })

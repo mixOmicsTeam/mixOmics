@@ -812,7 +812,7 @@ perf.mixo_plsda <- function(object,
     if (any(table(object$Y) <= 1)) {
         stop(paste("Cannot evaluate performance when a class level ('", 
                    names(table(object$Y))[which(table(object$Y) == 1)],
-                   "') has only a single assocaited sample.", sep = ""))
+                   "') has only a single associated sample.", sep = ""))
     }
     
     if (nrepeat < 3 && validation != "loo") {

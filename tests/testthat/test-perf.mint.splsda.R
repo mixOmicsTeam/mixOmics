@@ -49,10 +49,16 @@ test_that("perf.mint.splsda works in serial and in parallel with progress bar", 
   )
   
   set.seed(44)
+  sink(tempfile()) # added to hide progress bars during testing
   out = perf(res, auc = FALSE, BPPARAM = SerialParam(RNGseed = 44), progressBar = TRUE)
+  sink()
   expect_is(out, "perf")
   expect_true(all(out$choice.ncomp == 1))
+  
+  set.seed(44)
+  sink(tempfile()) # added to hide progress bars during testing
   out.parallel = perf(res, auc = FALSE, BPPARAM = SnowParam(workers = 2, RNGseed = 44, progressbar = TRUE))
+  sink()
   expect_equal(out$global.error$overall, out.parallel$global.error$overall)
 })
 
