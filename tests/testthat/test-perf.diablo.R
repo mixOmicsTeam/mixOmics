@@ -1,4 +1,8 @@
 context("perf.diablo")
+library(BiocParallel)
+
+## ------------------------------------------------------------------------ ##
+## Test perf.sgccda()
 
 test_that("perf.diablo works ", {
     data(nutrimouse)
@@ -10,8 +14,7 @@ test_that("perf.diablo works ", {
     expect_is(perf, "perf.sgccda.mthd")
 })
 
-
-test_that("perf.diablo works with and without parallel processing and with auroc", {
+test_that("perf.diablo works with and without perf wrapper and with auroc", {
     data(nutrimouse)
     nrep <- 3
     folds <- 2
@@ -25,22 +28,65 @@ test_that("perf.diablo works with and without parallel processing and with auroc
                                       keepX = list(gene=c(10,10), lipid=c(15,15)),
                                       ncomp = 2,
                                       scheme = "horst")
-    
-    RNGversion(.mixo_rng()) ## in case RNG changes!
+    # run perf.sgccda() directly
     set.seed(100)
-    perf.res12 = perf.sgccda(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE, progressBar = FALSE)
+    perf.res12 = perf.sgccda(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE, 
+                             progressBar = FALSE, BPPARAM = SerialParam(RNGseed = 100))
     choices <- unname(perf.res12$choice.ncomp$AveragedPredict[,1])
-    expect_equal(choices, c(2,2))
+    expect_equal(choices, c(1,1))
     aucs <- round(unname(perf.res12$auc$comp1[,1]), 2)
-    expect_equal(aucs, c(0.92, 0.74, 0.66, 0.55, 0.69))
-
-    # with cpus seed must be designated after cluster is created so I made it possible
-    # by listening to ... in perf for seed. Results are different even with seeds but reproducible with same cpus
-    # the hassle of making it fully reproducible is a bit too arduous
-    
-    perf.res42 = perf(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE, cpus = 2, seed = 100, progressBar = FALSE)
+    expect_equal(aucs, c(0.96, 0.76, 0.64, 0.53, 0.70))
+    # run perf.sgccda() through perf()
+    perf.res42 = perf(nutrimouse.sgccda, folds = folds, nrepeat = nrep, auc = TRUE, 
+                      BPPARAM = SerialParam(RNGseed = 100), seed = 100, progressBar = FALSE)
     choices <- unname(perf.res42$choice.ncomp$AveragedPredict[,1])
     expect_equal(choices, c(1,1))
     aucs <- round(unname(perf.res42$auc$comp1[,1]), 2)
-    expect_equal(aucs,c(0.97, 0.66, 0.6, 0.59, 0.79))
+    expect_equal(aucs, c(0.96, 0.76, 0.64, 0.53, 0.70))
+})
+
+test_that("perf.diablo works with and without parallelisation", {
+  data(nutrimouse)
+  Y = nutrimouse$diet
+  data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+  
+  nutrimouse.sgccda <- block.splsda(X=data,
+                                    Y = Y,
+                                    design = 'full',
+                                    keepX = list(gene=c(5,10), lipid=c(10,15)),
+                                    ncomp = 2,
+                                    scheme = "horst")
+  class(nutrimouse.sgccda) # "block.splsda" "block.spls"   "sgccda"       "sgcca"        "DA"
+  
+  # serial
+  set.seed(50)
+  perf <- perf(nutrimouse.sgccda, folds = 6, BPPARAM = SerialParam(RNGseed = 50))
+  # parallel
+  set.seed(50)
+  perf.parallel <- perf(nutrimouse.sgccda, folds = 6, BPPARAM = SnowParam(workers = 2, RNGseed = 50))
+  # check result same
+  expect_equal(perf$weights, perf.parallel$weights)
+})
+
+test_that("perf.diablo works with and without parallelisation with progress bar", {
+  data(nutrimouse)
+  Y = nutrimouse$diet
+  data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+  
+  nutrimouse.sgccda <- block.splsda(X=data,
+                                    Y = Y,
+                                    design = 'full',
+                                    keepX = list(gene=c(5,10), lipid=c(10,15)),
+                                    ncomp = 2,
+                                    scheme = "horst")
+  class(nutrimouse.sgccda) # "block.splsda" "block.spls"   "sgccda"       "sgcca"        "DA"
+  
+  # serial
+  set.seed(100)
+  perf <- perf(nutrimouse.sgccda, folds = 6, BPPARAM = SerialParam(RNGseed = 100), progressBar = TRUE)
+  # parallel
+  set.seed(100)
+  perf.parallel <- perf(nutrimouse.sgccda, folds = 6, BPPARAM = SnowParam(workers = 2, RNGseed = 100), progressBar = TRUE)
+  # check result same
+  expect_equal(perf$weights, perf.parallel$weights)
 })
