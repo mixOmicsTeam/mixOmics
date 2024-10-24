@@ -1,4 +1,5 @@
 context("tune.block.splsda")
+library(BiocParallel)
 
 test_that("tune.block.splsda works with and without parallel without auc", {
 
@@ -33,29 +34,31 @@ test_that("tune.block.splsda works with and without parallel without auc", {
         ncomp = ncomp,
         test.keepX = test.keepX,
         design = design,
-        nrepeat = nrep
+        nrepeat = nrep,
+        BPPARAM = SerialParam(RNGseed = 42)
     )
     expect_is(tune11, "tune.block.splsda")
     
-    # ## -------------------- parallel
-    # BPPARAM <- if (!.onUnix()) BiocParallel::SnowParam(workers = 2) else BiocParallel::MulticoreParam(workers = 2)
-    # tune41 = tune.block.splsda(
-    #     X = data,
-    #     Y = Y,
-    #     folds = folds,
-    #     ncomp = ncomp,
-    #     test.keepX = test.keepX,
-    #     design = design,
-    #     nrepeat = nrep,
-    #     BPPARAM = BPPARAM
-    # )
-    # expect_equal(tune11$choice.keepX,tune41$choice.keepX)
+    ## -------------------- parallel
+    set.seed(42)
+    tune41 = tune.block.splsda(
+        X = data,
+        Y = Y,
+        folds = folds,
+        ncomp = ncomp,
+        test.keepX = test.keepX,
+        design = design,
+        nrepeat = nrep,
+        BPPARAM = SnowParam(workers = 2, RNGseed = 42)
+    )
+    expect_equal(tune11$choice.keepX, tune41$choice.keepX)
     
     # ## -------------------- already.tested.keepX
     # already.tested.X = lapply(tune11$choice.keepX, function(x) {
     #     x[1]
     # })
-    
+    # 
+    # set.seed(42)
     # tune42 = tune.block.splsda(
     #     X = data,
     #     Y = Y,
@@ -64,9 +67,9 @@ test_that("tune.block.splsda works with and without parallel without auc", {
     #     test.keepX = test.keepX,
     #     design = design,
     #     already.tested.X = already.tested.X,
-    #     BPPARAM = BPPARAM
+    #     BPPARAM = SerialParam(RNGseed = 42)
     # )
-    # expect_equal(tune11$choice.keepX,tune42$choice.keepX)
+    # expect_equal(tune11$choice.keepX, tune42$choice.keepX)
     
 })
 
@@ -102,4 +105,58 @@ test_that("(tune.block.splsda:error): catches invalid values of 'folds'", {
                               test.keepX = test.keepX, design = design, folds="random.value"),
                  "'folds' need to be non-NULL and numeric",
                  fixed=T)
+})
+
+test_that("tune.block.splsda works independently and in tune wrapper the same", {
+  
+  data("breast.TCGA")
+  data = list(
+    mrna = breast.TCGA$data.train$mrna,
+    mirna = breast.TCGA$data.train$mirna,
+    protein = breast.TCGA$data.train$protein
+  )
+  
+  design = 'full'
+  ncomp <- 2
+  folds <- 3
+  nrep <- 3
+  test.keepX = list(
+    mrna = c(10, 20),
+    mirna = c(20, 30),
+    protein = c(3, 6)
+  )
+  
+  set.seed(100)
+  subset <- mixOmics:::stratified.subsampling(breast.TCGA$data.train$subtype, folds = 4)[[1]][[1]]
+  data <- lapply(data, function(omic) omic[subset,])
+  Y <- breast.TCGA$data.train$subtype[subset]
+  
+  ## -------------------- 1 cpu 
+  set.seed(42)
+  tune11 = tune.block.splsda(
+    X = data,
+    Y = Y,
+    folds = folds,
+    ncomp = ncomp,
+    test.keepX = test.keepX,
+    design = design,
+    nrepeat = nrep,
+    BPPARAM = SerialParam(RNGseed = 42)
+  )
+  expect_is(tune11, "tune.block.splsda")
+  
+  ## -------------------- parallel
+  set.seed(42)
+  tune41 = tune(
+    method = "block.splsda",
+    X = data,
+    Y = Y,
+    folds = folds,
+    ncomp = ncomp,
+    test.keepX = test.keepX,
+    design = design,
+    nrepeat = nrep,
+    BPPARAM = SerialParam(RNGseed = 42)
+  )
+  expect_equal(tune11$choice.keepX, tune41$choice.keepX)
 })
