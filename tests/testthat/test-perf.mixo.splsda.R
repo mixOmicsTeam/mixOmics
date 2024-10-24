@@ -36,16 +36,6 @@ test_that("perf.mixo_plsda in serial and parallel", code = {
   X <- liver.toxicity$gene
   Y <- liver.toxicity$treatment$Dose.Group
   res <- plsda(X, Y, ncomp = 2)
-  # in serial
-  set.seed(12)
-  out <- suppressWarnings(perf(res, validation = "Mfold", folds = 3, BPPARAM = SerialParam(RNGseed = 12)))
-})
-
-test_that("perf.mixo_plsda in serial and parallel", code = {
-  data(liver.toxicity)
-  X <- liver.toxicity$gene
-  Y <- liver.toxicity$treatment$Dose.Group
-  res <- plsda(X, Y, ncomp = 2)
   
   # Serial execution
   set.seed(12)
