@@ -1,4 +1,5 @@
 context("perf.pls")
+library(BiocParallel)
 
 ## ------------------------------------------------------------------------ ##
 ## Test perf.mixo_pls()
