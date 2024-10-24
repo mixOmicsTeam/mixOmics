@@ -89,7 +89,6 @@ test_that("perf() works on pls with nzv features (all modes)", code = {
   data("liver.toxicity")
   X <- liver.toxicity$gene[1:1000]
   Y <- liver.toxicity$clinic
-  class(pls.obg) # "mixo_pls"
   
   # to reproduce error, we need to induce some features to have near zero variance
   X[, c(1, 23, 62, 234, 789)] <- 0
@@ -123,7 +122,7 @@ test_that("perf() works on spls object in serial and parallel", code = {
   Y <- liver.toxicity$clinic
   model.spls = spls(X, Y, ncomp = 7, mode = 'regression',
                     keepX = c(rep(10, 7)), keepY = c(rep(4, 7)))
-  class(pls.obg) # "mixo_pls"
+  class(model.spls) # "mixo_pls"
   
   set.seed(12)
   model.spls.val <- perf(model.spls, validation = "Mfold", folds = 10,

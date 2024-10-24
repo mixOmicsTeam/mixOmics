@@ -78,7 +78,7 @@ test_that("perf.mixo_splsda", code = {
   
   set.seed(12)
   srbct.splsda <- splsda(X, Y, ncomp = 2, keepX = rep(10, 2))
-  class(res) #  "mixo_splsda" "mixo_spls"   "DA"   
+  class(srbct.splsda) #  "mixo_splsda" "mixo_spls"   "DA"   
   set.seed(45)
   out <- suppressWarnings(
     perf(srbct.splsda, validation = "Mfold", folds = 8,
@@ -98,7 +98,7 @@ test_that("perf.mixo_splsda in serial and parallel", code = {
   
   set.seed(12)
   srbct.splsda <- splsda(X, Y, ncomp = 2, keepX = rep(10, 2))
-  class(res) #  "mixo_splsda" "mixo_spls"   "DA"   
+  class(srbct.splsda) #  "mixo_splsda" "mixo_spls"   "DA"   
 
   # in serial
   set.seed(12)
@@ -124,7 +124,7 @@ test_that("perf.mixo_splsda in serial and parallel with progress bars", code = {
   
   set.seed(12)
   srbct.splsda <- splsda(X, Y, ncomp = 2, keepX = rep(10, 2))
-  class(res) #  "mixo_splsda" "mixo_spls"   "DA"   
+  class(srbct.splsda) #  "mixo_splsda" "mixo_spls"   "DA"   
   
   # in serial
   set.seed(12)
