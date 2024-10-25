@@ -11,7 +11,8 @@ tune.rcc(
   grid2 = seq(0.001, 1, length = 5),
   validation = c("loo", "Mfold"),
   folds = 10,
-  plot = TRUE
+  plot = TRUE,
+  BPPARAM = SerialParam()
 )
 }
 \arguments{
@@ -32,13 +33,16 @@ method to use, (partially) matching one of \code{"loo"} (leave-one-out) or
 \item{folds}{positive integer. Number of folds to use if
 \code{validation="Mfold"}. Defaults to \code{folds=10}.}
 
-\item{plot}{logical argument indicating whether a image map should be
+\item{plot}{logical argument indicating whether an image map should be
 plotted by calling the \code{imgCV} function.}
+
+\item{BPPARAM}{a BiocParallel parameter object; see \code{BiocParallel::bpparam} 
+for details. Default is \code{MulticoreParam()} for parallel processing.}
 }
 \value{
 The returned value is a list with components: \item{opt.lambda1,}{}
 \item{opt.lambda2}{value of the parameters of regularization on which the
-cross-validation method reached it optimal.} \item{opt.score}{the optimal
+cross-validation method reached its optimal.} \item{opt.score}{the optimal
 cross-validation score reached on the grid.} \item{grid1, grid2}{original
 vectors \code{grid1} and \code{grid2}.} \item{mat}{matrix containing the
 cross-validation score computed on the grid.}

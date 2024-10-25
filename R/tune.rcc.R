@@ -1,3 +1,5 @@
+library(BiocParallel)
+
 #' Estimate the parameters of regularization for Regularized CCA
 #' 
 #' Computes leave-one-out or M-fold cross-validation scores on a
@@ -31,11 +33,13 @@
 #' \code{"Mfolds"} (M-folds). See Details.
 #' @param folds positive integer. Number of folds to use if
 #' \code{validation="Mfold"}. Defaults to \code{folds=10}.
-#' @param plot logical argument indicating whether a image map should be
+#' @param plot logical argument indicating whether an image map should be
 #' plotted by calling the \code{imgCV} function.
+#' @param BPPARAM a BiocParallel parameter object; see \code{BiocParallel::bpparam} 
+#' for details. Default is \code{MulticoreParam()} for parallel processing.
 #' @return The returned value is a list with components: \item{opt.lambda1,}{}
 #' \item{opt.lambda2}{value of the parameters of regularization on which the
-#' cross-validation method reached it optimal.} \item{opt.score}{the optimal
+#' cross-validation method reached its optimal.} \item{opt.score}{the optimal
 #' cross-validation score reached on the grid.} \item{grid1, grid2}{original
 #' vectors \code{grid1} and \code{grid2}.} \item{mat}{matrix containing the
 #' cross-validation score computed on the grid.}
@@ -59,7 +63,8 @@ tune.rcc <-
              grid2 = seq(0.001, 1, length = 5), 
              validation = c("loo", "Mfold"), 
              folds = 10,
-             plot = TRUE)
+             plot = TRUE,
+             BPPARAM = SerialParam())
     {
         
         # validation des arguments #
@@ -83,10 +88,10 @@ tune.rcc <-
         {
             M = nrow(X)
             folds = split(1:M, 1:M)
-            cv.score = apply(grid, 1, function(lambda)
-            {
+            cv.score = bplapply(1:nrow(grid), function(i) {
+                lambda = as.numeric(grid[i, ])  # Ensure lambda is numeric
                 Mfold(X, Y, lambda[1], lambda[2], folds)
-            })
+            }, BPPARAM = BPPARAM)
             
         } else {
             nr = nrow(X)
@@ -98,12 +103,13 @@ tune.rcc <-
                 M = round(folds)
                 folds = split(sample(1:nr), rep(1:M, length = nr))
             }
-            cv.score = apply(grid, 1, function(lambda) 
-            {
+            cv.score = bplapply(1:nrow(grid), function(i) {
+                lambda = as.numeric(grid[i, ])  # Ensure lambda is numeric
                 Mfold(X, Y, lambda[1], lambda[2], folds)
-            })
+            }, BPPARAM = BPPARAM)
         }
         
+        cv.score = unlist(cv.score)
         cv.score.grid = cbind(grid, cv.score)
         mat = matrix(cv.score, nrow = length(grid1), ncol = length(grid2))
         
@@ -111,8 +117,6 @@ tune.rcc <-
             image.tune.rcc(list(grid1 = grid1, grid2 = grid2, mat = mat))
         
         opt = cv.score.grid[cv.score.grid[, 3] == max(cv.score.grid[, 3]), ]
-        #cat("  lambda1 = ", opt[[1]], "\n", " lambda2 = ", opt[[2]], "\n",
-        #"CV-score = ", opt[[3]], "\n")
         
         out = list(opt.lambda1 = opt[[1]], opt.lambda2 = opt[[2]], 
                    opt.score = opt[[3]], grid1 = grid1, grid2 = grid2, mat = mat)
@@ -123,10 +127,8 @@ tune.rcc <-
         return(invisible(out))
     }
 
-
 Mfold = function(X, Y, lambda1, lambda2, folds)
 {
-    
     xscore = NULL
     yscore = NULL
     M = length(folds)
@@ -144,5 +146,3 @@ Mfold = function(X, Y, lambda1, lambda2, folds)
     cv.score = cor(xscore, yscore, use = "pairwise")
     return(invisible(cv.score))
 }
-
-

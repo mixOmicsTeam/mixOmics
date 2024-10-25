@@ -1,5 +1,8 @@
-context("tune.mint.splsda")
+context("perf.mint.splsda")
+library(BiocParallel)
 
+## ------------------------------------------------------------------------ ##
+## Test perf.mint.splsda()
 
 test_that("perf.mint.splsda works", code = {
     data(stemcells)
@@ -15,6 +18,48 @@ test_that("perf.mint.splsda works", code = {
     expect_is(out, "perf")
     expect_true(all(out$choice.ncomp == 1))
     
+})
+
+test_that("perf.mint.splsda works in serial and in parallel", code = {
+  data(stemcells)
+  res = mint.splsda(
+    X = stemcells$gene,
+    Y = stemcells$celltype,
+    ncomp = 3,
+    keepX = c(5, 10, 15),
+    study = stemcells$study
+  )
+  
+  set.seed(44)
+  out = perf(res, auc = FALSE, BPPARAM = SerialParam(RNGseed = 44))
+  expect_is(out, "perf")
+  expect_true(all(out$choice.ncomp == 1))
+  out.parallel = perf(res, auc = FALSE, BPPARAM = SnowParam(workers = 2, RNGseed = 44))
+  expect_equal(out$global.error$overall, out.parallel$global.error$overall)
+})
+
+test_that("perf.mint.splsda works in serial and in parallel with progress bar", code = {
+  data(stemcells)
+  res = mint.splsda(
+    X = stemcells$gene,
+    Y = stemcells$celltype,
+    ncomp = 3,
+    keepX = c(5, 10, 15),
+    study = stemcells$study
+  )
+  
+  set.seed(44)
+  sink(tempfile()) # added to hide progress bars during testing
+  out = perf(res, auc = FALSE, BPPARAM = SerialParam(RNGseed = 44), progressBar = TRUE)
+  sink()
+  expect_is(out, "perf")
+  expect_true(all(out$choice.ncomp == 1))
+  
+  set.seed(44)
+  sink(tempfile()) # added to hide progress bars during testing
+  out.parallel = perf(res, auc = FALSE, BPPARAM = SnowParam(workers = 2, RNGseed = 44, progressbar = TRUE))
+  sink()
+  expect_equal(out$global.error$overall, out.parallel$global.error$overall)
 })
 
 test_that("perf.mint.splsda works with custom alpha", code = {

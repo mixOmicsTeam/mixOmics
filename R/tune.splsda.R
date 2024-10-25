@@ -109,7 +109,7 @@
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
-#' @param cpus Number of cpus to use when running the code in parallel.
+#' @template arg/BPPARAM
 #' @return Depending on the type of analysis performed, a list that contains:
 #' \item{error.rate}{returns the prediction error for each \code{test.keepX} on
 #' each component, averaged across all repeats and subsampling folds. Standard
@@ -199,7 +199,7 @@ tune.splsda <-
               multilevel = NULL,
               light.output = TRUE,
               signif.threshold = 0.01, 
-              cpus=1
+              BPPARAM = SerialParam()
     )
     {    #-- checking general input parameters --------------------------------------#
         #---------------------------------------------------------------------------#
@@ -317,20 +317,6 @@ tune.splsda <-
                 stop("Some entries of 'test.keepX' were higher than the number of
         variables in 'X' and were removed, the resulting 'test.keepX' has now
         too few entries (<2)", call. = FALSE)
-        }
-        
-        cpus <- .check_cpus(cpus)
-        parallel <- cpus > 1
-        
-        if (parallel)
-        {
-            if (.onUnix()) {
-                cl <- makeForkCluster(cpus)
-            } else {
-                cl <- makePSOCKcluster(cpus)
-            }
-            
-            clusterEvalQ(cl, library(mixOmics))
         }
         
         # add colnames and rownames if missing
@@ -457,10 +443,8 @@ tune.splsda <-
             }
             
             class.object=c("mixo_splsda","DA")
-            if (parallel)
-                clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","test.keepX"),envir=environment())
-            
             error.per.class.keepX.opt = list()
+
             if(all(measure != "AUC")){
                 error.per.class.keepX.opt.mean = matrix(0, nrow = nlevels(Y), ncol = length(comp.real),
                                                         dimnames = list(c(levels(Y)), c(paste0('comp', comp.real))))
@@ -471,14 +455,14 @@ tune.splsda <-
             for(comp in 1:length(comp.real))
             {
                 
-                if (progressBar == TRUE)
+                if (progressBar == TRUE & is(BPPARAM, 'SerialParam'))
                     cat("\ncomp",comp.real[comp], "\n")
                 
                 result = MCVfold.spls(X, Y, multilevel = multilevel, validation = validation, folds = folds, nrepeat = nrepeat, ncomp = 1 + length(already.tested.X),
                                       choice.keepX = already.tested.X,
                                       test.keepX = test.keepX, test.keepY = nlevels(Y), measure = measure, dist = dist, scale=scale,
                                       near.zero.var = near.zero.var, progressBar = progressBar, tol = tol, max.iter = max.iter, auc = auc,
-                                      cl = cl, parallel = parallel,
+                                      BPPARAM = BPPARAM,
                                       misdata = misdata, is.na.A = is.na.A, class.object=class.object)
                 
                 # in the following, there is [[1]] because 'tune' is working with only 1 distance and 'MCVfold.spls' can work with multiple distances

@@ -165,6 +165,7 @@ tune.spls <-
                         measure = measure, # can do a R2 per Y (correlation, linear regression R2), need to call MSEP (see perf.spls).
                         progressBar = progressBar,
                         nrepeat = nrepeat,
+                        BPPARAM = BPPARAM,
                         ...
       )
       ## --- call

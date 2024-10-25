@@ -777,25 +777,32 @@ test_that("plotIndiv works for (s)plsda (graphics style)", {
 ## ------------------------------------------------------------------------ ##
 ## Plotting with '3d' style
 
+library(rgl)
+
 test_that("plotIndiv works for rcc (3d style)", {
   data(nutrimouse)
   X <- nutrimouse$lipid
   Y <- nutrimouse$gene
   nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
   
-  pl.res <- plotIndiv(nutri.res, style = "3d")
-  # check correct output structure
+  # Clear any existing rgl plots
+  clear3d()
+  pl.res <- suppressWarnings(suppressMessages(plotIndiv(nutri.res, style = "3d")))
+  
+  # Check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
-  # check coordinates
+  # Check coordinates
   .expect_numerically_close(pl.res$df[1,1], 0.87088852)
   
-  pl.res <- plotIndiv(nutri.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
-                      legend = TRUE, style = "3d")
-  # check correct output structure
+  clear3d()
+  pl.res <- suppressWarnings(suppressMessages(plotIndiv(nutri.res, rep.space = 'XY-variate', group = nutrimouse$genotype,
+                                                        legend = TRUE, style = "3d")))
+  
+  # Check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
-  # check coordinates
+  # Check coordinates
   .expect_numerically_close(pl.res$df[1,1], 0.8270997)
-  # check groups
+  # Check groups
   expect_true(!is.null(pl.res$df$group))
   expect_equal(length(unique(pl.res$df$group)), length(unique(nutrimouse$genotype)))
 })
@@ -806,26 +813,27 @@ test_that("plotIndiv works for (s)pca (3d style)", {
   Y <- srbct$class
   pca.srbct = pca(X, ncomp = 10, center = TRUE, scale = TRUE)
   groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
-  pl.res <- plotIndiv(pca.srbct, group = groups, ind.names = FALSE, # plot the samples projected
-                      legend = TRUE, title = 'PCA on SRBCT, comp 1 - 2',
-                      col.per.group = c("red", "blue", "green", "black"),
-                      style = "3d") # onto the PCA subspace
   
-  # check coordinates
+  clear3d()
+  pl.res <- suppressWarnings(suppressMessages(plotIndiv(pca.srbct, group = groups, ind.names = FALSE, 
+                                                        legend = TRUE, title = 'PCA on SRBCT, comp 1 - 2',
+                                                        col.per.group = c("red", "blue", "green", "black"),
+                                                        style = "3d")))
+  
+  # Check coordinates
   .expect_numerically_close(pl.res$df[1,1], 10.13857)
-  # check correct output structure
+  # Check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
-  # check colour assignments are correct
+  # Check colour assignments are correct
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "RMS"]), "red")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "NB"]), "blue")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "EWS"]), "green")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "BL"]), "black")
-  # check right number of samples
+  # Check right number of samples
   expect_equal(dim(pca.srbct$X)[1], dim(pl.res$df)[1])
-  # check groups
+  # Check groups
   expect_true(!is.null(pl.res$df$group))
   expect_equal(length(unique(pl.res$df$group)), length(unique(groups)))
-  
 })
 
 test_that("plotIndiv works for (s)pls (3d style)", {
@@ -835,62 +843,67 @@ test_that("plotIndiv works for (s)pls (3d style)", {
   toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
                         keepY = c(10, 10, 10))
   
-  # expect error when passing numbers as pch argument, informative message about what pch levels can be passed for 3d plot
-  expect_error(plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
-                      group = factor(liver.toxicity$treatment$Time.Group),
-                      legend.title = 'Time',
-                      col.per.group = c("red", "blue", "green", "black"),
-                      pch = factor(liver.toxicity$treatment$Dose.Group),
-                      legend.title.pch = 'Dose',
-                      legend = TRUE, style = "3d"),
+  # Expect error when passing numbers as pch argument
+  expect_error(suppressWarnings(suppressMessages(plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
+                                                           group = factor(liver.toxicity$treatment$Time.Group),
+                                                           legend.title = 'Time',
+                                                           col.per.group = c("red", "blue", "green", "black"),
+                                                           pch = factor(liver.toxicity$treatment$Dose.Group),
+                                                           legend.title.pch = 'Dose',
+                                                           legend = TRUE, style = "3d"))),
                "pch' must be a simple character or character vector from {'sphere', 'tetra', 'cube', 'octa', 'icosa', 'dodeca'}.",
                fixed = TRUE)
   
-  # plot runs when the correct pch values are used for 3d plot, though not sure if it will be used much as not very informative plot
+  # Plot with correct pch values
   pchs <- factor(liver.toxicity$treatment$Dose.Group)
   levels(pchs) <- c("sphere", "tetra", "octa", "icosa")
-  pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
-                      group = factor(liver.toxicity$treatment$Time.Group),
-                      legend.title = 'Time',
-                      col.per.group = c("red", "blue", "green", "black"),
-                      pch = pchs,
-                      legend.title.pch = 'Dose',
-                      legend = TRUE, style = "3d")
   
-  # check coordinates
+  clear3d()
+  pl.res <- suppressWarnings(suppressMessages(plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
+                                                        group = factor(liver.toxicity$treatment$Time.Group),
+                                                        legend.title = 'Time',
+                                                        col.per.group = c("red", "blue", "green", "black"),
+                                                        pch = pchs,
+                                                        legend.title.pch = 'Dose',
+                                                        legend = TRUE, style = "3d")))
+  
+  # Check coordinates
   .expect_numerically_close(pl.res$df[1,1], 4.146771)
-  # check correct output structure
+  # Check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
-  # check colour assignments are correct
+  # Check colour assignments are correct
   expect_equal(unique(pl.res$df$col[pl.res$df$group == 6]), "red")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == 18]), "blue")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == 24]), "green")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == 48]), "black")
-  # check right number of samples
+  # Check right number of samples
   expect_equal(dim(toxicity.spls$X)[1], dim(pl.res$df)[1])
-  # check groups
+  # Check groups
   expect_true(!is.null(pl.res$df$group))
   expect_equal(length(unique(pl.res$df$group)), length(unique(liver.toxicity$treatment$Time.Group)))
-  
 })
 
 test_that("plotIndiv works for (s)plsda (3d style)", {
   data(breast.tumors)
   X <- breast.tumors$gene.exp
   Y <- breast.tumors$sample$treatment
-  splsda.breast <- splsda(X, Y,keepX=c(10,10), ncomp=3)
+  splsda.breast <- splsda(X, Y, keepX=c(10,10), ncomp=3)
   
-  pl.res <- plotIndiv(splsda.breast, style = "3d")
-  # check coordinates
+  clear3d()
+  pl.res <- suppressWarnings(suppressMessages(plotIndiv(splsda.breast, style = "3d")))
+  
+  # Check coordinates
   .expect_numerically_close(pl.res$df[1,1], -1.075222)
-  # check correct output structure
+  # Check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
-  # check colours
+  # Check colours
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "BE"]), "#F68B33")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == "AF"]), "#388ECC")
-  # check right number of samples
+  # Check right number of samples
   expect_equal(dim(splsda.breast$X)[1], dim(pl.res$df)[1])
 })
 
-unlink(list.files(pattern = "*.pdf"))
-
+# Clear the rgl device
+if (rgl::rgl.cur() > 0) {
+  rgl::close3d()
+}

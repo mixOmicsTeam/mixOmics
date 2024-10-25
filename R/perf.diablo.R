@@ -45,9 +45,14 @@ perf.sgccda <-
             auc = FALSE,
             progressBar = FALSE,
             signif.threshold = 0.01,
-            cpus = 1,
+            BPPARAM = SerialParam(),
             ...)
   {
+
+    if (hasArg('cpus')) #defunct
+    {
+    stop("'cpus' has been replaced by BPPARAM. See documentation.")  
+    }
     
     ### Start: Initialization parameters
     X = object$X; level.Y = object$names$colnames$Y;
@@ -619,36 +624,11 @@ perf.sgccda <-
     ## a list of nreps for lapply
     nrep_list <- as.list(seq_len(nrepeat))
     names(nrep_list) <- paste0("nrep", nrep_list)
-    
-    cpus <- .check_cpus(cpus)
-    parallel <- cpus > 1
-    
-    ### parallel
-    if (parallel) {
-      if (progressBar ==  TRUE) {
-        message("progressBar unavailable in parallel computing mode for perf.block.splsda ...")
-      }
       
-      ## for some reason, FORK freezes when auc == TRUE
-      if (.onUnix()) {
-        cl <- makeForkCluster(cpus)
-      } else {
-        cl <- makePSOCKcluster(cpus)
-      }
-      
-      on.exit(stopCluster(cl))
-      clusterEvalQ(cl, library(mixOmics))
-      clusterExport(cl, ls(), environment())
-      if (!is.null(list(...)$seed)) { ## for unit tests purpose
-        RNGversion(.mixo_rng()) ## bc different R versions can have different RNGs and we want reproducible unit tests
-        clusterSetRNGStream(cl = cl, iseed = list(...)$seed)
-      }
-      repeat_cv_perf.diablo_res <- parLapply(cl, nrep_list, function(nrep) repeat_cv_perf.diablo(nrep))
-    } else {
-      repeat_cv_perf.diablo_res <- lapply(nrep_list, function(nrep) {
-        repeat_cv_perf.diablo(nrep)
-      })
-    }
+    # Execute using bplapply, whether in serial or parallel mode
+    repeat_cv_perf.diablo_res <- BiocParallel::bplapply(nrep_list, function(nrep) {
+      repeat_cv_perf.diablo(nrep)
+    }, BPPARAM = BPPARAM)
     
     repeat_cv_perf.diablo_res  <- .unlist_repeat_cv_output(repeat_cv_perf.diablo_res)
     auc.rep.comp <- NULL ## R check pass
