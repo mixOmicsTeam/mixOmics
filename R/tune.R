@@ -359,6 +359,8 @@ tune <-
                 
                 if (missing(ncomp))
                     ncomp = 1
+                if (missing(already.tested.X))
+                  already.tested.X = NULL
                 if (missing(already.tested.Y))
                     already.tested.Y = NULL
                 
@@ -366,7 +368,8 @@ tune <-
                                         multilevel = multilevel,
                                         mode = mode,
                                         ncomp = ncomp, test.keepX = test.keepX, test.keepY = test.keepY,
-                                        already.tested.X = already.tested.X, already.tested.Y = already.tested.Y)
+                                        already.tested.X = already.tested.X, already.tested.Y = already.tested.Y,
+                                        BPPARAM = BPPARAM)
             }
         }
         
