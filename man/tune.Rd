@@ -5,7 +5,7 @@
 \title{Wrapper function to tune pls-derived methods.}
 \usage{
 tune(
-  method = c("spls", "splsda", "mint.splsda", "rcc", "pca", "spca"),
+  method = c("spls", "splsda", "block.splsda", "mint.splsda", "rcc", "pca", "spca"),
   X,
   Y,
   multilevel = NULL,
@@ -32,13 +32,19 @@ tune(
   max.iter = 100,
   tol = 1e-09,
   light.output = TRUE,
-  BPPARAM = SerialParam()
+  BPPARAM = SerialParam(),
+  indY,
+  weighted = TRUE,
+  design,
+  scheme = "horst",
+  init = "svd",
+  signif.threshold = 0.01
 )
 }
 \arguments{
 \item{method}{This parameter is used to pass all other argument to the
 suitable function. \code{method} has to be one of the following: "spls",
-"splsda", "mint.splsda", "rcc", "pca", "spca" or "pls".}
+"splsda", "block.splsda", "mint.splsda", "rcc", "pca", "spca" or "pls".}
 
 \item{X}{numeric matrix of predictors. \code{NA}s are allowed.}
 
@@ -124,6 +130,33 @@ sample for each of \code{test.keepX} and each comp is returned.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples.}
+
+\item{indY}{To supply if \code{Y} is missing, indicates the position of 
+the matrix response in the list \code{X}.}
+
+\item{weighted}{tune using either the performance of the Majority vote or
+the Weighted vote.}
+
+\item{design}{numeric matrix of size (number of blocks in X) x (number of
+blocks in X) with values between 0 and 1. Each value indicates the strenght
+of the relationship to be modelled between two blocks; a value of 0
+indicates no relationship, 1 is the maximum value. Alternatively, one of
+c('null', 'full') indicating a disconnected or fully connected design,
+respecively, or a numeric between 0 and 1 which will designate all
+off-diagonal elements of a fully connected design (see examples in
+\code{block.splsda}). If \code{Y} is provided instead of \code{indY}, the
+\code{design} matrix is changed to include relationships to \code{Y}.}
+
+\item{scheme}{Character, one of 'horst', 'factorial' or 'centroid'. Default =
+\code{'horst'}, see reference.}
+
+\item{init}{Mode of initialization use in the algorithm, either by Singular
+Value Decomposition of the product of each block of X with Y ('svd') or each
+block independently ('svd.single'). Default = \code{svd.single}}
+
+\item{signif.threshold}{numeric between 0 and 1 indicating the significance
+threshold required for improvement in error rate of the components. Default
+to 0.01.}
 }
 \value{
 Depending on the type of analysis performed and the input arguments,

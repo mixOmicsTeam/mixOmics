@@ -104,7 +104,7 @@
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
-#' @param cpus Number of cpus to use when running the code in parallel.
+#' @template arg/BPPARAM
 #' @param ... not used
 #' @return For PLS and sPLS models, \code{perf} produces a list with the
 #' following components for every repeat: 
@@ -745,7 +745,7 @@ perf.mixo_plsda <- function(object,
                             auc = FALSE,
                             progressBar = FALSE,
                             signif.threshold = 0.01,
-                            cpus = 1,
+                            BPPARAM = SerialParam(),
                             ...)
 {
     
@@ -812,7 +812,7 @@ perf.mixo_plsda <- function(object,
     if (any(table(object$Y) <= 1)) {
         stop(paste("Cannot evaluate performance when a class level ('", 
                    names(table(object$Y))[which(table(object$Y) == 1)],
-                   "') has only a single assocaited sample.", sep = ""))
+                   "') has only a single associated sample.", sep = ""))
     }
     
     if (nrepeat < 3 && validation != "loo") {
@@ -834,31 +834,6 @@ perf.mixo_plsda <- function(object,
     
     #-- check significance threshold
     signif.threshold <- .check_alpha(signif.threshold)
-    
-    cpus <- .check_cpus(cpus)
-    parallel <- cpus > 1
-    
-    if (parallel)
-    {
-        if (.onUnix()) {
-            cl <- makeForkCluster(cpus)
-        } else {
-            cl <- makePSOCKcluster(cpus)
-        }
-        
-        on.exit(stopCluster(cl))
-        #clusterExport(cl, c("splsda","selectVar"))
-        clusterEvalQ(cl, library(mixOmics))
-        
-        if (!is.null(list(...)$seed)) { ## for unit tests purpose
-            RNGversion(.mixo_rng()) ## bc different R versions can have different RNGs and we want reproducible unit tests
-            clusterSetRNGStream(cl = cl, iseed = list(...)$seed)
-        }
-    } else {
-        parallel = FALSE
-        cl = NULL
-    }
-    
     
     #---------------------------------------------------------------------------#
     #-- logration + multilevel approach ----------------------------------------#
@@ -954,9 +929,6 @@ perf.mixo_plsda <- function(object,
     }
     
     class.object=class(object)
-    if (parallel) {
-        clusterExport(cl, c("X","Y","is.na.A","misdata","scale","near.zero.var","class.object","keepX"),envir=environment())
-    }
     
     for (comp in 1 : ncomp)
     {
@@ -979,7 +951,8 @@ perf.mixo_plsda <- function(object,
                                choice.keepX = choice.keepX, test.keepX = test.keepX, test.keepY = nlevels(Y),
                                measure = measure, dist = dist, scale=scale,
                                near.zero.var = near.zero.var,
-                               auc = auc, progressBar = progressBar, class.object = class.object, cl = cl, parallel = parallel,
+                               auc = auc, progressBar = progressBar, class.object = class.object,
+                               BPPARAM = BPPARAM,
                                misdata = misdata, is.na.A = is.na.A)#, ind.NA = ind.NA, ind.NA.col = ind.NA.col)
         
         # ---- extract stability of features ----- # NEW

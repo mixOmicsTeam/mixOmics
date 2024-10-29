@@ -15,9 +15,10 @@
 #' supplemental material of the mixOmics article (Rohart et al. 2017). More
 #' details about the PLS modes are in \code{?pls}.
 #' 
+#' @inheritParams block.splsda
 #' @param method This parameter is used to pass all other argument to the
 #' suitable function. \code{method} has to be one of the following: "spls",
-#' "splsda", "mint.splsda", "rcc", "pca", "spca" or "pls".
+#' "splsda", "block.splsda", "mint.splsda", "rcc", "pca", "spca" or "pls".
 #' @param X numeric matrix of predictors. \code{NA}s are allowed.
 #' @param Y Either a factor or a class vector for the discrete outcome, or a
 #' numeric vector or matrix of continuous responses (for multi-response
@@ -75,6 +76,11 @@
 #' @param tol Numeric, convergence tolerance criteria.
 #' @param light.output if set to FALSE, the prediction/classification of each
 #' sample for each of \code{test.keepX} and each comp is returned.
+#' @param weighted tune using either the performance of the Majority vote or
+#' the Weighted vote.
+#' @param signif.threshold numeric between 0 and 1 indicating the significance
+#' threshold required for improvement in error rate of the components. Default
+#' to 0.01.
 #' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
 #'   of parallelisation. See examples.
 #' @return Depending on the type of analysis performed and the input arguments,
@@ -154,15 +160,15 @@
 #' @export
 #' @example ./examples/tune-examples.R
 tune <-
-    function (method = c("spls", "splsda", "mint.splsda", "rcc", "pca", "spca"),
+    function (method = c("spls", "splsda", "block.splsda", "mint.splsda", "rcc", "pca", "spca"),
               X,
               Y,
               multilevel = NULL,
               ncomp,
               study,
-              # mint.splsda
+              # mint.splsda, block.splsda
               test.keepX = c(5, 10, 15),
-              # all but pca, rcc
+              # all but pca, rcc, block.splsda
               test.keepY = NULL,
               # rcc, multilevel
               already.tested.X,
@@ -170,13 +176,13 @@ tune <-
               already.tested.Y,
               #multilevel
               mode = c("regression", "canonical", "invariant", "classic"),
-              # multilevel
+              # multilevel and block.splsda
               nrepeat = 1,
               #multilevel, splsda
               grid1 = seq(0.001, 1, length = 5),
               # rcc
               grid2 = seq(0.001, 1, length = 5),
-              # rcc
+              # rcc, mint,block.splsda
               validation = "Mfold",
               # all but pca
               folds = 10,
@@ -201,9 +207,15 @@ tune <-
               tol = 1e-09,
               #pca
               light.output = TRUE,
-              # mint, splsda
-              BPPARAM = SerialParam()
-              
+              # all apart from tun.pca
+              BPPARAM = SerialParam(),
+              # for block.splsda
+              indY,
+              weighted = TRUE,
+              design,
+              scheme = "horst",
+              init = "svd",
+              signif.threshold = 0.01
     )
     {
         method = match.arg(method)
@@ -229,6 +241,35 @@ tune <-
                                       max.iter = max.iter,
                                       near.zero.var = near.zero.var,
                                       light.output = light.output)
+            
+        } else if (method == "block.splsda") {
+          message("Calling 'tune.block.splsda'")
+          
+          result = tune.block.splsda(X = X,
+                                    Y = Y,
+                                    ncomp = ncomp,
+                                    test.keepX = test.keepX,
+                                    already.tested.X = already.tested.X,
+                                    validation = validation,
+                                    folds = folds,
+                                    dist = dist,
+                                    measure = measure,
+                                    progressBar = progressBar,
+                                    scale = scale,
+                                    tol = tol,
+                                    max.iter = max.iter,
+                                    near.zero.var = near.zero.var,
+                                    light.output = light.output,
+                                    nrepeat = nrepeat,
+                                    BPPARAM = BPPARAM,
+                                    indY = indY,
+                                    weighted = weighted,
+                                    design = design,
+                                    scheme = scheme,
+                                    init = init,
+                                    signif.threshold = signif.threshold
+                                    )
+          
             
         } else if (method == "rcc") {
             message("Calling 'tune.rcc'")
@@ -267,7 +308,8 @@ tune <-
                                folds = folds,
                                test.keepX = test.keepX,
                                center = center,
-                               scale = scale)
+                               scale = scale,
+                               BPPARAM = BPPARAM)
             
             
         } else if (method == "splsda") {
@@ -293,6 +335,7 @@ tune <-
                                   logratio = logratio,
                                   multilevel = multilevel,
                                   light.output = light.output)
+            
         } else if (method == "spls") {
             if(missing(multilevel))
             {
@@ -316,6 +359,8 @@ tune <-
                 
                 if (missing(ncomp))
                     ncomp = 1
+                if (missing(already.tested.X))
+                  already.tested.X = NULL
                 if (missing(already.tested.Y))
                     already.tested.Y = NULL
                 
@@ -323,7 +368,8 @@ tune <-
                                         multilevel = multilevel,
                                         mode = mode,
                                         ncomp = ncomp, test.keepX = test.keepX, test.keepY = test.keepY,
-                                        already.tested.X = already.tested.X, already.tested.Y = already.tested.Y)
+                                        already.tested.X = already.tested.X, already.tested.Y = already.tested.Y,
+                                        BPPARAM = BPPARAM)
             }
         }
         
