@@ -53,6 +53,8 @@
 #' @param measure The tuning measure to use. See details.
 #' @template arg/progressBar
 #' @template arg/BPPARAM
+#' @param seed set a number here if you want the function to give reproducible outputs. 
+#' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 #' @param limQ2 Q2 threshold for recommending optimal \code{ncomp}.
 #' @param ... Optional parameters passed to \code{\link{spls}}
 #' @return A list that contains: \item{cor.pred}{The correlation of predicted vs
@@ -130,12 +132,15 @@ tune.spls <-
            mode = c('regression', 'canonical', 'classic'),
            measure = NULL,
            BPPARAM = SerialParam(),
+           seed = NULL,
            progressBar = FALSE,
            limQ2 = 0.0975,
            ...
   ) {
     out = list()
     mode <- match.arg(mode)
+    
+    BPPARAM$RNGseed <- seed
     
     X <- .check_numeric_matrix(X, block_name = 'X')
     Y <- .check_numeric_matrix(Y, block_name = 'Y')
@@ -236,8 +241,9 @@ tune.spls <-
                         keepY = c(choice.keepY, keepY), 
                         ncomp = comp, mode = mode, ...)
       
-      # 
-      pls.perf <- perf(pls.model, validation = validation, folds = folds, nrepeat = nrepeat)
+      # run perf in serial to avoid nested parallel processes, but make sure seed is passed into perf
+      pls.perf <- perf(pls.model, validation = validation, folds = folds, nrepeat = nrepeat,
+                       BPPARAM = SerialParam(), seed = seed)
       
       
       # ensures the only rows that are returned are those manipulated in this

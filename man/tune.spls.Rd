@@ -16,6 +16,7 @@ tune.spls(
   mode = c("regression", "canonical", "classic"),
   measure = NULL,
   BPPARAM = SerialParam(),
+  seed = NULL,
   progressBar = FALSE,
   limQ2 = 0.0975,
   ...
@@ -54,6 +55,9 @@ of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples in \code{?tune.spca}.}
+
+\item{seed}{set a number here if you want the function to give reproducible outputs. 
+Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'.}
 
 \item{progressBar}{Logical. If \code{TRUE} a progress bar is shown as the
 computation completes. Default to \code{FALSE}.}
