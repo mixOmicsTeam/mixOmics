@@ -8,9 +8,8 @@ test_that("perf works when nrepeat < 3 and validation != 'loo'", code = {
   
   initial.plsda <- plsda(X, Y, ncomp = 5)
   
-  set.seed(12)
   plsda.perf <- suppressWarnings(perf(initial.plsda, progressBar = FALSE, auc = FALSE, 
-                     folds = 3, nrepeat = 1))
+                     folds = 3, nrepeat = 1, seed = 12))
   
   trueVals <- matrix(5, ncol = 3, nrow = 2)
   colnames(trueVals) <- c("max.dist", "centroids.dist", "mahalanobis.dist")
