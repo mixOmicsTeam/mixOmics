@@ -12,10 +12,10 @@ test_that("perf() works on pls object", code = {
   Y <- liver.toxicity$clinic
   pls.obg <- pls(Y, X, ncomp = 4)
   class(pls.obg) # "mixo_pls"
-  # run perf
+  # run perf - RNGseed is ignored, only looks at seed
   pls.perf.obj <- perf(pls.obg, validation = "Mfold", folds = 4, 
                        progressBar = FALSE, nrepeat = 3,
-                       BPPARAM = SerialParam(),
+                       BPPARAM = SerialParam(RNGseed = 10000),
                        seed = 12)
   trueVals <- c(0.009, -0.222, -0.332, -0.471)
   testVals <- round(pls.perf.obj$measures$Q2.total$summary[, "mean"], 3)
@@ -35,16 +35,16 @@ test_that("perf() works on pls object in serial and parallel", code = {
   # run in serial with seed
   pls.perf.obj <- perf(pls.obg, validation = "Mfold", folds = 4, 
                        progressBar = FALSE, nrepeat = 3,
-                       BPPARAM = SerialParam(),
+                       BPPARAM = SerialParam(RNGseed = 1000),
                        seed = 12)
   trueVals <- c(0.009, -0.222, -0.332, -0.471)
   testVals <- round(pls.perf.obj$measures$Q2.total$summary[, "mean"], 3)
   expect_equal(trueVals, testVals)
   
-  # run in parallel with seed
+  # run in parallel with seed - even if set RNGseed as different that is overwritten and gives reproducible results
   pls.perf.obj.p <- perf(pls.obg, validation = "Mfold", folds = 4, 
                        progressBar = FALSE, nrepeat = 3,
-                       BPPARAM = SnowParam(workers = 2),
+                       BPPARAM = SnowParam(workers = 2, RNGseed = 600),
                        seed = 12)
   testVals <- round(pls.perf.obj.p$measures$Q2.total$summary[, "mean"], 3)
   expect_equal(trueVals, testVals)
