@@ -266,21 +266,23 @@ perf.mixo_pls <- function(object,
                           folds,
                           progressBar = FALSE,
                           nrepeat = 1,
+                          BPPARAM = SerialParam(),
                           ...)
 {
+    # checking args and initialize params
     ncomp = object$ncomp
     spls.model <- is(object, 'mixo_spls')
     progressBar <- .check_logical(progressBar)
     
-    # TODO add BPPARAM to args and use bplapply
+    # run CV in parallel depending on BPPARAM
     repeat_names <- .name_list(char = seq_len(nrepeat))
-    result <- lapply(X = repeat_names, FUN = function(nrep) {
+    result <- bplapply(X = repeat_names, FUN = function(nrep) {
         ## progress bar
-        if (progressBar == TRUE) # TODO drop for parallel
+        if (progressBar == TRUE)
             .progressBar(nrep/nrepeat)
         ## CV
         .perf.mixo_pls_cv(object, validation = validation, folds = folds, nrep = nrep)
-    })
+    }, BPPARAM = BPPARAM)
     
     measures <- lapply(result, function(x){
         x$measures
