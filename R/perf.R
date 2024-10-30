@@ -105,6 +105,8 @@
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
 #' @template arg/BPPARAM
+#' @param seed set a number here if you want the function to give reproducible outputs. 
+#' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 #' @param ... not used
 #' @return For PLS and sPLS models, \code{perf} produces a list with the
 #' following components for every repeat: 
@@ -267,12 +269,14 @@ perf.mixo_pls <- function(object,
                           progressBar = FALSE,
                           nrepeat = 1,
                           BPPARAM = SerialParam(),
+                          seed = NULL,
                           ...)
 {
     # checking args and initialize params
     ncomp = object$ncomp
     spls.model <- is(object, 'mixo_spls')
     progressBar <- .check_logical(progressBar)
+    BPPARAM$RNGseed <- seed
     
     # run CV in parallel depending on BPPARAM
     repeat_names <- .name_list(char = seq_len(nrepeat))

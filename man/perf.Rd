@@ -21,6 +21,8 @@ perf(object, ...)
   folds,
   progressBar = FALSE,
   nrepeat = 1,
+  BPPARAM = SerialParam(),
+  seed = NULL,
   ...
 )
 
@@ -30,6 +32,8 @@ perf(object, ...)
   folds,
   progressBar = FALSE,
   nrepeat = 1,
+  BPPARAM = SerialParam(),
+  seed = NULL,
   ...
 )
 
@@ -126,6 +130,12 @@ of the computation.}
 This is an important argument to ensure the estimation of the performance to
 be as accurate as possible.}
 
+\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
+of parallelisation. See examples in \code{?tune.spca}.}
+
+\item{seed}{set a number here if you want the function to give reproducible outputs. 
+Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'.}
+
 \item{dist}{only applies to an object inheriting from \code{"plsda"},
 \code{"splsda"} or \code{"mint.splsda"} to evaluate the classification
 performance of the model. Should be a subset of \code{"max.dist"},
@@ -138,9 +148,6 @@ performance of the model.}
 \item{signif.threshold}{numeric between 0 and 1 indicating the significance
 threshold required for improvement in error rate of the components. Default
 to 0.01.}
-
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
-of parallelisation. See examples in \code{?tune.spca}.}
 }
 \value{
 For PLS and sPLS models, \code{perf} produces a list with the

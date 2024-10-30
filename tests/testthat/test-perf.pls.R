@@ -15,7 +15,8 @@ test_that("perf() works on pls object", code = {
   # run perf
   pls.perf.obj <- perf(pls.obg, validation = "Mfold", folds = 4, 
                        progressBar = FALSE, nrepeat = 3,
-                       BPPARAM = SerialParam(RNGseed = 12))
+                       BPPARAM = SerialParam(),
+                       seed = 12)
   trueVals <- c(0.009, -0.222, -0.332, -0.471)
   testVals <- round(pls.perf.obj$measures$Q2.total$summary[, "mean"], 3)
   expect_equal(trueVals, testVals)
@@ -34,7 +35,8 @@ test_that("perf() works on pls object in serial and parallel", code = {
   # run in serial with seed
   pls.perf.obj <- perf(pls.obg, validation = "Mfold", folds = 4, 
                        progressBar = FALSE, nrepeat = 3,
-                       BPPARAM = SerialParam(RNGseed = 12))
+                       BPPARAM = SerialParam(),
+                       seed = 12)
   trueVals <- c(0.009, -0.222, -0.332, -0.471)
   testVals <- round(pls.perf.obj$measures$Q2.total$summary[, "mean"], 3)
   expect_equal(trueVals, testVals)
@@ -42,7 +44,8 @@ test_that("perf() works on pls object in serial and parallel", code = {
   # run in parallel with seed
   pls.perf.obj.p <- perf(pls.obg, validation = "Mfold", folds = 4, 
                        progressBar = FALSE, nrepeat = 3,
-                       BPPARAM = SnowParam(RNGseed = 12, workers = 2))
+                       BPPARAM = SnowParam(workers = 2),
+                       seed = 12)
   testVals <- round(pls.perf.obj.p$measures$Q2.total$summary[, "mean"], 3)
   expect_equal(trueVals, testVals)
   # check the same
@@ -69,7 +72,8 @@ test_that("perf() works on pls with nzv features (all modes)", code = {
     suppressWarnings(pls.obg <- pls(Y, X, ncomp = 4, mode = modes[m]))
     suppressWarnings(pls.perf.obj <- perf(pls.obg, validation = "Mfold", folds = 4, 
                          progressBar = F, 
-                         nrepeat = 3, BPPARAM = SerialParam(RNGseed = 2)))
+                         nrepeat = 3, BPPARAM = SerialParam(),
+                         seed = 2))
     
     testVals <- round(pls.perf.obj$measures$Q2.total$summary[, "mean"], 3)
     expect_equal(trueVals[[m]], testVals)
@@ -92,10 +96,12 @@ test_that("perf() works on spls object in serial and parallel", code = {
   
   # run perf in series
   model.spls.val <- perf(model.spls, validation = "Mfold", folds = 10,
-                         BPPARAM = SerialParam(RNGseed = 12))
+                         BPPARAM = SerialParam(),
+                         seed = 12)
   # run perf in parallel
   model.spls.val.p <- perf(model.spls, validation = "Mfold", folds = 10,
-                         BPPARAM = SnowParam(workers = 2, RNGseed = 12))
+                         BPPARAM = SnowParam(workers = 2),
+                         seed = 12)
   
   # check values are expected
   trueVals <- c(0.160, -0.114, -0.210, -0.531, -0.707, -0.962, -1.322)
