@@ -752,10 +752,13 @@ perf.mixo_plsda <- function(object,
                             progressBar = FALSE,
                             signif.threshold = 0.01,
                             BPPARAM = SerialParam(),
+                            seed = NULL,
                             ...)
 {
     
     #-- initialising arguments --#
+    set.seed(seed)
+    BPPARAM$RNGseed <- seed
     # these data are the centered and scaled X output or the unmapped(Y) scaled and centered
     X = object$input.X
     level.Y = object$names$colnames$Y  #to make sure the levels are ordered

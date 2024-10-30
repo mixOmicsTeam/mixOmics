@@ -1,16 +1,6 @@
 context("perf.mixo_splsda")
 library(BiocParallel)
 
-# Helper function to suppress progress bar output
-run_perf_silent <- function(model, validation, folds, nrepeat = 1, BPPARAM, progressBar = TRUE, dist = "all", auc = FALSE) {
-  sink(tempfile())  # Suppress progress bar output
-  result <- suppressWarnings(
-    perf(model, validation = validation, folds = folds, nrepeat = nrepeat, BPPARAM = BPPARAM, progressBar = progressBar, dist = dist, auc = auc)
-  )
-  sink()  # Restore output
-  return(result)
-}
-
 ## ------------------------------------------------------------------------ ##
 ## Test perf.mixo_plsda()
 
@@ -19,10 +9,9 @@ test_that("perf.mixo_plsda", code = {
   X <- liver.toxicity$gene
   Y <- liver.toxicity$treatment$Dose.Group
   
-  set.seed(12)
   res <- plsda(X, Y, ncomp = 2)
   class(res) # "mint.splsda" "mixo_splsda" "mixo_spls"   "DA"        
-  out <- perf(res, validation = "Mfold", folds = 3, nrepeat = 3)
+  out <- perf(res, validation = "Mfold", folds = 3, nrepeat = 3, seed = 12)
   
   ground.ncomp <- matrix(c(2,1,2,2,1,2), ncol = 3, byrow=T,
                          dimnames = list(c("overall", "BER"),
@@ -38,15 +27,17 @@ test_that("perf.mixo_plsda in serial and parallel", code = {
   res <- plsda(X, Y, ncomp = 2)
   
   # Serial execution
-  set.seed(12)
-  out <- run_perf_silent(res, validation = "Mfold", folds = 3, nrepeat = 1, BPPARAM = SerialParam(RNGseed = 12))
+  out <- suppressWarnings(
+    perf(res, validation = "Mfold", folds = 3, nrepeat = 1, BPPARAM = SerialParam(), seed = 12)
+  )
   
   # Parallel execution
-  set.seed(12)
-  out.parallel <- run_perf_silent(res, validation = "Mfold", folds = 3, nrepeat = 1, BPPARAM = SnowParam(workers = 2, RNGseed = 12))
+  out.parallel <- suppressWarnings(
+    perf(res, validation = "Mfold", folds = 3, nrepeat = 1, BPPARAM = SnowParam(workers = 2), seed = 12)
+  )
   
   # Expect the same result
-  expect_equal(out$study.specific.error, out.parallel$study.specific.error)
+  expect_equal(out$error.rate$overall, out.parallel$error.rate$overall)
 })
 
 ## ------------------------------------------------------------------------ ##
@@ -62,7 +53,9 @@ test_that("perf.mixo_splsda", code = {
   class(srbct.splsda)  # Check model class
   
   # Use fewer folds and repeats to speed up the test
-  out <- run_perf_silent(srbct.splsda, validation = "Mfold", folds = 5, nrepeat = 1, BPPARAM = SerialParam(RNGseed = 12))
+  out <- suppressWarnings(perf(srbct.splsda, validation = "Mfold", folds = 5, nrepeat = 1, 
+                         BPPARAM = SerialParam(RNGseed = 1000), seed = 12)
+  )
   
   ground.ncomp <- matrix(c(2,2,2,2,2,2), ncol = 3, byrow = TRUE,
                          dimnames = list(c("overall", "BER"),
@@ -80,11 +73,17 @@ test_that("perf.mixo_splsda in serial and parallel with fewer folds", code = {
   
   # Serial execution
   set.seed(12)
-  out <- run_perf_silent(srbct.splsda, validation = "Mfold", folds = 3, nrepeat = 1, BPPARAM = SerialParam(RNGseed = 12))
+  out <- suppressWarnings(
+    perf(srbct.splsda, validation = "Mfold", folds = 3, nrepeat = 1, 
+              BPPARAM = SerialParam(RNGseed = 1000), seed = 12)
+  )
   
   # Parallel execution
   set.seed(12)
-  out.parallel <- run_perf_silent(srbct.splsda, validation = "Mfold", folds = 3, nrepeat = 1, BPPARAM = SnowParam(workers = 2, RNGseed = 12))
+  out.parallel <- suppressWarnings(
+    perf(srbct.splsda, validation = "Mfold", folds = 3, nrepeat = 1, 
+                                  BPPARAM = SnowParam(workers = 2, RNGseed = 1050), seed = 12)
+  )
   
   # Expect the same result
   expect_equal(out$study.specific.error, out.parallel$study.specific.error)
