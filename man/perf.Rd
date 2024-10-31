@@ -75,6 +75,7 @@ perf(object, ...)
   progressBar = FALSE,
   signif.threshold = 0.01,
   BPPARAM = SerialParam(),
+  seed = NULL,
   ...
 )
 

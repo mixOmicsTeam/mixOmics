@@ -46,6 +46,7 @@ perf.sgccda <-
             progressBar = FALSE,
             signif.threshold = 0.01,
             BPPARAM = SerialParam(),
+            seed = NULL,
             ...)
   {
 
@@ -55,6 +56,8 @@ perf.sgccda <-
     }
     
     ### Start: Initialization parameters
+    BPPARAM$RNGseed <- seed
+    set.seed(seed)
     X = object$X; level.Y = object$names$colnames$Y;
     J = length(X)
     Y = object$Y#ind.mat; Y = map(Y); Y = factor(Y, labels = level.Y)
