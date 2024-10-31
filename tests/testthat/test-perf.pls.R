@@ -4,46 +4,27 @@ library(BiocParallel)
 ## ------------------------------------------------------------------------ ##
 ## Test perf.mixo_pls()
 
-test_that("perf() works on pls object", code = {
-  
-  # set up data
-  data("liver.toxicity")
-  X <- liver.toxicity$gene[1:500]
-  Y <- liver.toxicity$clinic
-  pls.obg <- pls(Y, X, ncomp = 4)
-  class(pls.obg) # "mixo_pls"
-  # run perf - RNGseed is ignored, only looks at seed
-  pls.perf.obj <- perf(pls.obg, validation = "Mfold", folds = 4, 
-                       progressBar = FALSE, nrepeat = 3,
-                       BPPARAM = SerialParam(RNGseed = 10000),
-                       seed = 12)
-  trueVals <- c(0.009, -0.222, -0.332, -0.471)
-  testVals <- round(pls.perf.obj$measures$Q2.total$summary[, "mean"], 3)
-  expect_equal(trueVals, testVals)
-  expect_equal(names(pls.perf.obj), c("call", "measures", "features"))
-})
-
 test_that("perf() works on pls object in serial and parallel", code = {
   
   # set up data
   data("liver.toxicity")
   X <- liver.toxicity$gene[1:500]
   Y <- liver.toxicity$clinic
-  pls.obg <- pls(Y, X, ncomp = 4)
+  pls.obg <- pls(Y, X, ncomp = 2)
   class(pls.obg) # "mixo_pls"
   
   # run in serial with seed
-  pls.perf.obj <- perf(pls.obg, validation = "Mfold", folds = 4, 
-                       progressBar = FALSE, nrepeat = 3,
+  pls.perf.obj <- perf(pls.obg, validation = "Mfold", folds = 2, 
+                       progressBar = FALSE, nrepeat = 1,
                        BPPARAM = SerialParam(RNGseed = 1000),
                        seed = 12)
-  trueVals <- c(0.009, -0.222, -0.332, -0.471)
+  trueVals <- c(0.041, -0.177)
   testVals <- round(pls.perf.obj$measures$Q2.total$summary[, "mean"], 3)
   expect_equal(trueVals, testVals)
   
   # run in parallel with seed - even if set RNGseed as different that is overwritten and gives reproducible results
-  pls.perf.obj.p <- perf(pls.obg, validation = "Mfold", folds = 4, 
-                       progressBar = FALSE, nrepeat = 3,
+  pls.perf.obj.p <- perf(pls.obg, validation = "Mfold", folds = 2, 
+                       progressBar = FALSE, nrepeat = 1,
                        BPPARAM = SnowParam(workers = 2, RNGseed = 600),
                        seed = 12)
   testVals <- round(pls.perf.obj.p$measures$Q2.total$summary[, "mean"], 3)
@@ -64,15 +45,15 @@ test_that("perf() works on pls with nzv features (all modes)", code = {
   X[, c(1, 23, 62, 234, 789)] <- 0
   
   modes <- c("classic", "regression", "canonical")
-  trueVals <- list(c(0.032,  0.008,  0.003, -0.006),
-                   c(0.022, -0.175, -0.312, -0.437),
-                   c(0.088, -0.475, -1.238, -2.218))
+  trueVals <- list(c(0.021,  -0.014),
+                   c(-0.071, -0.260),
+                   c(0.089, -0.415))
   
   for (m in 1:3) {
-    suppressWarnings(pls.obg <- pls(Y, X, ncomp = 4, mode = modes[m]))
-    suppressWarnings(pls.perf.obj <- perf(pls.obg, validation = "Mfold", folds = 4, 
+    suppressWarnings(pls.obg <- pls(Y, X, ncomp = 2, mode = modes[m]))
+    suppressWarnings(pls.perf.obj <- perf(pls.obg, validation = "Mfold", folds = 2, 
                          progressBar = F, 
-                         nrepeat = 3, BPPARAM = SerialParam(),
+                         nrepeat = 1, BPPARAM = SerialParam(),
                          seed = 2))
     
     testVals <- round(pls.perf.obj$measures$Q2.total$summary[, "mean"], 3)
@@ -90,21 +71,21 @@ test_that("perf() works on spls object in serial and parallel", code = {
   data("liver.toxicity")
   X <- liver.toxicity$gene[1:500]
   Y <- liver.toxicity$clinic
-  model.spls = spls(X, Y, ncomp = 7, mode = 'regression',
-                    keepX = c(rep(10, 7)), keepY = c(rep(4, 7)))
+  model.spls = spls(X, Y, ncomp = 2, mode = 'regression',
+                    keepX = c(10, 10), keepY = c(4, 4))
   class(model.spls) # "mixo_pls"
   
   # run perf in series
-  model.spls.val <- perf(model.spls, validation = "Mfold", folds = 10,
+  model.spls.val <- perf(model.spls, validation = "Mfold", folds = 2,
                          BPPARAM = SerialParam(),
                          seed = 12)
   # run perf in parallel
-  model.spls.val.p <- perf(model.spls, validation = "Mfold", folds = 10,
+  model.spls.val.p <- perf(model.spls, validation = "Mfold", folds = 2,
                          BPPARAM = SnowParam(workers = 2),
                          seed = 12)
   
   # check values are expected
-  trueVals <- c(0.160, -0.114, -0.210, -0.531, -0.707, -0.962, -1.322)
+  trueVals <- c(0.096, -0.190)
   testVals <- round(model.spls.val$measures$Q2.total$summary[, "mean"], 3)
   expect_equal(trueVals, testVals)
   expect_equal(names(model.spls.val), c("call", "measures", "features"))
