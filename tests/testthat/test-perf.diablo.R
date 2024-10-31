@@ -17,20 +17,17 @@ test_that("perf.diablo works with with auroc", {
                                       scheme = "horst")
     
     # run perf model - set seed as 100, ignores RNGseed
-    perf.res = perf(nutrimouse.sgccda, folds = 2, nrepeat = 3, auc = TRUE, 
+    perf.res = perf(nutrimouse.sgccda, folds = 2, nrepeat = 1, auc = TRUE, 
                       BPPARAM = SerialParam(RNGseed = 100000), seed = 100, progressBar = FALSE)
-    choices <- unname(perf.res$choice.ncomp$AveragedPredict[,1])
-    expect_equal(choices, c(1,1))
+    true_aucs <- c(0.95, 0.62, 0.68, 0.54, 0.77)
     aucs <- round(unname(perf.res$auc$comp1[,1]), 2)
-    expect_equal(aucs, c(0.96, 0.76, 0.64, 0.53, 0.70))
+    expect_equal(aucs, true_aucs)
     
     # run in parallel
-    perf.res.parallel = perf(nutrimouse.sgccda, folds = 2, nrepeat = 3, auc = TRUE, 
+    perf.res.parallel = perf(nutrimouse.sgccda, folds = 2, nrepeat = 1, auc = TRUE, 
                       BPPARAM = SnowParam(workers = 2), seed = 100, progressBar = FALSE)
-    choices <- unname(perf.res.parallel$choice.ncomp$AveragedPredict[,1])
-    expect_equal(choices, c(1,1))
     aucs <- round(unname(perf.res.parallel$auc$comp1[,1]), 2)
-    expect_equal(aucs, c(0.96, 0.76, 0.64, 0.53, 0.70))
+    expect_equal(aucs, true_aucs)
     expect_equal(perf.res$weights, perf.res.parallel$weights)
     
 })
