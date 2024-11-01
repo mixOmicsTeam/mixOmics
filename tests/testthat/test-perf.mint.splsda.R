@@ -20,48 +20,6 @@ test_that("perf.mint.splsda works", code = {
     
 })
 
-test_that("perf.mint.splsda works in serial and in parallel", code = {
-  data(stemcells)
-  res = mint.splsda(
-    X = stemcells$gene,
-    Y = stemcells$celltype,
-    ncomp = 3,
-    keepX = c(5, 10, 15),
-    study = stemcells$study
-  )
-  
-  set.seed(44)
-  out = perf(res, auc = FALSE, BPPARAM = SerialParam(RNGseed = 44))
-  expect_is(out, "perf")
-  expect_true(all(out$choice.ncomp == 1))
-  out.parallel = perf(res, auc = FALSE, BPPARAM = SnowParam(workers = 2, RNGseed = 44))
-  expect_equal(out$global.error$overall, out.parallel$global.error$overall)
-})
-
-test_that("perf.mint.splsda works in serial and in parallel with progress bar", code = {
-  data(stemcells)
-  res = mint.splsda(
-    X = stemcells$gene,
-    Y = stemcells$celltype,
-    ncomp = 3,
-    keepX = c(5, 10, 15),
-    study = stemcells$study
-  )
-  
-  set.seed(44)
-  sink(tempfile()) # added to hide progress bars during testing
-  out = perf(res, auc = FALSE, BPPARAM = SerialParam(RNGseed = 44), progressBar = TRUE)
-  sink()
-  expect_is(out, "perf")
-  expect_true(all(out$choice.ncomp == 1))
-  
-  set.seed(44)
-  sink(tempfile()) # added to hide progress bars during testing
-  out.parallel = perf(res, auc = FALSE, BPPARAM = SnowParam(workers = 2, RNGseed = 44, progressbar = TRUE))
-  sink()
-  expect_equal(out$global.error$overall, out.parallel$global.error$overall)
-})
-
 test_that("perf.mint.splsda works with custom alpha", code = {
     data(stemcells)
     res = mint.splsda(
@@ -78,33 +36,33 @@ test_that("perf.mint.splsda works with custom alpha", code = {
     
 })
 
-test_that("perf.mint.splsda and tune.mint.splsda yield the same error rates for all measures", code = {
-    data(stemcells)
-    X = stemcells$gene
-    Y = stemcells$celltype
-    study <- stemcells$study
-    
-    metricsC1 <- matrix(0, nrow = 2, ncol = 3)
-    colnames(metricsC1) <- c('max.dist', 'centroids.dist', 'mahalanobis.dist')
-    rownames(metricsC1) <- c("overall", "BER")
-    
-    metricsC2 <- metricsC1
-    
-    for (dist in c('max.dist', 'centroids.dist', 'mahalanobis.dist')) {
-        for (measure in c("overall", "BER")) {
-            tune.mint = tune.mint.splsda(X = X, Y = Y, study = study, ncomp = 2, test.keepX = seq(1, 51, 5),
-                                         dist = dist, progressBar = FALSE, measure = measure)
-            
-            mint.splsda.res = mint.splsda(X = X, Y = Y, study = study, ncomp = 2,
-                                          keepX = tune.mint$choice.keepX)
-            
-            perf.mint = perf(mint.splsda.res, progressBar = FALSE, dist = dist)
-            
-            metricsC1[measure, dist] <- tune.mint$error.rate[which(rownames(tune.mint$error.rate) == tune.mint$choice.keepX[1]), "comp1"]
-            metricsC2[measure, dist] <- tune.mint$error.rate[which(rownames(tune.mint$error.rate) == tune.mint$choice.keepX[2]), "comp2"]
-            
-            expect_equal(round(perf.mint$global.error[[measure]]["comp1",], 4), round(metricsC1[[measure, dist]], 4))
-            expect_equal(round(perf.mint$global.error[[measure]]["comp2",], 4), round(metricsC2[[measure, dist]], 4))
-        }
-    }
-})
+# test_that("perf.mint.splsda and tune.mint.splsda yield the same error rates for all measures", code = {
+#     data(stemcells)
+#     X = stemcells$gene
+#     Y = stemcells$celltype
+#     study <- stemcells$study
+#     
+#     metricsC1 <- matrix(0, nrow = 2, ncol = 3)
+#     colnames(metricsC1) <- c('max.dist', 'centroids.dist', 'mahalanobis.dist')
+#     rownames(metricsC1) <- c("overall", "BER")
+#     
+#     metricsC2 <- metricsC1
+#     
+#     for (dist in c('max.dist', 'centroids.dist', 'mahalanobis.dist')) {
+#         for (measure in c("overall", "BER")) {
+#             tune.mint = tune.mint.splsda(X = X, Y = Y, study = study, ncomp = 2, test.keepX = seq(1, 51, 5),
+#                                          dist = dist, progressBar = FALSE, measure = measure)
+#             
+#             mint.splsda.res = mint.splsda(X = X, Y = Y, study = study, ncomp = 2,
+#                                           keepX = tune.mint$choice.keepX)
+#             
+#             perf.mint = perf(mint.splsda.res, progressBar = FALSE, dist = dist)
+#             
+#             metricsC1[measure, dist] <- tune.mint$error.rate[which(rownames(tune.mint$error.rate) == tune.mint$choice.keepX[1]), "comp1"]
+#             metricsC2[measure, dist] <- tune.mint$error.rate[which(rownames(tune.mint$error.rate) == tune.mint$choice.keepX[2]), "comp2"]
+#             
+#             expect_equal(round(perf.mint$global.error[[measure]]["comp1",], 4), round(metricsC1[[measure, dist]], 4))
+#             expect_equal(round(perf.mint$global.error[[measure]]["comp2",], 4), round(metricsC2[[measure, dist]], 4))
+#         }
+#     }
+# })

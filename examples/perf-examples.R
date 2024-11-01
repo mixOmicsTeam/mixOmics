@@ -46,8 +46,7 @@ model.spls = spls(X, Y, ncomp = ncomp, mode = 'regression',
 
 
 # with leave-one-out cross validation
-set.seed(45)
-model.spls.val <- perf(model.spls, validation = "Mfold", folds = 5 )
+model.spls.val <- perf(model.spls, validation = "Mfold", folds = 5, seed = 45 )
 
 #Q2 total
 model.spls.val$measures$Q2$summary
@@ -67,26 +66,24 @@ srbct.splsda <- splsda(X, Y, ncomp = ncomp, keepX = rep(10, ncomp))
 
 # with Mfold
 # ---------
-set.seed(45)
 error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", auc = TRUE)
+dist = "all", auc = TRUE, seed = 45)
 error
 error$auc
 
 plot(error)
 
 # parallel code
-set.seed(45)
+library(BiocParallel)
 error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", auc = TRUE, BPPARAM = SnowParam(workers = 2, RNGseed = 45))
+dist = "all", auc = TRUE, BPPARAM = SnowParam(workers = 2), seed = 45)
 
 # with 5 components and nrepeat=5, to get a $choice.ncomp
 ncomp = 5
 srbct.splsda <- splsda(X, Y, ncomp = ncomp, keepX = rep(10, ncomp))
 
-set.seed(45)
 error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", nrepeat =5)
+dist = "all", nrepeat = 5, seed = 45)
 error$choice.ncomp
 
 plot(error)

@@ -21,6 +21,8 @@ perf(object, ...)
   folds,
   progressBar = FALSE,
   nrepeat = 1,
+  BPPARAM = SerialParam(),
+  seed = NULL,
   ...
 )
 
@@ -30,6 +32,8 @@ perf(object, ...)
   folds,
   progressBar = FALSE,
   nrepeat = 1,
+  BPPARAM = SerialParam(),
+  seed = NULL,
   ...
 )
 
@@ -43,6 +47,7 @@ perf(object, ...)
   progressBar = FALSE,
   signif.threshold = 0.01,
   BPPARAM = SerialParam(),
+  seed = NULL,
   ...
 )
 
@@ -56,6 +61,7 @@ perf(object, ...)
   progressBar = FALSE,
   signif.threshold = 0.01,
   BPPARAM = SerialParam(),
+  seed = NULL,
   ...
 )
 
@@ -69,6 +75,7 @@ perf(object, ...)
   progressBar = FALSE,
   signif.threshold = 0.01,
   BPPARAM = SerialParam(),
+  seed = NULL,
   ...
 )
 
@@ -126,6 +133,13 @@ of the computation.}
 This is an important argument to ensure the estimation of the performance to
 be as accurate as possible.}
 
+\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
+of parallelisation. See examples in \code{?tune.spca}.}
+
+\item{seed}{set a number here if you want the function to give reproducible outputs. 
+Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
+Note 'seed' is not required or used in perf.mint.plsda as this method uses loo cross-validation}
+
 \item{dist}{only applies to an object inheriting from \code{"plsda"},
 \code{"splsda"} or \code{"mint.splsda"} to evaluate the classification
 performance of the model. Should be a subset of \code{"max.dist"},
@@ -138,9 +152,6 @@ performance of the model.}
 \item{signif.threshold}{numeric between 0 and 1 indicating the significance
 threshold required for improvement in error rate of the components. Default
 to 0.01.}
-
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
-of parallelisation. See examples in \code{?tune.spca}.}
 }
 \value{
 For PLS and sPLS models, \code{perf} produces a list with the
@@ -284,7 +295,8 @@ The mint.sPLS-DA function estimates errors based on Leave-one-group-out
 cross validation (where each levels of object$study is left out (and
 predicted) once) and provides study-specific outputs
 (\code{study.specific.error}) as well as global outputs
-(\code{global.error}).
+(\code{global.error}). Note the mint perf methods do not use \code{seed}
+or \code{BPPARAM} arguments. 
 
 AUROC. For PLS-DA, sPLS-DA, mint.PLS-DA, mint.sPLS-DA, and block.splsda
 methods: if \code{auc=TRUE}, Area Under the Curve (AUC) values are
@@ -370,8 +382,7 @@ model.spls = spls(X, Y, ncomp = ncomp, mode = 'regression',
 
 
 # with leave-one-out cross validation
-set.seed(45)
-model.spls.val <- perf(model.spls, validation = "Mfold", folds = 5 )
+model.spls.val <- perf(model.spls, validation = "Mfold", folds = 5, seed = 45 )
 
 #Q2 total
 model.spls.val$measures$Q2$summary
@@ -391,26 +402,24 @@ srbct.splsda <- splsda(X, Y, ncomp = ncomp, keepX = rep(10, ncomp))
 
 # with Mfold
 # ---------
-set.seed(45)
 error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", auc = TRUE)
+dist = "all", auc = TRUE, seed = 45)
 error
 error$auc
 
 plot(error)
 
 # parallel code
-set.seed(45)
+library(BiocParallel)
 error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", auc = TRUE, BPPARAM = SnowParam(workers = 2, RNGseed = 45))
+dist = "all", auc = TRUE, BPPARAM = SnowParam(workers = 2), seed = 45)
 
 # with 5 components and nrepeat=5, to get a $choice.ncomp
 ncomp = 5
 srbct.splsda <- splsda(X, Y, ncomp = ncomp, keepX = rep(10, ncomp))
 
-set.seed(45)
 error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", nrepeat =5)
+dist = "all", nrepeat = 5, seed = 45)
 error$choice.ncomp
 
 plot(error)

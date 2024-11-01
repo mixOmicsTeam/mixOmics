@@ -45,7 +45,8 @@
 #' cross validation (where each levels of object$study is left out (and
 #' predicted) once) and provides study-specific outputs
 #' (\code{study.specific.error}) as well as global outputs
-#' (\code{global.error}).
+#' (\code{global.error}). Note the mint perf methods do not use \code{seed}
+#' or \code{BPPARAM} arguments. 
 #' 
 #' AUROC. For PLS-DA, sPLS-DA, mint.PLS-DA, mint.sPLS-DA, and block.splsda
 #' methods: if \code{auc=TRUE}, Area Under the Curve (AUC) values are
@@ -104,7 +105,10 @@
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
-#' @template arg/BPPARAM
+#' @template arg/BPPARAM 
+#' @param seed set a number here if you want the function to give reproducible outputs. 
+#' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
+#' Note 'seed' is not required or used in perf.mint.plsda as this method uses loo cross-validation
 #' @param ... not used
 #' @return For PLS and sPLS models, \code{perf} produces a list with the
 #' following components for every repeat: 
@@ -266,21 +270,25 @@ perf.mixo_pls <- function(object,
                           folds,
                           progressBar = FALSE,
                           nrepeat = 1,
+                          BPPARAM = SerialParam(),
+                          seed = NULL,
                           ...)
 {
+    # checking args and initialize params
     ncomp = object$ncomp
     spls.model <- is(object, 'mixo_spls')
     progressBar <- .check_logical(progressBar)
+    BPPARAM$RNGseed <- seed
     
-    # TODO add BPPARAM to args and use bplapply
+    # run CV in parallel depending on BPPARAM
     repeat_names <- .name_list(char = seq_len(nrepeat))
-    result <- lapply(X = repeat_names, FUN = function(nrep) {
+    result <- bplapply(X = repeat_names, FUN = function(nrep) {
         ## progress bar
-        if (progressBar == TRUE) # TODO drop for parallel
+        if (progressBar == TRUE)
             .progressBar(nrep/nrepeat)
         ## CV
         .perf.mixo_pls_cv(object, validation = validation, folds = folds, nrep = nrep)
-    })
+    }, BPPARAM = BPPARAM)
     
     measures <- lapply(result, function(x){
         x$measures
@@ -746,10 +754,13 @@ perf.mixo_plsda <- function(object,
                             progressBar = FALSE,
                             signif.threshold = 0.01,
                             BPPARAM = SerialParam(),
+                            seed = NULL,
                             ...)
 {
     
     #-- initialising arguments --#
+    set.seed(seed)
+    BPPARAM$RNGseed <- seed
     # these data are the centered and scaled X output or the unmapped(Y) scaled and centered
     X = object$input.X
     level.Y = object$names$colnames$Y  #to make sure the levels are ordered
