@@ -49,7 +49,8 @@ jobs:
             r="$r_release"
           else
             bioc="devel"
-            r="$r_devel"
+            ## r="$r_devel" comment this out for now as R version 4.5 doesn't exist so fails on build
+            r="$r_release"
           fi
           echo "r=$r" >> $GITHUB_OUTPUT
           echo "bioc=$bioc" >> $GITHUB_OUTPUT
