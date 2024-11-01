@@ -48,7 +48,8 @@ jobs:
             bioc="latest"
             r="$r_release"
           else
-            bioc="devel"
+            ## bioc="devel" comment this out for now as bioc version 3.21 requires r version 4.5
+            bioc="latest"
             ## r="$r_devel" comment this out for now as R version 4.5 doesn't exist so fails on build
             r="$r_release"
           fi
