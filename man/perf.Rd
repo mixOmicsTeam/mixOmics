@@ -410,6 +410,7 @@ error$auc
 plot(error)
 
 # parallel code
+library(BiocParallel)
 error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
 dist = "all", auc = TRUE, BPPARAM = SnowParam(workers = 2), seed = 45)
 
