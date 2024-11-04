@@ -119,6 +119,9 @@ classification error rate, should be a subset of \code{"centroids.dist"},
 measurements) that indicates the repeated measures on each individual, i.e.
 the individuals ID. See Details.}
 
+\item{seed}{set a number here if you want the function to give reproducible outputs. 
+Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'.}
+
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples.}
 

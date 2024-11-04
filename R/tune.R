@@ -83,6 +83,8 @@
 #' to 0.01.
 #' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
 #'   of parallelisation. See examples.
+#' @param seed set a number here if you want the function to give reproducible outputs. 
+#' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 #' @return Depending on the type of analysis performed and the input arguments,
 #' a list that may contain:
 #' 
@@ -346,7 +348,8 @@ tune <-
                                    mode = mode,
                                    measure = measure,
                                    BPPARAM = BPPARAM,
-                                   progressBar = progressBar
+                                   progressBar = progressBar,
+                                   seed = seed
                 )
             } else {
                 message("Calling 'tune.splslevel' with method = 'spls'")

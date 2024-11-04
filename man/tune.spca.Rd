@@ -45,6 +45,9 @@ scaled to have unit variance before the analysis takes place.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples.}
+
+\item{seed}{set a number here if you want the function to give reproducible outputs. 
+Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'.}
 }
 \value{
 A \code{tune.spca} object containing: \describe{ 
