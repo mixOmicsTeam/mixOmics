@@ -171,6 +171,7 @@ tune.spls <-
                         progressBar = progressBar,
                         nrepeat = nrepeat,
                         BPPARAM = BPPARAM,
+                        seed = seed,
                         ...
       )
       ## --- call

@@ -81,8 +81,13 @@
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
+#' @param V Matrix used in the logratio transformation id provided (for tune.pca)
+#' @param plot logical argument indicating whether an image map should be
+#' plotted by calling the \code{imgCV} function. (for tune.rcc)
 #' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
 #'   of parallelisation. See examples.
+#' @param seed set a number here if you want the function to give reproducible outputs. 
+#' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 #' @return Depending on the type of analysis performed and the input arguments,
 #' a list that may contain:
 #' 
@@ -161,61 +166,54 @@
 #' @example ./examples/tune-examples.R
 tune <-
     function (method = c("spls", "splsda", "block.splsda", "mint.splsda", "rcc", "pca", "spca"),
+              # Input data
               X,
               Y,
-              multilevel = NULL,
-              ncomp,
-              study,
-              # mint.splsda, block.splsda
               test.keepX = c(5, 10, 15),
-              # all but pca, rcc, block.splsda
               test.keepY = NULL,
-              # rcc, multilevel
               already.tested.X,
-              # all but pca, rcc
               already.tested.Y,
-              #multilevel
+              # Number of components
+              ncomp,
+              # PLS mode
               mode = c("regression", "canonical", "invariant", "classic"),
-              # multilevel and block.splsda
+              # How to do the cross-validation
               nrepeat = 1,
-              #multilevel, splsda
-              grid1 = seq(0.001, 1, length = 5),
-              # rcc
-              grid2 = seq(0.001, 1, length = 5),
-              # rcc, mint,block.splsda
-              validation = "Mfold",
-              # all but pca
               folds = 10,
-              # all but pca
-              dist = "max.dist",
-              # all but pca, rcc
-              measure = ifelse(method == "spls", "cor", "BER"),
-              # all but pca, rcc
-              auc = FALSE,
-              progressBar = FALSE,
-              # all but pca, rcc
-              near.zero.var = FALSE,
-              # all but pca, rcc
-              logratio = c('none','CLR'),
-              # all but pca, rcc
-              center = TRUE,
-              # pca
-              scale = TRUE,
-              # mint, splsda
+              validation = "Mfold",
               max.iter = 100,
-              #pca
               tol = 1e-09,
-              #pca
-              light.output = TRUE,
-              # all apart from tun.pca
+              signif.threshold = 0.01,
+              # How to transform data
+              logratio = c('none','CLR'),
+              V, 
+              center = TRUE,
+              scale = TRUE,
+              near.zero.var = FALSE,
+              # How to measure accuracy
+              dist = "max.dist",
+              measure = ifelse(method == "spls", "cor", "BER"),
+              # Multilevel
+              multilevel = NULL,
+              # Running params
+              seed = NULL,
               BPPARAM = SerialParam(),
-              # for block.splsda
+              progressBar = FALSE,
+              # Output params
+              auc = FALSE,
+              light.output = TRUE,
+              plot = FALSE,
+              # Multiblock specific params
               indY,
               weighted = TRUE,
               design,
               scheme = "horst",
               init = "svd",
-              signif.threshold = 0.01
+              # CCA specific params
+              grid1 = seq(0.001, 1, length = 5),
+              grid2 = seq(0.001, 1, length = 5),
+              # MINT specific params
+              study
     )
     {
         method = match.arg(method)
@@ -267,7 +265,8 @@ tune <-
                                     design = design,
                                     scheme = scheme,
                                     init = init,
-                                    signif.threshold = signif.threshold
+                                    signif.threshold = signif.threshold,
+                                    seed = seed
                                     )
           
             
@@ -280,7 +279,9 @@ tune <-
                               grid2 = grid2,
                               validation = validation,
                               folds = folds,
-                              plot = plot)
+                              plot = plot,
+                              BPPARAM = BPPARAM,
+                              seed = seed)
             
         } else if (method == "pca") {
             message("Calling 'tune.pca'")
@@ -309,7 +310,8 @@ tune <-
                                test.keepX = test.keepX,
                                center = center,
                                scale = scale,
-                               BPPARAM = BPPARAM)
+                               BPPARAM = BPPARAM,
+                               seed = seed)
             
             
         } else if (method == "splsda") {
@@ -334,7 +336,8 @@ tune <-
                                   nrepeat = nrepeat,
                                   logratio = logratio,
                                   multilevel = multilevel,
-                                  light.output = light.output)
+                                  light.output = light.output,
+                                  seed = seed)
             
         } else if (method == "spls") {
             if(missing(multilevel))
@@ -352,7 +355,8 @@ tune <-
                                    mode = mode,
                                    measure = measure,
                                    BPPARAM = BPPARAM,
-                                   progressBar = progressBar
+                                   progressBar = progressBar,
+                                   seed = seed
                 )
             } else {
                 message("Calling 'tune.splslevel' with method = 'spls'")
@@ -369,7 +373,7 @@ tune <-
                                         mode = mode,
                                         ncomp = ncomp, test.keepX = test.keepX, test.keepY = test.keepY,
                                         already.tested.X = already.tested.X, already.tested.Y = already.tested.Y,
-                                        BPPARAM = BPPARAM)
+                                        BPPARAM = BPPARAM, seed = seed)
             }
         }
         

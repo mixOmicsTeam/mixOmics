@@ -26,7 +26,6 @@ test_that("tune.block.splsda works with and without parallel without auc", {
     Y <- breast.TCGA$data.train$subtype[subset]
     
     ## -------------------- 1 cpu 
-    set.seed(42)
     tune11 = tune.block.splsda(
         X = data,
         Y = Y,
@@ -35,12 +34,11 @@ test_that("tune.block.splsda works with and without parallel without auc", {
         test.keepX = test.keepX,
         design = design,
         nrepeat = nrep,
-        BPPARAM = SerialParam(RNGseed = 42)
+        BPPARAM = SerialParam(), seed = 42
     )
     expect_is(tune11, "tune.block.splsda")
     
     ## -------------------- parallel
-    set.seed(42)
     tune41 = tune.block.splsda(
         X = data,
         Y = Y,
@@ -49,7 +47,7 @@ test_that("tune.block.splsda works with and without parallel without auc", {
         test.keepX = test.keepX,
         design = design,
         nrepeat = nrep,
-        BPPARAM = SnowParam(workers = 2, RNGseed = 42)
+        BPPARAM = SnowParam(workers = 2), seed = 42
     )
     expect_equal(tune11$choice.keepX, tune41$choice.keepX)
     
@@ -141,7 +139,7 @@ test_that("tune.block.splsda works independently and in tune wrapper the same", 
     test.keepX = test.keepX,
     design = design,
     nrepeat = nrep,
-    BPPARAM = SerialParam(RNGseed = 42)
+    BPPARAM = SerialParam(), seed = 42
   )
   expect_is(tune11, "tune.block.splsda")
   
@@ -156,7 +154,7 @@ test_that("tune.block.splsda works independently and in tune wrapper the same", 
     test.keepX = test.keepX,
     design = design,
     nrepeat = nrep,
-    BPPARAM = SerialParam(RNGseed = 42)
+    BPPARAM = SerialParam(), seed = 42
   )
   expect_equal(tune11$choice.keepX, tune41$choice.keepX)
 })

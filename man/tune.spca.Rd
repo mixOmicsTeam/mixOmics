@@ -12,7 +12,8 @@ tune.spca(
   test.keepX,
   center = TRUE,
   scale = TRUE,
-  BPPARAM = SerialParam()
+  BPPARAM = SerialParam(),
+  seed = NULL
 )
 }
 \arguments{
@@ -44,6 +45,9 @@ scaled to have unit variance before the analysis takes place.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples.}
+
+\item{seed}{set a number here if you want the function to give reproducible outputs. 
+Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'.}
 }
 \value{
 A \code{tune.spca} object containing: \describe{ 
@@ -75,14 +79,14 @@ achieved by setting \code{folds = nrow(X)}.
 }
 \examples{
 data("nutrimouse")
-set.seed(42)
 nrepeat <- 5
 tune.spca.res <- tune.spca(
     X = nutrimouse$lipid,
     ncomp = 2,
     nrepeat = nrepeat,
     folds = 3,
-    test.keepX = seq(5, 15, 5)
+    test.keepX = seq(5, 15, 5),
+    seed = 42
 )
 tune.spca.res
 plot(tune.spca.res)

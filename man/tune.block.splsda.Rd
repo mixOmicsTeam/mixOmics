@@ -29,6 +29,7 @@ tune.block.splsda(
   light.output = TRUE,
   signif.threshold = 0.01,
   BPPARAM = SerialParam(),
+  seed = NULL,
   ...
 )
 }
@@ -114,6 +115,9 @@ to 0.01.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples.}
+
+\item{seed}{set a number here if you want the function to give reproducible outputs. 
+Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'.}
 
 \item{...}{Optional arguments:
 \itemize{

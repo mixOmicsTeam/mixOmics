@@ -8,8 +8,7 @@ test_that("tune.rcc works with Mfold method", code = {
   Y <- nutrimouse$gene
   
   # run
-  set.seed(20)
-  tune.rcc.res <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE)
+  tune.rcc.res <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE, seed = 20)
   
   # check outputs
   expect_equal(class(tune.rcc.res), "tune.rcc")
@@ -24,8 +23,7 @@ test_that("tune.rcc works with loo method", code = {
   Y <- nutrimouse$gene
   
   # run
-  set.seed(20)
-  tune.rcc.res <- tune.rcc(X, Y, validation = "loo", plot = FALSE)
+  tune.rcc.res <- tune.rcc(X, Y, validation = "loo", plot = FALSE, seed = 20)
   
   # check outputs
   expect_equal(class(tune.rcc.res), "tune.rcc")
@@ -40,13 +38,11 @@ test_that("tune.rcc works in parallel same as in series", code = {
   Y <- nutrimouse$gene
   
   # run in series
-  set.seed(12)
   tune.rcc.res <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE,
-                           BPPARAM = SerialParam(RNGseed = 12))
+                           BPPARAM = SerialParam(RNGseed = NULL), seed = 12)
   # run in parallel
-  set.seed(12)
   tune.rcc.res.parallel <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE,
-                           BPPARAM = SnowParam(workers = 2, RNGseed = 12))
+                           BPPARAM = SnowParam(workers = 2, RNGseed = NULL), seed = 12)
   
   # check outputs
   expect_equal(class(tune.rcc.res), "tune.rcc")
@@ -62,16 +58,14 @@ test_that("tune.rcc and tune(method='rcc') are equivalent", {
   Y <- nutrimouse$gene
   
   # run independently
-  set.seed(12)
   tune.rcc.res.1 <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE,
-                           BPPARAM = SerialParam(RNGseed = 12),
+                           BPPARAM = SerialParam(RNGseed = NULL), seed = 12,
                            grid1 = c(0.001, 0.2, 0.6, 1),
                            grid2 = c(0.001, 0.2, 0.6, 1))
   
   # run in tune wrapper
-  set.seed(12)
   tune.rcc.res.2 <- tune(X, Y, validation = "Mfold", 
-                           BPPARAM = SerialParam(RNGseed = 12),
+                           BPPARAM = SerialParam(), seed = 12,
                            grid1 = c(0.001, 0.2, 0.6, 1),
                            grid2 = c(0.001, 0.2, 0.6, 1),
                          method = "rcc")

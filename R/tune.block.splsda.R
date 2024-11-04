@@ -120,12 +120,15 @@ tune.block.splsda <-
             # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
             signif.threshold=0.01,
             BPPARAM = SerialParam(),
+            seed = NULL,
             ...)
   {
     if (hasArg('cpus')) #defunct
     {
     stop("'cpus' has been replaced by BPPARAM. See documentation.")  
     }
+    BPPARAM$RNGseed <- seed
+    set.seed(seed)
     ## ----------- checks -----------
     
     # check input 'Y' and transformation in a dummy matrix

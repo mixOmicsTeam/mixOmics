@@ -8,37 +8,40 @@ tune(
   method = c("spls", "splsda", "block.splsda", "mint.splsda", "rcc", "pca", "spca"),
   X,
   Y,
-  multilevel = NULL,
-  ncomp,
-  study,
   test.keepX = c(5, 10, 15),
   test.keepY = NULL,
   already.tested.X,
   already.tested.Y,
+  ncomp,
   mode = c("regression", "canonical", "invariant", "classic"),
   nrepeat = 1,
-  grid1 = seq(0.001, 1, length = 5),
-  grid2 = seq(0.001, 1, length = 5),
-  validation = "Mfold",
   folds = 10,
-  dist = "max.dist",
-  measure = ifelse(method == "spls", "cor", "BER"),
-  auc = FALSE,
-  progressBar = FALSE,
-  near.zero.var = FALSE,
-  logratio = c("none", "CLR"),
-  center = TRUE,
-  scale = TRUE,
+  validation = "Mfold",
   max.iter = 100,
   tol = 1e-09,
-  light.output = TRUE,
+  signif.threshold = 0.01,
+  logratio = c("none", "CLR"),
+  V,
+  center = TRUE,
+  scale = TRUE,
+  near.zero.var = FALSE,
+  dist = "max.dist",
+  measure = ifelse(method == "spls", "cor", "BER"),
+  multilevel = NULL,
+  seed = NULL,
   BPPARAM = SerialParam(),
+  progressBar = FALSE,
+  auc = FALSE,
+  light.output = TRUE,
+  plot = FALSE,
   indY,
   weighted = TRUE,
   design,
   scheme = "horst",
   init = "svd",
-  signif.threshold = 0.01
+  grid1 = seq(0.001, 1, length = 5),
+  grid2 = seq(0.001, 1, length = 5),
+  study
 )
 }
 \arguments{
@@ -51,15 +54,6 @@ suitable function. \code{method} has to be one of the following: "spls",
 \item{Y}{Either a factor or a class vector for the discrete outcome, or a
 numeric vector or matrix of continuous responses (for multi-response
 models).}
-
-\item{multilevel}{Design matrix for multilevel analysis (for repeated
-measurements) that indicates the repeated measures on each individual, i.e.
-the individuals ID. See Details.}
-
-\item{ncomp}{the number of components to include in the model.}
-
-\item{study}{grouping factor indicating which samples are from the same
-study}
 
 \item{test.keepX}{numeric vector for the different number of variables to
 test from the \eqn{X} data set}
@@ -75,39 +69,31 @@ the firsts components.}
 numeric vector indicating the number of variables to select from the \eqn{Y}
 data set on the first components}
 
+\item{ncomp}{the number of components to include in the model.}
+
 \item{mode}{character string. What type of algorithm to use, (partially)
 matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 or \code{"classic"}. See Details.}
 
 \item{nrepeat}{Number of times the Cross-Validation process is repeated.}
 
-\item{grid1, grid2}{vector numeric defining the values of \code{lambda1} and
-\code{lambda2} at which cross-validation score should be computed. Defaults
-to \code{grid1=grid2=seq(0.001, 1, length=5)}.}
+\item{folds}{the folds in the Mfold cross-validation. See Details.}
 
 \item{validation}{character.  What kind of (internal) validation to use,
 matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
 \code{"Mfold"}.}
 
-\item{folds}{the folds in the Mfold cross-validation. See Details.}
+\item{max.iter}{Integer, the maximum number of iterations.}
 
-\item{dist}{distance metric to estimate the
-classification error rate, should be a subset of \code{"centroids.dist"},
-\code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
+\item{tol}{Numeric, convergence tolerance criteria.}
 
-\item{measure}{The tuning measure used for different methods. See details.}
-
-\item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)
-performance of the model.}
-
-\item{progressBar}{by default set to \code{TRUE} to output the progress bar
-of the computation.}
-
-\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
-function (should be set to TRUE in particular for data with many zero
-values). Default value is FALSE}
+\item{signif.threshold}{numeric between 0 and 1 indicating the significance
+threshold required for improvement in error rate of the components. Default
+to 0.01.}
 
 \item{logratio}{one of ('none','CLR'). Default to 'none'}
+
+\item{V}{Matrix used in the logratio transformation id provided (for tune.pca)}
 
 \item{center}{a logical value indicating whether the variables should be
 shifted to be zero centered. Alternately, a vector of length equal the
@@ -121,15 +107,37 @@ scaling is advisable. Alternatively, a vector of length equal the number of
 columns of \code{X} can be supplied. The value is passed to
 \code{\link{scale}}.}
 
-\item{max.iter}{Integer, the maximum number of iterations.}
+\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
+function (should be set to TRUE in particular for data with many zero
+values). Default value is FALSE}
 
-\item{tol}{Numeric, convergence tolerance criteria.}
+\item{dist}{distance metric to estimate the
+classification error rate, should be a subset of \code{"centroids.dist"},
+\code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
+
+\item{measure}{The tuning measure used for different methods. See details.}
+
+\item{multilevel}{Design matrix for multilevel analysis (for repeated
+measurements) that indicates the repeated measures on each individual, i.e.
+the individuals ID. See Details.}
+
+\item{seed}{set a number here if you want the function to give reproducible outputs. 
+Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'.}
+
+\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
+of parallelisation. See examples.}
+
+\item{progressBar}{by default set to \code{TRUE} to output the progress bar
+of the computation.}
+
+\item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)
+performance of the model.}
 
 \item{light.output}{if set to FALSE, the prediction/classification of each
 sample for each of \code{test.keepX} and each comp is returned.}
 
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
-of parallelisation. See examples.}
+\item{plot}{logical argument indicating whether an image map should be
+plotted by calling the \code{imgCV} function. (for tune.rcc)}
 
 \item{indY}{To supply if \code{Y} is missing, indicates the position of 
 the matrix response in the list \code{X}.}
@@ -154,9 +162,12 @@ off-diagonal elements of a fully connected design (see examples in
 Value Decomposition of the product of each block of X with Y ('svd') or each
 block independently ('svd.single'). Default = \code{svd.single}}
 
-\item{signif.threshold}{numeric between 0 and 1 indicating the significance
-threshold required for improvement in error rate of the components. Default
-to 0.01.}
+\item{grid1, grid2}{vector numeric defining the values of \code{lambda1} and
+\code{lambda2} at which cross-validation score should be computed. Defaults
+to \code{grid1=grid2=seq(0.001, 1, length=5)}.}
+
+\item{study}{grouping factor indicating which samples are from the same
+study}
 }
 \value{
 Depending on the type of analysis performed and the input arguments,

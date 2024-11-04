@@ -12,45 +12,41 @@ test_that("tune.splslevel works and is the same in parallel and when run in tune
   design <- data.frame(sample = repeat.indiv)
   
   # run in serial
-  set.seed(42)
   tune.splslevel.res.1<- tune.splslevel(X = liver.toxicity$gene,
                                       Y=liver.toxicity$clinic,
                                       multilevel = design,
                                       test.keepX = c(5,10,15),
                                       test.keepY = c(1,2,5),
                                       ncomp = 1,
-                                      BPPARAM = SerialParam(RNGseed = 42))
+                                      BPPARAM = SerialParam(), seed = 42)
   
   # run in parallel
-  set.seed(42)
   tune.splslevel.res.2<- tune.splslevel(X = liver.toxicity$gene,
                                         Y=liver.toxicity$clinic,
                                         multilevel = design,
                                         test.keepX = c(5,10,15),
                                         test.keepY = c(1,2,5),
                                         ncomp = 1,
-                                        BPPARAM = SnowParam(RNGseed = 42, workers = 2))
+                                        BPPARAM = SnowParam(workers = 2), seed = 42)
   
   # in tune wrapper in serial
-  set.seed(42)
   tune.splslevel.res.3<- tune(X = liver.toxicity$gene,
                                         Y=liver.toxicity$clinic,
                                         multilevel = design,
                                         test.keepX = c(5,10,15),
                                         test.keepY = c(1,2,5),
                                         ncomp = 1,
-                                        BPPARAM = SerialParam(RNGseed = 42),
+                                        BPPARAM = SerialParam(), seed = 42,
                               method = "spls")
   
   # in tune wrapper in parallel
-  set.seed(42)
   tune.splslevel.res.4<- tune(X = liver.toxicity$gene,
                               Y=liver.toxicity$clinic,
                               multilevel = design,
                               test.keepX = c(5,10,15),
                               test.keepY = c(1,2,5),
                               ncomp = 1,
-                              BPPARAM = SnowParam(RNGseed = 42, workers = 2),
+                              BPPARAM = SnowParam(workers = 2), seed = 42,
                               method = "spls")
   
   

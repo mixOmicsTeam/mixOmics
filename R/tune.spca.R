@@ -20,6 +20,8 @@
 #' @param folds Number of folds in 'Mfold' cross-validation. See details.
 #' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
 #'   of parallelisation. See examples.
+#' @param seed set a number here if you want the function to give reproducible outputs. 
+#' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 #' @importFrom BiocParallel SerialParam bplapply
 #' @return A \code{tune.spca} object containing: \describe{ 
 #' \item{call}{ The
@@ -39,9 +41,11 @@ tune.spca <- function(X,
                       test.keepX, 
                       center = TRUE, 
                       scale = TRUE, 
-                      BPPARAM = SerialParam())
+                      BPPARAM = SerialParam(),
+                      seed = NULL)
 {
     ## evaluate all args
+    BPPARAM$RNGseed <- seed
     mget(names(formals()), sys.frame(sys.nframe()))
     X <- data.matrix(X, rownames.force = TRUE)
     X <- scale(X, center = center, scale = scale)

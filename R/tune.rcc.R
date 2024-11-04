@@ -37,6 +37,8 @@ library(BiocParallel)
 #' plotted by calling the \code{imgCV} function.
 #' @param BPPARAM a BiocParallel parameter object; see \code{BiocParallel::bpparam} 
 #' for details. Default is \code{MulticoreParam()} for parallel processing.
+#' @param seed set a number here if you want the function to give reproducible outputs. 
+#' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 #' @return The returned value is a list with components: \item{opt.lambda1,}{}
 #' \item{opt.lambda2}{value of the parameters of regularization on which the
 #' cross-validation method reached its optimal.} \item{opt.score}{the optimal
@@ -64,9 +66,13 @@ tune.rcc <-
              validation = c("loo", "Mfold"), 
              folds = 10,
              plot = TRUE,
-             BPPARAM = SerialParam())
+             BPPARAM = SerialParam(),
+             seed = NULL)
     {
         
+      BPPARAM$RNGseed <- seed
+      set.seed(seed)
+      
         # validation des arguments #
         #--------------------------#
         if (length(dim(X)) != 2 || length(dim(Y)) != 2) 

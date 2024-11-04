@@ -14,7 +14,8 @@ tune.splslevel(
   test.keepY = rep(ncol(Y), ncomp),
   already.tested.X = NULL,
   already.tested.Y = NULL,
-  BPPARAM = BiocParallel::SerialParam()
+  BPPARAM = BiocParallel::SerialParam(),
+  seed = seed
 )
 }
 \arguments{
@@ -48,6 +49,9 @@ indicating the number of variables to select from the \eqn{Y} data set on
 the firsts components.}
 
 \item{BPPARAM}{BiocParallelParam object to manage parallelization}
+
+\item{seed}{set a number here if you want the function to give reproducible outputs. 
+Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'.}
 }
 \value{
 \item{cor.value}{correlation between latent variables}

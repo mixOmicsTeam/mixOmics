@@ -106,6 +106,8 @@
 #' @param light.output if set to FALSE, the prediction/classification of each
 #' sample for each of \code{test.keepX} and each comp is returned.
 #' @template arg/BPPARAM
+#' @param seed set a number here if you want the function to give reproducible outputs. 
+#' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 #' @return A list that contains: \item{error.rate}{returns the prediction error
 #' for each \code{test.keepX} on each component, averaged across all repeats
 #' and subsampling folds. Standard deviation is also output. All error rates
@@ -184,12 +186,16 @@ tune.spls1 <- #TODO naming for tune.spls1 is wrong. it should hint the block whe
               nrepeat = 1,
               multilevel = NULL,
               light.output = TRUE,
-              BPPARAM = SerialParam()
+              BPPARAM = SerialParam(),
+              seed = NULL
     )
     {    #-- checking general input parameters --------------------------------------#
         #---------------------------------------------------------------------------#
         
         #------------------#
+      BPPARAM$RNGseed <- seed
+      set.seed(seed)
+      
         if(!is(X, "matrix"))
             X= as.matrix(X)
         
