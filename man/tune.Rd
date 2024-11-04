@@ -93,6 +93,8 @@ to 0.01.}
 
 \item{logratio}{one of ('none','CLR'). Default to 'none'}
 
+\item{V}{Matrix used in the logratio transformation id provided (for tune.pca)}
+
 \item{center}{a logical value indicating whether the variables should be
 shifted to be zero centered. Alternately, a vector of length equal the
 number of columns of \code{X} can be supplied. The value is passed to
@@ -133,6 +135,9 @@ performance of the model.}
 
 \item{light.output}{if set to FALSE, the prediction/classification of each
 sample for each of \code{test.keepX} and each comp is returned.}
+
+\item{plot}{logical argument indicating whether an image map should be
+plotted by calling the \code{imgCV} function. (for tune.rcc)}
 
 \item{indY}{To supply if \code{Y} is missing, indicates the position of 
 the matrix response in the list \code{X}.}

@@ -81,6 +81,9 @@
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
+#' @param V Matrix used in the logratio transformation id provided (for tune.pca)
+#' @param plot logical argument indicating whether an image map should be
+#' plotted by calling the \code{imgCV} function. (for tune.rcc)
 #' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
 #'   of parallelisation. See examples.
 #' @param seed set a number here if you want the function to give reproducible outputs. 
