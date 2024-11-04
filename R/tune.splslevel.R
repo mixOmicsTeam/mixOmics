@@ -24,6 +24,8 @@
 #' indicating the number of variables to select from the \eqn{Y} data set on
 #' the firsts components.
 #' @param BPPARAM BiocParallelParam object to manage parallelization
+#' @param seed set a number here if you want the function to give reproducible outputs. 
+#' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 #' @return
 #' \item{cor.value}{correlation between latent variables}
 #' @export
@@ -35,7 +37,11 @@ tune.splslevel <- function (X, Y,
                             test.keepY = rep(ncol(Y), ncomp),
                             already.tested.X = NULL,
                             already.tested.Y = NULL,
-                            BPPARAM = BiocParallel::SerialParam()) {
+                            BPPARAM = BiocParallel::SerialParam(),
+                            seed = seed) {
+  
+  BPPARAM$RNGseed <- seed
+  set.seed(seed)
 
     message("For a multilevel spls analysis, the tuning criterion is based on the maximisation of the correlation between the components from both data sets")
     

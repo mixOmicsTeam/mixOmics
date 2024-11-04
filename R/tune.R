@@ -368,7 +368,7 @@ tune <-
                                         mode = mode,
                                         ncomp = ncomp, test.keepX = test.keepX, test.keepY = test.keepY,
                                         already.tested.X = already.tested.X, already.tested.Y = already.tested.Y,
-                                        BPPARAM = BPPARAM)
+                                        BPPARAM = BPPARAM, seed = seed)
             }
         }
         
