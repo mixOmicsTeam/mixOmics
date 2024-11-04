@@ -275,7 +275,9 @@ tune <-
                               grid2 = grid2,
                               validation = validation,
                               folds = folds,
-                              plot = plot)
+                              plot = plot,
+                              BPPARAM = BPPARAM,
+                              seed = seed)
             
         } else if (method == "pca") {
             message("Calling 'tune.pca'")
