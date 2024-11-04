@@ -161,61 +161,54 @@
 #' @example ./examples/tune-examples.R
 tune <-
     function (method = c("spls", "splsda", "block.splsda", "mint.splsda", "rcc", "pca", "spca"),
+              # Input data
               X,
               Y,
-              multilevel = NULL,
-              ncomp,
-              study,
-              # mint.splsda, block.splsda
               test.keepX = c(5, 10, 15),
-              # all but pca, rcc, block.splsda
               test.keepY = NULL,
-              # rcc, multilevel
               already.tested.X,
-              # all but pca, rcc
               already.tested.Y,
-              #multilevel
+              # Number of components
+              ncomp,
+              # PLS mode
               mode = c("regression", "canonical", "invariant", "classic"),
-              # multilevel and block.splsda
+              # How to do the cross-validation
               nrepeat = 1,
-              #multilevel, splsda
-              grid1 = seq(0.001, 1, length = 5),
-              # rcc
-              grid2 = seq(0.001, 1, length = 5),
-              # rcc, mint,block.splsda
-              validation = "Mfold",
-              # all but pca
               folds = 10,
-              # all but pca
-              dist = "max.dist",
-              # all but pca, rcc
-              measure = ifelse(method == "spls", "cor", "BER"),
-              # all but pca, rcc
-              auc = FALSE,
-              progressBar = FALSE,
-              # all but pca, rcc
-              near.zero.var = FALSE,
-              # all but pca, rcc
-              logratio = c('none','CLR'),
-              # all but pca, rcc
-              center = TRUE,
-              # pca
-              scale = TRUE,
-              # mint, splsda
+              validation = "Mfold",
               max.iter = 100,
-              #pca
               tol = 1e-09,
-              #pca
-              light.output = TRUE,
-              # all apart from tun.pca
+              signif.threshold = 0.01,
+              # How to transform data
+              logratio = c('none','CLR'),
+              V, 
+              center = TRUE,
+              scale = TRUE,
+              near.zero.var = FALSE,
+              # How to measure accuracy
+              dist = "max.dist",
+              measure = ifelse(method == "spls", "cor", "BER"),
+              # Multilevel
+              multilevel = NULL,
+              # Running params
+              seed = NULL,
               BPPARAM = SerialParam(),
-              # for block.splsda
+              progressBar = FALSE,
+              # Output params
+              auc = FALSE,
+              light.output = TRUE,
+              plot = FALSE,
+              # Multiblock specific params
               indY,
               weighted = TRUE,
               design,
               scheme = "horst",
               init = "svd",
-              signif.threshold = 0.01
+              # CCA specific params
+              grid1 = seq(0.001, 1, length = 5),
+              grid2 = seq(0.001, 1, length = 5),
+              # MINT specific params
+              study
     )
     {
         method = match.arg(method)
@@ -309,7 +302,8 @@ tune <-
                                test.keepX = test.keepX,
                                center = center,
                                scale = scale,
-                               BPPARAM = BPPARAM)
+                               BPPARAM = BPPARAM,
+                               seed = seed)
             
             
         } else if (method == "splsda") {

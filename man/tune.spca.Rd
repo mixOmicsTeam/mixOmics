@@ -12,7 +12,8 @@ tune.spca(
   test.keepX,
   center = TRUE,
   scale = TRUE,
-  BPPARAM = SerialParam()
+  BPPARAM = SerialParam(),
+  seed = NULL
 )
 }
 \arguments{

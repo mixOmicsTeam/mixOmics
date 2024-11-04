@@ -39,9 +39,11 @@ tune.spca <- function(X,
                       test.keepX, 
                       center = TRUE, 
                       scale = TRUE, 
-                      BPPARAM = SerialParam())
+                      BPPARAM = SerialParam(),
+                      seed = NULL)
 {
     ## evaluate all args
+    BPPARAM$RNGseed <- seed
     mget(names(formals()), sys.frame(sys.nframe()))
     X <- data.matrix(X, rownames.force = TRUE)
     X <- scale(X, center = center, scale = scale)
