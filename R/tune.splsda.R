@@ -110,6 +110,8 @@
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
 #' @template arg/BPPARAM
+#' @param seed set a number here if you want the function to give reproducible outputs. 
+#' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 #' @return Depending on the type of analysis performed, a list that contains:
 #' \item{error.rate}{returns the prediction error for each \code{test.keepX} on
 #' each component, averaged across all repeats and subsampling folds. Standard
@@ -199,11 +201,15 @@ tune.splsda <-
               multilevel = NULL,
               light.output = TRUE,
               signif.threshold = 0.01, 
-              BPPARAM = SerialParam()
+              BPPARAM = SerialParam(),
+              seed = NULL
     )
     {    #-- checking general input parameters --------------------------------------#
         #---------------------------------------------------------------------------#
         
+      BPPARAM$RNGseed <- seed
+      set.seed(seed)
+      
         #-- check significance threshold
         signif.threshold <- .check_alpha(signif.threshold)
         

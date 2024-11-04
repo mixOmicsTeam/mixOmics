@@ -25,7 +25,8 @@ tune.splsda(
   multilevel = NULL,
   light.output = TRUE,
   signif.threshold = 0.01,
-  BPPARAM = SerialParam()
+  BPPARAM = SerialParam(),
+  seed = NULL
 )
 }
 \arguments{
@@ -91,6 +92,9 @@ to 0.01.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples in \code{?tune.spca}.}
+
+\item{seed}{set a number here if you want the function to give reproducible outputs. 
+Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'.}
 }
 \value{
 Depending on the type of analysis performed, a list that contains:

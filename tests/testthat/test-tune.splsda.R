@@ -9,29 +9,25 @@ test_that("tune.spls works and is the same in parallel and when run in tune wrap
   Y = as.factor(breast.tumors$sample$treatment)
   
   # run in serial
-  set.seed(42)
   tune.splsda.res.1 = tune.splsda(X, Y, ncomp = 2, nrepeat = 1, logratio = "none",
                                 test.keepX = c(5, 10, 15), folds = 2, dist = "max.dist",
-                                BPPARAM = SerialParam(RNGseed = 100))
+                                BPPARAM = SerialParam(), seed = 42)
   
   # run in parallel
-  set.seed(42)
   tune.splsda.res.2 = tune.splsda(X, Y, ncomp = 2, nrepeat = 1, logratio = "none",
                                 test.keepX = c(5, 10, 15), folds = 2, dist = "max.dist",
-                                BPPARAM = SnowParam(RNGseed = 100, workers = 2))
+                                BPPARAM = SnowParam(workers = 2), seed = 42)
   
   # in tune wrapper in serial
-  set.seed(42)
   tune.splsda.res.3 = tune(X, Y, ncomp = 2, nrepeat = 1, logratio = "none",
                                 test.keepX = c(5, 10, 15), folds = 2, dist = "max.dist",
-                                BPPARAM = SerialParam(RNGseed = 100),
+                                BPPARAM = SerialParam(), seed = 42,
                          method = "splsda")
   
   # in tune wrapper in parallel
-  set.seed(42)
   tune.splsda.res.4 = tune(X, Y, ncomp = 2, nrepeat = 1, logratio = "none",
                          test.keepX = c(5, 10, 15), folds = 2, dist = "max.dist",
-                         BPPARAM = SnowParam(RNGseed = 100, workers = 2),
+                         BPPARAM = SnowParam(workers = 2), seed = 42,
                          method = "splsda")
   
   

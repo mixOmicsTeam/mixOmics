@@ -262,7 +262,8 @@ tune <-
                                     design = design,
                                     scheme = scheme,
                                     init = init,
-                                    signif.threshold = signif.threshold
+                                    signif.threshold = signif.threshold,
+                                    seed = seed
                                     )
           
             
@@ -332,7 +333,8 @@ tune <-
                                   nrepeat = nrepeat,
                                   logratio = logratio,
                                   multilevel = multilevel,
-                                  light.output = light.output)
+                                  light.output = light.output,
+                                  seed = seed)
             
         } else if (method == "spls") {
             if(missing(multilevel))
