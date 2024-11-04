@@ -79,14 +79,14 @@ achieved by setting \code{folds = nrow(X)}.
 }
 \examples{
 data("nutrimouse")
-set.seed(42)
 nrepeat <- 5
 tune.spca.res <- tune.spca(
     X = nutrimouse$lipid,
     ncomp = 2,
     nrepeat = nrepeat,
     folds = 3,
-    test.keepX = seq(5, 15, 5)
+    test.keepX = seq(5, 15, 5),
+    seed = 42
 )
 tune.spca.res
 plot(tune.spca.res)
