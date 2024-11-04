@@ -13,7 +13,7 @@ tune.rcc(
   folds = 10,
   plot = TRUE,
   BPPARAM = SerialParam(),
-  seed = seed
+  seed = NULL
 )
 }
 \arguments{
