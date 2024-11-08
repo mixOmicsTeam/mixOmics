@@ -43,6 +43,14 @@ BiocManager::install('mixOmics')
 library(mixOmics) 
 ```
 
+You can also install the [development
+version](https://github.com/mixOmicsTeam/mixOmics/tree/development) for
+new features yet to be widely tested:
+
+``` r
+BiocManager::install("mixOmicsTeam/mixOmics@development")
+```
+
 ### From Github
 
 Bioconductor versions are updated twice a year, between these updates
@@ -50,15 +58,7 @@ you can downlod the latest stable version of `mixOmics` from `Github`
 using:
 
 ``` r
-BiocManager::install('mixOmicsTeam/mixOmics')
-```
-
-You can also install the [development
-version](https://github.com/mixOmicsTeam/mixOmics/tree/development) for
-new features yet to be widely tested:
-
-``` r
-BiocManager::install("mixOmicsTeam/mixOmics@development")
+devtools::install_github("mixOmicsTeam/mixOmics")
 ```
 
 ### From `Docker` container
