@@ -155,13 +155,6 @@ off-diagonal elements of a fully connected design (see examples in
 \code{block.splsda}). If \code{Y} is provided instead of \code{indY}, the
 \code{design} matrix is changed to include relationships to \code{Y}.}
 
-\item{scheme}{Character, one of 'horst', 'factorial' or 'centroid'. Default =
-\code{'horst'}, see reference.}
-
-\item{init}{Mode of initialization use in the algorithm, either by Singular
-Value Decomposition of the product of each block of X with Y ('svd') or each
-block independently ('svd.single'). Default = \code{svd.single}}
-
 \item{grid1, grid2}{vector numeric defining the values of \code{lambda1} and
 \code{lambda2} at which cross-validation score should be computed. Defaults
 to \code{grid1=grid2=seq(0.001, 1, length=5)}.}

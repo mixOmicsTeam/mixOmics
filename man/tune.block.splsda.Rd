@@ -102,10 +102,6 @@ off-diagonal elements of a fully connected design (see examples in
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
-\item{init}{Mode of initialization use in the algorithm, either by Singular
-Value Decomposition of the product of each block of X with Y ('svd') or each
-block independently ('svd.single'). Default = \code{svd.single}}
-
 \item{light.output}{if set to FALSE, the prediction/classification of each
 sample for each of \code{test.keepX} and each comp is returned.}
 
