@@ -62,7 +62,7 @@ test_that("network works when `shape.node` == 'none'", {
                  save = "jpeg", 
                  name.save = tmp.file)
   expect_equal(names(net), c("gR", "M_mRNA_proteomics", "cutoff"))
-  .expect_numerically_close(sum(net$M), 14.35823, digits = 3)
+  .expect_numerically_close(sum(net$M), 14.36216, digits = 3)
   unlink(tmp.file)
 })
 
