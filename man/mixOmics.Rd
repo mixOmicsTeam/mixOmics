@@ -14,10 +14,8 @@ mixOmics(
   keepY,
   design,
   tau = NULL,
-  scheme,
   mode = c("regression", "canonical", "invariant", "classic"),
   scale,
-  init,
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE
@@ -59,19 +57,12 @@ between 0 (no regularisation) and 1. If tau = "optimal" the shrinkage
 paramaters are estimated for each block and each dimension using the Schafer
 and Strimmer (2005) analytical formula.}
 
-\item{scheme}{Either "horst", "factorial" or "centroid" (Default:
-"centroid"), see reference paper.}
-
 \item{mode}{character string. What type of algorithm to use, (partially)
 matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 or \code{"classic"}. See Details.}
 
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
-means and unit variances (default: TRUE)}
-
-\item{init}{Mode of initialization use in the algorithm, either by Singular
-Value Decompostion of the product of each block of X with Y ("svd") or each
-block independently ("svd.single") . Default to "svd".}
+means and unit variances (default: TRUE).}
 
 \item{tol}{Convergence stopping value.}
 

@@ -56,16 +56,11 @@
 #' between 0 (no regularisation) and 1. If tau = "optimal" the shrinkage
 #' paramaters are estimated for each block and each dimension using the Schafer
 #' and Strimmer (2005) analytical formula.
-#' @param scheme Either "horst", "factorial" or "centroid" (Default:
-#' "centroid"), see reference paper.
 #' @param mode character string. What type of algorithm to use, (partially)
 #' matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 #' or \code{"classic"}. See Details.
 #' @param scale Logical. If scale = TRUE, each block is standardized to zero
-#' means and unit variances (default: TRUE)
-#' @param init Mode of initialization use in the algorithm, either by Singular
-#' Value Decompostion of the product of each block of X with Y ("svd") or each
-#' block independently ("svd.single") . Default to "svd".
+#' means and unit variances (default: TRUE).
 #' @param tol Convergence stopping value.
 #' @param max.iter integer, the maximum number of iterations.
 #' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
@@ -170,10 +165,8 @@ mixOmics <- function(X,
                      keepY, #sparse
                      design, #block
                      tau = NULL, # rgcca, number between 0,1 or "optimal"
-                     scheme, #block
                      mode = c("regression", "canonical", "invariant", "classic"), #for DA only regression
                      scale,
-                     init,
                      tol =  1e-06,
                      max.iter = 100,
                      near.zero.var = FALSE)
@@ -234,16 +227,16 @@ mixOmics <- function(X,
                             scale = FALSE
                         
                         message("a block Partial Least Squares - Discriminant Analysis is being performed (block.PLS-DA)")
-                        res = block.plsda(X = X, Y = Y, indY = indY, ncomp = ncomp,design = design,scheme = scheme,
-                                          scale = scale, init = init,tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
+                        res = block.plsda(X = X, Y = Y, indY = indY, ncomp = ncomp,design = design,
+                                          scale = scale, tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
                         
                     } else {# mint.block.plsda
                         if (missing(scale))
                             scale = FALSE
                         
                         message("a mint block Partial Least Squares - Discriminant Analysis is being performed (mint.block.PLS-DA)")
-                        res = mint.block.plsda(X = X, Y = Y, indY = indY,study = study, ncomp = ncomp,design = design,scheme = scheme,
-                                               scale = scale, init = init,tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
+                        res = mint.block.plsda(X = X, Y = Y, indY = indY,study = study, ncomp = ncomp,design = design,
+                                               scale = scale, tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
                     }
                     
                     
@@ -256,7 +249,7 @@ mixOmics <- function(X,
                         message("a block sparse Partial Least Squares - Discriminant Analysis is being performed (block.sPLS-DA)")
                         
                         res = mint.block.splsda(X = X, Y = Y, indY = indY, ncomp = ncomp,keepX = keepX,
-                                                design = design,scheme = scheme, scale = scale, init = init,tol = tol,
+                                                design = design, scale = scale, tol = tol,
                                                 max.iter = max.iter,near.zero.var = near.zero.var)
                         
                         
@@ -266,7 +259,7 @@ mixOmics <- function(X,
                         
                         message("a mint block sparse Partial Least Squares - Discriminant Analysis is being performed (mint.block.sPLS-DA)")
                         res = mint.block.splsda(X = X, Y = Y, indY = indY, ncomp = ncomp,study = study,keepX = keepX,
-                                                design = design,scheme = scheme,scale = scale, init = init,tol = tol,
+                                                design = design, scale = scale, tol = tol,
                                                 max.iter = max.iter,near.zero.var = near.zero.var)
                     }
                     
@@ -283,16 +276,16 @@ mixOmics <- function(X,
                             scale = FALSE
                         
                         message("a block Partial Least Squares is being performed (block.PLS)")
-                        res = block.pls(X = X, Y = Y, indY = indY, ncomp = ncomp,design = design,scheme = scheme,
-                                        mode = mode,scale = scale, init = init,tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
+                        res = block.pls(X = X, Y = Y, indY = indY, ncomp = ncomp,design = design,
+                                        mode = mode,scale = scale, tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
                         
                     } else {# mint.block.pls
                         if (missing(scale))
                             scale = FALSE
                         
                         message("a mint block Partial Least Squares is being performed (mint.block.PLS)")
-                        res = mint.block.pls(X = X, Y = Y, indY = indY,study = study, ncomp = ncomp,design = design,scheme = scheme,
-                                             mode = mode,scale = scale, init = init,tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
+                        res = mint.block.pls(X = X, Y = Y, indY = indY,study = study, ncomp = ncomp,design = design,
+                                             mode = mode,scale = scale, tol = tol, max.iter = max.iter,near.zero.var = near.zero.var)
                     }
                     
                     
@@ -304,7 +297,7 @@ mixOmics <- function(X,
                         
                         message("a block sparse Partial Least Squares is being performed (block.sPLS)")
                         res = block.spls(X = X, Y = Y, indY = indY, ncomp = ncomp,keepX = keepX,
-                                         design = design,scheme = scheme,mode =  mode,scale = scale, init = init,tol = tol,
+                                         design = design, mode =  mode,scale = scale, tol = tol,
                                          max.iter = max.iter,near.zero.var = near.zero.var)
                         
                         
@@ -314,7 +307,7 @@ mixOmics <- function(X,
                         
                         message("a mint block sparse Partial Least Squares is being performed (mint.block.sPLS)")
                         res = mint.block.spls(X = X, Y = Y, indY = indY, ncomp = ncomp,study = study,keepX = keepX,
-                                              design = design,scheme = scheme,mode =  mode,scale = scale, init = init,tol = tol,
+                                              design = design, mode =  mode,scale = scale, tol = tol,
                                               max.iter = max.iter,near.zero.var = near.zero.var)
                         
                     }
@@ -335,7 +328,7 @@ mixOmics <- function(X,
                     scale = FALSE
                 
                 res = wrapper.rgcca(X = X,design = design,tau = tau,ncomp = ncomp,
-                                    max.iter = max.iter,scheme = scheme,scale = scale,init = init, tol = tol)
+                                    max.iter = max.iter, scale = scale, tol = tol)
                 
             } else { #sparse RGCCA
                 if (missing(scale))
@@ -343,7 +336,7 @@ mixOmics <- function(X,
                 
                 message("A sparse RGCCA analysis is being performed")
                 res = wrapper.rgcca(X = X,design = design,tau = tau,ncomp = ncomp,keepX = keepX,
-                                    max.iter = max.iter,scheme = scheme,scale = scale,init = init, tol = tol)
+                                    max.iter = max.iter, scale = scale, tol = tol)
                 
                 
             }
@@ -359,17 +352,18 @@ mixOmics <- function(X,
             stop("Y must be a matrix or a factor")
         
         if (missing(mode)) mode = "regression"
-        #check for unused inputs (scheme, etc etc)
-        if (!is.null(tau) | !missing(design) | !missing(init) | !missing(scheme))
+        #check for unused inputs (scheme, etc etc) - now hardcoded scheme and init so dont check for these
+        # if (!is.null(tau) | !missing(design) | !missing(init) | !missing(scheme))
+        if (!is.null(tau) | !missing(design))
         {
             if (!is.null(tau))
                 message("'tau' is not used")
             if (!missing(design))
                 message("'design' is not used")
-            if (!missing(init))
-                message("'init' is not used")
-            if (!missing(scheme))
-                message("'scheme' is not used")
+            # if (!missing(init))
+            #     message("'init' is not used")
+            # if (!missing(scheme))
+            #     message("'scheme' is not used")
             
             stop("unused input parameters")
         }

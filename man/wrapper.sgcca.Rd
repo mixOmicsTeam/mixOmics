@@ -113,8 +113,7 @@ design = matrix(c(0,1,1,
 
 #note: the penalty parameters will need to be tuned
 wrap.result.sgcca = wrapper.sgcca(X = data, design = design, penalty = c(.3,.5, 1),
-ncomp = 2,
-scheme = "centroid")
+ncomp = 2)
 wrap.result.sgcca
 #did the algo converge?
 wrap.result.sgcca$crit  # yes
