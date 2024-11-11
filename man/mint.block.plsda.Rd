@@ -11,9 +11,7 @@ mint.block.plsda(
   study,
   ncomp = 2,
   design,
-  scheme,
   scale = TRUE,
-  init,
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
@@ -82,6 +80,7 @@ containing the names to be used for individuals and variables.}
 subsequent S3 methods} \item{max.iter}{the maximum number of iterations,
 used for subsequent S3 methods} \item{iter}{Number of iterations of the
 algorithm for each component}
+Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'.
 }
 \description{
 Function to integrate data sets measured on the same samples (N-integration)
