@@ -105,7 +105,8 @@ The type of algorithm to use is specified with the \code{mode} argument.
 Four PLS algorithms are available: PLS regression \code{("regression")}, PLS
 canonical analysis \code{("canonical")}, redundancy analysis
 \code{("invariant")} and the classical PLS algorithm \code{("classic")} (see
-References and \code{?pls} for more details).
+References and \code{?pls} for more details). Note that the argument 'scheme' 
+has now been hardcoded to 'horst' and 'init' to 'svd.single'. 
 
 Note that our method is partly based on Generalised Canonical Correlation
 Analysis and differs from the MB-PLS approaches proposed by Kowalski et al.,

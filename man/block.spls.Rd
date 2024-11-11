@@ -97,6 +97,7 @@ missing values in the centered data to zero}
 \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
 If \code{verbose.call = TRUE} then all the inputted values are accessable via
 this component}
+Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'.
 }
 \description{
 Integration of multiple data sets measured on the same samples or
