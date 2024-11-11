@@ -4,13 +4,16 @@ test_that("circosPlot works", code = {
     data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
     design = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
     
-    
-    nutrimouse.sgccda <- wrapper.sgccda(X=data,
-                                        Y = Y,
-                                        design = design,
+    # wrapper.sgccda is just exported version of block.splsda()
+    # nutrimouse.sgccda <- wrapper.sgccda(X=data,
+    #                                     Y = Y,
+    #                                     design = design,
+    #                                     keepX = list(gene=c(8,8), lipid=c(4,4)),
+    #                                     ncomp = 2,
+    #                                     scheme = "horst")
+    nutrimouse.sgccda <- block.splsda(X=data, Y = Y, design = design,
                                         keepX = list(gene=c(8,8), lipid=c(4,4)),
-                                        ncomp = 2,
-                                        scheme = "horst")
+                                        ncomp = 2)
     
     
     cp_res <- circosPlot(nutrimouse.sgccda, cutoff = 0.7, ncol.legend = 2, size.legend = 1.1,
