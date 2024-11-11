@@ -29,12 +29,8 @@
 #' @param ncomp the number of components to include in the model. Default to 1.
 #' @param keepX A vector of same length as X.  Each entry keepX[i] is the
 #' number of X[[i]]-variables kept in the model.
-#' @param scheme Either "horst", "factorial" or "centroid" (Default: "horst").
 #' @param scale Logical. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
-#' @param init Mode of initialization use in the algorithm, either by Singular
-#' Value Decompostion of the product of each block of X with Y ("svd") or each
-#' block independently ("svd.single") . Default to "svd.single".
 #' @param tol Convergence stopping value.
 #' @param max.iter integer, the maximum number of iterations.
 #' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
@@ -50,12 +46,13 @@
 #' design.} \item{variates}{the sgcca components.} \item{loadings}{the loadings
 #' for each block data set (outer wieght vector).} \item{loadings.star}{the
 #' laodings, standardised.} \item{tau}{the input tau parameter.}
-#' \item{scheme}{the input schme.} \item{ncomp}{the number of components
+#' \item{ncomp}{the number of components
 #' included in the model for each block.} \item{crit}{the convergence
 #' criterion.} \item{AVE}{Indicators of model quality based on the Average
 #' Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner
 #' model)..} \item{names}{list containing the names to be used for individuals
 #' and variables.} More details can be found in the references.
+#' Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'. 
 #' @author Arthur Tenenhaus, Vincent Guillemot, Kim-Anh Lê Cao, 
 #' Florian Rohart, Benoit Gautier
 #' @seealso \code{\link{wrapper.rgcca}}, \code{\link{plotIndiv}},
@@ -87,8 +84,7 @@
 #' 1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
 #' #note: the tau parameter is the regularization parameter
 #' wrap.result.rgcca = wrapper.rgcca(X = data, design = design, tau = c(1, 1, 0),
-#' ncomp = 2,
-#' scheme = "centroid")
+#' ncomp = 2)
 #' #wrap.result.rgcca
 #' 
 wrapper.rgcca <-
@@ -98,15 +94,16 @@ wrapper.rgcca <-
         tau = rep(1, length(X)),
         ncomp = 1,
         keepX,
-        scheme = "horst",
         scale = TRUE,
-        init = "svd.single",
         tol = .Machine$double.eps,
         max.iter = 1000,
         near.zero.var = FALSE,
         all.outputs = TRUE)
     {
-        
+
+        # hardcode scheme and init
+        scheme = "horst"
+        init = "svd.single"
         
         check = Check.entry.rgcca(X = X, design = design, tau = tau, ncomp = ncomp, scheme = scheme, scale = scale,
                                   init = init, tol = tol, max.iter = max.iter, near.zero.var = near.zero.var,keepX = keepX)
