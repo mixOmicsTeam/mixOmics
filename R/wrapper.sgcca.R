@@ -32,15 +32,11 @@
 #' @param ncomp the number of components to include in the model. Default to 1.
 #' @param keepX A vector of same length as X.  Each entry keepX[i] is the
 #' number of X[[i]]-variables kept in the model.
-#' @param scheme Either "horst", "factorial" or "centroid" (Default: "horst").
 #' @param mode character string. What type of algorithm to use, (partially)
 #' matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 #' or \code{"classic"}. See Details.
 #' @param scale Logical. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
-#' @param init Mode of initialization use in the algorithm, either by Singular
-#' Value Decompostion of the product of each block of X with Y ("svd") or each
-#' block independently ("svd.single") . Default to "svd.single".
 #' @param tol Convergence stopping value.
 #' @param max.iter integer, the maximum number of iterations.
 #' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
@@ -62,6 +58,7 @@
 #' Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner
 #' model)..} \item{names}{list containing the names to be used for individuals
 #' and variables.} More details can be found in the references.
+#' Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'. 
 #' @author Arthur Tenenhaus, Vincent Guillemot, Kim-Anh Lê Cao, 
 #' Florian Rohart, Benoit Gautier, Al J Abadi
 #' @seealso \code{\link{wrapper.sgcca}}, \code{\link{plotIndiv}},
@@ -96,8 +93,7 @@
 #' 
 #' #note: the penalty parameters will need to be tuned
 #' wrap.result.sgcca = wrapper.sgcca(X = data, design = design, penalty = c(.3,.5, 1),
-#' ncomp = 2,
-#' scheme = "centroid")
+#' ncomp = 2)
 #' wrap.result.sgcca
 #' #did the algo converge?
 #' wrap.result.sgcca$crit  # yes
@@ -109,15 +105,17 @@ wrapper.sgcca <-
         penalty = NULL,
         ncomp = 1,
         keepX,
-        scheme = "horst",
         mode = "canonical",
         scale = TRUE,
-        init = "svd.single",
         tol = .Machine$double.eps,
         max.iter = 1000,
         near.zero.var = FALSE,
         all.outputs = TRUE
     ){
+
+        # hardcode scheme and init
+        scheme = "horst"
+        init = "svd.single"
         
         check=Check.entry.sgcca(X = X, design = design ,ncomp = ncomp , scheme = scheme , scale = scale,
                                 init = init , tol = tol, mode = mode, max.iter = max.iter,near.zero.var = near.zero.var,keepX = keepX)

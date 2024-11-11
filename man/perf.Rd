@@ -450,8 +450,7 @@ nutrimouse.sgccda <- block.splsda(X=data,
 Y = Y,
 design = 'full',
 keepX = list(gene=c(10,10), lipid=c(15,15)),
-ncomp = 2,
-scheme = "horst")
+ncomp = 2)
 
 perf = perf(nutrimouse.sgccda)
 perf
@@ -463,8 +462,7 @@ nutrimouse.sgccda <- block.splsda(X=data,
 Y = Y,
 design = 'full',
 keepX = list(gene=c(10,10), lipid=c(15,15)),
-ncomp = 5,
-scheme = "horst")
+ncomp = 5)
 
 perf = perf(nutrimouse.sgccda, folds = 5, nrepeat = 5)
 perf

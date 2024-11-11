@@ -146,7 +146,7 @@ perf.sgccda <-
       block.splsda.args <- function(ind) {
         return(list(X = X.training[[ind]], Y = Y.training[[ind]], ncomp = ncomp, 
                     keepX = keepX,
-                    design = object$design, max.iter =  max.iter, tol = object$tol, init = object$init, scheme = object$scheme,
+                    design = object$design, max.iter =  max.iter, tol = object$tol,
                     near.zero.var = near.zero.var))
       }
       

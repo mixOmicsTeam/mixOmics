@@ -207,8 +207,6 @@ tune <-
               indY,
               weighted = TRUE,
               design,
-              scheme = "horst",
-              init = "svd",
               # CCA specific params
               grid1 = seq(0.001, 1, length = 5),
               grid2 = seq(0.001, 1, length = 5),
@@ -218,6 +216,10 @@ tune <-
     {
         method = match.arg(method)
         mode <- match.arg(mode)
+
+        # hardcode scheme and init
+        scheme = "horst"
+        init = "svd.single"
         
         if (method == "mint.splsda") {
             message("Calling 'tune.mint.splsda' with Leave-One-Group-Out Cross Validation (nrepeat = 1)")

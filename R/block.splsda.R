@@ -56,6 +56,7 @@
 #' \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
 #' If \code{verbose.call = TRUE} then all the inputted values are accessable via
 #' this component}
+#' Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'. 
 #' @author Florian Rohart, Benoit Gautier, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{plotIndiv}}, \code{\link{plotArrow}},
 #' \code{\link{plotLoadings}}, \code{\link{plotVar}}, \code{\link{predict}},
@@ -95,9 +96,7 @@ block.splsda <- function(X,
                          ncomp = 2,
                          keepX,
                          design,
-                         scheme,
                          scale = TRUE,
-                         init = "svd",
                          tol = 1e-06,
                          max.iter = 100,
                          near.zero.var = FALSE,
@@ -154,10 +153,10 @@ block.splsda <- function(X,
         keepX = keepX,
         DA = TRUE,
         design = design,
-        scheme = scheme,
+        scheme = 'horst',
         mode = 'regression',
         scale = scale,
-        init = init,
+        init = 'svd.single',
         tol = tol,
         max.iter = max.iter,
         near.zero.var = near.zero.var,

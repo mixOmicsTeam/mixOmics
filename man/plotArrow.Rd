@@ -145,8 +145,7 @@ design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
 nutrimouse.sgcca <- wrapper.sgcca(X = data,
                                   design = design1,
                                   penalty = c(0.3, 0.5, 1),
-                                  ncomp = 3,
-                                  scheme = "centroid")
+                                  ncomp = 3)
 
 plotArrow(nutrimouse.sgcca, group = nutrimouse$genotype, ind.names = TRUE, 
            legend.title = 'Genotype' )
@@ -192,8 +191,7 @@ nutrimouse.sgccda1 <-
                    Y = Y,
                    design = design1,
                    ncomp = 2,
-                   keepX = list(gene = c(10,10), lipid = c(15,15)),
-                   scheme = "centroid")
+                   keepX = list(gene = c(10,10), lipid = c(15,15)))
 
 
 ## Default colours correspond to outcome Y

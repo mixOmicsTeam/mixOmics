@@ -10,10 +10,8 @@ block.pls(
   indY,
   ncomp = 2,
   design,
-  scheme,
   mode,
   scale = TRUE,
-  init,
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
@@ -46,18 +44,11 @@ off-diagonal elements of a fully connected design (see examples in
 \code{block.splsda}). If \code{Y} is provided instead of \code{indY}, the
 \code{design} matrix is changed to include relationships to \code{Y}.}
 
-\item{scheme}{Character, one of 'horst', 'factorial' or 'centroid'. Default =
-\code{'horst'}, see reference.}
-
 \item{mode}{Character string indicating the type of PLS algorithm to use. One
 of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
 
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
-
-\item{init}{Mode of initialization use in the algorithm, either by Singular
-Value Decomposition of the product of each block of X with Y ('svd') or each
-block independently ('svd.single'). Default = \code{svd.single}}
 
 \item{tol}{Positive numeric used as convergence criteria/tolerance during the
 iterative process. Default to \code{1e-06}.}
@@ -114,7 +105,8 @@ The type of algorithm to use is specified with the \code{mode} argument.
 Four PLS algorithms are available: PLS regression \code{("regression")}, PLS
 canonical analysis \code{("canonical")}, redundancy analysis
 \code{("invariant")} and the classical PLS algorithm \code{("classic")} (see
-References and \code{?pls} for more details).
+References and \code{?pls} for more details). Note that the argument 'scheme' 
+has now been hardcoded to 'horst' and 'init' to 'svd.single'. 
 
 Note that our method is partly based on Generalised Canonical Correlation
 Analysis and differs from the MB-PLS approaches proposed by Kowalski et al.,

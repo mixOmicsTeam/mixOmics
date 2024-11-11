@@ -24,7 +24,8 @@
 #' Four PLS algorithms are available: PLS regression \code{("regression")}, PLS
 #' canonical analysis \code{("canonical")}, redundancy analysis
 #' \code{("invariant")} and the classical PLS algorithm \code{("classic")} (see
-#' References and \code{?pls} for more details).
+#' References and \code{?pls} for more details). Note that the argument 'scheme' 
+#' has now been hardcoded to 'horst' and 'init' to 'svd.single'. 
 #' 
 #' Note that our method is partly based on Generalised Canonical Correlation
 #' Analysis and differs from the MB-PLS approaches proposed by Kowalski et al.,
@@ -50,11 +51,6 @@
 #'   off-diagonal elements of a fully connected design (see examples in
 #'   \code{block.splsda}). If \code{Y} is provided instead of \code{indY}, the
 #'   \code{design} matrix is changed to include relationships to \code{Y}.
-#' @param scheme Character, one of 'horst', 'factorial' or 'centroid'. Default =
-#' \code{'horst'}, see reference.
-#' @param init Mode of initialization use in the algorithm, either by Singular
-#' Value Decomposition of the product of each block of X with Y ('svd') or each
-#' block independently ('svd.single'). Default = \code{svd.single}
 #' @template arg/verbose.call
 #' @return \code{block.pls} returns an object of class \code{'block.pls'}, a
 #' list that contains the following components:
@@ -95,10 +91,8 @@ block.pls <- function(X,
                       indY,
                       ncomp = 2,
                       design,
-                      scheme,
                       mode,
                       scale = TRUE,
-                      init ,
                       tol = 1e-06,
                       max.iter = 100,
                       near.zero.var = FALSE,
@@ -108,8 +102,8 @@ block.pls <- function(X,
     
     # call to 'internal_wrapper.mint.block'
     result = internal_wrapper.mint.block(X=X, Y=Y, indY=indY, ncomp=ncomp,
-                                         design=design, scheme=scheme, mode=mode, scale=scale,
-                                         init=init, tol=tol, max.iter=max.iter ,near.zero.var=near.zero.var,
+                                         design=design, scheme="horst", mode=mode, scale=scale,
+                                         init="svd.single", tol=tol, max.iter=max.iter ,near.zero.var=near.zero.var,
                                          all.outputs = all.outputs, DA = FALSE)
     
     # calculate weights for each dataset

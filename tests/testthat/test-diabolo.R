@@ -16,7 +16,6 @@ test_that("block.splsda works", {
                                     keepX = list(gene = c(10,10),
                                                  lipid = c(15,15)),
                                     ncomp = 2,
-                                    scheme = "centroid",
                                     tol = 1e-30)
   expect_length(nutrimouse.sgccda, 24L)
 
@@ -53,9 +52,6 @@ test_that("block.splsda works", {
   expect_null(nutrimouse.sgccda$nzv)
 
   expect_true(nutrimouse.sgccda$scale)
-
-  expect_equal(nutrimouse.sgccda$scheme, "centroid")
-  expect_equal(nutrimouse.sgccda$scheme, "centroid")
 
   expect_equal(nutrimouse.sgccda$indY, 3L)
 

@@ -13,8 +13,7 @@ test_that("perf.diablo works with with auroc", {
                                       Y = nutrimouse$diet,
                                       design = design,
                                       keepX = list(gene=c(10,10), lipid=c(15,15)),
-                                      ncomp = 2,
-                                      scheme = "horst")
+                                      ncomp = 2)
     
     # run perf model - set seed as 100, ignores RNGseed
     perf.res = perf(nutrimouse.sgccda, folds = 2, nrepeat = 1, auc = TRUE, 

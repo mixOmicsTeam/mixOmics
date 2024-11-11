@@ -37,8 +37,7 @@ test_that("plotLoadings.block.splsda works", code = {
                                        Y = Y,
                                        design = design,
                                        keepX = list(gene = c(10,10), lipid = c(15,15)),
-                                       ncomp = 2,
-                                       scheme = "centroid")
+                                       ncomp = 2)
     
     pl_res <- plotLoadings(nutrimouse.sgccda,block=2)
     
@@ -93,7 +92,6 @@ test_that("plotLoadings margin errrors is handled properly", code = {
                                      Y = Y,
                                      design = design,
                                      keepX = list(gene = c(10,10), lipid = c(15,15)),
-                                     ncomp = 2,
-                                     scheme = "centroid")
+                                     ncomp = 2)
     expect_error(plotLoadings(nutrimouse.sgccda, contrib = "min"), regexp = "plotLoadings encountered margin errors")
 })

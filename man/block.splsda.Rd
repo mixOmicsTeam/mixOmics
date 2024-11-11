@@ -13,9 +13,7 @@ block.splsda(
   ncomp = 2,
   keepX,
   design,
-  scheme,
   scale = TRUE,
-  init = "svd",
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
@@ -30,9 +28,7 @@ wrapper.sgccda(
   ncomp = 2,
   keepX,
   design,
-  scheme,
   scale = TRUE,
-  init = "svd",
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
@@ -67,15 +63,8 @@ off-diagonal elements of a fully connected design (see examples in
 \code{block.splsda}). If \code{Y} is provided instead of \code{indY}, the
 \code{design} matrix is changed to include relationships to \code{Y}.}
 
-\item{scheme}{Character, one of 'horst', 'factorial' or 'centroid'. Default =
-\code{'horst'}, see reference.}
-
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
-
-\item{init}{Mode of initialization use in the algorithm, either by Singular
-Value Decomposition of the product of each block of X with Y ('svd') or each
-block independently ('svd.single'). Default = \code{svd.single}}
 
 \item{tol}{Positive numeric used as convergence criteria/tolerance during the
 iterative process. Default to \code{1e-06}.}
@@ -114,6 +103,7 @@ variance for each component and each block}
 \item{call}{if \code{verbose.call = FALSE}, then just the function call is returned.
 If \code{verbose.call = TRUE} then all the inputted values are accessable via
 this component}
+Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'.
 }
 \description{
 Integration of multiple data sets measured on the same samples or

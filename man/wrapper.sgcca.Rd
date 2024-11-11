@@ -11,10 +11,8 @@ wrapper.sgcca(
   penalty = NULL,
   ncomp = 1,
   keepX,
-  scheme = "horst",
   mode = "canonical",
   scale = TRUE,
-  init = "svd.single",
   tol = .Machine$double.eps,
   max.iter = 1000,
   near.zero.var = FALSE,
@@ -42,18 +40,12 @@ between 0 (no variable selected) and 1 (all variables included).}
 \item{keepX}{A vector of same length as X.  Each entry keepX[i] is the
 number of X[[i]]-variables kept in the model.}
 
-\item{scheme}{Either "horst", "factorial" or "centroid" (Default: "horst").}
-
 \item{mode}{character string. What type of algorithm to use, (partially)
 matching one of \code{"regression"}, \code{"canonical"}, \code{"invariant"}
 or \code{"classic"}. See Details.}
 
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
-
-\item{init}{Mode of initialization use in the algorithm, either by Singular
-Value Decompostion of the product of each block of X with Y ("svd") or each
-block independently ("svd.single") . Default to "svd.single".}
 
 \item{tol}{Convergence stopping value.}
 
@@ -81,6 +73,7 @@ criterion.} \item{AVE}{Indicators of model quality based on the Average
 Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner
 model)..} \item{names}{list containing the names to be used for individuals
 and variables.} More details can be found in the references.
+Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'.
 }
 \description{
 Wrapper function to perform Sparse Generalised Canonical Correlation
@@ -120,8 +113,7 @@ design = matrix(c(0,1,1,
 
 #note: the penalty parameters will need to be tuned
 wrap.result.sgcca = wrapper.sgcca(X = data, design = design, penalty = c(.3,.5, 1),
-ncomp = 2,
-scheme = "centroid")
+ncomp = 2)
 wrap.result.sgcca
 #did the algo converge?
 wrap.result.sgcca$crit  # yes
