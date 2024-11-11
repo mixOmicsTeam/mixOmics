@@ -147,8 +147,7 @@ nutrimouse.sgccda <- wrapper.sgccda(X=data,
 Y = Y,
 design = design,
 keepX = list(gene=c(10,10), lipid=c(15,15)),
-ncomp = 2,
-scheme = "horst")
+ncomp = 2)
 
 circosPlot(nutrimouse.sgccda, cutoff = 0.7)
 ## links widths based on strength of their similarity

@@ -8,8 +8,7 @@ nutrimouse.sgccda <- block.splsda(X = data,
                                   Y = Y,
                                   design = "full",
                                   keepX = list(gene = c(10,10), lipid = c(15,15)),
-                                  ncomp = 2,
-                                  scheme = "centroid")
+                                  ncomp = 2)
 
 cimDiablo(nutrimouse.sgccda, comp = c(1,2))
 ## change trim range
