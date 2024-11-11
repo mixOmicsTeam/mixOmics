@@ -448,8 +448,7 @@ test_that("plotIndiv works for sgcca and rgcca", {
   nutrimouse.sgcca <- wrapper.sgcca(X = data,
                                     design = design1,
                                     penalty = c(0.3, 0.5, 1),
-                                    ncomp = 3,
-                                    scheme = "horst")
+                                    ncomp = 3)
   
   pl.res <-  plotIndiv(nutrimouse.sgcca)
   # check coordinates
@@ -502,8 +501,7 @@ test_that("plotIndiv.sgcca(..., blocks = 'average') works", code = {
     nutrimouse.sgcca <- wrapper.sgcca(X = data,
                                       design = design1,
                                       penalty = c(0.3, 0.5, 1),
-                                      ncomp = 2,
-                                      scheme = "horst")
+                                      ncomp = 2)
     
     # default style: one panel for each block
     plotindiv_res <- plotIndiv(nutrimouse.sgcca, blocks = c("lipid","average"))
