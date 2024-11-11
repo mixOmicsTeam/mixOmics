@@ -37,8 +37,6 @@ tune(
   indY,
   weighted = TRUE,
   design,
-  scheme = "horst",
-  init = "svd",
   grid1 = seq(0.001, 1, length = 5),
   grid2 = seq(0.001, 1, length = 5),
   study

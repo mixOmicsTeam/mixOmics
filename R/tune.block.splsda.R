@@ -46,8 +46,6 @@
 #' components.
 #' @param weighted tune using either the performance of the Majority vote or
 #' the Weighted vote.
-#' @param scheme Either "horst", "factorial" or "centroid". Default =
-#' \code{centroid}, see reference.
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
@@ -60,6 +58,7 @@
 #' most computationally intensive process. If there is excess CPU, the
 #' cross-vaidation is also parallelised on *nix-based OS which support
 #' \code{mclapply}.
+#' Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'. 
 #' @return A list that contains: \item{error.rate}{returns the prediction error
 #' for each \code{test.keepX} on each component, averaged across all repeats
 #' and subsampling folds. Standard deviation is also output. All error rates
@@ -113,9 +112,7 @@ tune.block.splsda <-
             near.zero.var = FALSE,
             nrepeat = 1,
             design,
-            scheme = "horst",
             scale = TRUE,
-            init = "svd",
             light.output = TRUE,
             # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
             signif.threshold=0.01,
@@ -129,6 +126,11 @@ tune.block.splsda <-
     }
     BPPARAM$RNGseed <- seed
     set.seed(seed)
+
+    # hardcode init and scheme
+    scheme <- 'horst'
+    init <- 'svd.single'
+
     ## ----------- checks -----------
     
     # check input 'Y' and transformation in a dummy matrix

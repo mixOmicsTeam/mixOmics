@@ -23,9 +23,7 @@ tune.block.splsda(
   near.zero.var = FALSE,
   nrepeat = 1,
   design,
-  scheme = "horst",
   scale = TRUE,
-  init = "svd",
   light.output = TRUE,
   signif.threshold = 0.01,
   BPPARAM = SerialParam(),
@@ -96,9 +94,6 @@ off-diagonal elements of a fully connected design (see examples in
 \code{block.splsda}). If \code{Y} is provided instead of \code{indY}, the
 \code{design} matrix is changed to include relationships to \code{Y}.}
 
-\item{scheme}{Either "horst", "factorial" or "centroid". Default =
-\code{centroid}, see reference.}
-
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
@@ -123,7 +118,8 @@ Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM'
 run in parallel when repeating the cross-validation, which is usually the
 most computationally intensive process. If there is excess CPU, the
 cross-vaidation is also parallelised on *nix-based OS which support
-\code{mclapply}.}
+\code{mclapply}.
+Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'.}
 }
 \value{
 A list that contains: \item{error.rate}{returns the prediction error
