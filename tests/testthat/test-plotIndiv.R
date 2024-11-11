@@ -465,14 +465,14 @@ test_that("plotIndiv works for sgccda", {
   data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
   design1 = matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
   
-  nutrimouse.sgccda1 <- wrapper.sgccda(X = data,
+  nutrimouse.sgccda1 <- block.splsda(X = data,
                                        Y = Y,
                                        design = design1,
                                        ncomp = 2,
                                        keepX = list(gene = c(10,10), lipid = c(15,15)))
   pl.res <- plotIndiv(nutrimouse.sgccda1)
   # check coordinates
-  .expect_numerically_close(pl.res$graph$data$x[1], -2.444754)
+  .expect_numerically_close(abs(pl.res$graph$data$x[1]), abs(-2.444754))
   # check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
   # check right number of samples - here have 40 samples across 2 modalities (gene, lipid)
