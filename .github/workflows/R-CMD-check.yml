@@ -138,14 +138,14 @@ jobs:
           brew install --cask xquartz
           brew install gcc
 
-      - name: Install extra dependencies for linux
-        if: runner.os == 'Linux'
-        env:
-          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pandoc-citeproc
-          sudo apt-get install -y qpdf
+      # - name: Install extra dependencies for linux
+      #   if: runner.os == 'Linux'
+      #   env:
+      #     RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y pandoc-citeproc
+      #     sudo apt-get install -y qpdf
 
       - name: Install R dependencies 🔨
         run: |
