@@ -144,7 +144,6 @@ jobs:
           RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc-citeproc
           sudo apt-get install -y qpdf
 
       - name: Install R dependencies 🔨
