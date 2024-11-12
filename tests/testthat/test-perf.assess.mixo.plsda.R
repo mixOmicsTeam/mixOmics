@@ -10,10 +10,17 @@ test_that("perf.assess.mixo_plsda in serial and parallel", code = {
   Y <- liver.toxicity$treatment$Dose.Group
   res <- plsda(X, Y, ncomp = 2)
   
-  # Serial execution
+  # Execution using old perf() function - checked is reproducible
+  out.old <- suppressWarnings(
+    perf(res, validation = "Mfold", folds = 2, nrepeat = 1, BPPARAM = SerialParam(), seed = 12)
+  )
+  out.old$error.rate$overall
+  
+  # Serial execution - checked is reproducible
   out <- suppressWarnings(
     perf.assess(res, validation = "Mfold", folds = 2, nrepeat = 1, BPPARAM = SerialParam(), seed = 12)
   )
+  out$error.rate$overall
   
   # Parallel execution
   out.parallel <- suppressWarnings(
@@ -25,4 +32,5 @@ test_that("perf.assess.mixo_plsda in serial and parallel", code = {
   
   # Expect the same result
   expect_equal(out$error.rate$overall, out.parallel$error.rate$overall)
+  expect_equal(as.vector(out.old$error.rate$overall[2,]), as.vector(out$error.rate$overall))
 })
