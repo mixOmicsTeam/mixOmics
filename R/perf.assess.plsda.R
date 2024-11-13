@@ -326,6 +326,6 @@ perf.assess.mixo_plsda <- function(object,
     return(invisible(result))
 }
 
-#' @rdname perf
+#' @rdname perf.assess
 #' @export
 perf.assess.mixo_splsda <- perf.assess.mixo_plsda
