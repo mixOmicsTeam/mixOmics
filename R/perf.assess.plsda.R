@@ -108,10 +108,6 @@ perf.assess.mixo_plsda <- function(object,
                    "') has only a single associated sample.", sep = ""))
     }
     
-    if (nrepeat < 3 && validation != "loo") {
-        warning("Values in '$choice.ncomp' will reflect component count with the minimum error rate rather than the best based on a one-way t.test")
-    }
-    
     if (!is.logical(progressBar))
         stop("'progressBar' must be either TRUE or FALSE")
     
