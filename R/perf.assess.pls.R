@@ -126,9 +126,9 @@ perf.assess.mixo_pls <- function(object,
     
 }
 
-#' @rdname perf
+#' @rdname perf.assess
 #' @export
-perf.mixo_spls  <- perf.mixo_pls
+perf.assess.mixo_spls  <- perf.mixo_pls
 
 #' @noRd
 #' @keywords Internal
@@ -251,8 +251,9 @@ perf.mixo_spls  <- perf.mixo_pls
     
     
     # ====  loop on h = ncomp is only for the calculation of Q2 on each component
-    for (h in 1:ncomp)
+    for (h in ncomp:ncomp)
     {
+        print(paste0("h is:", h))
         #-- initialising arguments --#
         tt = object$variates$X[, h]
         u = object$variates$Y[, h]
@@ -301,8 +302,9 @@ perf.mixo_spls  <- perf.mixo_pls
         Y.test = object$Y[omit, , drop = FALSE]
         
         # New loop to calculate prediction
-        for (h in 1:ncomp)
+        for (h in ncomp:ncomp)
         { 
+            print(paste0("h is:", h))
             #-- for MSEP and R2 criteria, no loop on the component as we do a spls with ncomp
             ##if (h == 1)
             #{
@@ -330,7 +332,6 @@ perf.mixo_spls  <- perf.mixo_pls
             # replaced h by 1; Y.hat is the prediction of the test samples for all q variable in comp h = 1
             Ypred[omit, nzv.Y, h] = Y.hat[, , 1]
             MSEP.mat[omit, nzv.Y, h] = (Y.test[, nzv.Y] - Y.hat[, , 1])^2
-            
             
             # Q2 criterion: buidling directly from spls object
             u.cv = spls.res$variates$Y[, 1]
@@ -401,7 +402,8 @@ perf.mixo_spls  <- perf.mixo_pls
     
     
     # store results for each comp
-    for (h in 1:ncomp){
+    for (h in ncomp:ncomp){
+        print(paste0("h is:", h))
         #-- compute the Q2 criterion --#
         # norm is equivalent to summing here the squared press values:
         PRESS.inside[h, ] = apply(press.mat[[h]], 2, function(x){norm(x, type = "2")^2})
@@ -507,7 +509,3 @@ perf.mixo_spls  <- perf.mixo_pls
     }
     return(invisible(result))
 }
-
-#' @rdname perf.assess
-#' @export
-perf.assess.mixo_spls <- perf.assess.mixo_pls
