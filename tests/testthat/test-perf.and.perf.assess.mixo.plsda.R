@@ -1,5 +1,5 @@
-context("perf.assess.mixo_plsda")
-context("perf.mixo_plsda")
+context("perf.assess")
+context("perf")
 library(BiocParallel)
 
 ## ------------------------------------------------------------------------ ##
