@@ -128,7 +128,7 @@ perf.assess.mixo_pls <- function(object,
 
 #' @rdname perf.assess
 #' @export
-perf.assess.mixo_spls  <- perf.mixo_pls
+perf.assess.mixo_spls  <- perf.assess.mixo_pls
 
 #' @noRd
 #' @keywords Internal
