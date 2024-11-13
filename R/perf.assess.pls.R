@@ -54,7 +54,7 @@ perf.assess.mixo_pls <- function(object,
         if (progressBar == TRUE)
             .progressBar(nrep/nrepeat)
         ## CV
-        .perf.mixo_pls_cv(object, validation = validation, folds = folds, nrep = nrep)
+        .perf.assess.mixo_pls_cv(object, validation = validation, folds = folds, nrep = nrep)
     }, BPPARAM = BPPARAM)
     
     measures <- lapply(result, function(x){
@@ -132,7 +132,7 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
 
 #' @noRd
 #' @keywords Internal
-.perf.mixo_pls_cv <- function(object,
+.perf.assess.mixo_pls_cv <- function(object,
                               validation = c("Mfold", "loo"),
                               folds,
                               nrep = 1,
