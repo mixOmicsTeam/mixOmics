@@ -139,6 +139,7 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
                               ...)
 {
     # changes to bypass the loop for the Q2
+    print("TEST")
     
     ## -------- checks -------- ##
     if (object$mode == 'invariant')
@@ -168,7 +169,6 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
     
     if (any(is.na(X)) || any(is.na(Y)))
         stop("missing data in 'X' and/or 'Y'. Use 'nipals' for dealing with NAs.", call. = FALSE)
-    
     
     #-- tells which variables are selected in X and in Y --#
     if (is(object, "mixo_spls"))
@@ -251,9 +251,8 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
     
     
     # ====  loop on h = ncomp is only for the calculation of Q2 on each component
-    for (h in ncomp:ncomp)
+    for (h in ncomp:ncomp) # EDIT to only run on ncomp of interest
     {
-        print(paste0("h is:", h))
         #-- initialising arguments --#
         tt = object$variates$X[, h]
         u = object$variates$Y[, h]
@@ -302,9 +301,8 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
         Y.test = object$Y[omit, , drop = FALSE]
         
         # New loop to calculate prediction
-        for (h in ncomp:ncomp)
+        for (h in ncomp:ncomp) # EDIT run for only one component, as loop over i in 1:M matrix press.mat[ncomp] will fill up
         { 
-            print(paste0("h is:", h))
             #-- for MSEP and R2 criteria, no loop on the component as we do a spls with ncomp
             ##if (h == 1)
             #{
@@ -332,6 +330,7 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
             # replaced h by 1; Y.hat is the prediction of the test samples for all q variable in comp h = 1
             Ypred[omit, nzv.Y, h] = Y.hat[, , 1]
             MSEP.mat[omit, nzv.Y, h] = (Y.test[, nzv.Y] - Y.hat[, , 1])^2
+            
             
             # Q2 criterion: buidling directly from spls object
             u.cv = spls.res$variates$Y[, 1]
@@ -402,8 +401,7 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
     
     
     # store results for each comp
-    for (h in ncomp:ncomp){
-        print(paste0("h is:", h))
+    for (h in 1:ncomp){
         #-- compute the Q2 criterion --#
         # norm is equivalent to summing here the squared press values:
         PRESS.inside[h, ] = apply(press.mat[[h]], 2, function(x){norm(x, type = "2")^2})
@@ -414,9 +412,29 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
             R2[h, ] = (diag(cor(object$Y, Ypred[, , h])))^2
         } # if mode == canonical, do not output
     }
+    # EDIT: only store for given ncomp
+        PRESS.inside[ncomp, ] = apply(press.mat[[ncomp]], 2, function(x){norm(x, type = "2")^2})
+        
+        if(mode != 'canonical'){
+            Q2[ncomp, ] = 1 - PRESS.inside[ncomp, ] / RSS[ncomp, ]
+            MSEP[ncomp, ] = apply(as.matrix(MSEP.mat[, , ncomp]), 2, mean)
+            R2[ncomp, ] = (diag(cor(object$Y, Ypred[, , ncomp])))^2
+        } # if mode == canonical, do not output
+
+        ## now have a table with results only for component 5
+        # PRESS.inside
+        #  [,1]     [,2]     [,3]     [,4]     [,5]     [,6]     [,7]     [,8]     [,9]    [,10]
+        # [1,]       NA       NA       NA       NA       NA       NA       NA       NA       NA       NA
+        # [2,]       NA       NA       NA       NA       NA       NA       NA       NA       NA       NA
+        # [3,]       NA       NA       NA       NA       NA       NA       NA       NA       NA       NA
+        # [4,]       NA       NA       NA       NA       NA       NA       NA       NA       NA       NA
+        # [5,] 31.98314 60.97068 65.46646 65.43552 26.28804 65.52353 28.04459 57.66355 26.05399 49.57962
+
+    }
     
     #-- output -----------------------------------------------------------------#
     #---------------------------------------------------------------------------#
+    ## but now to do Q2.total need to do row sums 
     Q2.total = matrix(1 - rowSums(PRESS.inside) / rowSums(RSS[-(ncomp+1), , drop = FALSE]),
                       nrow = 1, ncol = ncomp,
                       dimnames = list("Q2.total", paste0("comp", seq_len(ncomp))))
