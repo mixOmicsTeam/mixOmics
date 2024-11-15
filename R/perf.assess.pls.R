@@ -306,8 +306,9 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
         X.test = object$X[omit, , drop = FALSE]
         Y.test = object$Y[omit, , drop = FALSE]
         
-        # New loop to calculate prediction - can go directly to ncomp do not need to iterate over each component as these metrics are calculated independently
-        for (h in ncomp:ncomp)
+        # New loop to calculate prediction - theoretically should be able to just calculate ncomp directly but this gives a different result for whatever reason
+        # So just keeping the loop but exacting rows corresponding to ncomp at the end
+        for (h in 1:ncomp)
         { 
             #-- for MSEP and R2 criteria, no loop on the component as we do a spls with ncomp
             ##if (h == 1)
@@ -509,6 +510,9 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
         ## add block name column instead of default 'L1'
         colnames(features) <- c(rev(rev(colnames(features))[-1]), 'block')
         features$nrep <- nrep
+
+        # filter features to only include those based on ncomp
+        features <- dplyr::filter(features, comp == paste0("comp", ncomp))
         
         result$features <- features
     }
