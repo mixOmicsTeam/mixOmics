@@ -63,6 +63,9 @@ perf.assess.mixo_pls <- function(object,
     
     measures <- Reduce(rbind, measures)
     measures <- as.data.frame(measures)
+
+    # Add this line to remove rows with NAs that correspond to components < ncomp
+    measures <- dplyr::filter(measures, comp == ncomp)
     
     ## R CMD check stuff
     measure <- feature <- comp <- block <- stability <- value <- NULL
@@ -137,9 +140,9 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
                               folds,
                               nrep = 1,
                               ...)
+
 {
-    # changes to bypass the loop for the Q2
-    print("TEST")
+# changes to bypass the loop for the Q2
     
     ## -------- checks -------- ##
     if (object$mode == 'invariant')
@@ -169,6 +172,7 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
     
     if (any(is.na(X)) || any(is.na(Y)))
         stop("missing data in 'X' and/or 'Y'. Use 'nipals' for dealing with NAs.", call. = FALSE)
+    
     
     #-- tells which variables are selected in X and in Y --#
     if (is(object, "mixo_spls"))
@@ -251,7 +255,9 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
     
     
     # ====  loop on h = ncomp is only for the calculation of Q2 on each component
-    for (h in ncomp:ncomp) # EDIT to only run on ncomp of interest
+    ## loop adds data to new row in RSS 
+
+    for (h in 1:ncomp) # this loop needs to run on all components because Q2 is calculated using the RSS of ncomp-1
     {
         #-- initialising arguments --#
         tt = object$variates$X[, h]
@@ -291,7 +297,7 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
     
     
     # ======== loop on i for cross validation ===================#
-    for (i in 1:M)
+    for (i in 1:M) # M is number of folds
     {
         # initialise the train / test datasets
         omit = folds[[i]]
@@ -300,8 +306,8 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
         X.test = object$X[omit, , drop = FALSE]
         Y.test = object$Y[omit, , drop = FALSE]
         
-        # New loop to calculate prediction
-        for (h in ncomp:ncomp) # EDIT run for only one component, as loop over i in 1:M matrix press.mat[ncomp] will fill up
+        # New loop to calculate prediction - can go directly to ncomp do not need to iterate over each component as these metrics are calculated independently
+        for (h in ncomp:ncomp)
         { 
             #-- for MSEP and R2 criteria, no loop on the component as we do a spls with ncomp
             ##if (h == 1)
@@ -385,7 +391,6 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
                 press.mat[[h]][omit, ] = Y.test        # == Y.test - Y.hat.cv
             }  
             
-            
             # Record selected features in each set
             if (is(object,"mixo_spls"))
             {
@@ -401,40 +406,21 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
     
     
     # store results for each comp
-    for (h in 1:ncomp){
+    for (h in ncomp:ncomp){
         #-- compute the Q2 criterion --#
         # norm is equivalent to summing here the squared press values:
         PRESS.inside[h, ] = apply(press.mat[[h]], 2, function(x){norm(x, type = "2")^2})
         
         if(mode != 'canonical'){
-            Q2[h, ] = 1 - PRESS.inside[h, ] / RSS[h, ]
+            Q2[h, ] = 1 - PRESS.inside[h, ] / RSS[h, ] # note that RSS has an extra row so here Q is being calculated with PRESS of h and RSS of h-1
             MSEP[h, ] = apply(as.matrix(MSEP.mat[, , h]), 2, mean)
             R2[h, ] = (diag(cor(object$Y, Ypred[, , h])))^2
         } # if mode == canonical, do not output
-    }
-    # EDIT: only store for given ncomp
-        PRESS.inside[ncomp, ] = apply(press.mat[[ncomp]], 2, function(x){norm(x, type = "2")^2})
-        
-        if(mode != 'canonical'){
-            Q2[ncomp, ] = 1 - PRESS.inside[ncomp, ] / RSS[ncomp, ]
-            MSEP[ncomp, ] = apply(as.matrix(MSEP.mat[, , ncomp]), 2, mean)
-            R2[ncomp, ] = (diag(cor(object$Y, Ypred[, , ncomp])))^2
-        } # if mode == canonical, do not output
-
-        ## now have a table with results only for component 5
-        # PRESS.inside
-        #  [,1]     [,2]     [,3]     [,4]     [,5]     [,6]     [,7]     [,8]     [,9]    [,10]
-        # [1,]       NA       NA       NA       NA       NA       NA       NA       NA       NA       NA
-        # [2,]       NA       NA       NA       NA       NA       NA       NA       NA       NA       NA
-        # [3,]       NA       NA       NA       NA       NA       NA       NA       NA       NA       NA
-        # [4,]       NA       NA       NA       NA       NA       NA       NA       NA       NA       NA
-        # [5,] 31.98314 60.97068 65.46646 65.43552 26.28804 65.52353 28.04459 57.66355 26.05399 49.57962
 
     }
     
     #-- output -----------------------------------------------------------------#
     #---------------------------------------------------------------------------#
-    ## but now to do Q2.total need to do row sums 
     Q2.total = matrix(1 - rowSums(PRESS.inside) / rowSums(RSS[-(ncomp+1), , drop = FALSE]),
                       nrow = 1, ncol = ncomp,
                       dimnames = list("Q2.total", paste0("comp", seq_len(ncomp))))
@@ -508,6 +494,7 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
     colnames(result) <- c(col.names, 'measure')
     
     result <- list(measures = result)
+
     #---- stability of features -----#
     if (is(object, "mixo_spls"))
     {
