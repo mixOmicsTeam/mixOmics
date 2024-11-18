@@ -214,14 +214,11 @@ fold}
 
 For mint.splsda models, \code{perf} produces the following outputs:
 \item{study.specific.error}{A list that gives BER, overall error rate and
-error rate per class, for each study} \item{global.error}{A list that gives
-BER, overall error rate and error rate per class for all samples}
-\item{predict}{A list of length \code{ncomp} that produces the predicted
-values of each sample for each class} \item{class}{A list which gives the
-predicted class of each sample for each \code{dist} and each of the
-\code{ncomp} components. Directly obtained from the \code{predict} output.}
-\item{auc}{AUC values} \item{auc.study}{AUC values for each study in mint
-models}
+error rate per class, for each study} 
+\item{global.error}{A list that gives BER, overall error rate and error rate per class for all samples}
+\item{predict}{A list of the predicted values of each sample for each class} 
+\item{class}{A list which gives the predicted class of each sample for each \code{dist}. Directly obtained from the \code{predict} output.}
+\item{auc}{AUC values} \item{auc.study}{AUC values for each study}
 }
 \description{
 Function to evaluate the performance of the fitted PLS, sparse PLS, PLS-DA,
