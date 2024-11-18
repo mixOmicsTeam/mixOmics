@@ -3,7 +3,6 @@ name: Bug report
 about: Report unexpected behaviour (error or unsual results)
 title: ''
 labels: 'bug'
-assignees: 'aljabadi'
 
 ---
 <!--
