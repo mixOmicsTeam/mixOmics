@@ -38,12 +38,11 @@ perf.assess.mint.plsda <- function (object,
     
     #-- check significance threshold
     signif.threshold <- .check_alpha(signif.threshold)
+
+    near.zero.var = !is.null(object$nzv) # if near.zero.var was used, we set it to TRUE. if not used, object$nzv is NULL
     
     #-- end checking --#
     #------------------#
-    
-    near.zero.var = !is.null(object$nzv) # if near.zero.var was used, we set it to TRUE. if not used, object$nzv is NULL
-    
     
     # -------------------------------------
     # added: first check for near zero var on the whole data set
@@ -61,11 +60,12 @@ perf.assess.mint.plsda <- function (object,
     }
     # and then we start from the X data set with the nzv removed
     
+    # Init data structures to store results
     prediction.all = class.all = list()
     for(ijk in dist)
     {
-        class.all[[ijk]] = matrix(nrow = nrow(X), ncol = ncomp,
-                                  dimnames = list(rownames(X), c(paste0('comp', 1 : ncomp))))
+        class.all[[ijk]] = matrix(nrow = nrow(X), ncol = 1,
+                                  dimnames = list(rownames(X), c(paste0('comp', ncomp))))
     }
     
     if(auc)
@@ -78,26 +78,25 @@ perf.assess.mint.plsda <- function (object,
     for (study_i in 1:nlevels(study)) #LOO on the study factor
     {
         study.specific[[study_i]] =list()
-        study.specific[[study_i]]$BER = global$BER = matrix(0,nrow = ncomp, ncol = length(dist),
-                                                            dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
+        study.specific[[study_i]]$BER = global$BER = matrix(0, nrow = 1, ncol = length(dist),
+                                                            dimnames = list(c(paste0('comp', ncomp)), dist))
         
-        study.specific[[study_i]]$overall = global$overall = matrix(0,nrow = ncomp, ncol = length(dist),
-                                                                    dimnames = list(c(paste0('comp', 1 : ncomp)), dist))
+        study.specific[[study_i]]$overall = global$overall = matrix(0, nrow = 1, ncol = length(dist),
+                                                                    dimnames = list(c(paste0('comp', ncomp)), dist))
         
         study.specific[[study_i]]$error.rate.class = list()
         for(ijk in dist)
-            study.specific[[study_i]]$error.rate.class[[ijk]] = global$error.rate.class[[ijk]] = matrix(0,nrow = nlevels(Y), ncol = ncomp,
-                                                                                                        dimnames = list(levels(Y),c(paste0('comp', 1 : ncomp))))
+            study.specific[[study_i]]$error.rate.class[[ijk]] = global$error.rate.class[[ijk]] = matrix(0, nrow = nlevels(Y), ncol = 1,
+                                                                                                        dimnames = list(levels(Y), c(paste0('comp', ncomp))))
         
     }
-    names(study.specific) =levels(study)
+    names(study.specific) = levels(study)
     
     # successively tune the components until ncomp: comp1, then comp2, ...
-    for(comp in 1 : ncomp)
+    for(comp in ncomp : ncomp)
     {
         
         already.tested.X = keepX[1:comp]
-        
         
         if (progressBar == TRUE)
             cat("\ncomp",comp, "\n")
@@ -170,46 +169,46 @@ perf.assess.mint.plsda <- function (object,
             
             # result per study
             #BER
-            study.specific[[study_i]]$BER[comp,] = sapply(test.predict.sw$class, function(x){
-                conf = get.confusion_matrix(truth = Y[omit], all.levels = levels(Y), predicted = x[,comp])
-                get.BER(conf)
+            study.specific[[study_i]]$BER[1,] = sapply(test.predict.sw$class, function(x){
+            conf = get.confusion_matrix(truth = Y[omit], all.levels = levels(Y), predicted = x[,ncomp])
+            get.BER(conf)
             })
-            
+
             #overall
-            study.specific[[study_i]]$overall[comp,] = sapply(test.predict.sw$class, function(x){
-                conf = get.confusion_matrix(truth = Y[omit], all.levels = levels(Y), predicted = x[,comp])
-                out = sum(apply(conf, 1, sum) - diag(conf)) / length(Y[omit])
+            study.specific[[study_i]]$overall[1,] = sapply(test.predict.sw$class, function(x){
+            conf = get.confusion_matrix(truth = Y[omit], all.levels = levels(Y), predicted = x[,ncomp])
+            out = sum(apply(conf, 1, sum) - diag(conf)) / length(Y[omit])
             })
-            
+
             #classification for each level of Y
             temp = lapply(test.predict.sw$class, function(x){
-                conf = get.confusion_matrix(truth = Y[omit], all.levels = levels(Y), predicted = x[,comp])
-                out = (apply(conf, 1, sum) - diag(conf)) / summary(Y[omit])
+            conf = get.confusion_matrix(truth = Y[omit], all.levels = levels(Y), predicted = x[,ncomp])
+            out = (apply(conf, 1, sum) - diag(conf)) / summary(Y[omit])
             })
             for (ijk in dist)
-                study.specific[[study_i]]$error.rate.class[[ijk]][,comp] = temp[[ijk]]
-            
+            study.specific[[study_i]]$error.rate.class[[ijk]][,1] = temp[[ijk]]
+
             #AUC per study
             if(auc)
             {
-                data = list()
-                data$outcome = Y[omit]
-                data$data = prediction.comp[omit, ]
-                auc.mean.study[[comp]][[study_i]] = statauc(data)
+            data = list()
+            data$outcome = Y[omit]
+            data$data = prediction.comp[omit, ]
+            auc.mean.study[[comp]][[study_i]] = statauc(data)
             }
-            
+
             # average of ER and BER across studies, weighted by study sample size
-            global$BER[comp,] <- global$BER[comp,] + study.specific[[study_i]]$BER[comp, ] * table(study)[study_i]/length(study)
-            global$overall[comp,] <- global$overall[comp,] + study.specific[[study_i]]$overall[comp, ] * table(study)[study_i]/length(study)
+            global$BER[1,] <- global$BER[1,] + study.specific[[study_i]]$BER[1, ] * table(study)[study_i]/length(study)
+            global$overall[1,] <- global$overall[1,] + study.specific[[study_i]]$overall[1, ] * table(study)[study_i]/length(study)
             
         } # end study_i 1:M (M folds)
         
         for (ijk in dist)
         {
             #prediction of each samples for each fold and each repeat, on each comp
-            class.all[[ijk]][,comp] = class.comp[[ijk]][,1]
+            class.all[[ijk]][,1] = class.comp[[ijk]][,1]
         }
-        prediction.all[[comp]] = prediction.comp
+        prediction.all[[1]] = prediction.comp
         
         #classification for each level of Y
         temp = lapply(class.comp, function(x){
@@ -217,7 +216,7 @@ perf.assess.mint.plsda <- function (object,
             out = (apply(conf, 1, sum) - diag(conf)) / summary(Y)
         })
         for (ijk in dist)
-            global$error.rate.class[[ijk]][,comp] = temp[[ijk]]
+            global$error.rate.class[[ijk]][,1] = temp[[ijk]]
         
         #AUC global
         if(auc)
@@ -232,7 +231,7 @@ perf.assess.mint.plsda <- function (object,
         
         
     } # end comp
-    names(prediction.all) = paste0('comp', 1:ncomp)
+    names(prediction.all) = paste0('comp', ncomp)
     
     result = list(study.specific.error = study.specific,
                   global.error = global,
@@ -241,36 +240,13 @@ perf.assess.mint.plsda <- function (object,
     
     if(auc)
     {
-        names(auc.mean) = names(auc.mean.study) = paste0('comp', 1:ncomp)
+        names(auc.mean) = names(auc.mean.study) = paste0('comp', ncomp)
         result$auc = auc.mean
         result$auc.study = auc.mean.study
     }
     
     if (progressBar == TRUE)
         cat('\n')
-    
-    
-    # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
-    if(nlevels(study) > 2 & ncomp >1)
-    {
-        measure = c("overall","BER")
-        ncomp_opt = matrix(NA, nrow = length(measure), ncol = length(dist),
-                           dimnames = list(measure, dist))
-        
-        for (measure_i in measure)
-        {
-            for (ijk in dist)
-            {
-                mat.error.rate = sapply(study.specific, function(x){x[[measure_i]][,ijk]})
-                ncomp_opt[measure_i, ijk] = t.test.process(t(mat.error.rate), alpha = signif.threshold)
-            }
-        }
-    } else {
-        ncomp_opt = NULL
-    }
-    
-    result$choice.ncomp = ncomp_opt
-    
     
     # added
     if (near.zero.var == TRUE)
