@@ -4,6 +4,9 @@
 #' sparse PLS-DA, MINT (mint.splsda) and DIABLO (block.splsda) models using
 #' various criteria.
 #' 
+#' This function is built upon 'perf()' but instead of assessing model performance 
+#' across components 1:ncomp only assesses performance of the given model
+#' 
 #' Procedure. The process of evaluating the performance of a fitted model
 #' \code{object} is similar for all PLS-derived methods; a cross-validation
 #' approach is used to fit the method of \code{object} on \code{folds-1}
@@ -54,7 +57,7 @@
 #' function applied to the internal test sets in the cross-validation process,
 #' either for all samples or for study-specific samples (for mint models).
 #' Therefore we minimise the risk of overfitting. For block.splsda model, the
-#' calculated AUC is simply the blocks-combined AUC for each component
+#' calculated AUC is simply the blocks-combined AUC
 #' calculated using \code{auroc.sgccda}.  See \code{\link{auroc}} for more
 #' details. Our multivariate supervised methods already use a prediction
 #' threshold based on distances (see \code{predict}) that optimally determine
@@ -118,8 +121,7 @@
 #' \item{RMSEP}{Root Mean Square Error Prediction for each \eqn{Y} variable, only 
 #' applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
 #' available when in regression (s)PLS.} 
-#' \item{R2}{a matrix of \eqn{R^2} values of the \eqn{Y}-variables for models 
-#' with \eqn{1, \ldots ,}\code{ncomp} components, only applies to object
+#' \item{R2}{a matrix of \eqn{R^2} values of the \eqn{Y}-variables. Only applies to object
 #' inherited from \code{"pls"}, and \code{"spls"}. Only available when in 
 #' regression (s)PLS.}
 #' \item{Q2}{if \eqn{Y} contains one variable, a vector of \eqn{Q^2} values
@@ -127,13 +129,10 @@
 #' Note that in the specific case of an sPLS model, it is better to have a look
 #' at the Q2.total criterion, only applies to object inherited from
 #' \code{"pls"}, and \code{"spls"}. Only available when in regression (s)PLS.} 
-#' \item{Q2.total}{a vector of \eqn{Q^2}-total values for models with \eqn{1, 
-#' \ldots ,}\code{ncomp} components, only applies to object inherited from 
+#' \item{Q2.total}{a vector of \eqn{Q^2}-total values for model, only applies to object inherited from 
 #' \code{"pls"}, and \code{"spls"}. Available in both (s)PLS modes.}
-#' \item{RSS}{Residual Sum of Squares across all selected features and the 
-#' components.}
-#' \item{PRESS}{Predicted Residual Error Sum of Squares across all selected 
-#' features and the components.}
+#' \item{RSS}{Residual Sum of Squares across all selected features.}
+#' \item{PRESS}{Predicted Residual Error Sum of Squares across all selected features}
 #' \item{features}{a list of features selected across the 
 #' folds (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
 #' \code{keepY} parameters from the input object. Note, this will be \code{NULL} 
@@ -144,9 +143,9 @@
 #' predicted and actual components for X (t) and Y (u)} 
 #' \item{error.rate}{ For
 #' PLS-DA and sPLS-DA models, \code{perf} produces a matrix of classification
-#' error rate estimation. The dimensions correspond to the components in the
-#' model and to the prediction method used, respectively. Note that error rates
-#' reported in any component include the performance of the model in earlier
+#' error rate estimation using overall and BER error rates across different distance methods. 
+#' Although error rates are only reported for the number of components used in the final model, 
+#' Note that are calculated including the performance of the model in a smaller number of
 #' components for the specified \code{keepX} parameters (e.g. error rate
 #' reported for component 3 for \code{keepX = 20} already includes the fitted
 #' model on components 1 and 2 for \code{keepX = 20}). For more advanced usage
@@ -154,6 +153,40 @@
 #' consider using the \code{predict} function.} 
 #' \item{auc}{Averaged AUC values
 #' over the \code{nrepeat}}
+#' 
+#' #' For sgccda models, \code{perf} produces the following outputs:
+#' \item{error.rate}{Prediction error rate for each block of \code{object$X}
+#' and each \code{dist}} 
+#' \item{error.rate.per.class}{Prediction error rate for
+#' each block of \code{object$X}, each \code{dist} and each class}
+#' \item{predict}{Predicted values of each sample for each class and each block.} 
+#' \item{class}{Predicted class of each sample for each block, each \code{dist}, and each nrepeat} 
+#' \item{features}{a list of features selected across the folds (\code{$stable.X} and
+#' \code{$stable.Y}) for the \code{keepX} and \code{keepY} parameters from the
+#' input object.} 
+#' \item{AveragedPredict.class}{if more than one block, returns
+#' the average predicted class over the blocks (averaged of the \code{Predict}
+#' output and prediction using the \code{max.dist} distance)}
+#' \item{AveragedPredict.error.rate}{if more than one block, returns the
+#' average predicted error rate over the blocks (using the
+#' \code{AveragedPredict.class} output)} 
+#' \item{WeightedPredict.class}{if more than one block, returns the weighted predicted class over the blocks
+#' (weighted average of the \code{Predict} output and prediction using the
+#' \code{max.dist} distance). See details for more info on weights.}
+#' \item{WeightedPredict.error.rate}{if more than one block, returns the
+#' weighted average predicted error rate over the blocks (using the
+#' \code{WeightedPredict.class} output.)} 
+#' \item{MajorityVote}{if more than one block, returns the majority class over the blocks. NA for a sample means that
+#' there is no consensus on the predicted class for this particular sample over
+#' the blocks.} 
+#' \item{MajorityVote.error.rate}{if more than one block, returns the error rate of the \code{MajorityVote} output}
+#' \item{WeightedVote}{if more than one block, returns the weighted majority
+#' class over the blocks. NA for a sample means that there is no consensus on
+#' the predicted class for this particular sample over the blocks.}
+#' \item{WeightedVote.error.rate}{if more than one block, returns the error
+#' rate of the \code{WeightedVote} output} 
+#' \item{weights}{Returns the weights of each block used for the weighted predictions, for each nrepeat and each
+#' fold} 
 #' 
 #' For mint.splsda models, \code{perf} produces the following outputs:
 #' \item{study.specific.error}{A list that gives BER, overall error rate and
@@ -166,43 +199,7 @@
 #' \item{auc}{AUC values} \item{auc.study}{AUC values for each study in mint
 #' models}
 #' 
-#' For sgccda models, \code{perf} produces the following outputs:
-#' \item{error.rate}{Prediction error rate for each block of \code{object$X}
-#' and each \code{dist}} \item{error.rate.per.class}{Prediction error rate for
-#' each block of \code{object$X}, each \code{dist} and each class}
-#' \item{predict}{Predicted values of each sample for each class, each block
-#' and each component} \item{class}{Predicted class of each sample for each
-#' block, each \code{dist}, each component and each nrepeat} \item{features}{a
-#' list of features selected across the folds (\code{$stable.X} and
-#' \code{$stable.Y}) for the \code{keepX} and \code{keepY} parameters from the
-#' input object.} \item{AveragedPredict.class}{if more than one block, returns
-#' the average predicted class over the blocks (averaged of the \code{Predict}
-#' output and prediction using the \code{max.dist} distance)}
-#' \item{AveragedPredict.error.rate}{if more than one block, returns the
-#' average predicted error rate over the blocks (using the
-#' \code{AveragedPredict.class} output)} \item{WeightedPredict.class}{if more
-#' than one block, returns the weighted predicted class over the blocks
-#' (weighted average of the \code{Predict} output and prediction using the
-#' \code{max.dist} distance). See details for more info on weights.}
-#' \item{WeightedPredict.error.rate}{if more than one block, returns the
-#' weighted average predicted error rate over the blocks (using the
-#' \code{WeightedPredict.class} output.)} \item{MajorityVote}{if more than one
-#' block, returns the majority class over the blocks. NA for a sample means that
-#' there is no consensus on the predicted class for this particular sample over
-#' the blocks.} \item{MajorityVote.error.rate}{if more than one block, returns
-#' the error rate of the \code{MajorityVote} output}
-#' \item{WeightedVote}{if more than one block, returns the weighted majority
-#' class over the blocks. NA for a sample means that there is no consensus on
-#' the predicted class for this particular sample over the blocks.}
-#' \item{WeightedVote.error.rate}{if more than one block, returns the error
-#' rate of the \code{WeightedVote} output} \item{weights}{Returns the weights
-#' of each block used for the weighted predictions, for each nrepeat and each
-#' fold} \item{choice.ncomp}{For supervised models; returns the optimal number
-#' of components for the model for each prediction distance using one-sided
-#' t-tests that test for a significant difference in the mean error rate (gain
-#' in prediction) when components are added to the model. See more details in
-#' Rohart et al 2017 Suppl. For more than one block, an optimal ncomp is
-#' returned for each prediction framework.}
+
 #' @author Ignacio González, Amrit Singh, Kim-Anh Lê Cao, Benoit Gautier,
 #' Florian Rohart, Al J Abadi
 #' @seealso \code{\link{predict}}, \code{\link{nipals}},
