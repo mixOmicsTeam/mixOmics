@@ -20,7 +20,7 @@ test_that("perf.mint.splsda works", code = {
     
     out.perf.assess <- perf.assess(res, auc = FALSE)
     expect_is(out.perf.assess, "perf")
-    expect_true(out.perf.assess$choice.ncomp == NULL)
+    expect_equal(out.perf.assess$choice.ncomp, NULL)
     
     expect_equal(out.perf$study.specific.error$`1`$BER[3,], out.perf.assess$study.specific.error$`1`$BER[1,])
     
