@@ -1,5 +1,4 @@
 context("perf.diablo")
-context("perf.assess.diablo")
 library(BiocParallel)
 
 ## ------------------------------------------------------------------------ ##

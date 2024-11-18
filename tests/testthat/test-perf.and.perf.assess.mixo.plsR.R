@@ -1,11 +1,10 @@
-context("perf.assess")
-context("perf")
+context("perf.mixo.pls")
 library(BiocParallel)
 
 ## ------------------------------------------------------------------------ ##
 ## Test perf.mixo_pls() and perf.assess.mixo_pls()
 
-test_that("perf.assess.mixo_plsda works same as perf for same components in serial and in parallel for regression mode", code = {
+test_that("perf.assess.mixo_pls works same as perf for same components in serial and in parallel for regression mode", code = {
   
   # set up data
   data("liver.toxicity")
