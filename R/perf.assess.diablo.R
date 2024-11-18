@@ -871,6 +871,52 @@ perf.assess.sgccda <-
       result$auc <- auc.comp
     }
     
+    ## EDIT from perf.sgccda to perf.assess.sgccda: extract just values relating to ncomp
+    result.new <- result
+    
+    result.new$error.rate <- lapply(result$error.rate, function(tbl) tbl[ncomp, , drop = FALSE])
+    result.new$error.rate.sd <- lapply(result$error.rate.sd, function(tbl) tbl[ncomp, , drop = FALSE])
+    result.new$error.rate.all <- result_ncomp <- lapply(result$error.rate.all, function(sublist) {lapply(sublist, function(tbl) tbl[ncomp, , drop = FALSE])})
+
+    result.new$error.rate.per.class <- lapply(result$error.rate.per.class, function(sublist) {lapply(sublist, function(tbl) tbl[, ncomp, drop = FALSE])})
+    result.new$error.rate.per.class.sd <- lapply(result$error.rate.per.class.sd, function(sublist) {lapply(sublist, function(tbl) tbl[, ncomp, drop = FALSE])})
+    result.new$error.rate.per.class.all <- lapply(result$error.rate.per.class.all, function(rep_list) {lapply(rep_list, function(sublist) {lapply(sublist, function(tbl) tbl[, ncomp, drop = FALSE])})})
+
+    result.new$predict <- lapply(result$predict, function(rep_data) {lapply(rep_data, function(block_data) {block_data[ncomp]})})
+
+    result.new$class <- lapply(result$class, function(rep_data) {lapply(rep_data, function(block_data) {lapply(block_data, function(matrix_data) {matrix_data[, ncomp, drop = FALSE]})})})
+
+    result.new$features$stable <- lapply(result$features$stable, function(nrep) {lapply(nrep, function(mrna_mirna) {mrna_mirna[[ncomp]]})})
+
+    result.new$AveragedPredict.class <- lapply(result$AveragedPredict.class, function(tbl) tbl[ , ncomp, drop = FALSE])
+    result.new$AveragedPredict.error.rate <- result$AveragedPredict.error.rate[, ncomp]
+    result.new$AveragedPredict.error.rate.sd <- result$AveragedPredict.error.rate.sd[, ncomp]
+    result.new$AveragedPredict.error.rate.all <- lapply(result$AveragedPredict.error.rate.all, function(tbl) {tbl[, ncomp, drop = FALSE]})
+
+    # result$WeightedPredict.class # list()
+    result.new$WeightedPredict.error.rate <- result$WeightedPredict.error.rate[, ncomp]
+    result.new$WeightedPredict.error.rate.sd <- result$WeightedPredict.error.rate.sd[, ncomp]
+    result.new$WeightedPredict.error.rate.all <- lapply(result$WeightedPredict.error.rate.all, function(tbl) {tbl[, ncomp, drop = FALSE]})
+
+    # result.new$MajorityVote # list()
+    result.new$MajorityVote.error.rate <- lapply(result$MajorityVote.error.rate, function(tbl) {tbl[, ncomp, drop = FALSE]})
+    result.new$MajorityVote.error.rate.sd <- lapply(result$MajorityVote.error.rate.sd, function(tbl) {tbl[, ncomp, drop = FALSE]})
+    result.new$MajorityVote.error.rate.all <- lapply(result$MajorityVote.error.rate.all, function(sublist) {lapply(sublist, function(tbl) tbl[, ncomp, drop = FALSE])})
+
+    # result.new$WeightedVote # list()
+    result.new$WeightedVote.error.rate <- lapply(result$WeightedVote.error.rate, function(tbl) {tbl[, ncomp, drop = FALSE]})
+    result.new$WeightedVote.error.rate.sd <- lapply(result$WeightedVote.error.rate.sd, function(tbl) {tbl[, ncomp, drop = FALSE]})
+    result.new$WeightedVote.error.rate.all <- lapply(result$WeightedVote.error.rate.all, function(sublist) {lapply(sublist, function(tbl) tbl[, ncomp, drop = FALSE])})
+
+    result.new$weights <- result$weights[, c(paste0("comp", ncomp), "fold", "rep", "block")]
+
+    # str(result.new$crit) ## what is this??
+
+    result.new$choice.ncomp <- NULL
+
+    result.new$auc <- result$auc[ncomp]
+
+    result <- result.new
     
     return(invisible(result))
   }
