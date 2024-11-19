@@ -318,7 +318,8 @@ perf.assess.mixo_plsda <- function(object,
     } else {
         warning("Something that should not happen happened. Please contact us.")
     }
-    class(result) = c("perf",paste(c("perf", method), collapse ="."))
+    # edit class to 'perf' and remove 'perf.plsda.mthd' class so that plotting functionality is stopped
+    class(result) = "perf"
     result$call = match.call()
     
     
