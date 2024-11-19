@@ -854,7 +854,8 @@ perf.assess.sgccda <-
     }
     
     result$meth = "sgccda.mthd"
-    class(result) = "perf.sgccda.mthd"
+    # change class output from "perf.sgccda.mthd" to "perf" so cant be plotted
+    class(result) = "perf"
     result$call = match.call()
     result$crit = crit
     result$choice.ncomp = ncomp_opt
