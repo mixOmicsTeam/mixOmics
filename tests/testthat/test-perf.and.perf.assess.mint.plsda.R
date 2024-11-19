@@ -1,4 +1,4 @@
-context("perf.mint.splsda")
+context("perf.mint.plsda")
 library(BiocParallel)
 
 ## ------------------------------------------------------------------------ ##
@@ -14,9 +14,15 @@ test_that("perf.mint.splsda works", code = {
         study = stemcells$study
     )
     
-    out = perf(res, auc = FALSE)
-    expect_is(out, "perf")
-    expect_true(all(out$choice.ncomp == 1))
+    out.perf = perf(res, auc = FALSE)
+    expect_is(out.perf, "perf")
+    expect_true(all(out.perf$choice.ncomp == 1))
+    
+    out.perf.assess <- perf.assess(res, auc = FALSE)
+    expect_is(out.perf.assess, "perf")
+    expect_equal(out.perf.assess$choice.ncomp, NULL)
+    
+    expect_equal(out.perf$study.specific.error$`1`$BER[3,], out.perf.assess$study.specific.error$`1`$BER[1,])
     
 })
 

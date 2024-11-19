@@ -16,7 +16,7 @@ test_that("perf.diablo works with with auroc", {
                                       ncomp = 2)
     
     # run perf model - set seed as 100, ignores RNGseed
-    perf.res = perf(nutrimouse.sgccda, folds = 2, nrepeat = 1, auc = TRUE, 
+    perf.res <- perf(nutrimouse.sgccda, folds = 2, nrepeat = 1, auc = TRUE, 
                       BPPARAM = SerialParam(RNGseed = 100000), seed = 100, progressBar = FALSE)
     true_aucs <- c(0.95, 0.62, 0.68, 0.54, 0.77)
     aucs <- round(unname(perf.res$auc$comp1[,1]), 2)
@@ -28,5 +28,15 @@ test_that("perf.diablo works with with auroc", {
     aucs <- round(unname(perf.res.parallel$auc$comp1[,1]), 2)
     expect_equal(aucs, true_aucs)
     expect_equal(perf.res$weights, perf.res.parallel$weights)
+    
+    # run perf.assess
+    perf.assess.res <- perf.assess(nutrimouse.sgccda, folds = 2, nrepeat = 1, auc = TRUE, 
+                            BPPARAM = SerialParam(RNGseed = 100000), seed = 100, progressBar = FALSE)
+    expect_equal(perf.res$weights$comp2, perf.assess.res$weights$comp2)
+    
+    # run perf.assess in parallel
+    perf.assess.res.parallel <- perf.assess(nutrimouse.sgccda, folds = 2, nrepeat = 1, auc = TRUE, 
+                                   BPPARAM = SnowParam(workers = 2), seed = 100, progressBar = FALSE)
+    expect_equal(perf.res$weights$comp2, perf.assess.res.parallel$weights$comp2)
     
 })
