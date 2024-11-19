@@ -123,7 +123,9 @@ perf.assess.mixo_pls <- function(object,
     ## replace function, object with unevaluated call
     mc <- as.call(c(as.list(match.call())[1:2], mc))
     result <- c(list(call = mc), result)
-    class(result) <- "perf.pls.mthd"
+    
+    # change this so cant plot the output
+    class(result) <- "perf"
     
     return(result)
     
