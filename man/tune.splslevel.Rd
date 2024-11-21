@@ -15,7 +15,7 @@ tune.splslevel(
   already.tested.X = NULL,
   already.tested.Y = NULL,
   BPPARAM = BiocParallel::SerialParam(),
-  seed = seed
+  seed = NULL
 )
 }
 \arguments{

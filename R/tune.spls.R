@@ -44,9 +44,13 @@
 #' @section more:
 #' See also \code{?perf} for more details.
 #' 
-#' @inheritParams spls
+#' @param X numeric matrix of predictors with the rows as individual observations.
+#' @param Y numeric matrix of response(s) with the rows as individual observations matching \code{X}.
+#' @template arg/ncomp
 #' @template arg/test.keepX-X.matrix
 #' @template arg/test.keepY
+#' @templateVar modes \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}
+#' @template arg/mode
 #' @template arg/validation
 #' @template arg/folds
 #' @template arg/nrepeat

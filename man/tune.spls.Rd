@@ -23,11 +23,9 @@ tune.spls(
 )
 }
 \arguments{
-\item{X}{numeric matrix of predictors with the rows as individual
-observations. missing values (\code{NA}s) are allowed.}
+\item{X}{numeric matrix of predictors with the rows as individual observations.}
 
-\item{Y}{numeric matrix of response(s) with the rows as individual
-observations matching \code{X}. missing values (\code{NA}s) are allowed.}
+\item{Y}{numeric matrix of response(s) with the rows as individual observations matching \code{X}.}
 
 \item{test.keepX}{numeric vector for the different number of variables to
 test from the \eqn{X} data set.}
