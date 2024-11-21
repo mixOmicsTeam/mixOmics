@@ -252,7 +252,7 @@ perf.assess.mint.plsda <- function (object,
     if (near.zero.var == TRUE)
         result$nzvX = nzv$Position
     
-    class(result) = c("perf","perf.mint.splsda.mthd")
+    class(result) = c("perf")
     result$call = match.call()
     
     return(invisible(result))
