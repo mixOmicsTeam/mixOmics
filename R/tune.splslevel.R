@@ -38,7 +38,7 @@ tune.splslevel <- function (X, Y,
                             already.tested.X = NULL,
                             already.tested.Y = NULL,
                             BPPARAM = BiocParallel::SerialParam(),
-                            seed = seed) {
+                            seed = NULL) {
   
   BPPARAM$RNGseed <- seed
   set.seed(seed)
