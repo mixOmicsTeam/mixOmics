@@ -33,7 +33,6 @@ pkg_license <- read.dcf("../DESCRIPTION")[, "License"]
 pkg_license_badge <- sprintf("https://img.shields.io/badge/license-%s-lightgrey.svg", pkg_license)
 ```
 
-`r badge_bioc_release("mixOmics", "green")`
 `r badge_bioc_download_rank('mixOmics')`
 `r badge_github_actions(re = "mixOmicsteam/mixOmics", action = "R-CMD-check.yml")`
 `r badge_last_commit("mixOmicsTeam/mixOmics", branch='master')`

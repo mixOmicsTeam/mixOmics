@@ -17,6 +17,25 @@ opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE)
 
 ## What's New
 
+#### November 2024
+
+* enhancement request [#216](https://github.com/mixOmicsTeam/mixOmics/issues/216) implemented parallel processing using `BPPARAM` across all `tune()` functions
+* feature request [#335](https://github.com/mixOmicsTeam/mixOmics/issues/335) added `seed` argument to `perf()` functions for better reproducibility
+* feature request [#334](https://github.com/mixOmicsTeam/mixOmics/issues/334) added `seed` argument to `tune()` functions for better reproducibility
+
+* bug fix implemented for [#307](https://github.com/mixOmicsTeam/mixOmics/issues/307) `plotIndiv()` ellipses colours not matching points, now sample group order is respected and colours can be customised for points and ellipses
+
+* updated documentation to fix issue [#297](https://github.com/mixOmicsTeam/mixOmics/issues/297) broken link in bookdown vignette
+* updated documentation to fix issue [#296](https://github.com/mixOmicsTeam/mixOmics/issues/296) typo in vignette
+
+#### October 2024
+** Version 6.30.0 **
+
+[Bioconductor release version 6.30.0](https://bioconductor.org/packages/release/bioc/html/mixOmics.html) released end of October 2024
+Minor bug fixes and updated deprecated code and unit tests, no major code changes and no changes to user experience of mixOmics. 
+
+* bug fix implemented for [#293](https://github.com/mixOmicsTeam/mixOmics/issues/293) `splsda()` example code error
+
 #### March 2022
 
 * bug fix implemented for [Issue #196](https://github.com/mixOmicsTeam/mixOmics/issues/196). `perf()` can now handle features with a `(s)pls` which have near zero variance.

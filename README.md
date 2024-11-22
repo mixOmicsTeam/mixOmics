@@ -1,7 +1,6 @@
 
 <!-- PLEASE DO NOT EDIT ./README.md BY HAND, EDIT ./inst/README.Rmd AND RENDER TO CREATE ./README.md -->
 
-[![](https://img.shields.io/badge/release%20version-6.28.0-green.svg)](https://www.bioconductor.org/packages/mixOmics)
 [![download](http://www.bioconductor.org/shields/downloads/release/mixOmics.svg)](https://bioconductor.org/packages/stats/bioc/mixOmics)
 [![R build
 status](https://github.com/mixOmicsteam/mixOmics/workflows/R-CMD-check.yml/badge.svg)](https://github.com/mixOmicsteam/mixOmics/actions)
@@ -43,14 +42,6 @@ BiocManager::install('mixOmics')
 library(mixOmics) 
 ```
 
-You can also install the [development
-version](https://github.com/mixOmicsTeam/mixOmics/tree/development) for
-new features yet to be widely tested:
-
-``` r
-BiocManager::install("mixOmicsTeam/mixOmics@development")
-```
-
 ### From Github
 
 Bioconductor versions are updated twice a year, between these updates
@@ -58,7 +49,15 @@ you can downlod the latest stable version of `mixOmics` from `Github`
 using:
 
 ``` r
-devtools::install_github("mixOmicsTeam/mixOmics")
+BiocManager::install('mixOmicsTeam/mixOmics')
+```
+
+You can also install the [development
+version](https://github.com/mixOmicsTeam/mixOmics/tree/development) for
+new features yet to be widely tested:
+
+``` r
+BiocManager::install("mixOmicsTeam/mixOmics@development")
 ```
 
 ### From `Docker` container
@@ -267,6 +266,49 @@ Thank you for using `mixOmics`!
 ![](http://mixomics.org/wp-content/uploads/2012/04/framework-mixOmics-June2016.jpg)
 
 ## What’s New
+
+#### November 2024
+
+- enhancement request
+  [\#216](https://github.com/mixOmicsTeam/mixOmics/issues/216)
+  implemented parallel processing using `BPPARAM` across all `tune()`
+  functions
+
+- feature request
+  [\#335](https://github.com/mixOmicsTeam/mixOmics/issues/335) added
+  `seed` argument to `perf()` functions for better reproducibility
+
+- feature request
+  [\#334](https://github.com/mixOmicsTeam/mixOmics/issues/334) added
+  `seed` argument to `tune()` functions for better reproducibility
+
+- bug fix implemented for
+  [\#307](https://github.com/mixOmicsTeam/mixOmics/issues/307)
+  `plotIndiv()` ellipses colours not matching points, now sample group
+  order is respected and colours can be customised for points and
+  ellipses
+
+- updated documentation to fix issue
+  [\#297](https://github.com/mixOmicsTeam/mixOmics/issues/297) broken
+  link in bookdown vignette
+
+- updated documentation to fix issue
+  [\#296](https://github.com/mixOmicsTeam/mixOmics/issues/296) typo in
+  vignette
+
+#### October 2024
+
+\*\* Version 6.30.0 \*\*
+
+[Bioconductor release version
+6.30.0](https://bioconductor.org/packages/release/bioc/html/mixOmics.html)
+released end of October 2024 Minor bug fixes and updated deprecated code
+and unit tests, no major code changes and no changes to user experience
+of mixOmics.
+
+- bug fix implemented for
+  [\#293](https://github.com/mixOmicsTeam/mixOmics/issues/293)
+  `splsda()` example code error
 
 #### March 2022
 
