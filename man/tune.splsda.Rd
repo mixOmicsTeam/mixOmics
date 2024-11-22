@@ -8,11 +8,11 @@ tune.splsda(
   X,
   Y,
   ncomp = 1,
-  test.keepX = c(5, 10, 15),
+  test.keepX = NULL,
   already.tested.X,
   validation = "Mfold",
   folds = 10,
-  dist = "max.dist",
+  dist = NULL,
   measure = "BER",
   scale = TRUE,
   auc = FALSE,
@@ -38,7 +38,8 @@ responses (for multi-response models) \code{NA}s are allowed.}
 \item{ncomp}{the number of components to include in the model.}
 
 \item{test.keepX}{numeric vector for the different number of variables to
-test from the \eqn{X} data set}
+test from the \eqn{X} data set. If set to NULL, tuning will be performed on ncomp
+using all variables in the \eqn{X} data set.}
 
 \item{already.tested.X}{Optional, if \code{ncomp > 1} A numeric vector
 indicating the number of variables to select from the \eqn{X} data set on
@@ -120,8 +121,7 @@ between latent variables.}
 }
 \description{
 Computes M-fold or Leave-One-Out Cross-Validation scores on a user-input
-grid to determine optimal values for the sparsity parameters in
-\code{splsda}.
+grid to determine optimal values for the parameters in \code{splsda}.
 }
 \details{
 This tuning function should be used to tune the parameters in the
@@ -183,32 +183,46 @@ towards majority classes during the performance assessment.
 
 More details about the prediction distances in \code{?predict} and the
 supplemental material of the mixOmics article (Rohart et al. 2017).
+
+If test.keepX is set to NULL, the \code{perf()} function will be run internally,
+which performs cross-validation to identify optimal number of components and 
+distance measure. Running tuning initially using \code{test.keepX = NULL} speeds
+up the parameter tuning workflow, as then a lower ncomp value can be used for 
+variable selection tuning.
 }
 \examples{
 ## First example: analysis with sPLS-DA
-
 data(breast.tumors)
 X = breast.tumors$gene.exp
 Y = as.factor(breast.tumors$sample$treatment)
-tune = tune.splsda(X, Y, ncomp = 1, nrepeat = 10, logratio = "none",
-test.keepX = c(5, 10, 15), folds = 10, dist = "max.dist",
-progressBar = TRUE)
+
+# first tune on components only
+tune = tune.splsda(X, Y, ncomp = 5, logratio = "none",
+                   nrepeat = 10, folds = 10,
+                   test.keepX = NULL, 
+                   progressBar = TRUE,
+                   seed = 20) # set for reproducibility of example only
+plot(tune) # optimal distance = centroids.dist
+tune$choice.ncomp # optimal component number = 3
+
+# then tune optimal keepX for each component
+tune = tune.splsda(X, Y, ncomp = 3, logratio = "none",
+                   nrepeat = 10, folds = 10, 
+                   test.keepX = c(5, 10, 15), dist = "centroids.dist",
+                   progressBar = TRUE,
+                   seed = 20)
+
+plot(tune)
+tune$choice.keepX # optimal number of variables to keep c(15, 5, 15)
 
 \dontrun{
-# 5 components, optimising 'keepX' and 'ncomp'
-tune = tune.splsda(X, Y, ncomp = 5, test.keepX = c(5, 10, 15),
-folds = 10, dist = "max.dist", nrepeat = 5, progressBar = FALSE)
-
-tune$choice.ncomp
-tune$choice.keepX
+tune = tune.splsda(X, Y, ncomp = 3, logratio = "none",
+                   nrepeat = 10, folds = 10, 
+                   test.keepX = c(5, 10, 15), already.tested.X = c(5, 10),
+                   dist = "centroids.dist",
+                   progressBar = TRUE,
+                   seed = 20)
 plot(tune)
-
-## only tune component 3 and 4
-# keeping 5 and 10 variables on the first two components respectively
-
-tune = tune.splsda(X = X,Y = Y, ncomp = 4,
-already.tested.X = c(5,10),
-test.keepX = seq(1,10,2), progressBar = TRUE)
 
 ## Second example: multilevel one-factor analysis with sPLS-DA
 
@@ -219,8 +233,9 @@ Y = vac18$stimulation
 design = data.frame(sample = vac18$sample)
 
 tune = tune.splsda(X, Y = Y, ncomp = 3, nrepeat = 10, logratio = "none",
-test.keepX = c(5,50,100),folds = 10, dist = "max.dist", multilevel = design)
+                   test.keepX = c(5,50,100),folds = 10, dist = "max.dist", multilevel = design)
 
+plot(tune)
 }
 }
 \references{
