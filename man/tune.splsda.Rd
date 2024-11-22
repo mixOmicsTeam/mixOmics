@@ -108,6 +108,14 @@ components for the model fitted with \code{$choice.keepX} }
 \item{error.rate.class}{returns the error rate for each level of \code{Y}
 and for each component computed with the optimal keepX}
 
+If test.keepX = FALSE,produces a matrix of classification
+error rate estimation. The dimensions correspond to the components in the
+model and to the prediction method used, respectively. Note that error rates
+reported in any component include the performance of the model in earlier
+components for the specified \code{keepX} parameters (e.g. error rate
+reported for component 3 for \code{keepX = 20} already includes the fitted
+model on components 1 and 2 for \code{keepX = 20}).
+
 \item{predict}{Prediction values for each sample, each \code{test.keepX},
 each comp and each repeat. Only if light.output=FALSE}
 \item{class}{Predicted class for each sample, each \code{test.keepX}, each
