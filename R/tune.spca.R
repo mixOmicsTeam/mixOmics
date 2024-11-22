@@ -16,8 +16,10 @@
 #' it is recommended to use Leave-One-Out Cross-Validation which can be
 #' achieved by setting \code{folds = nrow(X)}.
 #' @inheritParams spca
-#' @inheritParams tune.splsda
 #' @param folds Number of folds in 'Mfold' cross-validation. See details.
+#' @param nrepeat Number of times the Cross-Validation process is repeated.
+#' @param test.keepX numeric vector for the different number of variables to
+#' test from the \eqn{X} data set.
 #' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
 #'   of parallelisation. See examples.
 #' @param seed set a number here if you want the function to give reproducible outputs. 

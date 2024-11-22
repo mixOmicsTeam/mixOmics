@@ -32,7 +32,7 @@ ncol(X))}}
 \item{folds}{Number of folds in 'Mfold' cross-validation. See details.}
 
 \item{test.keepX}{numeric vector for the different number of variables to
-test from the \eqn{X} data set}
+test from the \eqn{X} data set.}
 
 \item{center}{(Default=TRUE) Logical, whether the variables should be shifted
 to be zero centered. Only set to FALSE if data have already been centered.
