@@ -138,3 +138,38 @@ test_that("tune.spls works when test.keepX and test.keepY = NULL and gives same 
   # check results match
   expect_equal(tune_res$measures$MSEP$summary[1,3], perf_res$measures$MSEP$summary[1,3])
 })
+
+test_that("tune.spls works in different test cases", code = {
+  
+  # set up data
+  data(liver.toxicity)
+  X <- liver.toxicity$gene
+  Y <- liver.toxicity$clinic
+  list.keepX <- c(5:10, seq(15, 50, 5))     
+  
+  # near.zero.var = TRUE
+  expect_no_error(
+    tune.spls(X, Y, ncomp = 2, logratio = "none", near.zero.var = TRUE,
+              nrepeat = 1, folds = 3, measure = "cor",
+              test.keepX = NULL, test.keepY = NULL, seed = 20)
+  )
+  expect_no_error(
+    tune.spls(X, Y, ncomp = 2, logratio = "none", near.zero.var = TRUE,
+              nrepeat = 1, folds = 3, measure = "cor",
+              test.keepX = list.keepX, test.keepY = NULL, seed = 20)
+  )
+  
+  # canonical mode
+  expect_no_error(
+    tune.spls(X, Y, ncomp = 2, logratio = "none", near.zero.var = TRUE,
+              nrepeat = 1, folds = 3, measure = "cor", mode = "canonical",
+              test.keepX = NULL, test.keepY = NULL, seed = 20)
+  )
+  expect_no_error(
+    tune.spls(X, Y, ncomp = 2, logratio = "none", near.zero.var = TRUE,
+              nrepeat = 1, folds = 3, measure = "cor", mode = "canonical",
+              test.keepX = list.keepX, test.keepY = NULL, seed = 20)
+  )
+})
+
+
