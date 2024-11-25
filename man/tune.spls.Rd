@@ -2,7 +2,7 @@
 % Please edit documentation in R/tune.spls.R
 \name{tune.spls}
 \alias{tune.spls}
-\title{Tuning functions for sPLS and PLS functions}
+\title{Tuning functions for sPLS method}
 \usage{
 tune.spls(
   X,
@@ -13,8 +13,14 @@ tune.spls(
   validation = c("Mfold", "loo"),
   nrepeat = 1,
   folds,
-  mode = c("regression", "canonical", "classic"),
   measure = NULL,
+  mode = c("regression", "canonical", "classic"),
+  scale = TRUE,
+  logratio = "none",
+  tol = 1e-06,
+  max.iter = 100,
+  near.zero.var = FALSE,
+  multilevel = NULL,
   BPPARAM = SerialParam(),
   seed = NULL,
   progressBar = FALSE,
@@ -46,10 +52,10 @@ details.}
 
 \item{folds}{Positive Integer, The folds in the Mfold cross-validation.}
 
+\item{measure}{The tuning measure to use. See details.}
+
 \item{mode}{Character string indicating the type of PLS algorithm to use. One
 of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
-
-\item{measure}{The tuning measure to use. See details.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples in \code{?tune.spca}.}
@@ -63,9 +69,22 @@ computation completes. Default to \code{FALSE}.}
 \item{limQ2}{Q2 threshold for recommending optimal \code{ncomp}.}
 
 \item{...}{Optional parameters passed to \code{\link{spls}}}
+
+\item{arg/scale}{Logical. If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE}
+
+\item{arg/tol}{Positive numeric used as convergence criteria/tolerance during the iterative process. Default to 1e-06.}
+
+\item{arg/max.iter}{Integer, the maximum number of iterations. Default to 100.}
+
+\item{arg/near.zero.var}{Logical, see the internal nearZeroVar function (should be set to TRUE in particular for data with many zero values). Setting this argument to FALSE (when appropriate) will speed up the computations. Default value is FALSE.}
+
+\item{arg/logratio}{Character, one of ('none','CLR') specifies the log ratio transformation to deal with compositional values that may arise from specific normalisation in sequencing data. Default to 'none'. See ?logratio.transfo for details.}
+
+\item{arg/multilevel}{Numeric, design matrix for repeated measurement analysis, where multilevel decomposition is required. For a one factor decomposition, the repeated measures on each individual, i.e. the individuals ID is input as the first column. For a 2 level factor decomposition then 2nd AND 3rd columns indicate those factors. See examples.}
 }
 \value{
-A list that contains: \item{cor.pred}{The correlation of predicted vs
+If \code{test.keepX != NULL} and \code{test.keepY != NULL} returns a list that contains: 
+\item{cor.pred}{The correlation of predicted vs
   actual components from X (t) and Y (u) for each
   component}\item{RSS.pred}{The Residual Sum of Squares of predicted vs
   actual components from X (t) and Y (u) for each component}
@@ -75,11 +94,47 @@ A list that contains: \item{cor.pred}{The correlation of predicted vs
   \item{choice.ncomp}{returns the optimal number of components for the model
   fitted with \code{$choice.keepX} and \code{$choice.keepY} } \item{call}{The
   functioncal call including the parameteres used.}
+
+If \code{test.keepX = NULL} and \code{test.keepY = NULL} returns a list with the following components for every repeat:
+\item{MSEP}{Mean Square Error Prediction for each \eqn{Y} variable, only 
+applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
+available when in regression (s)PLS.} 
+\item{RMSEP}{Root Mean Square Error Prediction for each \eqn{Y} variable, only 
+applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
+available when in regression (s)PLS.} 
+\item{R2}{a matrix of \eqn{R^2} values of the \eqn{Y}-variables for models 
+with \eqn{1, \ldots ,}\code{ncomp} components, only applies to object
+inherited from \code{"pls"}, and \code{"spls"}. Only available when in 
+regression (s)PLS.}
+\item{Q2}{if \eqn{Y} contains one variable, a vector of \eqn{Q^2} values
+else a list with a matrix of \eqn{Q^2} values for each \eqn{Y}-variable.
+Note that in the specific case of an sPLS model, it is better to have a look
+at the Q2.total criterion, only applies to object inherited from
+\code{"pls"}, and \code{"spls"}. Only available when in regression (s)PLS.} 
+\item{Q2.total}{a vector of \eqn{Q^2}-total values for models with \eqn{1, 
+\ldots ,}\code{ncomp} components, only applies to object inherited from 
+\code{"pls"}, and \code{"spls"}. Available in both (s)PLS modes.}
+\item{RSS}{Residual Sum of Squares across all selected features and the 
+components.}
+\item{PRESS}{Predicted Residual Error Sum of Squares across all selected 
+features and the components.}
+\item{features}{a list of features selected across the 
+folds (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
+\code{keepY} parameters from the input object. Note, this will be \code{NULL} 
+if using standard (non-sparse) PLS.} 
+\item{cor.tpred, cor.upred}{Correlation between the 
+predicted and actual components for X (t) and Y (u)} 
+\item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
+predicted and actual components for X (t) and Y (u)} 
+\item{error.rate}
 }
 \description{
-This function uses repeated cross-validation to tune hyperparameters such as
-the number of features to select and possibly the number of components to
-extract.
+Computes M-fold or Leave-One-Out Cross-Validation scores on a user-input
+grid to determine optimal values for the parameters in \code{spls}.
+}
+\details{
+This tuning function should be used to tune the parameters in the
+\code{spls} function (number of components and number of variables to select).
 }
 \section{folds}{
  
