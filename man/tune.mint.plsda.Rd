@@ -104,6 +104,21 @@ towards majority classes during the performance assessment.
 More details about the prediction distances in \code{?predict} and the
 supplemental material of the mixOmics article (Rohart et al. 2017).
 }
+\examples{
+# set up data
+data(stemcells)
+data <- stemcells$gene
+type.id <- stemcells$celltype
+exp <- stemcells$study
+
+# tune number of components
+tune_res <- tune.mint.plsda(X = data,Y = type.id, ncomp=5, 
+                             near.zero.var=FALSE,
+                             study=exp)
+
+plot(tune_res)
+tune_res$choice.ncomp # 1 component
+}
 \references{
 Rohart F, Eslami A, Matigian, N, Bougeard S, Lê Cao K-A (2017).
 MINT: A multivariate integrative approach to identify a reproducible
