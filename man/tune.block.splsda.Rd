@@ -10,22 +10,22 @@ tune.block.splsda(
   Y,
   indY,
   ncomp = 2,
+  tol = 1e-06,
+  max.iter = 100,
+  near.zero.var = FALSE,
+  design,
+  scale = TRUE,
   test.keepX,
   already.tested.X,
   validation = "Mfold",
   folds = 10,
+  nrepeat = 1,
+  signif.threshold = 0.01,
   dist = "max.dist",
   measure = "BER",
   weighted = TRUE,
   progressBar = FALSE,
-  tol = 1e-06,
-  max.iter = 100,
-  near.zero.var = FALSE,
-  nrepeat = 1,
-  design,
-  scale = TRUE,
   light.output = TRUE,
-  signif.threshold = 0.01,
   BPPARAM = SerialParam(),
   seed = NULL,
   ...
@@ -44,34 +44,6 @@ the matrix response in the list \code{X}.}
 \item{ncomp}{the number of components to include in the model. Default to 2.
 Applies to all blocks.}
 
-\item{test.keepX}{A named list with the same length and names as X 
-(without the outcome Y, if it is provided in X and designated using 
-\code{indY}).  Each entry of this list is a numeric vector for the different 
-keepX values to test for that specific block.}
-
-\item{already.tested.X}{Optional, if \code{ncomp > 1} A named list of 
-numeric vectors each of length \code{n_tested} indicating the number of 
-variables to select from the \eqn{X} data set on the first \code{n_tested} 
-components.}
-
-\item{validation}{character.  What kind of (internal) validation to use,
-matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
-\code{"Mfold"}.}
-
-\item{folds}{the folds in the Mfold cross-validation. See Details.}
-
-\item{dist}{distance metric to estimate the
-classification error rate, should be a subset of \code{"centroids.dist"},
-\code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
-
-\item{measure}{The tuning measure used for different methods. See details.}
-
-\item{weighted}{tune using either the performance of the Majority vote or
-the Weighted vote.}
-
-\item{progressBar}{by default set to \code{TRUE} to output the progress bar
-of the computation.}
-
 \item{tol}{Positive numeric used as convergence criteria/tolerance during the
 iterative process. Default to \code{1e-06}.}
 
@@ -81,8 +53,6 @@ iterative process. Default to \code{1e-06}.}
 function (should be set to TRUE in particular for data with many zero
 values). Setting this argument to FALSE (when appropriate) will speed up the
 computations. Default value is FALSE.}
-
-\item{nrepeat}{Number of times the Cross-Validation process is repeated.}
 
 \item{design}{numeric matrix of size (number of blocks in X) x (number of
 blocks in X) with values between 0 and 1. Each value indicates the strenght
@@ -97,12 +67,42 @@ off-diagonal elements of a fully connected design (see examples in
 \item{scale}{Logical. If scale = TRUE, each block is standardized to zero
 means and unit variances (default: TRUE)}
 
-\item{light.output}{if set to FALSE, the prediction/classification of each
-sample for each of \code{test.keepX} and each comp is returned.}
+\item{test.keepX}{A named list with the same length and names as X 
+(without the outcome Y, if it is provided in X and designated using 
+\code{indY}).  Each entry of this list is a numeric vector for the different 
+keepX values to test for that specific block. If set to NULL, ncomp is tuned.}
+
+\item{already.tested.X}{Optional, if \code{ncomp > 1} A named list of 
+numeric vectors each of length \code{n_tested} indicating the number of 
+variables to select from the \eqn{X} data set on the first \code{n_tested} 
+components.}
+
+\item{validation}{character.  What kind of (internal) validation to use,
+matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
+\code{"Mfold"}.}
+
+\item{folds}{the folds in the Mfold cross-validation. See Details.}
+
+\item{nrepeat}{Number of times the Cross-Validation process is repeated.}
 
 \item{signif.threshold}{numeric between 0 and 1 indicating the significance
 threshold required for improvement in error rate of the components. Default
 to 0.01.}
+
+\item{dist}{distance metric to estimate the
+classification error rate, should be a subset of \code{"centroids.dist"},
+\code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
+
+\item{measure}{The tuning measure used for different methods. See details.}
+
+\item{weighted}{tune using either the performance of the Majority vote or
+the Weighted vote.}
+
+\item{progressBar}{by default set to \code{TRUE} to output the progress bar
+of the computation.}
+
+\item{light.output}{if set to FALSE, the prediction/classification of each
+sample for each of \code{test.keepX} and each comp is returned.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples.}
@@ -139,15 +139,53 @@ comp and each repeat. Only if light.output=FALSE}
 
 \item{cor.value}{compute the correlation between latent variables for
 two-factor sPLS-DA analysis.}
+
+If \code{test.keepX = NULL}, returns:
+\item{error.rate}{Prediction error rate for each block of \code{object$X}
+and each \code{dist}} \item{error.rate.per.class}{Prediction error rate for
+each block of \code{object$X}, each \code{dist} and each class}
+\item{predict}{Predicted values of each sample for each class, each block
+and each component} \item{class}{Predicted class of each sample for each
+block, each \code{dist}, each component and each nrepeat} \item{features}{a
+list of features selected across the folds (\code{$stable.X} and
+\code{$stable.Y}) for the \code{keepX} and \code{keepY} parameters from the
+input object.} \item{AveragedPredict.class}{if more than one block, returns
+the average predicted class over the blocks (averaged of the \code{Predict}
+output and prediction using the \code{max.dist} distance)}
+\item{AveragedPredict.error.rate}{if more than one block, returns the
+average predicted error rate over the blocks (using the
+\code{AveragedPredict.class} output)} \item{WeightedPredict.class}{if more
+than one block, returns the weighted predicted class over the blocks
+(weighted average of the \code{Predict} output and prediction using the
+\code{max.dist} distance). See details for more info on weights.}
+\item{WeightedPredict.error.rate}{if more than one block, returns the
+weighted average predicted error rate over the blocks (using the
+\code{WeightedPredict.class} output.)} \item{MajorityVote}{if more than one
+block, returns the majority class over the blocks. NA for a sample means that
+there is no consensus on the predicted class for this particular sample over
+the blocks.} \item{MajorityVote.error.rate}{if more than one block, returns
+the error rate of the \code{MajorityVote} output}
+\item{WeightedVote}{if more than one block, returns the weighted majority
+class over the blocks. NA for a sample means that there is no consensus on
+the predicted class for this particular sample over the blocks.}
+\item{WeightedVote.error.rate}{if more than one block, returns the error
+rate of the \code{WeightedVote} output} \item{weights}{Returns the weights
+of each block used for the weighted predictions, for each nrepeat and each
+fold} \item{choice.ncomp}{For supervised models; returns the optimal number
+of components for the model for each prediction distance using one-sided
+t-tests that test for a significant difference in the mean error rate (gain
+in prediction) when components are added to the model. See more details in
+Rohart et al 2017 Suppl. For more than one block, an optimal ncomp is
+returned for each prediction framework.}
 }
 \description{
 Computes M-fold or Leave-One-Out Cross-Validation scores based on a
-user-input grid to determine the optimal parsity parameters values for
+user-input grid to determine the optimal parameters for
 method \code{block.splsda}.
 }
 \details{
-This tuning function should be used to tune the keepX parameters in the
-\code{block.splsda} function (N-integration with sparse Discriminant
+This tuning function should be used to tune the number of components and the 
+keepX parameters in the \code{block.splsda} function (N-integration with sparse Discriminant
 Analysis).
 
 M-fold or LOO cross-validation is performed with stratified subsampling
@@ -172,64 +210,70 @@ class, weighted by the number of samples in each class. BER is less biased
 towards majority classes during the performance assessment.
 }
 \examples{
-\dontrun{
+## Set up data
+
+# load data
 data("breast.TCGA")
-# this is the X data as a list of mRNA and miRNA; the Y data set is a single data set of proteins
-data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
-            protein = breast.TCGA$data.train$protein)
+
+# X data - list of mRNA and miRNA
+X <- list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
+          protein = breast.TCGA$data.train$protein)
+
+# Y data - single data set of proteins
+Y <- breast.TCGA$data.train$subtype
+
+# subset the X and Y data to speed up computation in this example
+set.seed(100)
+subset <- mixOmics:::stratified.subsampling(breast.TCGA$data.train$subtype, folds = 3)[[1]][[1]]
+X <- lapply(X, function(omic) omic[subset,])
+Y <- Y[subset]
+
 # set up a full design where every block is connected
 # could also consider other weights, see our mixOmics manuscript
 design = matrix(1, ncol = length(data), nrow = length(data),
                 dimnames = list(names(data), names(data)))
 diag(design) =  0
 design
-# set number of component per data set
-ncomp = 3
 
-# Tuning the first two components
-# -------------
-## Not run: 
+## Tune number of components to keep
+tune_res <- tune.block.splsda(X, Y, design = design,
+                              ncomp = 5,
+                              test.keepX = NULL,
+                              nrepeat = 3,
+                              seed = 13)
+
+plot(tune_res)
+
+tune_res$choice.ncomp # 3 components best
+
+## Tune number of variables to keep
+
 # definition of the keepX value to be tested for each block mRNA miRNA and protein
 # names of test.keepX must match the names of 'data'
 test.keepX = list(mrna = c(10, 30), mirna = c(15, 25), protein = c(4, 8))
 
-# the following may take some time to run, so we subset the data first.
-# Note that for thorough tuning, nrepeat should be >= 3 so that significance of 
-# the model improvement can be measured
-## ---- subset by 3rd of samples
-set.seed(100)
-subset <- mixOmics:::stratified.subsampling(breast.TCGA$data.train$subtype, folds = 3)[[1]][[1]]
-data <- lapply(data, function(omic) omic[subset,])
-Y <- breast.TCGA$data.train$subtype[subset]
-## ---- run
-# Check if the environment variable exists (during R CMD check) and limit cores accordingly
-max_cores <- if (Sys.getenv("_R_CHECK_LIMIT_CORES_") != "") 2 else parallel::detectCores() - 1
-# Setup the parallel backend with the appropriate number of workers
-BPPARAM <- BiocParallel::MulticoreParam(workers = max_cores)
+# load parallel package
+library(BiocParallel)
 
-tune <- tune.block.splsda(
-    X = data,
-    Y = Y,
-    ncomp = ncomp,
-    test.keepX = test.keepX,
-    design = design,
-    nrepeat = 2, 
-    BPPARAM = BPPARAM
-)
+# run tuning in parallel on 2 cores
+tune_res <- tune.block.splsda(X, Y, design = design,
+                              ncomp = 2,
+                              test.keepX = test.keepX,
+                              nrepeat = 3,
+                              seed = 13,
+                              BPPARAM = SnowParam(workers = 2))
 
-plot(tune)
-tune$choice.ncomp
-tune$choice.keepX
+plot(tune_res)
+tune_res$choice.keepX
 
 # Now tuning a new component given previous tuned keepX
-already.tested.X = tune$choice.keepX
-tune = tune.block.splsda(X = data, Y = Y,
-                         ncomp = 4, test.keepX = test.keepX, design = design,
+already.tested.X <- tune_res$choice.keepX
+tune_res <- tune.block.splsda(X, Y, design = design,
+                         ncomp = 3, 
+                         test.keepX = test.keepX,
                          already.tested.X = already.tested.X,
-                         BPPARAM = BPPARAM
-                         )
-tune$choice.keepX
-}
+                         BPPARAM = SnowParam(workers = 2))
+tune_res$choice.keepX
 }
 \references{
 Method:
