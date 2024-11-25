@@ -114,3 +114,27 @@ test_that("tune.spls.1 works and is the same in parallel and when run in tune wr
   expect_equal(tune.spls1.MAE.1$measure.pred$mean, tune.spls1.MAE.3$measure.pred$mean)
   expect_equal(tune.spls1.MAE.1$measure.pred$mean, tune.spls1.MAE.4$measure.pred$mean)
 })
+
+test_that("tune.spls works when test.keepX and test.keepY = NULL and gives same result as perf()", code = {
+  
+  # set up data
+  data(liver.toxicity)
+  X <- liver.toxicity$gene
+  Y <- liver.toxicity$clinic
+  
+  # tune on components only
+  tune_res <- suppressWarnings(
+    tune.spls(X, Y, ncomp = 2, logratio = "none",
+                nrepeat = 1, folds = 3, measure = "cor",
+                test.keepX = NULL, test.keepY = NULL, seed = 20)
+  )
+  
+  # run perf
+  spls_res <- spls(X, Y, ncomp = 2, logratio = "none")
+  perf_res <- suppressWarnings(
+    perf(spls_res, ncomp = 2, nrepeat = 1, folds = 3, seed = 20)
+  )
+  
+  # check results match
+  expect_equal(tune_res$measures$MSEP$summary[1,3], perf_res$measures$MSEP$summary[1,3])
+})
