@@ -4,17 +4,14 @@
 #' Estimate the parameters of mint.splsda method
 #' 
 #' Computes Leave-One-Group-Out-Cross-Validation (LOGOCV) scores on a
-#' user-input grid to determine optimal values for the sparsity parameters in
+#' user-input grid to determine optimal values for the parameters in
 #' \code{mint.splsda}.
 #' 
 #' This function performs a Leave-One-Group-Out-Cross-Validation (LOGOCV),
-#' where each of \code{study} is left out once. It returns a list of variables
-#' of \code{X} that were selected on each of the \code{ncomp} components. Then,
-#' a \code{\link{mint.splsda}} can be performed with \code{keepX} set as the
-#' output \code{choice.keepX}.
+#' where each of \code{study} is left out once.
 #' 
-#' All component \eqn{1:\code{ncomp}} are tuned, except the first ones for
-#' which a \code{already.tested.X} is provided. See examples below.
+#' When \code{test.keepX} is not NULL, all component \eqn{1:\code{ncomp}} are tuned to identify number of variables to keep,
+#' except the first ones for which a \code{already.tested.X} is provided. See examples below.
 #' 
 #' The function outputs the optimal number of components that achieve the best
 #' performance based on the overall error rate or BER. The assessment is
@@ -41,7 +38,7 @@
 #' @param study grouping factor indicating which samples are from the same
 #' study
 #' @param test.keepX numeric vector for the different number of variables to
-#' test from the \eqn{X} data set
+#' test from the \eqn{X} data set. If set to NULL only number of components will be tuned. 
 #' @param already.tested.X if \code{ncomp > 1} Numeric vector indicating the
 #' number of variables to select from the \eqn{X} data set on the firsts
 #' components
@@ -81,6 +78,18 @@
 #' \item{predict}{Prediction values for each sample, each \code{test.keepX} and
 #' each comp.} \item{class}{Predicted class for each sample, each
 #' \code{test.keepX} and each comp.}
+#' 
+#' If \code{test.keepX = NULL}, returns:
+#' \item{study.specific.error}{A list that gives BER, overall error rate and
+#' error rate per class, for each study} \item{global.error}{A list that gives
+#' BER, overall error rate and error rate per class for all samples}
+#' \item{predict}{A list of length \code{ncomp} that produces the predicted
+#' values of each sample for each class} \item{class}{A list which gives the
+#' predicted class of each sample for each \code{dist} and each of the
+#' \code{ncomp} components. Directly obtained from the \code{predict} output.}
+#' \item{auc}{AUC values} \item{auc.study}{AUC values for each study in mint
+#' models}.
+#' 
 #' @author Florian Rohart, Al J Abadi
 #' @seealso \code{\link{mint.splsda}} and http://www.mixOmics.org for more
 #' details.
@@ -96,38 +105,14 @@
 #' e1005752
 #' @keywords multivariate dplot
 #' @export
-#' @examples
-#' data(stemcells)
-#' data = stemcells$gene
-#' type.id = stemcells$celltype
-#' exp = stemcells$study
-#' 
-#' res = mint.splsda(X=data,Y=type.id,ncomp=3,keepX=c(10,5,15),study=exp)
-#' out = tune.mint.splsda(X=data,Y=type.id,ncomp=2,near.zero.var=FALSE,
-#' study=exp,test.keepX=seq(1,10,1))
-#' 
-#' out$choice.ncomp
-#' out$choice.keepX
-#' 
-#' \dontrun{
-#' 
-#' out = tune.mint.splsda(X=data,Y=type.id,ncomp=2,near.zero.var=FALSE,
-#' study=exp,test.keepX=seq(1,10,1))
-#' out$choice.keepX
-#' 
-#' ## only tune component 2 and keeping 10 genes on comp1
-#' out = tune.mint.splsda(X=data,Y=type.id,ncomp=2, study=exp,
-#' already.tested.X = c(10),
-#' test.keepX=seq(1,10,1))
-#' out$choice.keepX
-#' 
-#' }
+#' @examples ./examples/tune.mint.splsda-examples.R
+
 tune.mint.splsda <-
     function (X, 
               Y,
               ncomp = 1,
               study,
-              test.keepX = c(5, 10, 15),
+              test.keepX = NULL,
               already.tested.X,
               dist = c("max.dist", "centroids.dist", "mahalanobis.dist"),
               measure = c("BER", "overall"),
@@ -138,7 +123,7 @@ tune.mint.splsda <-
               max.iter = 100,
               near.zero.var = FALSE,
               light.output = TRUE, # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
-              signif.threshold=0.01
+              signif.threshold = 0.01
     )
     {    
         #-- checking general input parameters --------------------------------------#
@@ -238,7 +223,18 @@ tune.mint.splsda <-
         if (!is.logical(light.output))
             stop("'light.output' must be either TRUE or FALSE", call. = FALSE)
         
-        #-- test.keepX
+        #-- test.keepX, if null just tune on ncomp
+        if (is.null(test.keepX)){
+        print("test.keepX is set to NULL, tuning only for number of components...")
+        mint.splsda_res <- mint.splsda(X, Y, ncomp = ncomp, study = study,
+                    scale = scale, tol = tol, max.iter = max.iter, near.zero.var = near.zero.var)
+        perf_res <- perf(mint.splsda_res, 
+                    validation = validation, folds = folds, nrepeat = nrepeat,
+                    dist = dist,
+                    BPPARAM = BPPARAM, seed = seed, progressBar = progressBar)
+        return(perf_res)
+
+    } else {
         if (is.null(test.keepX) | length(test.keepX) == 1 | !is.numeric(test.keepX))
             stop("'test.keepX' must be a numeric vector with more than two entries", call. = FALSE)
         
@@ -362,4 +358,5 @@ tune.mint.splsda <-
         class(result) = c("tune.mint.splsda","tune.splsda")
         
         return(result)
+        }
     }

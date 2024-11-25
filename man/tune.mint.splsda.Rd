@@ -9,7 +9,7 @@ tune.mint.splsda(
   Y,
   ncomp = 1,
   study,
-  test.keepX = c(5, 10, 15),
+  test.keepX = NULL,
   already.tested.X,
   dist = c("max.dist", "centroids.dist", "mahalanobis.dist"),
   measure = c("BER", "overall"),
@@ -36,7 +36,7 @@ Default to 1}
 study}
 
 \item{test.keepX}{numeric vector for the different number of variables to
-test from the \eqn{X} data set}
+test from the \eqn{X} data set. If set to NULL only number of components will be tuned.}
 
 \item{already.tested.X}{if \code{ncomp > 1} Numeric vector indicating the
 number of variables to select from the \eqn{X} data set on the firsts
@@ -89,21 +89,29 @@ and for each component computed with the optimal keepX}
 \item{predict}{Prediction values for each sample, each \code{test.keepX} and
 each comp.} \item{class}{Predicted class for each sample, each
 \code{test.keepX} and each comp.}
+
+If \code{test.keepX = NULL}, returns:
+\item{study.specific.error}{A list that gives BER, overall error rate and
+error rate per class, for each study} \item{global.error}{A list that gives
+BER, overall error rate and error rate per class for all samples}
+\item{predict}{A list of length \code{ncomp} that produces the predicted
+values of each sample for each class} \item{class}{A list which gives the
+predicted class of each sample for each \code{dist} and each of the
+\code{ncomp} components. Directly obtained from the \code{predict} output.}
+\item{auc}{AUC values} \item{auc.study}{AUC values for each study in mint
+models}.
 }
 \description{
 Computes Leave-One-Group-Out-Cross-Validation (LOGOCV) scores on a
-user-input grid to determine optimal values for the sparsity parameters in
+user-input grid to determine optimal values for the parameters in
 \code{mint.splsda}.
 }
 \details{
 This function performs a Leave-One-Group-Out-Cross-Validation (LOGOCV),
-where each of \code{study} is left out once. It returns a list of variables
-of \code{X} that were selected on each of the \code{ncomp} components. Then,
-a \code{\link{mint.splsda}} can be performed with \code{keepX} set as the
-output \code{choice.keepX}.
+where each of \code{study} is left out once.
 
-All component \eqn{1:\code{ncomp}} are tuned, except the first ones for
-which a \code{already.tested.X} is provided. See examples below.
+When \code{test.keepX} is not NULL, all component \eqn{1:\code{ncomp}} are tuned to identify number of variables to keep,
+except the first ones for which a \code{already.tested.X} is provided. See examples below.
 
 The function outputs the optimal number of components that achieve the best
 performance based on the overall error rate or BER. The assessment is
@@ -123,31 +131,7 @@ More details about the prediction distances in \code{?predict} and the
 supplemental material of the mixOmics article (Rohart et al. 2017).
 }
 \examples{
-data(stemcells)
-data = stemcells$gene
-type.id = stemcells$celltype
-exp = stemcells$study
-
-res = mint.splsda(X=data,Y=type.id,ncomp=3,keepX=c(10,5,15),study=exp)
-out = tune.mint.splsda(X=data,Y=type.id,ncomp=2,near.zero.var=FALSE,
-study=exp,test.keepX=seq(1,10,1))
-
-out$choice.ncomp
-out$choice.keepX
-
-\dontrun{
-
-out = tune.mint.splsda(X=data,Y=type.id,ncomp=2,near.zero.var=FALSE,
-study=exp,test.keepX=seq(1,10,1))
-out$choice.keepX
-
-## only tune component 2 and keeping 10 genes on comp1
-out = tune.mint.splsda(X=data,Y=type.id,ncomp=2, study=exp,
-already.tested.X = c(10),
-test.keepX=seq(1,10,1))
-out$choice.keepX
-
-}
+./examples/tune.mint.splsda-examples.R
 }
 \references{
 Rohart F, Eslami A, Matigian, N, Bougeard S, Lê Cao K-A (2017).
