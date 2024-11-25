@@ -44,3 +44,27 @@ test_that("tune.mint.splsda works with custom alpha", code = {
     expect_equal(out$choice.ncomp$ncomp, 1)
     
 })
+
+test_that("tune.mint.splsda works when test.keepX = NULL and gives same result as perf()", code = {
+  
+  # set up data
+  data(stemcells)
+  X = stemcells$gene
+  Y = stemcells$celltype
+  study = stemcells$study
+  
+  # tune on components only
+  tune_res <- suppressWarnings(
+    tune.mint.splsda(X, Y, study = study, ncomp = 2,
+                test.keepX = NULL)
+  )
+  
+  # run perf
+  mint.splsda_res <- mint.splsda(X, Y, study = study, ncomp = 2)
+  perf_res <- suppressWarnings(
+    perf(mint.splsda_res, ncomp = 2, dist = "max.dist")
+  )
+  
+  # check results match
+  expect_equal(tune_res$global.error$BER[1,1], perf_res$global.error$BER[1,1])
+})
