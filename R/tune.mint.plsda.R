@@ -85,7 +85,7 @@
 #' @export
 #' @example ./examples/tune.mint.plsda-examples.R
 
-tune.mint.splsda <-
+tune.mint.plsda <-
     function (X, 
               Y,
               ncomp = 1,
