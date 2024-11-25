@@ -105,7 +105,7 @@
 #' e1005752
 #' @keywords multivariate dplot
 #' @export
-#' @examples ./examples/tune.mint.splsda-examples.R
+#' @example ./examples/tune.mint.splsda-examples.R
 
 tune.mint.splsda <-
     function (X, 
