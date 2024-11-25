@@ -56,7 +56,7 @@
 #' @template arg/validation
 #' @template arg/folds
 #' @template arg/nrepeat
-#' @param measure The tuning measure to use. See details.
+#' @param measure The tuning measure to use. Cannot be NULL when applied to sPLS1 object. See details.
 #' @templateVar modes \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}
 #' @template arg/mode
 #' @param arg/scale Logical. If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE

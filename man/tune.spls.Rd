@@ -52,7 +52,7 @@ details.}
 
 \item{folds}{Positive Integer, The folds in the Mfold cross-validation.}
 
-\item{measure}{The tuning measure to use. See details.}
+\item{measure}{The tuning measure to use. Cannot be NULL when applied to sPLS1 object. See details.}
 
 \item{mode}{Character string indicating the type of PLS algorithm to use. One
 of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
@@ -199,6 +199,8 @@ See also \code{?perf} for more details.
 }
 
 \examples{
+## sPLS2 model (i.e. more than one Y outcome variable)
+
 # set up data
 data(liver.toxicity)
 X <- liver.toxicity$gene
@@ -217,6 +219,17 @@ tune.res <- tune.spls( X, Y, ncomp = 3,
                       test.keepY = c(3, 6, 8), measure = "cor",
                       folds = 5, nrepeat = 3, progressBar = TRUE)
 plot(tune.res) # plot outputs
+
+## sPLS1 model (i.e. only one Y outcome variable)
+
+# set up data 
+Y1 <- liver.toxicity$clinic[,1]
+
+# tune spls model for components only
+plot(tune.spls(X, Y1, ncomp = 3, folds = 3, test.keepX = NULL, test.keepY = NULL))
+
+# tune spls model for number of X variables to keep, note for sPLS1 models 'measure' needs to be set
+plot(tune.spls(X, Y1, ncomp = 3, folds = 3, test.keepX = c(5, 10, 15), test.keepY = c(3, 6, 8), measure = "MSE"))
 }
 \references{
 mixOmics article:
