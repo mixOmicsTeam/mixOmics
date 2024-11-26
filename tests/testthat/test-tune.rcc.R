@@ -8,7 +8,7 @@ test_that("tune.rcc works with Mfold method", code = {
   Y <- nutrimouse$gene
   
   # run
-  tune.rcc.res <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE, seed = 20)
+  tune.rcc.res <- tune.rcc(X, Y, validation = "Mfold", seed = 20)
   
   # check outputs
   expect_equal(class(tune.rcc.res), "tune.rcc")
@@ -23,7 +23,7 @@ test_that("tune.rcc works with loo method", code = {
   Y <- nutrimouse$gene
   
   # run
-  tune.rcc.res <- tune.rcc(X, Y, validation = "loo", plot = FALSE, seed = 20)
+  tune.rcc.res <- tune.rcc(X, Y, validation = "loo", seed = 20)
   
   # check outputs
   expect_equal(class(tune.rcc.res), "tune.rcc")
@@ -38,10 +38,10 @@ test_that("tune.rcc works in parallel same as in series", code = {
   Y <- nutrimouse$gene
   
   # run in series
-  tune.rcc.res <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE,
+  tune.rcc.res <- tune.rcc(X, Y, validation = "Mfold",
                            BPPARAM = SerialParam(RNGseed = NULL), seed = 12)
   # run in parallel
-  tune.rcc.res.parallel <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE,
+  tune.rcc.res.parallel <- tune.rcc(X, Y, validation = "Mfold",
                            BPPARAM = SnowParam(workers = 2, RNGseed = NULL), seed = 12)
   
   # check outputs
@@ -58,7 +58,7 @@ test_that("tune.rcc and tune(method='rcc') are equivalent", {
   Y <- nutrimouse$gene
   
   # run independently
-  tune.rcc.res.1 <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE,
+  tune.rcc.res.1 <- tune.rcc(X, Y, validation = "Mfold",
                            BPPARAM = SerialParam(RNGseed = NULL), seed = 12,
                            grid1 = c(0.001, 0.2, 0.6, 1),
                            grid2 = c(0.001, 0.2, 0.6, 1))
