@@ -161,11 +161,6 @@ tune.spls <-
            test.keepX = NULL,
            test.keepY = NULL,
            ncomp,
-           # params related to CV
-           validation = c('Mfold', 'loo'),
-           nrepeat = 1,
-           folds,
-           measure = NULL,
            # params related to spls model building
            mode = c('regression', 'canonical', 'classic'),
            scale = TRUE,
@@ -174,6 +169,11 @@ tune.spls <-
            max.iter = 100,
            near.zero.var = FALSE,
            multilevel = NULL,
+           # params related to CV
+           validation = c('Mfold', 'loo'),
+           nrepeat = 1,
+           folds,
+           measure = NULL,
            # params related to running tune
            BPPARAM = SerialParam(),
            seed = NULL,

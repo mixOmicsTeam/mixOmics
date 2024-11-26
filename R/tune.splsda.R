@@ -164,21 +164,21 @@ tune.splsda <-
               ncomp = 1,
               test.keepX = NULL, # in which case perf() is run internally to only tune ncomp
               already.tested.X,
-              validation = "Mfold",
-              folds = 10,
-              dist = NULL,
-              measure = "BER", # one of c("overall","BER")
-              scale = TRUE,
-              auc = FALSE,
-              progressBar = FALSE,
-              tol = 1e-06,
               max.iter = 100,
+              tol = 1e-06,
+              scale = TRUE,
               near.zero.var = FALSE,
-              nrepeat = 1,
               logratio = c('none','CLR'),
               multilevel = NULL,
-              light.output = TRUE,
+              validation = "Mfold",
+              folds = 10,
+              nrepeat = 1,
               signif.threshold = 0.01, 
+              dist = NULL,
+              measure = "BER", # one of c("overall","BER","AUC")
+              auc = FALSE,
+              light.output = TRUE,
+              progressBar = FALSE,
               BPPARAM = SerialParam(),
               seed = NULL
     )

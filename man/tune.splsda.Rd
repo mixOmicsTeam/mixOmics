@@ -10,21 +10,21 @@ tune.splsda(
   ncomp = 1,
   test.keepX = NULL,
   already.tested.X,
-  validation = "Mfold",
-  folds = 10,
-  dist = NULL,
-  measure = "BER",
-  scale = TRUE,
-  auc = FALSE,
-  progressBar = FALSE,
-  tol = 1e-06,
   max.iter = 100,
+  tol = 1e-06,
+  scale = TRUE,
   near.zero.var = FALSE,
-  nrepeat = 1,
   logratio = c("none", "CLR"),
   multilevel = NULL,
-  light.output = TRUE,
+  validation = "Mfold",
+  folds = 10,
+  nrepeat = 1,
   signif.threshold = 0.01,
+  dist = NULL,
+  measure = "BER",
+  auc = FALSE,
+  light.output = TRUE,
+  progressBar = FALSE,
   BPPARAM = SerialParam(),
   seed = NULL
 )
@@ -45,11 +45,34 @@ using all variables in the \eqn{X} data set.}
 indicating the number of variables to select from the \eqn{X} data set on
 the firsts components.}
 
+\item{max.iter}{integer, the maximum number of iterations.}
+
+\item{tol}{Convergence stopping value.}
+
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
+means and unit variances (default: TRUE)}
+
+\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
+function (should be set to TRUE in particular for data with many zero
+values). Default value is FALSE}
+
+\item{logratio}{one of ('none','CLR'). Default to 'none'}
+
+\item{multilevel}{Design matrix for multilevel analysis (for repeated
+measurements) that indicates the repeated measures on each individual, i.e.
+the individuals ID. See Details.}
+
 \item{validation}{character. What kind of (internal) validation to use,
 matching one of \code{"Mfold"} or \code{"loo"} (short for 'leave-one-out').
 Default is \code{"Mfold"}.}
 
 \item{folds}{the folds in the Mfold cross-validation. See Details.}
+
+\item{nrepeat}{Number of times the Cross-Validation process is repeated.}
+
+\item{signif.threshold}{numeric between 0 and 1 indicating the significance
+threshold required for improvement in error rate of the components. Default
+to 0.01.}
 
 \item{dist}{distance metric to use for \code{splsda} to estimate the
 classification error rate, should be a subset of \code{"centroids.dist"},
@@ -59,37 +82,14 @@ classification error rate, should be a subset of \code{"centroids.dist"},
 misclassification error \code{overall}, the Balanced Error Rate \code{BER}
 or the Area Under the Curve \code{AUC}}
 
-\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
-means and unit variances (default: TRUE)}
-
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)
 performance of the model based on the optimisation measure \code{measure}.}
-
-\item{progressBar}{by default set to \code{TRUE} to output the progress bar
-of the computation.}
-
-\item{tol}{Convergence stopping value.}
-
-\item{max.iter}{integer, the maximum number of iterations.}
-
-\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
-function (should be set to TRUE in particular for data with many zero
-values). Default value is FALSE}
-
-\item{nrepeat}{Number of times the Cross-Validation process is repeated.}
-
-\item{logratio}{one of ('none','CLR'). Default to 'none'}
-
-\item{multilevel}{Design matrix for multilevel analysis (for repeated
-measurements) that indicates the repeated measures on each individual, i.e.
-the individuals ID. See Details.}
 
 \item{light.output}{if set to FALSE, the prediction/classification of each
 sample for each of \code{test.keepX} and each comp is returned.}
 
-\item{signif.threshold}{numeric between 0 and 1 indicating the significance
-threshold required for improvement in error rate of the components. Default
-to 0.01.}
+\item{progressBar}{by default set to \code{TRUE} to output the progress bar
+of the computation.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples in \code{?tune.spca}.}

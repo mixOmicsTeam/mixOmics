@@ -10,10 +10,6 @@ tune.spls(
   test.keepX = NULL,
   test.keepY = NULL,
   ncomp,
-  validation = c("Mfold", "loo"),
-  nrepeat = 1,
-  folds,
-  measure = NULL,
   mode = c("regression", "canonical", "classic"),
   scale = TRUE,
   logratio = "none",
@@ -21,6 +17,10 @@ tune.spls(
   max.iter = 100,
   near.zero.var = FALSE,
   multilevel = NULL,
+  validation = c("Mfold", "loo"),
+  nrepeat = 1,
+  folds,
+  measure = NULL,
   BPPARAM = SerialParam(),
   seed = NULL,
   progressBar = FALSE,
@@ -41,6 +41,9 @@ test from the \eqn{Y} data set. Default to \code{ncol(Y)}.}
 \item{ncomp}{Positive Integer. The number of components to include in the
 model. Default to 2.}
 
+\item{mode}{Character string indicating the type of PLS algorithm to use. One
+of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
+
 \item{validation}{character.  What kind of (internal) validation to use,
 matching one of \code{"Mfold"} or \code{"loo"} (Leave-One-out). Default is
 \code{"Mfold"}.}
@@ -52,9 +55,6 @@ details.}
 \item{folds}{Positive Integer, The folds in the Mfold cross-validation.}
 
 \item{measure}{The tuning measure to use. Cannot be NULL when applied to sPLS1 object. See details.}
-
-\item{mode}{Character string indicating the type of PLS algorithm to use. One
-of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples in \code{?tune.spca}.}
