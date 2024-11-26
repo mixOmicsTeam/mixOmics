@@ -22,7 +22,6 @@ tune.pls(
   BPPARAM = SerialParam(),
   seed = NULL,
   progressBar = FALSE,
-  limQ2 = 0.0975,
   ...
 )
 }
@@ -58,8 +57,6 @@ Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM'
 \item{progressBar}{Logical. If \code{TRUE} a progress bar is shown as the
 computation completes. Default to \code{FALSE}.}
 
-\item{limQ2}{Q2 threshold for recommending optimal \code{ncomp}.}
-
 \item{...}{Optional parameters passed to \code{\link{spls}}}
 
 \item{arg/scale}{Logical. If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE}
@@ -73,6 +70,8 @@ computation completes. Default to \code{FALSE}.}
 \item{arg/logratio}{Character, one of ('none','CLR') specifies the log ratio transformation to deal with compositional values that may arise from specific normalisation in sequencing data. Default to 'none'. See ?logratio.transfo for details.}
 
 \item{arg/multilevel}{Numeric, design matrix for repeated measurement analysis, where multilevel decomposition is required. For a one factor decomposition, the repeated measures on each individual, i.e. the individuals ID is input as the first column. For a 2 level factor decomposition then 2nd AND 3rd columns indicate those factors. See examples.}
+
+\item{limQ2}{Q2 threshold for recommending optimal \code{ncomp}.}
 }
 \value{
 Returns a list with the following components for every repeat:

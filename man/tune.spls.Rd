@@ -24,7 +24,6 @@ tune.spls(
   BPPARAM = SerialParam(),
   seed = NULL,
   progressBar = FALSE,
-  limQ2 = 0.0975,
   ...
 )
 }
@@ -65,8 +64,6 @@ Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM'
 
 \item{progressBar}{Logical. If \code{TRUE} a progress bar is shown as the
 computation completes. Default to \code{FALSE}.}
-
-\item{limQ2}{Q2 threshold for recommending optimal \code{ncomp}.}
 
 \item{...}{Optional parameters passed to \code{\link{spls}}}
 

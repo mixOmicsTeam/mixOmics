@@ -162,7 +162,6 @@ tune.pls <-
            BPPARAM = SerialParam(),
            seed = NULL,
            progressBar = FALSE,
-           limQ2 = 0.0975,
            ...
   ) {
 
@@ -172,6 +171,9 @@ tune.pls <-
     mode <- match.arg(mode)
     
     BPPARAM$RNGseed <- seed
+
+    # hardcode to streamline
+    limQ2 <- 0.0975
     
     X <- .check_numeric_matrix(X, block_name = 'X')
     Y <- .check_numeric_matrix(Y, block_name = 'Y')

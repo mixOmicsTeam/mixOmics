@@ -69,7 +69,6 @@
 #' @template arg/BPPARAM
 #' @param seed set a number here if you want the function to give reproducible outputs. 
 #' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
-#' @param limQ2 Q2 threshold for recommending optimal \code{ncomp}.
 #' @param ... Optional parameters passed to \code{\link{spls}}
 #' @return 
 #' If \code{test.keepX != NULL} and \code{test.keepY != NULL} returns a list that contains: 
@@ -179,7 +178,6 @@ tune.spls <-
            BPPARAM = SerialParam(),
            seed = NULL,
            progressBar = FALSE,
-           limQ2 = 0.0975,
            ...
   ) {
 
@@ -189,6 +187,9 @@ tune.spls <-
     mode <- match.arg(mode)
     
     BPPARAM$RNGseed <- seed
+
+    # hardcode to streamline
+    limQ2 <- 0.0975
     
     X <- .check_numeric_matrix(X, block_name = 'X')
     Y <- .check_numeric_matrix(Y, block_name = 'Y')
