@@ -123,7 +123,8 @@ tune.mint.splsda <-
               max.iter = 100,
               near.zero.var = FALSE,
               light.output = TRUE, # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
-              signif.threshold = 0.01
+              signif.threshold = 0.01,
+              ...
     )
     {    
         #-- checking general input parameters --------------------------------------#
