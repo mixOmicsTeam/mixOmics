@@ -44,21 +44,16 @@
 #' numeric vectors each of length \code{n_tested} indicating the number of 
 #' variables to select from the \eqn{X} data set on the first \code{n_tested} 
 #' components.
+#' @param measure only used when \code{test.keepX} is not NULL. Measure used when plotting, 
+#' should be 'BER' or 'overall'
+#' @param dist distance metric to estimate the classification error rate, should be one of 
+#' "centroids.dist", "mahalanobis.dist" or "max.dist" (see Details). If \code{test.keepX = NULL}, 
+#' can also input "all" or more than one distance metric
 #' @param weighted tune using either the performance of the Majority vote or
 #' the Weighted vote.
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
-#' @param ... Optional arguments:
-#' \itemize{
-#'  \item \bold{seed} Integer. Seed number for reproducible parallel code.
-#'  Default is \code{NULL}.
-#' }
-#' run in parallel when repeating the cross-validation, which is usually the
-#' most computationally intensive process. If there is excess CPU, the
-#' cross-vaidation is also parallelised on *nix-based OS which support
-#' \code{mclapply}.
-#' Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'. 
 #' @return A list that contains: \item{error.rate}{returns the prediction error
 #' for each \code{test.keepX} on each component, averaged across all repeats
 #' and subsampling folds. Standard deviation is also output. All error rates

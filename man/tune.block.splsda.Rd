@@ -89,11 +89,12 @@ matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
 threshold required for improvement in error rate of the components. Default
 to 0.01.}
 
-\item{dist}{distance metric to estimate the
-classification error rate, should be a subset of \code{"centroids.dist"},
-\code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
+\item{dist}{distance metric to estimate the classification error rate, should be one of 
+"centroids.dist", "mahalanobis.dist" or "max.dist" (see Details). If \code{test.keepX = NULL}, 
+can also input "all" or more than one distance metric}
 
-\item{measure}{The tuning measure used for different methods. See details.}
+\item{measure}{only used when \code{test.keepX} is not NULL. Measure used when plotting, 
+should be 'BER' or 'overall'}
 
 \item{weighted}{tune using either the performance of the Majority vote or
 the Weighted vote.}
@@ -109,17 +110,6 @@ of parallelisation. See examples.}
 
 \item{seed}{set a number here if you want the function to give reproducible outputs. 
 Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'.}
-
-\item{...}{Optional arguments:
-\itemize{
- \item \bold{seed} Integer. Seed number for reproducible parallel code.
- Default is \code{NULL}.
-}
-run in parallel when repeating the cross-validation, which is usually the
-most computationally intensive process. If there is excess CPU, the
-cross-vaidation is also parallelised on *nix-based OS which support
-\code{mclapply}.
-Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'.}
 }
 \value{
 A list that contains: \item{error.rate}{returns the prediction error
@@ -230,8 +220,8 @@ Y <- Y[subset]
 
 # set up a full design where every block is connected
 # could also consider other weights, see our mixOmics manuscript
-design = matrix(1, ncol = length(data), nrow = length(data),
-                dimnames = list(names(data), names(data)))
+design = matrix(1, ncol = length(X), nrow = length(X),
+                dimnames = list(names(X), names(X)))
 diag(design) =  0
 design
 
@@ -239,7 +229,8 @@ design
 tune_res <- tune.block.splsda(X, Y, design = design,
                               ncomp = 5,
                               test.keepX = NULL,
-                              nrepeat = 3,
+                              validation = "Mfold", nrepeat = 3,
+                              dist = "all", measure = "BER",
                               seed = 13)
 
 plot(tune_res)
@@ -255,13 +246,13 @@ test.keepX = list(mrna = c(10, 30), mirna = c(15, 25), protein = c(4, 8))
 # load parallel package
 library(BiocParallel)
 
-# run tuning in parallel on 2 cores
+# run tuning in parallel on 2 cores, output plot on overall error
 tune_res <- tune.block.splsda(X, Y, design = design,
                               ncomp = 2,
                               test.keepX = test.keepX,
-                              nrepeat = 3,
-                              seed = 13,
-                              BPPARAM = SnowParam(workers = 2))
+                              validation = "Mfold", nrepeat = 3,
+                              measure = "overall",
+                              seed = 13, BPPARAM = SnowParam(workers = 2))
 
 plot(tune_res)
 tune_res$choice.keepX
@@ -269,10 +260,12 @@ tune_res$choice.keepX
 # Now tuning a new component given previous tuned keepX
 already.tested.X <- tune_res$choice.keepX
 tune_res <- tune.block.splsda(X, Y, design = design,
-                         ncomp = 3, 
-                         test.keepX = test.keepX,
-                         already.tested.X = already.tested.X,
-                         BPPARAM = SnowParam(workers = 2))
+                              ncomp = 3,
+                              test.keepX = test.keepX,
+                              validation = "Mfold", nrepeat = 3,
+                              measure = "overall",
+                              seed = 13, BPPARAM = SnowParam(workers = 2),
+                              already.tested.X = already.tested.X)
 tune_res$choice.keepX
 }
 \references{
