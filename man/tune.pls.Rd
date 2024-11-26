@@ -48,6 +48,18 @@ details.}
 \item{mode}{Character string indicating the type of PLS algorithm to use. One
 of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
 
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE}
+
+\item{logratio}{Character, one of ('none','CLR') specifies the log ratio transformation to deal with compositional values that may arise from specific normalisation in sequencing data. Default to 'none'. See ?logratio.transfo for details.}
+
+\item{tol}{Positive numeric used as convergence criteria/tolerance during the iterative process. Default to 1e-06.}
+
+\item{max.iter}{Integer, the maximum number of iterations. Default to 100.}
+
+\item{near.zero.var}{Logical, see the internal nearZeroVar function (should be set to TRUE in particular for data with many zero values). Setting this argument to FALSE (when appropriate) will speed up the computations. Default value is FALSE.}
+
+\item{multilevel}{Numeric, design matrix for repeated measurement analysis, where multilevel decomposition is required. For a one factor decomposition, the repeated measures on each individual, i.e. the individuals ID is input as the first column. For a 2 level factor decomposition then 2nd AND 3rd columns indicate those factors. See examples.}
+
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples in \code{?tune.spca}.}
 
@@ -58,18 +70,6 @@ Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM'
 computation completes. Default to \code{FALSE}.}
 
 \item{...}{Optional parameters passed to \code{\link{spls}}}
-
-\item{arg/scale}{Logical. If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE}
-
-\item{arg/tol}{Positive numeric used as convergence criteria/tolerance during the iterative process. Default to 1e-06.}
-
-\item{arg/max.iter}{Integer, the maximum number of iterations. Default to 100.}
-
-\item{arg/near.zero.var}{Logical, see the internal nearZeroVar function (should be set to TRUE in particular for data with many zero values). Setting this argument to FALSE (when appropriate) will speed up the computations. Default value is FALSE.}
-
-\item{arg/logratio}{Character, one of ('none','CLR') specifies the log ratio transformation to deal with compositional values that may arise from specific normalisation in sequencing data. Default to 'none'. See ?logratio.transfo for details.}
-
-\item{arg/multilevel}{Numeric, design matrix for repeated measurement analysis, where multilevel decomposition is required. For a one factor decomposition, the repeated measures on each individual, i.e. the individuals ID is input as the first column. For a 2 level factor decomposition then 2nd AND 3rd columns indicate those factors. See examples.}
 
 \item{limQ2}{Q2 threshold for recommending optimal \code{ncomp}.}
 }
@@ -213,7 +213,7 @@ Mevik, B.-H., Cederkvist, H. R. (2004). Mean Squared Error of Prediction
 (MSEP) Estimates for Principal Component Regression (PCR) and Partial Least
 Squares Regression (PLSR). Journal of Chemometrics 18(9), 422-429.
 
-sparse PLS regression mode:
+Sparse PLS regression mode:
 
 Lê Cao, K. A., Rossouw D., Robert-Granie, C. and Besse, P. (2008). A sparse
 PLS for variable selection when integrating Omics data. Statistical
@@ -227,12 +227,10 @@ Patel J, Atkinson K, Khosrotehrani K, Fisk NM, Lê Cao K-A&, Wells CA&
 4:e1845.
 }
 \seealso{
-\code{\link{splsda}}, \code{\link{predict.splsda}} and
-http://www.mixOmics.org for more details.
+\code{\link{splsda}}, \code{\link{predict.splsda}}, and http://www.mixOmics.org for more details.
 }
 \author{
-Kim-Anh Lê Cao, Al J Abadi, Benoit Gautier, Francois Bartolo,
-Florian Rohart,
+Kim-Anh Lê Cao, Al J Abadi, Benoit Gautier, Francois Bartolo and Florian Rohart.
 }
 \keyword{multivariate}
 \keyword{regression}
