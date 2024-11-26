@@ -99,7 +99,6 @@
 #' predicted and actual components for X (t) and Y (u)} 
 #' \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
 #' predicted and actual components for X (t) and Y (u)} 
-#' \item{error.rate}
 #' 
 #' @author Kim-Anh Lê Cao, Al J Abadi, Benoit Gautier, Francois Bartolo and Florian Rohart.
 #' @seealso \code{\link{splsda}}, \code{\link{predict.splsda}}, and http://www.mixOmics.org for more details.

@@ -122,8 +122,7 @@ if using standard (non-sparse) PLS.}
 \item{cor.tpred, cor.upred}{Correlation between the 
 predicted and actual components for X (t) and Y (u)} 
 \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
-predicted and actual components for X (t) and Y (u)} 
-\item{error.rate}
+predicted and actual components for X (t) and Y (u)}
 }
 \description{
 Computes M-fold or Leave-One-Out Cross-Validation scores on a user-input

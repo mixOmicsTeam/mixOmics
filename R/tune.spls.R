@@ -114,7 +114,6 @@
 #' predicted and actual components for X (t) and Y (u)} 
 #' \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
 #' predicted and actual components for X (t) and Y (u)} 
-#' \item{error.rate}
 #' 
 #' @author Kim-Anh Lê Cao, Al J Abadi, Benoit Gautier, Francois Bartolo,
 #' Florian Rohart,
