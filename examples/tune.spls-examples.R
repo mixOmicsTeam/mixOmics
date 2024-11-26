@@ -25,7 +25,11 @@ plot(tune.res) # plot outputs
 Y1 <- liver.toxicity$clinic[,1]
 
 # tune spls model for components only
-plot(tune.spls(X, Y1, ncomp = 3, folds = 3, test.keepX = NULL, test.keepY = NULL))
+plot(tune.spls(X, Y1, ncomp = 3, 
+folds = 3, 
+test.keepX = NULL, test.keepY = NULL))
 
 # tune spls model for number of X variables to keep, note for sPLS1 models 'measure' needs to be set
-plot(tune.spls(X, Y1, ncomp = 3, folds = 3, test.keepX = c(5, 10, 15), test.keepY = c(3, 6, 8), measure = "MSE"))
+plot(tune.spls(X, Y1, ncomp = 3, 
+folds = 3, measure = "MSE",
+test.keepX = c(5, 10, 15), test.keepY = c(3, 6, 8)))
