@@ -82,8 +82,6 @@
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
 #' @param V Matrix used in the logratio transformation id provided (for tune.pca)
-#' @param plot logical argument indicating whether an image map should be
-#' plotted by calling the \code{imgCV} function. (for tune.rcc)
 #' @param BPPARAM A \linkS4class{BiocParallelParam} object indicating the type
 #'   of parallelisation. See examples.
 #' @param seed set a number here if you want the function to give reproducible outputs. 
@@ -165,202 +163,136 @@
 #' @export
 #' @example ./examples/tune-examples.R
 tune <-
-    function (method = c("spls", "splsda", "block.splsda", "mint.splsda", "rcc", "pca", "spca"),
+    function (method = c("pls", "spls", "plsda", "splsda", "block.plsda", "block.splsda", "mint.plsda", "mint.splsda", "rcc", "pca", "spca"),
               # Input data
               X,
               Y,
+              # Sparse params
               test.keepX = c(5, 10, 15),
               test.keepY = NULL,
               already.tested.X,
               already.tested.Y,
               # Number of components
               ncomp,
-              # PLS mode
-              mode = c("regression", "canonical", "invariant", "classic"),
-              # How to do the cross-validation
+
+              ## Params related to model building
+              V, # PCA
+              center = TRUE, # PCA
+              grid1 = seq(0.001, 1, length = 5), # CCA
+              grid2 = seq(0.001, 1, length = 5), # CCA
+              mode = c("regression", "canonical", "invariant", "classic"), # PLS
+              indY, # block PLSDA
+              weighted = TRUE, # block PLSDA
+              design, # block PLSDA
+              study, # MINT PLSDA
+              tol = 1e-09, # PLSDA, block PLSDA, mint PLSDA, PCA
+              scale = TRUE, # PLS, PLSDA, block PLSDA, mint PLSDA, PCA
+              logratio = c('none','CLR'), # PLS, PLSDA, PCA
+              near.zero.var = FALSE, # PLS, PLSDA, block PLSDA, mint PLSDA
+              max.iter = 100, # PLS, PLSDA, block PLSDA, mint PLSDA, PCA
+              multilevel = NULL, # PLS, PLSDA, PCA
+
+              ## Params related to cross-validation
+              validation = "Mfold",
               nrepeat = 1,
               folds = 10,
-              validation = "Mfold",
-              max.iter = 100,
-              tol = 1e-09,
               signif.threshold = 0.01,
-              # How to transform data
-              logratio = c('none','CLR'),
-              V, 
-              center = TRUE,
-              scale = TRUE,
-              near.zero.var = FALSE,
-              # How to measure accuracy
+
+              # How to measure accuracy - only for DA methods
               dist = "max.dist",
               measure = ifelse(method == "spls", "cor", "BER"),
-              # Multilevel
-              multilevel = NULL,
+              auc = FALSE,
+
               # Running params
               seed = NULL,
               BPPARAM = SerialParam(),
               progressBar = FALSE,
+
               # Output params
-              auc = FALSE,
-              light.output = TRUE,
-              plot = FALSE,
-              # Multiblock specific params
-              indY,
-              weighted = TRUE,
-              design,
-              # CCA specific params
-              grid1 = seq(0.001, 1, length = 5),
-              grid2 = seq(0.001, 1, length = 5),
-              # MINT specific params
-              study
+              light.output = TRUE
+              
     )
     {
+
+        ## ----------- checks ----------- ##
+
         method = match.arg(method)
         mode <- match.arg(mode)
 
         # hardcode scheme and init
         scheme = "horst"
         init = "svd.single"
-        
-        if (method == "mint.splsda") {
-            message("Calling 'tune.mint.splsda' with Leave-One-Group-Out Cross Validation (nrepeat = 1)")
-            
-            if (missing(ncomp))
-                ncomp = 1
-            
-            result = tune.mint.splsda(X = X, Y = Y,
-                                      ncomp = ncomp,
-                                      study = study,
-                                      test.keepX = test.keepX,
-                                      already.tested.X = already.tested.X,
-                                      dist = dist,
-                                      measure = measure,
-                                      auc = auc,
-                                      progressBar = progressBar,
-                                      scale = scale,
-                                      tol = tol,
-                                      max.iter = max.iter,
-                                      near.zero.var = near.zero.var,
-                                      light.output = light.output)
-            
-        } else if (method == "block.splsda") {
-          message("Calling 'tune.block.splsda'")
-          
-          result = tune.block.splsda(X = X,
-                                    Y = Y,
-                                    ncomp = ncomp,
-                                    test.keepX = test.keepX,
-                                    already.tested.X = already.tested.X,
-                                    validation = validation,
-                                    folds = folds,
-                                    dist = dist,
-                                    measure = measure,
-                                    progressBar = progressBar,
-                                    scale = scale,
-                                    tol = tol,
-                                    max.iter = max.iter,
-                                    near.zero.var = near.zero.var,
-                                    light.output = light.output,
-                                    nrepeat = nrepeat,
-                                    BPPARAM = BPPARAM,
-                                    indY = indY,
-                                    weighted = weighted,
-                                    design = design,
-                                    scheme = scheme,
-                                    init = init,
-                                    signif.threshold = signif.threshold,
-                                    seed = seed
-                                    )
-          
-            
-        } else if (method == "rcc") {
-            message("Calling 'tune.rcc'")
-            
-            result = tune.rcc(X = X,
-                              Y = Y,
-                              grid1 = grid1,
-                              grid2 = grid2,
-                              validation = validation,
-                              folds = folds,
-                              plot = plot,
-                              BPPARAM = BPPARAM,
-                              seed = seed)
-            
-        } else if (method == "pca") {
+
+
+        ## ----------- PCA ----------- ##
+
+        if (method == "pca") {
             message("Calling 'tune.pca'")
             
             if (missing(ncomp))
                 ncomp = NULL
             
-            result = tune.pca(X = X,
-                              ncomp = ncomp,
-                              center = center,
-                              scale = scale,
-                              max.iter = max.iter,
-                              tol = tol)
-            
-            
+            result = tune.pca(
+                # model building params
+                X = X, ncomp = ncomp,
+                center = center, scale = scale, max.iter = max.iter, tol = tol)
+
+        ## ----------- sPCA ----------- ##
+
         } else if (method == "spca") {
             message("Calling 'tune.spca'")
             
             if (missing(ncomp))
                 ncomp = 2
             #TODO use match.call() arg matching for these function calls
-            result = tune.spca(X = X,
-                               ncomp = ncomp,
-                               nrepeat = nrepeat,
-                               folds = folds,
-                               test.keepX = test.keepX,
-                               center = center,
-                               scale = scale,
-                               BPPARAM = BPPARAM,
-                               seed = seed)
+            result = tune.spca(
+                # model building params
+                X = X, ncomp = ncomp,
+                center = center, scale = scale,
+                # sparsity params
+                test.keepX = test.keepX,
+                # CV params
+                nrepeat = nrepeat, folds = folds,
+                # running params
+                BPPARAM = BPPARAM, seed = seed)
+
+
+        ## ----------- CCA ----------- ##
+
+        } else if (method == "rcc") {
+            message("Calling 'tune.rcc'")
             
-            
-        } else if (method == "splsda") {
-            
-            message("Calling 'tune.splsda'")
-            
-            if (missing(ncomp))
-                ncomp = 1
-            
-            result = tune.splsda (X = X, Y = Y,
-                                  ncomp = ncomp,
-                                  test.keepX = test.keepX,
-                                  already.tested.X = already.tested.X,
-                                  validation = validation,
-                                  folds = folds,
-                                  dist = dist ,
-                                  measure = measure,
-                                  auc = auc,
-                                  progressBar = progressBar,
-                                  max.iter = max.iter,
-                                  near.zero.var = near.zero.var,
-                                  nrepeat = nrepeat,
-                                  logratio = logratio,
-                                  multilevel = multilevel,
-                                  light.output = light.output,
-                                  seed = seed)
-            
+            result = tune.rcc(
+                # model building params
+                X = X, Y = Y,
+                # sparsity params
+                grid1 = grid1, grid2 = grid2,
+                # CV params
+                validation = validation, folds = folds,
+                # running params
+                BPPARAM = BPPARAM, seed = seed)
+
+        ## ----------- sPLS +/- multilevel ----------- ##
+
         } else if (method == "spls") {
             if(missing(multilevel))
             {
                 message("Calling 'tune.spls'")
                 
-                result = tune.spls(X = X,
-                                   Y = Y,
-                                   test.keepX = test.keepX,
-                                   test.keepY = test.keepY,
-                                   ncomp = ncomp,
-                                   validation = validation,
-                                   nrepeat = nrepeat,
-                                   folds = folds,
-                                   mode = mode,
-                                   measure = measure,
-                                   BPPARAM = BPPARAM,
-                                   progressBar = progressBar,
-                                   seed = seed
-                )
-            } else {
+                result = tune.spls(
+                    # model building params
+                    X = X, Y = Y, ncomp = ncomp, mode = mode,
+                    # sparsity params
+                    test.keepX = test.keepX, test.keepY = test.keepY,
+                    # CV params
+                    validation = validation, nrepeat = nrepeat, folds = folds,
+                    # PA params
+                    measure = measure,
+                    # running params
+                    progressBar = progressBar,
+                    BPPARAM = BPPARAM, seed = seed) 
+                    
+                    } else {
                 message("Calling 'tune.splslevel' with method = 'spls'")
                 
                 if (missing(ncomp))
@@ -370,15 +302,64 @@ tune <-
                 if (missing(already.tested.Y))
                     already.tested.Y = NULL
                 
-                result = tune.splslevel(X = X, Y = Y,
-                                        multilevel = multilevel,
-                                        mode = mode,
-                                        ncomp = ncomp, test.keepX = test.keepX, test.keepY = test.keepY,
-                                        already.tested.X = already.tested.X, already.tested.Y = already.tested.Y,
-                                        BPPARAM = BPPARAM, seed = seed)
+                result = tune.splslevel(
+                    # model building params
+                    X = X, Y = Y, ncomp = ncomp, mode = mode,
+                    # multilevel params
+                    multilevel = multilevel,
+                    # sparsity params
+                    test.keepX = test.keepX, test.keepY = test.keepY,
+                    already.tested.X = already.tested.X, already.tested.Y = already.tested.Y,
+                    # running params
+                    BPPARAM = BPPARAM, seed = seed)
             }
-        }
-        
+
+
+        ## ----------- block.splsda ----------- ##
+
+        } else if (method == "block.splsda") {
+          message("Calling 'tune.block.splsda'")
+          
+          result = tune.block.splsda(
+            # model building params
+            X = X, Y = Y, indY = indY, ncomp = ncomp, design = design,
+            tol = tol, scale = scale, max.iter = max.iter, near.zero.var = near.zero.var,
+            scheme = scheme, init = init, # hardcoded above
+            # sparsity params
+            test.keepX = test.keepX, already.tested.X = already.tested.X,
+            # CV params
+            validation = validation, folds = folds, nrepeat = nrepeat,
+            # PA params
+            dist = dist, measure = measure,
+            weighted = weighted, signif.threshold = signif.threshold,
+            # running params
+            progressBar = progressBar, light.output = light.output,
+            BPPARAM = BPPARAM, seed = seed)
+
+
+        ## ----------- mint.splsda ----------- ##
+
+        } else if (method == "mint.splsda") {
+            message("Calling 'tune.mint.splsda' with Leave-One-Group-Out Cross Validation (nrepeat = 1)")
+            
+            if (missing(ncomp))
+                ncomp = 1
+            
+            result = tune.mint.splsda(
+                # model building params
+                X = X, Y = Y, ncomp = ncomp, study = study,
+                scale = scale, tol = tol, max.iter = max.iter, near.zero.var = near.zero.var,
+                # sparsity params
+                test.keepX = test.keepX, already.tested.X = already.tested.X,
+                # PA params
+                dist = dist, measure = measure, auc = auc,
+                # running params - no need for seed or BPPARAM due to LOO CV
+                progressBar = progressBar,light.output = light.output)
+
+        } 
+
+        ## ----------- end ----------- ##
+            
         result$call = match.call()
         return(result)
     }
