@@ -29,6 +29,8 @@
 #' 
 #' @inheritParams block.plsda
 #' @inheritParams tune
+#' @param dist Distance metric. Should be a subset of "max.dist", "centroids.dist", "mahalanobis.dist" or "all".
+#' Default is "all"
 #' @param weighted tune using either the performance of the Majority vote or
 #' the Weighted vote.
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
@@ -117,7 +119,7 @@ tune.block.plsda <-
             nrepeat = 1,
             signif.threshold=0.01,
             # measure of performance params
-            dist = "max.dist",
+            dist = "all",
             weighted = TRUE, # optimise the weighted or not-weighted prediction
             # processing params
             progressBar = FALSE,

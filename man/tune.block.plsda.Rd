@@ -18,7 +18,7 @@ tune.block.plsda(
   folds = 10,
   nrepeat = 1,
   signif.threshold = 0.01,
-  dist = "max.dist",
+  dist = "all",
   weighted = TRUE,
   progressBar = FALSE,
   light.output = TRUE,
@@ -75,9 +75,8 @@ matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
 threshold required for improvement in error rate of the components. Default
 to 0.01.}
 
-\item{dist}{distance metric to estimate the
-classification error rate, should be a subset of \code{"centroids.dist"},
-\code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
+\item{dist}{Distance metric. Should be a subset of "max.dist", "centroids.dist", "mahalanobis.dist" or "all".
+Default is "all"}
 
 \item{weighted}{tune using either the performance of the Majority vote or
 the Weighted vote.}
