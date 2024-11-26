@@ -49,15 +49,10 @@
 #' If \code{auc = TRUE} and there are more than 2 categories in \code{Y}, the
 #' Area Under the Curve is averaged using one-vs-all comparison. Note however
 #' that the AUC criteria may not be particularly insightful as the prediction
-#' threshold we use in sPLS-DA differs from an AUC threshold (PLS-DA relies on
+#' threshold we use in PLS-DA differs from an AUC threshold (PLS-DA relies on
 #' prediction distances for predictions, see \code{?predict.plsda} for more
 #' details) and the supplemental material of the mixOmics article (Rohart et
-#' al. 2017). If you want the AUC criterion to be insightful, you should use
-#' \code{measure==AUC} as this will output the number of variable that
-#' maximises the AUC; in this case there is no prediction threshold from
-#' PLS-DA (\code{dist} is not used). If \code{measure==AUC}, we do not output
-#' SD as this measure can be a mean (over \code{nrepeat}) of means (over the
-#' categories).
+#' al. 2017).
 #' 
 #' BER is appropriate in case of an unbalanced number of samples per class as
 #' it calculates the average proportion of wrongly classified samples in each
@@ -81,13 +76,9 @@
 #' @param dist distance metric to use for \code{splsda} to estimate the
 #' classification error rate, should be a subset of \code{"centroids.dist"},
 #' \code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).
-#' @param measure Three misclassification measure are available: overall
-#' misclassification error \code{overall}, the Balanced Error Rate \code{BER}
-#' or the Area Under the Curve \code{AUC}
 #' @param scale Logical. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
 #' @param auc if \code{TRUE} calculate the Area Under the Curve (AUC)
-#' performance of the model based on the optimisation measure \code{measure}.
 #' @param progressBar by default set to \code{TRUE} to output the progress bar
 #' of the computation.
 #' @param tol Convergence stopping value.
@@ -105,6 +96,7 @@
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
+#' @param dist Distance metric. Should be a subset of "max.dist", "centroids.dist", "mahalanobis.dist" or "all". Default is "all"
 #' @template arg/BPPARAM
 #' @param seed set a number here if you want the function to give reproducible outputs. 
 #' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
@@ -136,8 +128,7 @@ tune.plsda <-
               ncomp = 1,
               validation = "Mfold",
               folds = 10,
-              dist = NULL,
-              measure = "BER", # one of c("overall","BER")
+              dist = "all",
               scale = TRUE,
               auc = FALSE,
               progressBar = FALSE,
@@ -233,15 +224,13 @@ tune.plsda <-
         #-- logratio
         logratio <- match.arg(logratio)
 
-        #-- measure
-        choices = c("BER", "overall","AUC")
-        measure = choices[pmatch(measure, choices)]
-        if (is.na(measure))
-            stop("'measure' must be either 'BER', 'overall' or 'AUC' ")
-        
+        #-- validation
         if (any(is.na(validation)) || length(validation) > 1)
             stop("'validation' should be one of 'Mfold' or 'loo'.", call. = FALSE)
 
+
+        #------------------#
+        #-- run perf --#
         plsda_res <- plsda(X, Y, ncomp, scale = scale, tol = tol, max.iter = max.iter, 
             near.zero.var = near.zero.var, logratio = logratio, multilevel = multilevel)
         perf_res <- perf(plsda_res, 
