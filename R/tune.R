@@ -314,6 +314,29 @@ tune <-
                     BPPARAM = BPPARAM, seed = seed)
             }
 
+        ## ----------- splsda ----------- ##
+
+        } else if (method == "splsda") {
+            
+            message("Calling 'tune.splsda'")
+            
+            if (missing(ncomp))
+                ncomp = 1
+            
+            result = tune.splsda(
+                # model building params
+                X = X, Y = Y, ncomp = ncomp, multilevel = multilevel,
+                logratio = logratio, max.iter = max.iter, near.zero.var = near.zero.var,
+                # sparsity params
+                test.keepX = test.keepX, already.tested.X = already.tested.X,
+                # CV params
+                validation = validation, folds = folds, nrepeat = nrepeat,
+                # PA params
+                dist = dist, measure = measure, auc = auc,
+                # running params
+                progressBar = progressBar, light.output = light.output,
+                BPPARAM = BPPARAM, seed = seed)
+
 
         ## ----------- block.splsda ----------- ##
 
