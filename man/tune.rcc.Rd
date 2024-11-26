@@ -11,7 +11,6 @@ tune.rcc(
   grid2 = seq(0.001, 1, length = 5),
   validation = c("loo", "Mfold"),
   folds = 10,
-  plot = TRUE,
   BPPARAM = SerialParam(),
   seed = NULL
 )
@@ -33,9 +32,6 @@ method to use, (partially) matching one of \code{"loo"} (leave-one-out) or
 
 \item{folds}{positive integer. Number of folds to use if
 \code{validation="Mfold"}. Defaults to \code{folds=10}.}
-
-\item{plot}{logical argument indicating whether an image map should be
-plotted by calling the \code{imgCV} function.}
 
 \item{BPPARAM}{a BiocParallel parameter object; see \code{BiocParallel::bpparam} 
 for details. Default is \code{MulticoreParam()} for parallel processing.}
@@ -73,13 +69,16 @@ of the data matrix using the \code{nipals} function. Otherwise, missing
 values are handled by casewise deletion in the \code{rcc} function.
 }
 \examples{
+#load data
 data(nutrimouse)
 X <- nutrimouse$lipid
 Y <- nutrimouse$gene
 
-## this can take some seconds
+# run tuning
+tune_res <- tune.rcc(X, Y, validation = "Mfold")
 
-tune.rcc(X, Y, validation = "Mfold")
+# plot output
+plot(tune_res)
 }
 \seealso{
 \code{\link{image.tune.rcc}} and http://www.mixOmics.org for more

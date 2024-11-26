@@ -225,13 +225,6 @@ tune.block.splsda <-
       }
       return(zm)
     })
-  
-    #-- dist
-    dist = match.arg(
-      dist,
-      choices = c("max.dist", "centroids.dist", "mahalanobis.dist"),
-      several.ok = TRUE
-    )
     
     #-- progressBar
     if (!is.logical(progressBar))
@@ -241,7 +234,6 @@ tune.block.splsda <-
     #-- ncomp
     if (is.null(ncomp) || !is.numeric(ncomp) || ncomp <= 0)
       stop("invalid number of variates, 'ncomp'.")
-    
     
     #-- validation
     choices = c("Mfold", "loo")
@@ -265,7 +257,6 @@ tune.block.splsda <-
     signif.threshold <- .check_alpha(signif.threshold)
     
     #-- already.tested.X
-    
     if (missing(already.tested.X))
     {
       already.tested.X = NULL
@@ -298,7 +289,7 @@ tune.block.splsda <-
     #-- test.keepX
     if (is.null(test.keepX)){
       print("test.keepX is set to NULL, tuning only for number of components...")
-      block.splsda_res <- block.splsda(X, Y, ncomp = ncomp, keepX = setNames(as.list(rep(nrow(X[[1]]), length(names(X)))), names(X)),
+      block.splsda_res <- block.splsda(X, Y, ncomp = ncomp,
                   scale = scale, tol = tol, max.iter = max.iter, near.zero.var = near.zero.var, design = design)
       perf_res <- perf(block.splsda_res, 
                 validation = validation, folds = folds, nrepeat = nrepeat,
@@ -307,7 +298,13 @@ tune.block.splsda <-
       return(perf_res)
 
     } else {
-      
+
+      #-- dist (for tune can only have one dist, for perf can have multiple)
+      dist = match.arg(
+      dist,
+      choices = c("max.dist", "centroids.dist", "mahalanobis.dist"),
+      several.ok = TRUE
+    )
 
       if (missing(test.keepX))
       {
