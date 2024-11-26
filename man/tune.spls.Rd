@@ -44,6 +44,18 @@ model. Default to 2.}
 \item{mode}{Character string indicating the type of PLS algorithm to use. One
 of \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}. See Details.}
 
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE}
+
+\item{logratio}{Character, one of ('none','CLR') specifies the log ratio transformation to deal with compositional values that may arise from specific normalisation in sequencing data. Default to 'none'. See ?logratio.transfo for details.}
+
+\item{tol}{Positive numeric used as convergence criteria/tolerance during the iterative process. Default to 1e-06.}
+
+\item{max.iter}{Integer, the maximum number of iterations. Default to 100.}
+
+\item{near.zero.var}{Logical, see the internal nearZeroVar function (should be set to TRUE in particular for data with many zero values). Setting this argument to FALSE (when appropriate) will speed up the computations. Default value is FALSE.}
+
+\item{multilevel}{Numeric, design matrix for repeated measurement analysis, where multilevel decomposition is required. For a one factor decomposition, the repeated measures on each individual, i.e. the individuals ID is input as the first column. For a 2 level factor decomposition then 2nd AND 3rd columns indicate those factors. See examples.}
+
 \item{validation}{character.  What kind of (internal) validation to use,
 matching one of \code{"Mfold"} or \code{"loo"} (Leave-One-out). Default is
 \code{"Mfold"}.}
@@ -66,18 +78,6 @@ Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM'
 computation completes. Default to \code{FALSE}.}
 
 \item{...}{Optional parameters passed to \code{\link{spls}}}
-
-\item{arg/scale}{Logical. If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE}
-
-\item{arg/tol}{Positive numeric used as convergence criteria/tolerance during the iterative process. Default to 1e-06.}
-
-\item{arg/max.iter}{Integer, the maximum number of iterations. Default to 100.}
-
-\item{arg/near.zero.var}{Logical, see the internal nearZeroVar function (should be set to TRUE in particular for data with many zero values). Setting this argument to FALSE (when appropriate) will speed up the computations. Default value is FALSE.}
-
-\item{arg/logratio}{Character, one of ('none','CLR') specifies the log ratio transformation to deal with compositional values that may arise from specific normalisation in sequencing data. Default to 'none'. See ?logratio.transfo for details.}
-
-\item{arg/multilevel}{Numeric, design matrix for repeated measurement analysis, where multilevel decomposition is required. For a one factor decomposition, the repeated measures on each individual, i.e. the individuals ID is input as the first column. For a 2 level factor decomposition then 2nd AND 3rd columns indicate those factors. See examples.}
 }
 \value{
 If \code{test.keepX != NULL} and \code{test.keepY != NULL} returns a list that contains: 
@@ -223,10 +223,14 @@ plot(tune.res) # plot outputs
 Y1 <- liver.toxicity$clinic[,1]
 
 # tune spls model for components only
-plot(tune.spls(X, Y1, ncomp = 3, folds = 3, test.keepX = NULL, test.keepY = NULL))
+plot(tune.spls(X, Y1, ncomp = 3, 
+folds = 3, 
+test.keepX = NULL, test.keepY = NULL))
 
 # tune spls model for number of X variables to keep, note for sPLS1 models 'measure' needs to be set
-plot(tune.spls(X, Y1, ncomp = 3, folds = 3, test.keepX = c(5, 10, 15), test.keepY = c(3, 6, 8), measure = "MSE"))
+plot(tune.spls(X, Y1, ncomp = 3, 
+folds = 3, measure = "MSE",
+test.keepX = c(5, 10, 15), test.keepY = c(3, 6, 8)))
 }
 \references{
 mixOmics article:
