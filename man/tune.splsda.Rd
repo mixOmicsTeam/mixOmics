@@ -75,12 +75,13 @@ threshold required for improvement in error rate of the components. Default
 to 0.01.}
 
 \item{dist}{distance metric to use for \code{splsda} to estimate the
-classification error rate, should be a subset of \code{"centroids.dist"},
-\code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
+classification error rate, should one of \code{"centroids.dist"},
+\code{"mahalanobis.dist"} or \code{"max.dist"} (see Details). 
+If \code{test.keepX = NULL} multiple distances can be inputted or "all".}
 
 \item{measure}{Three misclassification measure are available: overall
 misclassification error \code{overall}, the Balanced Error Rate \code{BER}
-or the Area Under the Curve \code{AUC}}
+or the Area Under the Curve \code{AUC}. Only used when \code{test.keepX} is not NULL.}
 
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)
 performance of the model based on the optimisation measure \code{measure}.}

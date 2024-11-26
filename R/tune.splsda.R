@@ -89,11 +89,12 @@
 #'   Default is \code{"Mfold"}.
 #' @param folds the folds in the Mfold cross-validation. See Details.
 #' @param dist distance metric to use for \code{splsda} to estimate the
-#' classification error rate, should be a subset of \code{"centroids.dist"},
-#' \code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).
+#' classification error rate, should one of \code{"centroids.dist"},
+#' \code{"mahalanobis.dist"} or \code{"max.dist"} (see Details). 
+#' If \code{test.keepX = NULL} multiple distances can be inputted or "all". 
 #' @param measure Three misclassification measure are available: overall
 #' misclassification error \code{overall}, the Balanced Error Rate \code{BER}
-#' or the Area Under the Curve \code{AUC}
+#' or the Area Under the Curve \code{AUC}. Only used when \code{test.keepX} is not NULL. 
 #' @param scale Logical. If scale = TRUE, each block is standardized to zero
 #' means and unit variances (default: TRUE)
 #' @param auc if \code{TRUE} calculate the Area Under the Curve (AUC)
