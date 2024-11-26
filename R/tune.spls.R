@@ -116,7 +116,6 @@
 #' predicted and actual components for X (t) and Y (u)} 
 #' \item{error.rate}
 #' 
-#' 
 #' @author Kim-Anh Lê Cao, Al J Abadi, Benoit Gautier, Francois Bartolo,
 #' Florian Rohart,
 #' @seealso \code{\link{splsda}}, \code{\link{predict.splsda}} and

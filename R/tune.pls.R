@@ -66,8 +66,7 @@
 #' @template arg/BPPARAM
 #' @param seed set a number here if you want the function to give reproducible outputs. 
 #' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
-#' @param limQ2 Q2 threshold for recommending optimal \code{ncomp}.
-#' @param ... Optional parameters passed to \code{\link{spls}}
+#' @param ... Optional parameters passed to \code{\link{pls}}
 #' @return 
 #' Returns a list with the following components for every repeat:
 #' \item{MSEP}{Mean Square Error Prediction for each \eqn{Y} variable, only 
@@ -101,7 +100,6 @@
 #' \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
 #' predicted and actual components for X (t) and Y (u)} 
 #' \item{error.rate}
-#' 
 #' 
 #' @author Kim-Anh Lê Cao, Al J Abadi, Benoit Gautier, Francois Bartolo and Florian Rohart.
 #' @seealso \code{\link{splsda}}, \code{\link{predict.splsda}}, and http://www.mixOmics.org for more details.
