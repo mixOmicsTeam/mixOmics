@@ -38,7 +38,7 @@ X <- nutrimouse$lipid
 Y <- nutrimouse$gene
 
 ## this can take some seconds
-cv.score <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE)
+cv.score <- tune.rcc(X, Y, validation = "Mfold")
 plot(cv.score)
 
 # image(cv.score) # same result as plot()
