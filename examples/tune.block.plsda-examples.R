@@ -1,6 +1,3 @@
-## Set up data
-
-# load data
 data("breast.TCGA")
 
 # X data - list of mRNA and miRNA
@@ -18,20 +15,19 @@ Y <- Y[subset]
 
 # set up a full design where every block is connected
 # could also consider other weights, see our mixOmics manuscript
-design = matrix(1, ncol = length(data), nrow = length(data),
-                dimnames = list(names(data), names(data)))
+design = matrix(1, ncol = length(X), nrow = length(X),
+                dimnames = list(names(X), names(X)))
 diag(design) =  0
 design
 
-## Tune number of components to keep
+## Tune number of components to keep - use all distance metrics
 tune_res <- tune.block.plsda(X, Y, design = design,
-                              ncomp = 5,
-                              nrepeat = 3,
-                              seed = 13,
-                             dist = c("max.dist", "centroids.dist"))
+                             ncomp = 5,
+                             nrepeat = 3,
+                             seed = 13,
+                             dist = c("all"))
 
 plot(tune_res)
-
 tune_res$choice.ncomp # 3 components best for max.dist, 1 for centroids.dist
 
 
@@ -40,8 +36,14 @@ tune_res <- tune.block.plsda(X, Y, design = design,
                              ncomp = 5,
                              nrepeat = 3,
                              seed = 13,
-                             dist = c("max.dist", "centroids.dist"),
+                             dist = c("all"),
                              weighted = FALSE)
-plot(tune_res)
-
 tune_res$weights
+
+## Tune number of components to keep - plot just max.dist
+tune_res <- tune.block.plsda(X, Y, design = design,
+                             ncomp = 5,
+                             nrepeat = 3,
+                             seed = 13,
+                             dist = c("max.dist"))
+plot(tune_res)

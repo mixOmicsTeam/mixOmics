@@ -118,7 +118,6 @@ tune.block.plsda <-
             signif.threshold=0.01,
             # measure of performance params
             dist = "max.dist",
-            measure = "BER", # one of c("overall","BER")
             weighted = TRUE, # optimise the weighted or not-weighted prediction
             # processing params
             progressBar = FALSE,
@@ -212,11 +211,6 @@ tune.block.plsda <-
         message("Leave-One-Out validation does not need to be repeated: 'nrepeat' is set to '1'.")
       nrepeat = 1
     }
-    
-    #-- measure
-    measure.input = measure
-    if (!measure %in% c("overall", "BER"))
-      stop("'measure' must be 'overall' or 'BER'")
     
     #-- check significance threshold
     signif.threshold <- .check_alpha(signif.threshold)

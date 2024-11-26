@@ -19,7 +19,6 @@ tune.block.plsda(
   nrepeat = 1,
   signif.threshold = 0.01,
   dist = "max.dist",
-  measure = "BER",
   weighted = TRUE,
   progressBar = FALSE,
   light.output = TRUE,
@@ -79,8 +78,6 @@ to 0.01.}
 \item{dist}{distance metric to estimate the
 classification error rate, should be a subset of \code{"centroids.dist"},
 \code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
-
-\item{measure}{The tuning measure used for different methods. See details.}
 
 \item{weighted}{tune using either the performance of the Majority vote or
 the Weighted vote.}
@@ -174,9 +171,6 @@ class, weighted by the number of samples in each class. BER is less biased
 towards majority classes during the performance assessment.
 }
 \examples{
-## Set up data
-
-# load data
 data("breast.TCGA")
 
 # X data - list of mRNA and miRNA
@@ -194,20 +188,19 @@ Y <- Y[subset]
 
 # set up a full design where every block is connected
 # could also consider other weights, see our mixOmics manuscript
-design = matrix(1, ncol = length(data), nrow = length(data),
-                dimnames = list(names(data), names(data)))
+design = matrix(1, ncol = length(X), nrow = length(X),
+                dimnames = list(names(X), names(X)))
 diag(design) =  0
 design
 
-## Tune number of components to keep
+## Tune number of components to keep - use all distance metrics
 tune_res <- tune.block.plsda(X, Y, design = design,
-                              ncomp = 5,
-                              nrepeat = 3,
-                              seed = 13,
-                             dist = c("max.dist", "centroids.dist"))
+                             ncomp = 5,
+                             nrepeat = 3,
+                             seed = 13,
+                             dist = c("all"))
 
 plot(tune_res)
-
 tune_res$choice.ncomp # 3 components best for max.dist, 1 for centroids.dist
 
 
@@ -216,11 +209,17 @@ tune_res <- tune.block.plsda(X, Y, design = design,
                              ncomp = 5,
                              nrepeat = 3,
                              seed = 13,
-                             dist = c("max.dist", "centroids.dist"),
+                             dist = c("all"),
                              weighted = FALSE)
-plot(tune_res)
-
 tune_res$weights
+
+## Tune number of components to keep - plot just max.dist
+tune_res <- tune.block.plsda(X, Y, design = design,
+                             ncomp = 5,
+                             nrepeat = 3,
+                             seed = 13,
+                             dist = c("max.dist"))
+plot(tune_res)
 }
 \references{
 Method:
