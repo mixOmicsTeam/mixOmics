@@ -272,6 +272,26 @@ tune <-
                 # running params
                 BPPARAM = BPPARAM, seed = seed)
 
+        ## ----------- PLS ----------- ##
+
+        } else if (method == "pls") {
+            message("Calling 'tune.pls'")
+            
+            result = tune.pls(
+                # model building params
+                X = X, Y = Y, ncomp = ncomp, mode = mode,
+                scale = scale, logratio = logratio, tol = tol, 
+                max.iter = max.iter, near.zero.var = near.zero.var,
+                # CV params
+                validation = validation, nrepeat = nrepeat, folds = folds,
+                # PA params
+                measure = measure,
+                # running params
+                progressBar = progressBar,
+                BPPARAM = BPPARAM, seed = seed) 
+                
+                # multilevel??
+
         ## ----------- sPLS +/- multilevel ----------- ##
 
         } else if (method == "spls") {
@@ -282,6 +302,8 @@ tune <-
                 result = tune.spls(
                     # model building params
                     X = X, Y = Y, ncomp = ncomp, mode = mode,
+                    scale = scale, logratio = logratio, tol = tol, 
+                    max.iter = max.iter, near.zero.var = near.zero.var,
                     # sparsity params
                     test.keepX = test.keepX, test.keepY = test.keepY,
                     # CV params
@@ -314,6 +336,28 @@ tune <-
                     BPPARAM = BPPARAM, seed = seed)
             }
 
+        ## ----------- plsda ----------- ##
+
+        } else if (method == "plsda") {
+            
+            message("Calling 'tune.plsda'")
+            
+            if (missing(ncomp))
+                ncomp = 1
+            
+            result = tune.plsda(
+                # model building params
+                X = X, Y = Y, ncomp = ncomp, multilevel = multilevel,
+                scale = scale, logratio = logratio, tol = tol, 
+                max.iter = max.iter, near.zero.var = near.zero.var,
+                # CV params
+                validation = validation, folds = folds, nrepeat = nrepeat,
+                # PA params
+                dist = dist, auc = auc,
+                # running params
+                progressBar = progressBar, light.output = light.output,
+                BPPARAM = BPPARAM, seed = seed)
+
         ## ----------- splsda ----------- ##
 
         } else if (method == "splsda") {
@@ -326,7 +370,8 @@ tune <-
             result = tune.splsda(
                 # model building params
                 X = X, Y = Y, ncomp = ncomp, multilevel = multilevel,
-                logratio = logratio, max.iter = max.iter, near.zero.var = near.zero.var,
+                scale = scale, logratio = logratio, tol = tol, 
+                max.iter = max.iter, near.zero.var = near.zero.var,
                 # sparsity params
                 test.keepX = test.keepX, already.tested.X = already.tested.X,
                 # CV params
@@ -336,6 +381,24 @@ tune <-
                 # running params
                 progressBar = progressBar, light.output = light.output,
                 BPPARAM = BPPARAM, seed = seed)
+
+
+        ## ----------- block.plsda ----------- ##
+
+        } else if (method == "block.plsda") {
+          message("Calling 'tune.block.plsda'")
+          
+          result = tune.block.plsda(
+            # model building params
+            X = X, Y = Y, indY = indY, ncomp = ncomp, design = design,
+            tol = tol, scale = scale, max.iter = max.iter, near.zero.var = near.zero.var,
+            # CV params
+            validation = validation, folds = folds, nrepeat = nrepeat, signif.threshold = signif.threshold,
+            # PA params
+            dist = dist, weighted = weighted, 
+            # running params
+            progressBar = progressBar, light.output = light.output,
+            BPPARAM = BPPARAM, seed = seed)
 
 
         ## ----------- block.splsda ----------- ##
@@ -350,13 +413,30 @@ tune <-
             # sparsity params
             test.keepX = test.keepX, already.tested.X = already.tested.X,
             # CV params
-            validation = validation, folds = folds, nrepeat = nrepeat,
+            validation = validation, folds = folds, nrepeat = nrepeat, signif.threshold = signif.threshold,
             # PA params
-            dist = dist, measure = measure,
-            weighted = weighted, signif.threshold = signif.threshold,
+            dist = dist, weighted = weighted, measure = measure,
             # running params
             progressBar = progressBar, light.output = light.output,
             BPPARAM = BPPARAM, seed = seed)
+
+        
+        ## ----------- mint.plsda ----------- ##
+
+        } else if (method == "mint.plsda") {
+            message("Calling 'tune.mint.plsda' with Leave-One-Group-Out Cross Validation (nrepeat = 1)")
+            
+            if (missing(ncomp))
+                ncomp = 1
+            
+            result = tune.mint.plsda(
+                # model building params
+                X = X, Y = Y, ncomp = ncomp, study = study,
+                scale = scale, tol = tol, max.iter = max.iter, near.zero.var = near.zero.var,
+                # PA params
+                dist = dist, auc = auc,
+                # running params - no need for seed or BPPARAM due to LOO CV
+                progressBar = progressBar,light.output = light.output)
 
 
         ## ----------- mint.splsda ----------- ##
