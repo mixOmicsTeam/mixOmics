@@ -1,7 +1,7 @@
 context("tune.splsda")
 library(BiocParallel)
 
-test_that("tune.spls works and is the same in parallel and when run in tune wrapper", code = {
+test_that("tune.splsda works and is the same in parallel and when run in tune wrapper", code = {
   
   # set up data
   data(breast.tumors)
