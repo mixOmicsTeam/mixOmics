@@ -42,9 +42,6 @@ perf.assess.mixo_pls <- function(object,
                           ...)
 {
 
-    # define global variables to avoid NOTES in R CMD Check
-    utils::globalVariables(c("comp", "block", "measure", "value", "feature", "stability", "lower", "upper", "keepX", "keepY"))
-
     # checking args and initialize params
     ncomp = object$ncomp
     spls.model <- is(object, 'mixo_spls')
@@ -150,8 +147,6 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
 {
 # changes to bypass the loop for the Q2
 
-    # to deal with NOTE saying comp is not defined
-    utils::globalVariables(c("comp"))
     ## R CMD check stuff
     measure <- feature <- comp <- block <- stability <- value <- NULL
     lower <- upper <- keepX <- keepY <- NULL
