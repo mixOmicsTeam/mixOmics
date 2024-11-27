@@ -126,20 +126,24 @@
 tune.plsda <- 
     function (X, Y,
               ncomp = 1,
+              # params related to spls model building
+              scale = TRUE,
+              logratio = c('none','CLR'),
+              max.iter = 100,
+              tol = 1e-06,
+              near.zero.var = FALSE,
+              multilevel = NULL,
+              # params related to CV
               validation = "Mfold",
               folds = 10,
-              dist = "all",
-              scale = TRUE,
-              auc = FALSE,
-              progressBar = FALSE,
-              tol = 1e-06,
-              max.iter = 100,
-              near.zero.var = FALSE,
               nrepeat = 1,
-              logratio = c('none','CLR'),
-              multilevel = NULL,
-              light.output = TRUE,
               signif.threshold = 0.01, 
+              # params related to PA
+              dist = "all",
+              auc = FALSE,
+              # params related to running
+              progressBar = FALSE,
+              light.output = TRUE,
               BPPARAM = SerialParam(),
               seed = NULL
     )

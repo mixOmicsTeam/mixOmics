@@ -10,21 +10,21 @@ tune.splsda(
   ncomp = 1,
   test.keepX = NULL,
   already.tested.X,
+  scale = TRUE,
+  logratio = c("none", "CLR"),
   max.iter = 100,
   tol = 1e-06,
-  scale = TRUE,
   near.zero.var = FALSE,
-  logratio = c("none", "CLR"),
   multilevel = NULL,
   validation = "Mfold",
   folds = 10,
   nrepeat = 1,
   signif.threshold = 0.01,
-  dist = NULL,
+  dist = "max.dist",
   measure = "BER",
   auc = FALSE,
-  light.output = TRUE,
   progressBar = FALSE,
+  light.output = TRUE,
   BPPARAM = SerialParam(),
   seed = NULL
 )
@@ -45,18 +45,18 @@ using all variables in the \eqn{X} data set.}
 indicating the number of variables to select from the \eqn{X} data set on
 the firsts components.}
 
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
+means and unit variances (default: TRUE)}
+
+\item{logratio}{one of ('none','CLR'). Default to 'none'}
+
 \item{max.iter}{integer, the maximum number of iterations.}
 
 \item{tol}{Convergence stopping value.}
 
-\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
-means and unit variances (default: TRUE)}
-
 \item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
 function (should be set to TRUE in particular for data with many zero
 values). Default value is FALSE}
-
-\item{logratio}{one of ('none','CLR'). Default to 'none'}
 
 \item{multilevel}{Design matrix for multilevel analysis (for repeated
 measurements) that indicates the repeated measures on each individual, i.e.
@@ -86,11 +86,11 @@ or the Area Under the Curve \code{AUC}. Only used when \code{test.keepX} is not 
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)
 performance of the model based on the optimisation measure \code{measure}.}
 
-\item{light.output}{if set to FALSE, the prediction/classification of each
-sample for each of \code{test.keepX} and each comp is returned.}
-
 \item{progressBar}{by default set to \code{TRUE} to output the progress bar
 of the computation.}
+
+\item{light.output}{if set to FALSE, the prediction/classification of each
+sample for each of \code{test.keepX} and each comp is returned.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples in \code{?tune.spca}.}

@@ -163,23 +163,28 @@
 tune.splsda <- 
     function (X, Y,
               ncomp = 1,
+              # sparsity params
               test.keepX = NULL, # in which case perf() is run internally to only tune ncomp
               already.tested.X,
+              # params related to spls model building
+              scale = TRUE,
+              logratio = c('none','CLR'),
               max.iter = 100,
               tol = 1e-06,
-              scale = TRUE,
               near.zero.var = FALSE,
-              logratio = c('none','CLR'),
               multilevel = NULL,
+              # params related to CV
               validation = "Mfold",
               folds = 10,
               nrepeat = 1,
               signif.threshold = 0.01, 
-              dist = NULL,
-              measure = "BER", # one of c("overall","BER","AUC")
+              # params related to PA
+              dist = "max.dist",
+              measure = "BER", # or 'overall'
               auc = FALSE,
-              light.output = TRUE,
+              # params related to running
               progressBar = FALSE,
+              light.output = TRUE,
               BPPARAM = SerialParam(),
               seed = NULL
     )
