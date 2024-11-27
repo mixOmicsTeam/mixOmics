@@ -31,7 +31,7 @@
 
 ## ------------------------------- (s)PLSDA ------------------------------- ##
 #' @rdname perf.assess
-#' @importFrom methods hasArg
+#' @method perf.assess mixo_plsda
 #' @export
 perf.assess.mixo_plsda <- function(object,
                             dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
@@ -328,5 +328,6 @@ perf.assess.mixo_plsda <- function(object,
 }
 
 #' @rdname perf.assess
+#' @method perf.assess mixo_splsda
 #' @export
 perf.assess.mixo_splsda <- perf.assess.mixo_plsda

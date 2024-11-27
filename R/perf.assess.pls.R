@@ -31,6 +31,7 @@
 
 ## -------------------------------- (s)PLS -------------------------------- ##
 #' @rdname perf.assess
+#' @method perf.assess mixo_pls
 #' @export
 perf.assess.mixo_pls <- function(object,
                           validation = c("Mfold", "loo"),
@@ -133,6 +134,7 @@ perf.assess.mixo_pls <- function(object,
 }
 
 #' @rdname perf.assess
+#' @method perf.assess mixo_spls
 #' @export
 perf.assess.mixo_spls  <- perf.assess.mixo_pls
 
