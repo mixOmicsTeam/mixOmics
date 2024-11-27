@@ -231,7 +231,7 @@
 #' 4:e1845.
 #' @keywords regression multivariate
 #' @export
-#' @example ./examples/perf-examples.R
+#' @example ./examples/perf.assess-examples.R
 ## ------------------------------- Generic -------------------------------- ##
 perf.assess <- function(object, ...)
     UseMethod("perf.assess")

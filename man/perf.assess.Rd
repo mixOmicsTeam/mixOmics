@@ -293,141 +293,99 @@ given block with the outcome variable Y.
 More details about the PLS modes in \code{?pls}.
 }
 \examples{
-## validation for objects of class 'pls' (regression)
-# ----------------------------------------
-data(liver.toxicity)
-X <- liver.toxicity$gene
-Y <- liver.toxicity$clinic
+## PLS-DA example
 
-# try tune the number of component to choose
-# ---------------------
-# first learn the full model
-liver.pls <- pls(X, Y, ncomp = 5)
+data(liver.toxicity) # rats gex and clinical measurements/treatments
+unique(liver.toxicity$treatment$Treatment.Group) # 16 groups
+length(liver.toxicity$treatment$Treatment.Group) # 64 samples
 
-# with 5-fold cross validation: we use the same parameters as in model above
-# but we perform cross validation to compute the MSEP, Q2 and R2 criteria
-# ---------------------------
-liver.val <- perf(liver.pls, validation = "Mfold", folds = 5)
+plsda.res <- plsda(liver.toxicity$gene, liver.toxicity$treatment$Treatment.Group, ncomp = 2)
 
-# see available criteria
-names(liver.val$measures)
-# see values for all repeats
-liver.val$measures$Q2.total$values
-# see summary over repeats
-liver.val$measures$Q2.total$summary
-# Q2 total should decrease until it reaches a threshold
-liver.val$measures$Q2.total
+performance <- perf.assess(plsda.res, 
+                           validation = "Mfold", folds = 3, nrepeat = 10, # to make sure each fold has all classes represented
+                           seed = 12) # for reproducibility, remove for analysis
 
-# ncomp = 2 is enough
-plot(liver.val, criterion  = 'Q2.total')
+performance$error.rate$BER
 
-\dontrun{
+## sPLS-DA example
 
-# have a look at the other criteria
-# ----------------------
-# R2
-plot(liver.val, criterion  = 'R2')
-## correlation of components (see docs)
-plot(liver.val, criterion  = 'cor.tpred')
+splsda.res <- splsda(liver.toxicity$gene, liver.toxicity$treatment$Treatment.Group,
+                     keepX = c(25, 25), ncomp = 2)
 
-# MSEP
-plot(liver.val, criterion  = 'MSEP')
-## validation for objects of class 'spls' (regression)
-# ----------------------------------------
-ncomp = 7
-# first, learn the model on the whole data set
-model.spls = spls(X, Y, ncomp = ncomp, mode = 'regression',
-                  keepX = c(rep(10, ncomp)), keepY = c(rep(4,ncomp)))
+performance <- perf.assess(splsda.res,
+                           validation = "Mfold", folds = 3, nrepeat = 10, # to make sure each fold has all classes represented
+                           seed = 12)
 
+performance$error.rate$BER # can see slight improvement in error rate over PLS-DA example
 
-# with leave-one-out cross validation
-model.spls.val <- perf(model.spls, validation = "Mfold", folds = 5, seed = 45 )
+## PLS example
 
-#Q2 total
-model.spls.val$measures$Q2$summary
+ncol(liver.toxicity$clinic) # 10 Y variables as output of PLS model
 
-# R2: we can see how the performance degrades when ncomp increases
-plot(model.spls.val, criterion="R2")
+pls.res <- pls(liver.toxicity$gene, liver.toxicity$clinic, ncomp = 2)
 
-## validation for objects of class 'splsda' (classification)
-# ----------------------------------------
-data(srbct)
-X <- srbct$gene
-Y <- srbct$class
+performance <- perf.assess(pls.res, 
+                           validation = "Mfold", folds = 3, nrepeat = 10, # to make sure each fold has all classes represented
+                           seed = 12)
 
-ncomp = 2
+performance$measures$Q2$summary # see Q2 which gives indication of predictive ability for each of the 10 Y outputs
 
-srbct.splsda <- splsda(X, Y, ncomp = ncomp, keepX = rep(10, ncomp))
+## sPLS example
 
-# with Mfold
-# ---------
-error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", auc = TRUE, seed = 45)
-error
-error$auc
+spls.res <- spls(liver.toxicity$gene, liver.toxicity$clinic, ncomp = 2, keepX = c(50, 50))
 
-plot(error)
+performance <- perf.assess(spls.res, 
+                           validation = "Mfold", folds = 3, nrepeat = 10, # to make sure each fold has all classes represented
+                           seed = 12)
 
-# parallel code
-library(BiocParallel)
-error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", auc = TRUE, BPPARAM = SnowParam(workers = 2), seed = 45)
-
-# with 5 components and nrepeat=5, to get a $choice.ncomp
-ncomp = 5
-srbct.splsda <- splsda(X, Y, ncomp = ncomp, keepX = rep(10, ncomp))
-
-error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", nrepeat = 5, seed = 45)
-error$choice.ncomp
-
-plot(error)
+performance$measures$Q2$summary # see Q2 which gives indication of predictive ability for each of the 10 Y outputs
 
 
-## validation for objects of class 'mint.splsda' (classification)
-# ----------------------------------------
+## block PLS-DA example
 
-data(stemcells)
-res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, 
-                  ncomp = 3, keepX = c(10, 5, 15),
-                  study = stemcells$study)
+data("breast.TCGA")
+mrna <- breast.TCGA$data.train$mrna
+mirna <- breast.TCGA$data.train$mirna
+data <- list(mrna = mrna, mirna = mirna)
+design <- matrix(1, ncol = length(data), nrow = length(data), dimnames = list(names(data), names(data)))
+diag(design) <-  0
 
-out = perf(res, auc = TRUE)
-out
-plot(out)
-out$auc
-out$auc.study
+block.plsda.res <- block.plsda(X = data, Y = breast.TCGA$data.train$subtype, 
+                               ncomp = 2, design = design)
 
-## validation for objects of class 'sgccda' (classification)
-# ----------------------------------------
+performance <- perf.assess(block.plsda.res)
 
-data(nutrimouse)
-Y = nutrimouse$diet
-data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+performance$error.rate.per.class # error rate per class per distance metric
 
-nutrimouse.sgccda <- block.splsda(X=data,
-Y = Y,
-design = 'full',
-keepX = list(gene=c(10,10), lipid=c(15,15)),
-ncomp = 2)
+## block sPLS-DA example
 
-perf = perf(nutrimouse.sgccda)
-perf
-plot(perf)
+block.splsda.res <- block.splsda(X = data, Y = breast.TCGA$data.train$subtype, 
+                                 ncomp = 2, design = design,
+                                 keepX = list(mrna = c(8,8), mirna = c(8,8)))
 
+performance <- perf.assess(block.splsda.res)
 
-# with 5 components and nrepeat=5 to get $choice.ncomp
-nutrimouse.sgccda <- block.splsda(X=data,
-Y = Y,
-design = 'full',
-keepX = list(gene=c(10,10), lipid=c(15,15)),
-ncomp = 5)
+performance$error.rate.per.class
 
-perf = perf(nutrimouse.sgccda, folds = 5, nrepeat = 5)
-perf
-plot(perf)
-perf$choice.ncomp
-}
+## MINT PLS-DA example
+
+data("stemcells")
+
+mint.plsda.res <- mint.plsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 3,
+                             study = stemcells$study)
+
+performance <- perf.assess(mint.plsda.res)
+
+performance$global.error$BER # global error per distance metric
+
+## MINT sPLS-DA example
+
+mint.splsda.res <- mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 3, 
+                               keepX = c(10, 5, 15), study = stemcells$study)
+
+performance <- perf.assess(mint.splsda.res)
+
+performance$global.error$BER # error slightly higher in this sparse model verses non-sparse
 }
 \references{
 Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt S.
