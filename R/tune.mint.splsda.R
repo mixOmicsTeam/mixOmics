@@ -218,10 +218,6 @@ tune.mint.splsda <-
         if(sum(apply(table(Y,study)==0,2,sum)>0) >0)
             warning("At least one study does not contain all the levels of the outcome Y. The MINT algorithm might not perform as expected.")
         
-        
-        #-- dist
-        dist = match.arg(dist)
-        
         #-- light.output
         if (!is.logical(light.output))
             stop("'light.output' must be either TRUE or FALSE", call. = FALSE)
@@ -239,6 +235,13 @@ tune.mint.splsda <-
     } else {
         if (is.null(test.keepX) | length(test.keepX) == 1 | !is.numeric(test.keepX))
             stop("'test.keepX' must be a numeric vector with more than two entries", call. = FALSE)
+
+        #-- dist (for tune can only have one dist, for perf can have multiple)
+        dist = match.arg(
+        dist,
+        choices = c("max.dist", "centroids.dist", "mahalanobis.dist"),
+        several.ok = TRUE
+        )
         
         #-- end checking --#
         #------------------#

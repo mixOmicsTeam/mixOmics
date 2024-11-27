@@ -178,10 +178,6 @@ tune.mint.plsda <-
         if(sum(apply(table(Y,study)==0,2,sum)>0) >0)
             warning("At least one study does not contain all the levels of the outcome Y. The MINT algorithm might not perform as expected.")
         
-        
-        #-- dist
-        dist = match.arg(dist)
-        
         #-- light.output
         if (!is.logical(light.output))
             stop("'light.output' must be either TRUE or FALSE", call. = FALSE)
