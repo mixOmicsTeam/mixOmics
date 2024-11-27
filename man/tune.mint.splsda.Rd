@@ -64,7 +64,8 @@ Should be a subset of \code{"max.dist"}, \code{"centroids.dist"},
 \code{\link{predict}}.}
 
 \item{measure}{Two misclassification measure are available: overall
-misclassification error \code{overall} or the Balanced Error Rate \code{BER}}
+misclassification error \code{overall} or the Balanced Error Rate \code{BER}. 
+Only used when \code{test.keepX = NULL}.}
 
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)
 performance of the model.}

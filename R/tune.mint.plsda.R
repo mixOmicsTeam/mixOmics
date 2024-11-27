@@ -39,8 +39,6 @@
 #' Should be a subset of \code{"max.dist"}, \code{"centroids.dist"},
 #' \code{"mahalanobis.dist"}. Default is \code{"all"}. See
 #' \code{\link{predict}}.
-#' @param measure Two misclassification measure are available: overall
-#' misclassification error \code{overall} or the Balanced Error Rate \code{BER}
 #' @param auc if \code{TRUE} calculate the Area Under the Curve (AUC)
 #' performance of the model.
 #' @param progressBar by default set to \code{TRUE} to output the progress bar
@@ -99,7 +97,6 @@ tune.mint.plsda <-
               signif.threshold = 0.01,
               # PA params
               dist = c("max.dist", "centroids.dist", "mahalanobis.dist"),
-              measure = c("BER", "overall"),
               auc = FALSE,
               # running params
               progressBar = FALSE,
@@ -149,10 +146,6 @@ tune.mint.plsda <-
         
         if (is.null(ncomp) || !is.numeric(ncomp) || ncomp <= 0)
             stop("invalid number of variates, 'ncomp'.")
-        
-        
-        #-- measure
-        measure <- match.arg(measure)
         
         # -- check using the check of mint.splsda
         Y.mat = unmap(Y)

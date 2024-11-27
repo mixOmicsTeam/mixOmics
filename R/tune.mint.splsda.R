@@ -48,7 +48,8 @@
 #' \code{"mahalanobis.dist"}. Default is \code{"all"}. See
 #' \code{\link{predict}}.
 #' @param measure Two misclassification measure are available: overall
-#' misclassification error \code{overall} or the Balanced Error Rate \code{BER}
+#' misclassification error \code{overall} or the Balanced Error Rate \code{BER}. 
+#' Only used when \code{test.keepX = NULL}. 
 #' @param auc if \code{TRUE} calculate the Area Under the Curve (AUC)
 #' performance of the model.
 #' @param progressBar by default set to \code{TRUE} to output the progress bar
@@ -177,9 +178,6 @@ tune.mint.splsda <-
             stop("invalid number of variates, 'ncomp'.")
         
         
-        #-- measure
-        measure <- match.arg(measure)
-        
         #if ((!is.null(already.tested.X)) && (length(already.tested.X) != (ncomp - 1)) )
         #stop("The number of already tested parameters should be NULL or ", ncomp - 1, " since you set ncomp = ", ncomp)
         if (missing(already.tested.X))
@@ -248,6 +246,9 @@ tune.mint.splsda <-
         choices = c("max.dist", "centroids.dist", "mahalanobis.dist"),
         several.ok = TRUE
         )
+
+        #-- measure
+        measure <- match.arg(measure)
         
         #-- end checking --#
         #------------------#

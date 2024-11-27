@@ -15,7 +15,6 @@ tune.mint.plsda(
   near.zero.var = FALSE,
   signif.threshold = 0.01,
   dist = c("max.dist", "centroids.dist", "mahalanobis.dist"),
-  measure = c("BER", "overall"),
   auc = FALSE,
   progressBar = FALSE,
   light.output = TRUE
@@ -53,9 +52,6 @@ to 0.01.}
 Should be a subset of \code{"max.dist"}, \code{"centroids.dist"},
 \code{"mahalanobis.dist"}. Default is \code{"all"}. See
 \code{\link{predict}}.}
-
-\item{measure}{Two misclassification measure are available: overall
-misclassification error \code{overall} or the Balanced Error Rate \code{BER}}
 
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)
 performance of the model.}
