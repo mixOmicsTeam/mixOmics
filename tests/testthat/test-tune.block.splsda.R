@@ -157,6 +157,11 @@ test_that("tune.block.splsda works independently and in tune wrapper the same", 
     BPPARAM = SerialParam(), seed = 42
   )
   expect_equal(tune11$choice.keepX, tune41$choice.keepX)
+  
+  # check can plot outputs
+  expect_silent(plot(tune41))
+  expect_silent(plot(tune11))
+
 })
 
 test_that("tune.block.splsda works when test.keepX = NULL and gives same result as perf()", code = {

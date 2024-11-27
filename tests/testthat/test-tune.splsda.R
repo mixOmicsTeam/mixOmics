@@ -45,6 +45,12 @@ test_that("tune.splsda works and is the same in parallel and when run in tune wr
   .expect_numerically_close(tune.splsda.res.3$error.rate[1,1], 0.3111111)
   .expect_numerically_close(tune.splsda.res.4$error.rate[1,1], 0.3111111)
   
+  # check can plot outputs
+  expect_silent(plot(tune.splsda.res.1))
+  expect_silent(plot(tune.splsda.res.2))
+  expect_silent(plot(tune.splsda.res.3))
+  expect_silent(plot(tune.splsda.res.4))
+  
 })
 
 test_that("tune.splsda works when test.keepX = NULL and gives same result as perf()", code = {

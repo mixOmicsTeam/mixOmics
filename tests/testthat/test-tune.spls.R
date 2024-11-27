@@ -64,6 +64,12 @@ test_that("tune.spls works and is the same in parallel and when run in tune wrap
   .expect_numerically_close(tune.spls.res.1$measure.pred$mean, tune.spls.res.2$measure.pred$mean)
   .expect_numerically_close(tune.spls.res.1$measure.pred$mean, tune.spls.res.3$measure.pred$mean)
   .expect_numerically_close(tune.spls.res.1$measure.pred$mean, tune.spls.res.4$measure.pred$mean)
+  
+  # check can plot outputs
+  expect_silent(plot(tune.spls.res.1))
+  expect_silent(plot(tune.spls.res.2))
+  expect_silent(plot(tune.spls.res.3))
+  expect_silent(plot(tune.spls.res.4))
 })
 
 ## If ncol(Y) == 1 tune.spls calls tune.spls1

@@ -19,6 +19,9 @@ test_that("tune.spca works in serial and parallel", {
   expect_equal(object_parallel$choice.keepX[[1]], 35)
   expect_equal(object_parallel$choice.keepX[[2]], 5)
   .expect_numerically_close(object_parallel$cor.comp$comp1[1,2], 0.3994544)
+  # test can plot outputs
+  expect_silent(plot(object_serial))
+  expect_silent(plot(object_parallel))
 })
 
 test_that("tune.spca same result in serial and parallel", {
@@ -77,5 +80,8 @@ test_that("tune.spca and tune(method='spca') are equivalent", {
   expect_equal(object1$choice.keepX[[1]], object2$choice.keepX[[1]])
   expect_equal(object1$choice.keepX[[2]], object2$choice.keepX[[2]])
   .expect_numerically_close(object1$cor.comp$comp1[3,3], object2$cor.comp$comp1[3,3])
+  # test can plot outputs
+  expect_silent(plot(object1))
+  expect_silent(plot(object2))
 })
   

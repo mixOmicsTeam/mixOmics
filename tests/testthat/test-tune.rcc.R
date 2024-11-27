@@ -14,6 +14,9 @@ test_that("tune.rcc works with Mfold method", code = {
   expect_equal(class(tune.rcc.res), "tune.rcc")
   expect_equal(tune.rcc.res$opt.lambda1, 0.5005)
   expect_equal(tune.rcc.res$grid1, c(0.00100, 0.25075, 0.50050, 0.75025, 1.00000))
+  
+  # check can plot
+  expect_silent(plot(tune.rcc.res))
 })
 
 test_that("tune.rcc works with loo method", code = {
@@ -29,6 +32,9 @@ test_that("tune.rcc works with loo method", code = {
   expect_equal(class(tune.rcc.res), "tune.rcc")
   expect_equal(tune.rcc.res$opt.lambda1, 0.25075)
   expect_equal(tune.rcc.res$grid1, c(0.00100, 0.25075, 0.50050, 0.75025, 1.00000))
+  
+  # check can plot
+  expect_silent(plot(tune.rcc.res))
 })
   
 test_that("tune.rcc works in parallel same as in series", code = {
@@ -48,6 +54,10 @@ test_that("tune.rcc works in parallel same as in series", code = {
   expect_equal(class(tune.rcc.res), "tune.rcc")
   expect_equal(tune.rcc.res$opt.lambda2, tune.rcc.res.parallel$opt.lambda2)
   expect_equal(tune.rcc.res$grid2, tune.rcc.res.parallel$grid2)
+  
+  # check can plot
+  expect_silent(plot(tune.rcc.res))
+  expect_silent(plot(tune.rcc.res.parallel))
 })
 
 test_that("tune.rcc and tune(method='rcc') are equivalent", {
@@ -74,6 +84,10 @@ test_that("tune.rcc and tune(method='rcc') are equivalent", {
   expect_equal(class(tune.rcc.res.1), "tune.rcc")
   expect_equal(tune.rcc.res.1$opt.lambda2, tune.rcc.res.2$opt.lambda2)
   expect_equal(tune.rcc.res.1$grid2, tune.rcc.res.2$grid2)
+  
+  # check can plot
+  expect_silent(plot(tune.rcc.res.1))
+  expect_silent(plot(tune.rcc.res.2))
   
 })
 

@@ -20,6 +20,9 @@ test_that("tune.mint.splsda works", code = {
     expect_is(out, "tune.mint.splsda")
     expect_equal(out$choice.ncomp$ncomp, 1)
     
+    # check can plot
+    expect_silent(plot(out))
+    
 })
 
 test_that("tune.mint.splsda works with custom alpha", code = {
@@ -42,6 +45,9 @@ test_that("tune.mint.splsda works with custom alpha", code = {
     out$choice.keepX
     expect_is(out, "tune.mint.splsda")
     expect_equal(out$choice.ncomp$ncomp, 1)
+    
+    # check can plot
+    expect_silent(plot(out))
     
 })
 
