@@ -89,18 +89,18 @@
 #' @param object object of class inherited from \code{"pls"}, \code{"plsda"},
 #' \code{"spls"}, \code{"splsda"} or \code{"mint.splsda"}. The function will
 #' retrieve some key parameters stored in that object.
+#' @param validation a character string.  What kind of (internal) validation to use,
+#' matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
+#' \code{"Mfold"}. For MINT methods only \code{"loo"} will be used. 
+#' @param folds numeric. Number of folds in the Mfold cross-validation. See Details.
+#' @param nrepeat numierc. Number of times the Cross-Validation process is repeated.
+#' This is an important argument to ensure the estimation of the performance to
+#' be as accurate as possible. Default it 1. 
 #' @param dist only applies to an object inheriting from \code{"plsda"},
 #' \code{"splsda"} or \code{"mint.splsda"} to evaluate the classification
 #' performance of the model. Should be a subset of \code{"max.dist"},
 #' \code{"centroids.dist"}, \code{"mahalanobis.dist"}. Default is \code{"all"}.
 #' See \code{\link{predict}}.
-#' @param validation character.  What kind of (internal) validation to use,
-#' matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
-#' \code{"Mfold"}.
-#' @param folds the folds in the Mfold cross-validation. See Details.
-#' @param nrepeat Number of times the Cross-Validation process is repeated.
-#' This is an important argument to ensure the estimation of the performance to
-#' be as accurate as possible.
 #' @param auc if \code{TRUE} calculate the Area Under the Curve (AUC)
 #' performance of the model.
 #' @param progressBar by default set to \code{FALSE} to output the progress bar
