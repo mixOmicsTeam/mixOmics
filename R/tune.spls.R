@@ -163,7 +163,7 @@ tune.spls <-
            mode = c('regression', 'canonical', 'classic'),
            scale = TRUE,
            logratio = "none",
-           tol = 1e-06,
+           tol = 1e-09,
            max.iter = 100,
            near.zero.var = FALSE,
            multilevel = NULL,

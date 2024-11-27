@@ -10,24 +10,27 @@ test_that("tune.spls works and is the same in parallel and when run in tune wrap
   
   # run in serial
   tune.spls.res.1 = suppressWarnings(tune.spls(X, Y, ncomp = 2,
-                                             test.keepX = seq(5, 10, 5),
+                                             test.keepX = seq(5, 10, 5), 
                                              test.keepY = seq(3, 6, 3), measure = "cor",
+                                             logratio = "none", mode = "regression", 
                                              folds = 2, nrepeat = 1, progressBar = FALSE,
                                              BPPARAM = SerialParam(RNGseed = 5), # RNGseed is ignored
                                              seed = 5212))
   
   # run in parallel
   tune.spls.res.2 = suppressWarnings(tune.spls(X, Y, ncomp = 2,
-                                               test.keepX = seq(5, 10, 5),
+                                               test.keepX = seq(5, 10, 5), 
                                                test.keepY = seq(3, 6, 3), measure = "cor",
+                                               logratio = "none", mode = "regression", 
                                                folds = 2, nrepeat = 1, progressBar = FALSE,
                                                BPPARAM = SnowParam(workers = 2),
                                                seed = 5212))
   
   # in tune wrapper in serial
   tune.spls.res.3 = suppressWarnings(tune(X, Y, ncomp = 2,
-                                               test.keepX = seq(5, 10, 5),
+                                               test.keepX = seq(5, 10, 5), 
                                                test.keepY = seq(3, 6, 3), measure = "cor",
+                                               logratio = "none", mode = "regression", 
                                                folds = 2, nrepeat = 1, progressBar = FALSE,
                                                BPPARAM = SerialParam(RNGseed = NULL),
                                           seed = 5212,
@@ -36,8 +39,9 @@ test_that("tune.spls works and is the same in parallel and when run in tune wrap
 
   # in tune wrapper in parallel
   tune.spls.res.4 = suppressWarnings(tune(X, Y, ncomp = 2,
-                                          test.keepX = seq(5, 10, 5),
+                                          test.keepX = seq(5, 10, 5), 
                                           test.keepY = seq(3, 6, 3), measure = "cor",
+                                          logratio = "none", mode = "regression", 
                                           folds = 2, nrepeat = 1, progressBar = FALSE,
                                           BPPARAM = SnowParam(workers = 2),
                                           method = "spls",
@@ -57,9 +61,9 @@ test_that("tune.spls works and is the same in parallel and when run in tune wrap
   expect_equal(unname(tune.spls.res.4$choice.keepY), c(3,6))
   
   # check outputs exactly the same regardless of how the function was run
-  expect_equal(tune.spls.res.1$measure.pred$mean, tune.spls.res.2$measure.pred$mean)
-  expect_equal(tune.spls.res.1$measure.pred$mean, tune.spls.res.3$measure.pred$mean)
-  expect_equal(tune.spls.res.1$measure.pred$mean, tune.spls.res.4$measure.pred$mean)
+  .expect_numerically_close(tune.spls.res.1$measure.pred$mean, tune.spls.res.2$measure.pred$mean)
+  .expect_numerically_close(tune.spls.res.1$measure.pred$mean, tune.spls.res.3$measure.pred$mean)
+  .expect_numerically_close(tune.spls.res.1$measure.pred$mean, tune.spls.res.4$measure.pred$mean)
 })
 
 ## If ncol(Y) == 1 tune.spls calls tune.spls1
