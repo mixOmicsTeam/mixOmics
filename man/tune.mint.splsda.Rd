@@ -11,16 +11,16 @@ tune.mint.splsda(
   study,
   test.keepX = NULL,
   already.tested.X,
-  dist = c("max.dist", "centroids.dist", "mahalanobis.dist"),
-  measure = c("BER", "overall"),
-  auc = FALSE,
-  progressBar = FALSE,
   scale = TRUE,
   tol = 1e-06,
   max.iter = 100,
   near.zero.var = FALSE,
-  light.output = TRUE,
-  signif.threshold = 0.01
+  signif.threshold = 0.01,
+  dist = c("max.dist", "centroids.dist", "mahalanobis.dist"),
+  measure = c("BER", "overall"),
+  auc = FALSE,
+  progressBar = FALSE,
+  light.output = TRUE
 )
 }
 \arguments{
@@ -42,6 +42,21 @@ test from the \eqn{X} data set. If set to NULL only number of components will be
 number of variables to select from the \eqn{X} data set on the firsts
 components}
 
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
+means and unit variances (default: TRUE)}
+
+\item{tol}{Convergence stopping value.}
+
+\item{max.iter}{integer, the maximum number of iterations.}
+
+\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
+function (should be set to TRUE in particular for data with many zero
+values). Default value is FALSE}
+
+\item{signif.threshold}{numeric between 0 and 1 indicating the significance
+threshold required for improvement in error rate of the components. Default
+to 0.01.}
+
 \item{dist}{only applies to an object inheriting from \code{"plsda"} or
 \code{"splsda"} to evaluate the classification performance of the model.
 Should be a subset of \code{"max.dist"}, \code{"centroids.dist"},
@@ -57,23 +72,8 @@ performance of the model.}
 \item{progressBar}{by default set to \code{TRUE} to output the progress bar
 of the computation.}
 
-\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
-means and unit variances (default: TRUE)}
-
-\item{tol}{Convergence stopping value.}
-
-\item{max.iter}{integer, the maximum number of iterations.}
-
-\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
-function (should be set to TRUE in particular for data with many zero
-values). Default value is FALSE}
-
 \item{light.output}{if set to FALSE, the prediction/classification of each
 sample for each of \code{test.keepX} and each comp is returned.}
-
-\item{signif.threshold}{numeric between 0 and 1 indicating the significance
-threshold required for improvement in error rate of the components. Default
-to 0.01.}
 }
 \value{
 The returned value is a list with components:

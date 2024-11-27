@@ -90,16 +90,20 @@ tune.mint.plsda <-
               Y,
               ncomp = 1,
               study,
-              dist = c("max.dist", "centroids.dist", "mahalanobis.dist"),
-              measure = c("BER", "overall"),
-              auc = FALSE,
-              progressBar = FALSE,
+              # model building params
               scale = TRUE,
               tol = 1e-06,
               max.iter = 100,
               near.zero.var = FALSE,
-              light.output = TRUE, # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
-              signif.threshold = 0.01
+              # CV params
+              signif.threshold = 0.01,
+              # PA params
+              dist = c("max.dist", "centroids.dist", "mahalanobis.dist"),
+              measure = c("BER", "overall"),
+              auc = FALSE,
+              # running params
+              progressBar = FALSE,
+              light.output = TRUE # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
     )
     {    
         #-- checking general input parameters --------------------------------------#
