@@ -347,7 +347,6 @@ tune <-
             # model building params
             X = X, Y = Y, indY = indY, ncomp = ncomp, design = design,
             tol = tol, scale = scale, max.iter = max.iter, near.zero.var = near.zero.var,
-            scheme = scheme, init = init, # hardcoded above
             # sparsity params
             test.keepX = test.keepX, already.tested.X = already.tested.X,
             # CV params

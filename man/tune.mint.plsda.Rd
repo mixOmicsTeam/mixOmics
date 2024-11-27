@@ -18,8 +18,7 @@ tune.mint.plsda(
   max.iter = 100,
   near.zero.var = FALSE,
   light.output = TRUE,
-  signif.threshold = 0.01,
-  ...
+  signif.threshold = 0.01
 )
 }
 \arguments{

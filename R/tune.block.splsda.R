@@ -155,8 +155,7 @@ tune.block.splsda <-
             progressBar = FALSE,
             light.output = TRUE, # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
             BPPARAM = SerialParam(),
-            seed = NULL,
-            ...)
+            seed = NULL)
   {
     if (hasArg('cpus')) #defunct
     {

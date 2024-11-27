@@ -27,8 +27,7 @@ tune.block.splsda(
   progressBar = FALSE,
   light.output = TRUE,
   BPPARAM = SerialParam(),
-  seed = NULL,
-  ...
+  seed = NULL
 )
 }
 \arguments{
