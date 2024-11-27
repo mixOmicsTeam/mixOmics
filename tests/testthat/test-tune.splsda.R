@@ -68,5 +68,5 @@ test_that("tune.splsda works when test.keepX = NULL and gives same result as per
   )
   
   # check results match
-  expect_equal(tune_res$error.rate$overall[1,2], perf_res$error.rate$overall[1,2])
+  expect_equal(tune_res$error.rate$overall[2,1], perf_res$error.rate$overall[2,1])
 })
