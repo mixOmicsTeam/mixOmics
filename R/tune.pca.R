@@ -52,11 +52,8 @@
 #' for more details.
 #' @keywords algebra
 #' @export
-#' @examples
-#' data(liver.toxicity)
-#' tune <- tune.pca(liver.toxicity$gene, center = TRUE, scale = TRUE)
-#' tune
-#' plot(tune)
+#' @example ./examples/tune.pca-examples.R
+
 tune.pca <-
     function(X,
              ncomp = NULL,
