@@ -7,6 +7,7 @@ Y = as.factor(breast.tumors$sample$treatment)
 tune = tune.splsda(X, Y, ncomp = 5, logratio = "none",
                    nrepeat = 10, folds = 10,
                    test.keepX = NULL, 
+                   dist = "all",
                    progressBar = TRUE,
                    seed = 20) # set for reproducibility of example only
 plot(tune) # optimal distance = centroids.dist
@@ -22,7 +23,7 @@ tune = tune.splsda(X, Y, ncomp = 3, logratio = "none",
 plot(tune)
 tune$choice.keepX # optimal number of variables to keep c(15, 5, 15)
 
-\dontrun{
+## With already tested variables:
 tune = tune.splsda(X, Y, ncomp = 3, logratio = "none",
                    nrepeat = 10, folds = 10, 
                    test.keepX = c(5, 10, 15), already.tested.X = c(5, 10),
@@ -39,8 +40,14 @@ Y = vac18$stimulation
 # sample indicates the repeated measurements
 design = data.frame(sample = vac18$sample)
 
+# tune on components
+tune = tune.splsda(X, Y = Y, ncomp = 5, nrepeat = 10, logratio = "none",
+                   test.keepX = NULL, folds = 10, dist = "max.dist", multilevel = design)
+
+plot(tune)
+
+# tune on variables
 tune = tune.splsda(X, Y = Y, ncomp = 3, nrepeat = 10, logratio = "none",
                    test.keepX = c(5,50,100),folds = 10, dist = "max.dist", multilevel = design)
 
 plot(tune)
-}
