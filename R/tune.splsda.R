@@ -308,9 +308,11 @@ tune.splsda <-
         } else {
 
             # reformat multilevel design for tuning variables
-            multilevel = data.frame(multilevel, Y)
-            multilevel[, 1] = as.numeric(factor(multilevel[, 1])) # we want numbers for the repeated measurements
-        
+            if (!is.null(multilevel)){
+                multilevel = data.frame(multilevel, Y)
+                multilevel[, 1] = as.numeric(factor(multilevel[, 1])) # we want numbers for the repeated measurements
+            }
+            
             #-- test.keepX
             if (length(test.keepX) == 1 | !is.numeric(test.keepX))
                 stop("'test.keepX' must be a numeric vector with more than two entries", call. = FALSE)
