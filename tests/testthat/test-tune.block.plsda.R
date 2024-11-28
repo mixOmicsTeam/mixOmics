@@ -42,6 +42,8 @@ test_that("tune.block.plsda works and is the same as perf alone and in tune wrap
   .expect_numerically_close(tune.res.3$error.rate.per.class$mrna$max.dist[3,2], 0.25)
   
   # check can plot outputs
+  pdf(NULL)
+  on.exit(dev.off())
   expect_silent(plot(tune.res.1))
   expect_silent(plot(tune.res.2))
   expect_silent(plot(tune.res.3))

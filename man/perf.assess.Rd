@@ -302,7 +302,8 @@ length(liver.toxicity$treatment$Treatment.Group) # 64 samples
 plsda.res <- plsda(liver.toxicity$gene, liver.toxicity$treatment$Treatment.Group, ncomp = 2)
 
 performance <- perf.assess(plsda.res, 
-                           validation = "Mfold", folds = 3, nrepeat = 10, # to make sure each fold has all classes represented
+                        # to make sure each fold has all classes represented
+                           validation = "Mfold", folds = 3, nrepeat = 10, 
                            seed = 12) # for reproducibility, remove for analysis
 
 performance$error.rate$BER
@@ -313,7 +314,7 @@ splsda.res <- splsda(liver.toxicity$gene, liver.toxicity$treatment$Treatment.Gro
                      keepX = c(25, 25), ncomp = 2)
 
 performance <- perf.assess(splsda.res,
-                           validation = "Mfold", folds = 3, nrepeat = 10, # to make sure each fold has all classes represented
+                           validation = "Mfold", folds = 3, nrepeat = 10, 
                            seed = 12)
 
 performance$error.rate$BER # can see slight improvement in error rate over PLS-DA example
@@ -325,20 +326,22 @@ ncol(liver.toxicity$clinic) # 10 Y variables as output of PLS model
 pls.res <- pls(liver.toxicity$gene, liver.toxicity$clinic, ncomp = 2)
 
 performance <- perf.assess(pls.res, 
-                           validation = "Mfold", folds = 3, nrepeat = 10, # to make sure each fold has all classes represented
+                           validation = "Mfold", folds = 3, nrepeat = 10,
                            seed = 12)
 
-performance$measures$Q2$summary # see Q2 which gives indication of predictive ability for each of the 10 Y outputs
+# see Q2 which gives indication of predictive ability for each of the 10 Y outputs
+performance$measures$Q2$summary 
 
 ## sPLS example
 
 spls.res <- spls(liver.toxicity$gene, liver.toxicity$clinic, ncomp = 2, keepX = c(50, 50))
 
 performance <- perf.assess(spls.res, 
-                           validation = "Mfold", folds = 3, nrepeat = 10, # to make sure each fold has all classes represented
+                           validation = "Mfold", folds = 3, nrepeat = 10, 
                            seed = 12)
 
-performance$measures$Q2$summary # see Q2 which gives indication of predictive ability for each of the 10 Y outputs
+# see Q2 which gives indication of predictive ability for each of the 10 Y outputs
+performance$measures$Q2$summary
 
 
 ## block PLS-DA example

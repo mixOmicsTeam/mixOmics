@@ -159,6 +159,8 @@ test_that("tune.block.splsda works independently and in tune wrapper the same", 
   expect_equal(tune11$choice.keepX, tune41$choice.keepX)
   
   # check can plot outputs
+  pdf(NULL)
+  on.exit(dev.off())
   expect_silent(plot(tune41))
   expect_silent(plot(tune11))
 

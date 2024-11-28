@@ -36,6 +36,8 @@ test_that("tune.mint.plsda works and is the same perf alone and in tune wrapper"
   .expect_numerically_close(tune.res.3$global.error$BER[1,1], 0.3803556)
   
   # check can plot outputs
+  pdf(NULL)
+  on.exit(dev.off())
   expect_silent(plot(tune.res.1))
   expect_silent(plot(tune.res.2))
   expect_silent(plot(tune.res.3))

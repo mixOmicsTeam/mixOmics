@@ -43,6 +43,8 @@ test_that("tune.plsda works and is the same perf alone and in tune wrapper", cod
   .expect_numerically_close(tune.plsda.res.3$error.rate$overall[1,1], 0.5106383)
   
   # check can plot
+  pdf(NULL)
+  on.exit(dev.off())
   expect_silent(plot(tune.plsda.res.1))
   expect_silent(plot(tune.plsda.res.2))
   expect_silent(plot(tune.plsda.res.3))

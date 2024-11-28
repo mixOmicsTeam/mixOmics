@@ -31,6 +31,8 @@ test_that("tune.pls works and is the same as perf alone and in tune wrapper", co
   .expect_numerically_close(tune.res.3$measures$Q2$summary[1,3], -0.1304012)
   
   # check can plot outputs
+  pdf(NULL)
+  on.exit(dev.off())
   expect_silent(plot(tune.res.1))
   expect_silent(plot(tune.res.2))
   expect_silent(plot(tune.res.3))

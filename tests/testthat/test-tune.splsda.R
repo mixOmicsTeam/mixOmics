@@ -31,11 +31,13 @@ test_that("tune.splsda works and is the same in parallel and when run in tune wr
                          method = "splsda")
   
   
-  # check outputs
+  # check outputs format
   expect_equal(class(tune.splsda.res.1), "tune.splsda")
   expect_equal(class(tune.splsda.res.2), "tune.splsda")
   expect_equal(class(tune.splsda.res.3), "tune.splsda")
   expect_equal(class(tune.splsda.res.4), "tune.splsda")
+  
+  # check output values
   expect_equal(unname(tune.splsda.res.1$choice.keepX), c(10,15))
   expect_equal(unname(tune.splsda.res.2$choice.keepX), c(10,15))
   expect_equal(unname(tune.splsda.res.3$choice.keepX), c(10,15))
@@ -46,10 +48,10 @@ test_that("tune.splsda works and is the same in parallel and when run in tune wr
   .expect_numerically_close(tune.splsda.res.4$error.rate[1,1], 0.3111111)
   
   # check can plot outputs
-  expect_silent(plot(tune.splsda.res.1))
-  expect_silent(plot(tune.splsda.res.2))
-  expect_silent(plot(tune.splsda.res.3))
-  expect_silent(plot(tune.splsda.res.4))
+  expect_is(plot(tune.splsda.res.1), "ggplot")
+  expect_is(plot(tune.splsda.res.2), "ggplot")
+  expect_is(plot(tune.splsda.res.3), "ggplot")
+  expect_is(plot(tune.splsda.res.4), "ggplot")
   
 })
 

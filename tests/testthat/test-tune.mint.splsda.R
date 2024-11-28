@@ -21,7 +21,9 @@ test_that("tune.mint.splsda works", code = {
     expect_equal(out$choice.ncomp$ncomp, 1)
     
     # check can plot
-    expect_silent(plot(out))
+    pdf(NULL)
+    on.exit(dev.off())
+    expect_error(plot(out), NA) # makes note about not being able to plot SD bars
     
 })
 
@@ -47,7 +49,9 @@ test_that("tune.mint.splsda works with custom alpha", code = {
     expect_equal(out$choice.ncomp$ncomp, 1)
     
     # check can plot
-    expect_silent(plot(out))
+    pdf(NULL)
+    on.exit(dev.off())
+    expect_error(plot(out), NA) # makes note about not being able to plot SD bars
     
 })
 

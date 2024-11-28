@@ -9,6 +9,8 @@ test_that("tune.pca and tune(method='pca') are equivalent", {
   expect_equal(object1$ncomp, object2$ncomp)
   expect_equal(object1$sdev[1], object2$sdev[1])
   # check can plot outputs without errors
+  pdf(NULL)
+  on.exit(dev.off())
   expect_silent(plot(object1))
   expect_silent(plot(object2))
 })
