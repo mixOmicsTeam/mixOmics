@@ -279,7 +279,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 
 Alternatively, you can install the latest GitHub version of the package:
 
-```{r 02-install-github, eval = FALSE}
+```{r 02-install-github, eval = TRUE}
 BiocManager::install("mixOmicsTeam/mixOmics")
 ```
 
