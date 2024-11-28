@@ -1027,7 +1027,13 @@ perf.mixo_plsda <- function(object,
             }
             else
             {
-                ncomp_opt[measure, ijk] = which(t(rowMeans(mat.error.rate[[measure_i]][[ijk]])) == min(t(rowMeans(mat.error.rate[[measure_i]][[ijk]]))))
+                if(length(min(t(rowMeans(mat.error.rate[[measure_i]][[ijk]])))) > 1){
+                    # avoid multiple replacements - fix for issue #303
+                    print("More than one component found with same minimum error rate, selecting smaller component...")
+                    ncomp_opt[measure, ijk] = which(t(rowMeans(mat.error.rate[[measure_i]][[ijk]])) == min(t(rowMeans(mat.error.rate[[measure_i]][[ijk]]))))[1]
+                } else{
+                    ncomp_opt[measure, ijk] = which(t(rowMeans(mat.error.rate[[measure_i]][[ijk]])) == min(t(rowMeans(mat.error.rate[[measure_i]][[ijk]]))))
+                }
             }
         }
     }
