@@ -22,11 +22,22 @@ opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE)
 * enhancement request [#216](https://github.com/mixOmicsTeam/mixOmics/issues/216) implemented parallel processing using `BPPARAM` across all `tune()` functions
 * feature request [#335](https://github.com/mixOmicsTeam/mixOmics/issues/335) added `seed` argument to `perf()` functions for better reproducibility
 * feature request [#334](https://github.com/mixOmicsTeam/mixOmics/issues/334) added `seed` argument to `tune()` functions for better reproducibility
-
+* bug fix implemented for [#303](https://github.com/mixOmicsTeam/mixOmics/issues/303) multiple solutions found in `perf()` returns error
 * bug fix implemented for [#307](https://github.com/mixOmicsTeam/mixOmics/issues/307) `plotIndiv()` ellipses colours not matching points, now sample group order is respected and colours can be customised for points and ellipses
-
 * updated documentation to fix issue [#297](https://github.com/mixOmicsTeam/mixOmics/issues/297) broken link in bookdown vignette
 * updated documentation to fix issue [#296](https://github.com/mixOmicsTeam/mixOmics/issues/296) typo in vignette
+
+The performance assessment and parameter tuning workflow has been streamlined as described in issue [#343](https://github.com/mixOmicsTeam/mixOmics/issues/343)
+
+* New function: `perf.assess()` 
+This function essentially runs `perf()` on final model but only returns performance metrics for the number of components used in the final model. 
+Designed to be used in the final step of the workflow for quantifying final model performance. Outputs a list of values but no plotting functionality avaliable. 
+See [PR 344](https://github.com/mixOmicsTeam/mixOmics/pull/344) for more details. 
+
+* Additional functionality for `tune()` functions and new `tune()` functions created
+`tune()` can now be used in its original capacity (to tune number of variables and components simultaneously) or just to tune number of components by internally calling `perf()`. 
+Designed to be used for tuning both components and variables to keep across (s)PCA, (s)PLS, (s)PLSDA, block (s)PLSDA and mint (s)PLSDA models
+See [PR #348](https://github.com/mixOmicsTeam/mixOmics/pull/348) for more details.  
 
 #### October 2024
 ** Version 6.30.0 **
