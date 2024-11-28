@@ -1,5 +1,41 @@
-## -------------------------- perf.mint(s)plsda --------------------------- ##
+#############################################################################################################
+# Authors:
+#   Amrit Singh, University of British Columbia, Vancouver.
+#   Florian Rohart, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
+#   Kim-Anh Le Cao, The University of Queensland, The University of Queensland Diamantina Institute, Translational Research Institute, Brisbane, QLD
+#
+# created: 01-04-2015
+# last modified: 27-05-2016
+#
+# Copyright (C) 2015
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#############################################################################################################
+
+
+# ----------------------------------------------------------------------------------------------------------
+# perf.assess.mint.plsda - Function to evaluate the performance of the fitted PLS (cross-validation)
+#   inputs: object - object obtain from running mint.plsda
+#           dist - to evaluate the classification performance
+#           validation - type of validation
+#           folds - number of folds if validation = "Mfold"
+# ----------------------------------------------------------------------------------------------------------
+#' ## -------------------------- perf.mint(s)plsda --------------------------- ##
+
 #' @rdname perf.assess
+#' @method perf.assess mint.plsda
 #' @export
 perf.assess.mint.plsda <- function (object,
                              dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
@@ -259,5 +295,6 @@ perf.assess.mint.plsda <- function (object,
 }
 
 #' @rdname perf.assess
+#' @method perf.assess mint.splsda
 #' @export
 perf.assess.mint.splsda <- perf.assess.mint.plsda

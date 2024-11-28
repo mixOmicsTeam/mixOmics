@@ -34,16 +34,6 @@
 #' that for PLS and sPLS objects, perf is performed on the pre-processed data
 #' after log ratio transform and multilevel analysis, if any.
 #' 
-#' Sparse methods. The sPLS, sPLS-DA and sgccda functions are run on several
-#' and different subsets of data (the cross-folds) and will certainly lead to
-#' different subset of selected features. Those are summarised in the output
-#' \code{features$stable} (see output Value below) to assess how often the
-#' variables are selected across all folds. Note that for PLS-DA and sPLS-DA
-#' objects, perf is performed on the original data, i.e. before the
-#' pre-processing step of the log ratio transform and multilevel analysis, if
-#' any. In addition for these methods, the classification error rate is
-#' averaged across all folds.
-#' 
 #' The mint.sPLS-DA function estimates errors based on Leave-one-group-out
 #' cross validation (where each levels of object$study is left out (and
 #' predicted) once) and provides study-specific outputs
@@ -63,8 +53,7 @@
 #' threshold based on distances (see \code{predict}) that optimally determine
 #' class membership of the samples tested. As such AUC and ROC are not needed
 #' to estimate the performance of the model. We provide those outputs as
-#' complementary performance measures. See more details in our mixOmics
-#' article.
+#' complementary performance measures.
 #' 
 #' Prediction distances. See details from \code{?predict}, and also our
 #' supplemental material in the mixOmics article.
@@ -87,20 +76,20 @@
 #' More details about the PLS modes in \code{?pls}.
 #'
 #' @param object object of class inherited from \code{"pls"}, \code{"plsda"},
-#' \code{"spls"}, \code{"splsda"} or \code{"mint.splsda"}. The function will
+#' \code{"spls"}, \code{"splsda"}. \code{"sgccda"} or \code{"mint.splsda"}. The function will
 #' retrieve some key parameters stored in that object.
+#' @param validation a character string.  What kind of (internal) validation to use,
+#' matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
+#' \code{"Mfold"}. For MINT methods only \code{"loo"} will be used. 
+#' @param folds numeric. Number of folds in the Mfold cross-validation. See Details.
+#' @param nrepeat numierc. Number of times the Cross-Validation process is repeated.
+#' This is an important argument to ensure the estimation of the performance to
+#' be as accurate as possible. Default it 1. 
 #' @param dist only applies to an object inheriting from \code{"plsda"},
 #' \code{"splsda"} or \code{"mint.splsda"} to evaluate the classification
 #' performance of the model. Should be a subset of \code{"max.dist"},
 #' \code{"centroids.dist"}, \code{"mahalanobis.dist"}. Default is \code{"all"}.
 #' See \code{\link{predict}}.
-#' @param validation character.  What kind of (internal) validation to use,
-#' matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
-#' \code{"Mfold"}.
-#' @param folds the folds in the Mfold cross-validation. See Details.
-#' @param nrepeat Number of times the Cross-Validation process is repeated.
-#' This is an important argument to ensure the estimation of the performance to
-#' be as accurate as possible.
 #' @param auc if \code{TRUE} calculate the Area Under the Curve (AUC)
 #' performance of the model.
 #' @param progressBar by default set to \code{FALSE} to output the progress bar
@@ -113,15 +102,16 @@
 #' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 #' Note 'seed' is not required or used in perf.mint.plsda as this method uses loo cross-validation
 #' @param ... not used
-#' @return For PLS and sPLS models, \code{perf} produces a list with the
-#' following components for every repeat: 
+
+#' @return For PLS and sPLS models:
 #' \item{MSEP}{Mean Square Error Prediction for each \eqn{Y} variable, only 
 #' applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
 #' available when in regression (s)PLS.} 
 #' \item{RMSEP}{Root Mean Square Error Prediction for each \eqn{Y} variable, only 
 #' applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
 #' available when in regression (s)PLS.} 
-#' \item{R2}{a matrix of \eqn{R^2} values of the \eqn{Y}-variables. Only applies to object
+#' \item{R2}{a matrix of \eqn{R^2} values of the \eqn{Y}-variables for models 
+#' with \eqn{1, \ldots ,}\code{ncomp} components, only applies to object
 #' inherited from \code{"pls"}, and \code{"spls"}. Only available when in 
 #' regression (s)PLS.}
 #' \item{Q2}{if \eqn{Y} contains one variable, a vector of \eqn{Q^2} values
@@ -129,41 +119,44 @@
 #' Note that in the specific case of an sPLS model, it is better to have a look
 #' at the Q2.total criterion, only applies to object inherited from
 #' \code{"pls"}, and \code{"spls"}. Only available when in regression (s)PLS.} 
-#' \item{Q2.total}{a vector of \eqn{Q^2}-total values for model, only applies to object inherited from 
+#' \item{Q2.total}{a vector of \eqn{Q^2}-total values for models with \eqn{1, 
+#' \ldots ,}\code{ncomp} components, only applies to object inherited from 
 #' \code{"pls"}, and \code{"spls"}. Available in both (s)PLS modes.}
-#' \item{RSS}{Residual Sum of Squares across all selected features.}
+#' \item{RSS}{Residual Sum of Squares across all selected features}
 #' \item{PRESS}{Predicted Residual Error Sum of Squares across all selected features}
-#' \item{features}{a list of features selected across the 
-#' folds (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
-#' \code{keepY} parameters from the input object. Note, this will be \code{NULL} 
-#' if using standard (non-sparse) PLS.} 
 #' \item{cor.tpred, cor.upred}{Correlation between the 
 #' predicted and actual components for X (t) and Y (u)} 
 #' \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
-#' predicted and actual components for X (t) and Y (u)} 
-#' \item{error.rate}{ For
-#' PLS-DA and sPLS-DA models, \code{perf} produces a matrix of classification
-#' error rate estimation using overall and BER error rates across different distance methods. 
-#' Although error rates are only reported for the number of components used in the final model, 
-#' Note that are calculated including the performance of the model in a smaller number of
-#' components for the specified \code{keepX} parameters (e.g. error rate
-#' reported for component 3 for \code{keepX = 20} already includes the fitted
-#' model on components 1 and 2 for \code{keepX = 20}). For more advanced usage
-#' of the \code{perf} function, see \url{www.mixomics.org/methods/spls-da/} and
-#' consider using the \code{predict} function.} 
-#' \item{auc}{Averaged AUC values
-#' over the \code{nrepeat}}
+#' predicted and actual components for X (t) and Y (u)}
 #' 
-#' #' For sgccda models, \code{perf} produces the following outputs:
+#' 
+#'
+#' For PLS-DA and sPLS-DA models:
+#' \item{error.rate}{Prediction error rate for each dist and measure}
+#' \item{auc}{AUC value averaged over the \code{nrepeat}}
+#' \item{auc.all}{AUC values per repeat}
+#' \item{predict}{Predicted values of each sample for each class}
+#' \item{class}{A list which gives the predicted class of each sample for each dist and each of the ncomp components}
+#' 
+#' For mint.splsda models:
+#' \item{study.specific.error}{A list that gives BER, overall error rate and
+#' error rate per class, for each study} 
+#' \item{global.error}{A list that gives
+#' BER, overall error rate and error rate per class for all samples}
+#' \item{predict}{A list of length \code{ncomp} that produces the predicted
+#' values of each sample for each class} 
+#' \item{class}{A list which gives the
+#' predicted class of each sample for each \code{dist}.}
+#' \item{auc}{AUC values} \item{auc.study}{AUC values for each study in mint models}
+#' 
+#' For sgccda models (i.e. block (s)PLS-DA models):
 #' \item{error.rate}{Prediction error rate for each block of \code{object$X}
 #' and each \code{dist}} 
 #' \item{error.rate.per.class}{Prediction error rate for
 #' each block of \code{object$X}, each \code{dist} and each class}
-#' \item{predict}{Predicted values of each sample for each class and each block.} 
-#' \item{class}{Predicted class of each sample for each block, each \code{dist}, and each nrepeat} 
-#' \item{features}{a list of features selected across the folds (\code{$stable.X} and
-#' \code{$stable.Y}) for the \code{keepX} and \code{keepY} parameters from the
-#' input object.} 
+#' \item{predict}{Predicted values of each sample for each class and each block} 
+#' \item{class}{Predicted class of each sample for each
+#' block, each \code{dist}, and each nrepeat} 
 #' \item{AveragedPredict.class}{if more than one block, returns
 #' the average predicted class over the blocks (averaged of the \code{Predict}
 #' output and prediction using the \code{max.dist} distance)}
@@ -187,15 +180,6 @@
 #' rate of the \code{WeightedVote} output} 
 #' \item{weights}{Returns the weights of each block used for the weighted predictions, for each nrepeat and each
 #' fold} 
-#' 
-#' For mint.splsda models, \code{perf} produces the following outputs:
-#' \item{study.specific.error}{A list that gives BER, overall error rate and
-#' error rate per class, for each study} 
-#' \item{global.error}{A list that gives BER, overall error rate and error rate per class for all samples}
-#' \item{predict}{A list of the predicted values of each sample for each class} 
-#' \item{class}{A list which gives the predicted class of each sample for each \code{dist}. Directly obtained from the \code{predict} output.}
-#' \item{auc}{AUC values} \item{auc.study}{AUC values for each study}
-#' 
 
 #' @author Ignacio González, Amrit Singh, Kim-Anh Lê Cao, Benoit Gautier,
 #' Florian Rohart, Al J Abadi
@@ -247,7 +231,7 @@
 #' 4:e1845.
 #' @keywords regression multivariate
 #' @export
-#' @example ./examples/perf-examples.R
+#' @example ./examples/perf.assess-examples.R
 ## ------------------------------- Generic -------------------------------- ##
 perf.assess <- function(object, ...)
     UseMethod("perf.assess")

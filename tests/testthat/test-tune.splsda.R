@@ -1,7 +1,7 @@
 context("tune.splsda")
 library(BiocParallel)
 
-test_that("tune.spls works and is the same in parallel and when run in tune wrapper", code = {
+test_that("tune.splsda works and is the same in parallel and when run in tune wrapper", code = {
   
   # set up data
   data(breast.tumors)
@@ -31,11 +31,13 @@ test_that("tune.spls works and is the same in parallel and when run in tune wrap
                          method = "splsda")
   
   
-  # check outputs
+  # check outputs format
   expect_equal(class(tune.splsda.res.1), "tune.splsda")
   expect_equal(class(tune.splsda.res.2), "tune.splsda")
   expect_equal(class(tune.splsda.res.3), "tune.splsda")
   expect_equal(class(tune.splsda.res.4), "tune.splsda")
+  
+  # check output values
   expect_equal(unname(tune.splsda.res.1$choice.keepX), c(10,15))
   expect_equal(unname(tune.splsda.res.2$choice.keepX), c(10,15))
   expect_equal(unname(tune.splsda.res.3$choice.keepX), c(10,15))
@@ -45,4 +47,34 @@ test_that("tune.spls works and is the same in parallel and when run in tune wrap
   .expect_numerically_close(tune.splsda.res.3$error.rate[1,1], 0.3111111)
   .expect_numerically_close(tune.splsda.res.4$error.rate[1,1], 0.3111111)
   
+  # check can plot outputs
+  expect_is(plot(tune.splsda.res.1), "ggplot")
+  expect_is(plot(tune.splsda.res.2), "ggplot")
+  expect_is(plot(tune.splsda.res.3), "ggplot")
+  expect_is(plot(tune.splsda.res.4), "ggplot")
+  
+})
+
+test_that("tune.splsda works when test.keepX = NULL and gives same result as perf()", code = {
+  
+  # set up data
+  data(breast.tumors)
+  X <- breast.tumors$gene.exp
+  Y <- as.factor(breast.tumors$sample$treatment)
+  
+  # tune on components only
+  tune_res <- suppressWarnings(
+    tune.splsda(X, Y, ncomp = 2, logratio = "none",
+                     nrepeat = 1, folds = 3,
+                     test.keepX = NULL, seed = 20)
+  )
+  
+  # run perf
+  splsda_res <- splsda(X, Y, ncomp = 2)
+  perf_res <- suppressWarnings(
+    perf(splsda_res, ncomp = 2, nrepeat = 1, folds = 3, seed = 20)
+  )
+  
+  # check results match
+  expect_equal(tune_res$error.rate$overall[2,1], perf_res$error.rate$overall[2,1])
 })

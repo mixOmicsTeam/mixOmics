@@ -8,12 +8,17 @@ test_that("tune.rcc works with Mfold method", code = {
   Y <- nutrimouse$gene
   
   # run
-  tune.rcc.res <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE, seed = 20)
+  tune.rcc.res <- tune.rcc(X, Y, validation = "Mfold", seed = 20)
   
   # check outputs
   expect_equal(class(tune.rcc.res), "tune.rcc")
   expect_equal(tune.rcc.res$opt.lambda1, 0.5005)
   expect_equal(tune.rcc.res$grid1, c(0.00100, 0.25075, 0.50050, 0.75025, 1.00000))
+  
+  # check can plot
+  pdf(NULL)
+  on.exit(dev.off())
+  expect_silent(plot(tune.rcc.res))
 })
 
 test_that("tune.rcc works with loo method", code = {
@@ -23,12 +28,17 @@ test_that("tune.rcc works with loo method", code = {
   Y <- nutrimouse$gene
   
   # run
-  tune.rcc.res <- tune.rcc(X, Y, validation = "loo", plot = FALSE, seed = 20)
+  tune.rcc.res <- tune.rcc(X, Y, validation = "loo", seed = 20)
   
   # check outputs
   expect_equal(class(tune.rcc.res), "tune.rcc")
   expect_equal(tune.rcc.res$opt.lambda1, 0.25075)
   expect_equal(tune.rcc.res$grid1, c(0.00100, 0.25075, 0.50050, 0.75025, 1.00000))
+  
+  # check can plot
+  pdf(NULL)
+  on.exit(dev.off())
+  expect_silent(plot(tune.rcc.res))
 })
   
 test_that("tune.rcc works in parallel same as in series", code = {
@@ -38,16 +48,22 @@ test_that("tune.rcc works in parallel same as in series", code = {
   Y <- nutrimouse$gene
   
   # run in series
-  tune.rcc.res <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE,
+  tune.rcc.res <- tune.rcc(X, Y, validation = "Mfold",
                            BPPARAM = SerialParam(RNGseed = NULL), seed = 12)
   # run in parallel
-  tune.rcc.res.parallel <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE,
+  tune.rcc.res.parallel <- tune.rcc(X, Y, validation = "Mfold",
                            BPPARAM = SnowParam(workers = 2, RNGseed = NULL), seed = 12)
   
   # check outputs
   expect_equal(class(tune.rcc.res), "tune.rcc")
   expect_equal(tune.rcc.res$opt.lambda2, tune.rcc.res.parallel$opt.lambda2)
   expect_equal(tune.rcc.res$grid2, tune.rcc.res.parallel$grid2)
+  
+  # check can plot
+  pdf(NULL)
+  on.exit(dev.off())
+  expect_silent(plot(tune.rcc.res))
+  expect_silent(plot(tune.rcc.res.parallel))
 })
 
 test_that("tune.rcc and tune(method='rcc') are equivalent", {
@@ -58,7 +74,7 @@ test_that("tune.rcc and tune(method='rcc') are equivalent", {
   Y <- nutrimouse$gene
   
   # run independently
-  tune.rcc.res.1 <- tune.rcc(X, Y, validation = "Mfold", plot = FALSE,
+  tune.rcc.res.1 <- tune.rcc(X, Y, validation = "Mfold",
                            BPPARAM = SerialParam(RNGseed = NULL), seed = 12,
                            grid1 = c(0.001, 0.2, 0.6, 1),
                            grid2 = c(0.001, 0.2, 0.6, 1))
@@ -74,6 +90,12 @@ test_that("tune.rcc and tune(method='rcc') are equivalent", {
   expect_equal(class(tune.rcc.res.1), "tune.rcc")
   expect_equal(tune.rcc.res.1$opt.lambda2, tune.rcc.res.2$opt.lambda2)
   expect_equal(tune.rcc.res.1$grid2, tune.rcc.res.2$grid2)
+  
+  # check can plot
+  pdf(NULL)
+  on.exit(dev.off())
+  expect_silent(plot(tune.rcc.res.1))
+  expect_silent(plot(tune.rcc.res.2))
   
 })
 

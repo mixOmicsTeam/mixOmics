@@ -1,15 +1,15 @@
 # ========================================================================================================
-# tune.splsda: chose the optimal number of parameters per component on a splsda method
+# tune.block.splsda: Tuning hyperparameters on a block splsda method
 # ========================================================================================================
 #' Tuning function for block.splsda method (N-integration with sparse
 #' Discriminant Analysis)
 #' 
 #' Computes M-fold or Leave-One-Out Cross-Validation scores based on a
-#' user-input grid to determine the optimal parsity parameters values for
+#' user-input grid to determine the optimal parameters for
 #' method \code{block.splsda}.
 #' 
-#' This tuning function should be used to tune the keepX parameters in the
-#' \code{block.splsda} function (N-integration with sparse Discriminant
+#' This tuning function should be used to tune the number of components and the 
+#' keepX parameters in the \code{block.splsda} function (N-integration with sparse Discriminant
 #' Analysis).
 #' 
 #' M-fold or LOO cross-validation is performed with stratified subsampling
@@ -39,26 +39,21 @@
 #' @param test.keepX A named list with the same length and names as X 
 #' (without the outcome Y, if it is provided in X and designated using 
 #' \code{indY}).  Each entry of this list is a numeric vector for the different 
-#' keepX values to test for that specific block.
+#' keepX values to test for that specific block. If set to NULL, ncomp is tuned. 
 #' @param already.tested.X Optional, if \code{ncomp > 1} A named list of 
 #' numeric vectors each of length \code{n_tested} indicating the number of 
 #' variables to select from the \eqn{X} data set on the first \code{n_tested} 
 #' components.
+#' @param measure only used when \code{test.keepX} is not NULL. Measure used when plotting, 
+#' should be 'BER' or 'overall'
+#' @param dist distance metric to estimate the classification error rate, should be one of 
+#' "centroids.dist", "mahalanobis.dist" or "max.dist" (see Details). If \code{test.keepX = NULL}, 
+#' can also input "all" or more than one distance metric
 #' @param weighted tune using either the performance of the Majority vote or
 #' the Weighted vote.
 #' @param signif.threshold numeric between 0 and 1 indicating the significance
 #' threshold required for improvement in error rate of the components. Default
 #' to 0.01.
-#' @param ... Optional arguments:
-#' \itemize{
-#'  \item \bold{seed} Integer. Seed number for reproducible parallel code.
-#'  Default is \code{NULL}.
-#' }
-#' run in parallel when repeating the cross-validation, which is usually the
-#' most computationally intensive process. If there is excess CPU, the
-#' cross-vaidation is also parallelised on *nix-based OS which support
-#' \code{mclapply}.
-#' Note that the argument 'scheme' has now been hardcoded to 'horst' and 'init' to 'svd.single'. 
 #' @return A list that contains: \item{error.rate}{returns the prediction error
 #' for each \code{test.keepX} on each component, averaged across all repeats
 #' and subsampling folds. Standard deviation is also output. All error rates
@@ -76,6 +71,45 @@
 #' 
 #' \item{cor.value}{compute the correlation between latent variables for
 #' two-factor sPLS-DA analysis.}
+#' 
+#' If \code{test.keepX = NULL}, returns:
+#' \item{error.rate}{Prediction error rate for each block of \code{object$X}
+#' and each \code{dist}} \item{error.rate.per.class}{Prediction error rate for
+#' each block of \code{object$X}, each \code{dist} and each class}
+#' \item{predict}{Predicted values of each sample for each class, each block
+#' and each component} \item{class}{Predicted class of each sample for each
+#' block, each \code{dist}, each component and each nrepeat} \item{features}{a
+#' list of features selected across the folds (\code{$stable.X} and
+#' \code{$stable.Y}) for the \code{keepX} and \code{keepY} parameters from the
+#' input object.} \item{AveragedPredict.class}{if more than one block, returns
+#' the average predicted class over the blocks (averaged of the \code{Predict}
+#' output and prediction using the \code{max.dist} distance)}
+#' \item{AveragedPredict.error.rate}{if more than one block, returns the
+#' average predicted error rate over the blocks (using the
+#' \code{AveragedPredict.class} output)} \item{WeightedPredict.class}{if more
+#' than one block, returns the weighted predicted class over the blocks
+#' (weighted average of the \code{Predict} output and prediction using the
+#' \code{max.dist} distance). See details for more info on weights.}
+#' \item{WeightedPredict.error.rate}{if more than one block, returns the
+#' weighted average predicted error rate over the blocks (using the
+#' \code{WeightedPredict.class} output.)} \item{MajorityVote}{if more than one
+#' block, returns the majority class over the blocks. NA for a sample means that
+#' there is no consensus on the predicted class for this particular sample over
+#' the blocks.} \item{MajorityVote.error.rate}{if more than one block, returns
+#' the error rate of the \code{MajorityVote} output}
+#' \item{WeightedVote}{if more than one block, returns the weighted majority
+#' class over the blocks. NA for a sample means that there is no consensus on
+#' the predicted class for this particular sample over the blocks.}
+#' \item{WeightedVote.error.rate}{if more than one block, returns the error
+#' rate of the \code{WeightedVote} output} \item{weights}{Returns the weights
+#' of each block used for the weighted predictions, for each nrepeat and each
+#' fold} \item{choice.ncomp}{For supervised models; returns the optimal number
+#' of components for the model for each prediction distance using one-sided
+#' t-tests that test for a significant difference in the mean error rate (gain
+#' in prediction) when components are added to the model. See more details in
+#' Rohart et al 2017 Suppl. For more than one block, an optimal ncomp is
+#' returned for each prediction framework.}
+#' 
 #' @author Florian Rohart, Amrit Singh, Kim-Anh Lê Cao, AL J Abadi
 #' @seealso \code{\link{block.splsda}} and http://www.mixOmics.org for more
 #' details.
@@ -93,32 +127,35 @@
 #' @export
 #' @example ./examples/tune.block.splsda-examples.R
 tune.block.splsda <- 
-  function (X,
+  function (
+            # basic params
+            X,
             Y,
             indY,
             ncomp = 2,
-            test.keepX,
-            already.tested.X,
-            validation = "Mfold",
-            folds = 10,
-            dist = "max.dist",
-            measure = "BER",
-            # one of c("overall","BER")
-            weighted = TRUE,
-            # optimise the weighted or not-weighted prediction
-            progressBar = FALSE,
+            # model building params
             tol = 1e-06,
             max.iter = 100,
             near.zero.var = FALSE,
-            nrepeat = 1,
             design,
             scale = TRUE,
-            light.output = TRUE,
-            # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
+            # sparse method params
+            test.keepX,
+            already.tested.X,
+            # cross validation params
+            validation = "Mfold",
+            folds = 10,
+            nrepeat = 1,
             signif.threshold=0.01,
+            # measure of performance params
+            dist = "max.dist",
+            measure = "BER", # one of c("overall","BER")
+            weighted = TRUE, # optimise the weighted or not-weighted prediction
+            # processing params
+            progressBar = FALSE,
+            light.output = TRUE, # if FALSE, output the prediction and classification of each sample during each folds, on each comp, for each repeat
             BPPARAM = SerialParam(),
-            seed = NULL,
-            ...)
+            seed = NULL)
   {
     if (hasArg('cpus')) #defunct
     {
@@ -182,13 +219,6 @@ tune.block.splsda <-
       }
       return(zm)
     })
-  
-    #-- dist
-    dist = match.arg(
-      dist,
-      choices = c("max.dist", "centroids.dist", "mahalanobis.dist"),
-      several.ok = TRUE
-    )
     
     #-- progressBar
     if (!is.logical(progressBar))
@@ -198,7 +228,6 @@ tune.block.splsda <-
     #-- ncomp
     if (is.null(ncomp) || !is.numeric(ncomp) || ncomp <= 0)
       stop("invalid number of variates, 'ncomp'.")
-    
     
     #-- validation
     choices = c("Mfold", "loo")
@@ -222,7 +251,6 @@ tune.block.splsda <-
     signif.threshold <- .check_alpha(signif.threshold)
     
     #-- already.tested.X
-    
     if (missing(already.tested.X))
     {
       already.tested.X = NULL
@@ -248,262 +276,283 @@ tune.block.splsda <-
         )
     }
     
+    #-- validation
     if (any(is.na(validation)) || length(validation) > 1)
       stop("'validation' should be one of 'Mfold' or 'loo'.", call. = FALSE)
     
     #-- test.keepX
-    if (missing(test.keepX))
-    {
-      test.keepX = lapply(X, function(x) {
-        max.test.keepX <- min(30, ncol(x))
-        if (max.test.keepX > 15)
-          return(seq(5, max.test.keepX, 5))
-        else
-          return(seq(1, max.test.keepX, 2))
-      })
-      
+    if (is.null(test.keepX)){
+      print("test.keepX is set to NULL, tuning only for number of components...")
+      block.splsda_res <- block.splsda(X, Y, ncomp = ncomp,
+                  scale = scale, tol = tol, max.iter = max.iter, near.zero.var = near.zero.var, design = design)
+      perf_res <- perf(block.splsda_res, 
+                validation = validation, folds = folds, nrepeat = nrepeat,
+                dist = dist,
+                BPPARAM = BPPARAM, seed = seed, progressBar = progressBar)
+      return(perf_res)
+
     } else {
-      if (length(test.keepX) != length(X))
-        stop(
-          paste(
-            "test.keepX should be a list of length ",
-            length(X),
-            ", corresponding to the blocks: ",
-            paste(names(X), collapse = ", "),
-            sep = ""
-          )
-        )
-      
-      #aa = sapply(test.keepX, length)
-      #if (any(is.null(aa) | aa == 1 | !is.numeric(aa)))
-      #stop("Each entry of 'test.keepX' must be a numeric vector with more than two values", call. = FALSE)
-      
-    }
-    
-    l = sapply(test.keepX, length)
-    n = names(test.keepX)
-    temp = data.frame(l, n)
-    
-    
-    message(
-      paste(
-        "\nYou have provided a sequence of keepX of length: ",
-        paste(apply(temp, 1, function(x)
-          paste(x, collapse = " for block ")), collapse = " and "),
-        ".\nThis results in ",
-        prod(sapply(test.keepX, length)),
-        " models being fitted for each component and each nrepeat, this may take some time to run, be patient!",
-        sep = ""
-      )
+
+      #-- dist (for tune can only have one dist, for perf can have multiple)
+      dist = match.arg(
+      dist,
+      choices = c("max.dist", "centroids.dist", "mahalanobis.dist"),
+      several.ok = TRUE
     )
-    
-    if (is (BPPARAM, 'SerialParam'))
-    {
-      message(paste0(
-        "\nYou can look into the 'BPPARAM' argument to speed up computation time."
-      ))
-      
-    } else {
-      if (progressBar == TRUE)
-        message(paste0(
-          "\nAs code is running in parallel, the progressBar is not available."
-        ))
-    }
-    
-    ## ----------- END checks -----------#
-    
-    ## ----------- NA calculation ----------- 
-    
-    misdata = c(sapply(X, anyNA), Y = FALSE) # Detection of missing data. we assume no missing values in the factor Y
-    
-    is.na.A = vector("list", length = length(X))
-    for (q in seq_along(X))
-    {
-      if (misdata[q])
+
+      if (missing(test.keepX))
       {
-        is.na.A[[q]] = is.na(X[[q]])
-        #ind.NA[[q]] = which(apply(is.na.A[[q]], 1, sum) > 0) # calculated only once
-        #ind.NA.col[[q]] = which(apply(is.na.A[[q]], 2, sum) >0) # indice of the col that have missing values. used in the deflation
-      }
-    }
-    
-    ## ----------- END NA calculation ----------- #
-    
-    
-    # if some components have already been tuned (eg comp1 and comp2), we're only tuning the following ones (comp3 comp4 .. ncomp)
-    if ((!is.null(already.tested.X)) & length(already.tested.X) > 0)
-    {
-      comp.real = (length(already.tested.X[[1]]) + 1):ncomp
-      #check and match already.tested.X to X
-      if (length(already.tested.X[[1]]) > 0)
-      {
-        if (length(unique(names(already.tested.X))) != length(already.tested.X) |
-            sum(is.na(match(names(
-              already.tested.X
-            ), names(X)))) > 0)
+        test.keepX = lapply(X, function(x) {
+          max.test.keepX <- min(30, ncol(x))
+          if (max.test.keepX > 15)
+            return(seq(5, max.test.keepX, 5))
+          else
+            return(seq(1, max.test.keepX, 2))
+        })
+        
+      } else {
+        if (length(test.keepX) != length(X))
           stop(
-            "Each entry of 'already.tested.X' must have a unique name corresponding to a block of 'X'"
+            paste(
+              "test.keepX should be a list of length ",
+              length(X),
+              ", corresponding to the blocks: ",
+              paste(names(X), collapse = ", "),
+              sep = ""
+            )
           )
+        
+        #aa = sapply(test.keepX, length)
+        #if (any(is.null(aa) | aa == 1 | !is.numeric(aa)))
+        #stop("Each entry of 'test.keepX' must be a numeric vector with more than two values", call. = FALSE)
         
       }
       
-    } else {
-      comp.real = seq_len(ncomp)
-    }
-    
-    # near zero var on the whole data sets. It will be performed inside each fold as well
-    if (near.zero.var == TRUE)
-    {
-      nzv.A = lapply(X, nearZeroVar)
+      l = sapply(test.keepX, length)
+      n = names(test.keepX)
+      temp = data.frame(l, n)
+      
+      
+      message(
+        paste(
+          "\nYou have provided a sequence of keepX of length: ",
+          paste(apply(temp, 1, function(x)
+            paste(x, collapse = " for block ")), collapse = " and "),
+          ".\nThis results in ",
+          prod(sapply(test.keepX, length)),
+          " models being fitted for each component and each nrepeat, this may take some time to run, be patient!",
+          sep = ""
+        )
+      )
+      
+      if (is (BPPARAM, 'SerialParam'))
+      {
+        message(paste0(
+          "\nYou can look into the 'BPPARAM' argument to speed up computation time."
+        ))
+        
+      } else {
+        if (progressBar == TRUE)
+          message(paste0(
+            "\nAs code is running in parallel, the progressBar is not available."
+          ))
+      }
+      
+      ## ----------- END checks -----------#
+      
+      ## ----------- NA calculation ----------- 
+      
+      misdata = c(sapply(X, anyNA), Y = FALSE) # Detection of missing data. we assume no missing values in the factor Y
+      
+      is.na.A = vector("list", length = length(X))
       for (q in seq_along(X))
       {
-        if (length(nzv.A[[q]]$Position) > 0)
+        if (misdata[q])
         {
-          names.remove.X = colnames(X[[q]])[nzv.A[[q]]$Position]
-          X[[q]] = X[[q]][, -nzv.A[[q]]$Position, drop = FALSE]
-          warning(
-            "Zero- or near-zero variance predictors.\n Reset predictors matrix to not near-zero variance predictors.\n See $nzv for problematic predictors."
-          )
-          if (ncol(X[[q]]) == 0)
-            stop(paste0("No more variables in", X[[q]]))
+          is.na.A[[q]] = is.na(X[[q]])
+          #ind.NA[[q]] = which(apply(is.na.A[[q]], 1, sum) > 0) # calculated only once
+          #ind.NA.col[[q]] = which(apply(is.na.A[[q]], 2, sum) >0) # indice of the col that have missing values. used in the deflation
+        }
+      }
+      
+      ## ----------- END NA calculation ----------- #
+      
+      
+      # if some components have already been tuned (eg comp1 and comp2), we're only tuning the following ones (comp3 comp4 .. ncomp)
+      if ((!is.null(already.tested.X)) & length(already.tested.X) > 0)
+      {
+        comp.real = (length(already.tested.X[[1]]) + 1):ncomp
+        #check and match already.tested.X to X
+        if (length(already.tested.X[[1]]) > 0)
+        {
+          if (length(unique(names(already.tested.X))) != length(already.tested.X) |
+              sum(is.na(match(names(
+                already.tested.X
+              ), names(X)))) > 0)
+            stop(
+              "Each entry of 'already.tested.X' must have a unique name corresponding to a block of 'X'"
+            )
           
-          #need to check that the keepA[[q]] is now not higher than ncol(A[[q]])
-          if (any(test.keepX[[q]] > ncol(X[[q]])))
-            test.keepX[[q]][which(test.keepX[[q]] > ncol(X[[q]]))] = ncol(X[[q]])
         }
         
+      } else {
+        comp.real = seq_len(ncomp)
       }
-    }
-    N.test.keepX = nrow(expand.grid(test.keepX))
-    
-    mat.error.rate = list()
-    
-    mat.sd.error = matrix(0,
-                          nrow = N.test.keepX,
-                          ncol = ncomp - length(already.tested.X[[1]]))
-    
-    mat.mean.error = matrix(nrow = N.test.keepX,
-                            ncol = ncomp - length(already.tested.X[[1]]))
-    
-    
-    mat.error.rate = list()
-    error.per.class.keepX.opt = list()
-    error.per.class.keepX.opt.mean = matrix(
-      0,
-      nrow = nlevels(Y),
-      ncol = length(comp.real),
-      dimnames = list(c(levels(Y)), c(paste0('comp', comp.real)))
-    )
-    
-    error.opt.per.comp = matrix(
-      nrow = nrepeat,
-      ncol = length(comp.real),
-      dimnames = list(paste("nrep", seq_len(nrepeat), sep = "."), paste0("comp", comp.real))
-    )
-    
-    if (light.output == FALSE)
-      class.all = list()
-    
-    ## ----------- tune components ----------- 
-    
-    # successively tune the components until ncomp: comp1, then comp2, ...
-    for (comp in seq_along(comp.real))
-    {
-      tune_comp <- comp.real[comp]
-      if (progressBar == TRUE)
-        cat(sprintf("\ntuning component %s\n", tune_comp))
       
-      result = MCVfold.block.splsda(
-        X,
-        Y,
-        validation = validation,
-        folds = folds,
-        nrepeat = nrepeat,
-        ncomp = tune_comp,
-        choice.keepX = already.tested.X,
-        scheme = scheme,
-        design = design,
-        init = init,
-        tol = tol,
-        test.keepX = test.keepX,
-        measure = measure,
-        dist = dist,
-        scale = scale,
-        weighted = weighted,
-        near.zero.var = near.zero.var,
-        progressBar = progressBar,
-        max.iter = max.iter,
-        misdata = misdata,
-        is.na.A = is.na.A,
-        BPPARAM = BPPARAM
+      # near zero var on the whole data sets. It will be performed inside each fold as well
+      if (near.zero.var == TRUE)
+      {
+        nzv.A = lapply(X, nearZeroVar)
+        for (q in seq_along(X))
+        {
+          if (length(nzv.A[[q]]$Position) > 0)
+          {
+            names.remove.X = colnames(X[[q]])[nzv.A[[q]]$Position]
+            X[[q]] = X[[q]][, -nzv.A[[q]]$Position, drop = FALSE]
+            warning(
+              "Zero- or near-zero variance predictors.\n Reset predictors matrix to not near-zero variance predictors.\n See $nzv for problematic predictors."
+            )
+            if (ncol(X[[q]]) == 0)
+              stop(paste0("No more variables in", X[[q]]))
+            
+            #need to check that the keepA[[q]] is now not higher than ncol(A[[q]])
+            if (any(test.keepX[[q]] > ncol(X[[q]])))
+              test.keepX[[q]][which(test.keepX[[q]] > ncol(X[[q]]))] = ncol(X[[q]])
+          }
+          
+        }
+      }
+      N.test.keepX = nrow(expand.grid(test.keepX))
+      
+      mat.error.rate = list()
+      
+      mat.sd.error = matrix(0,
+                            nrow = N.test.keepX,
+                            ncol = ncomp - length(already.tested.X[[1]]))
+      
+      mat.mean.error = matrix(nrow = N.test.keepX,
+                              ncol = ncomp - length(already.tested.X[[1]]))
+      
+      
+      mat.error.rate = list()
+      error.per.class.keepX.opt = list()
+      error.per.class.keepX.opt.mean = matrix(
+        0,
+        nrow = nlevels(Y),
+        ncol = length(comp.real),
+        dimnames = list(c(levels(Y)), c(paste0('comp', comp.real)))
       )
       
-      
-      ## returns error.rate for all test.keepX
-      
-      # in the following, there is [[1]] because 'tune' is working with only 1 distance and 'MCVfold.block.splsda' can work with multiple distances
-      mat.error.rate[[comp]] = result[[measure]]$mat.error.rate[[1]]
-      mat.mean.error[, comp] = result[[measure]]$error.rate.mean[[1]]
-      if (!is.null(result[[measure]]$error.rate.sd[[1]]))
-        mat.sd.error[, comp] = result[[measure]]$error.rate.sd[[1]]
-      
-      # confusion matrix for keepX.opt
-      error.per.class.keepX.opt[[comp]] = result[[measure]]$confusion[[1]]
-      error.per.class.keepX.opt.mean[, comp] = apply(result[[measure]]$confusion[[1]], 1, mean)
-      
-      # error rate for best keepX
-      error.opt.per.comp[, comp] = mat.error.rate[[comp]][result[[measure]]$ind.keepX.opt[[1]], ]
-      
-      # best keepX
-      already.tested.X = result[[measure]]$choice.keepX
+      error.opt.per.comp = matrix(
+        nrow = nrepeat,
+        ncol = length(comp.real),
+        dimnames = list(paste("nrep", seq_len(nrepeat), sep = "."), paste0("comp", comp.real))
+      )
       
       if (light.output == FALSE)
+        class.all = list()
+      
+      ## ----------- tune components ----------- 
+      
+      # successively tune the components until ncomp: comp1, then comp2, ...
+      for (comp in seq_along(comp.real))
       {
-        #prediction of each samples for each fold and each repeat, on each comp
-        class.all[[comp]] = result$class.comp[[1]]
+        tune_comp <- comp.real[comp]
+        if (progressBar == TRUE)
+          cat(sprintf("\ntuning component %s\n", tune_comp))
+        
+        result = MCVfold.block.splsda(
+          X,
+          Y,
+          validation = validation,
+          folds = folds,
+          nrepeat = nrepeat,
+          ncomp = tune_comp,
+          choice.keepX = already.tested.X,
+          scheme = scheme,
+          design = design,
+          init = init,
+          tol = tol,
+          test.keepX = test.keepX,
+          measure = measure,
+          dist = dist,
+          scale = scale,
+          weighted = weighted,
+          near.zero.var = near.zero.var,
+          progressBar = progressBar,
+          max.iter = max.iter,
+          misdata = misdata,
+          is.na.A = is.na.A,
+          BPPARAM = BPPARAM
+        )
+        
+        
+        ## returns error.rate for all test.keepX
+        
+        # in the following, there is [[1]] because 'tune' is working with only 1 distance and 'MCVfold.block.splsda' can work with multiple distances
+        mat.error.rate[[comp]] = result[[measure]]$mat.error.rate[[1]]
+        mat.mean.error[, comp] = result[[measure]]$error.rate.mean[[1]]
+        if (!is.null(result[[measure]]$error.rate.sd[[1]]))
+          mat.sd.error[, comp] = result[[measure]]$error.rate.sd[[1]]
+        
+        # confusion matrix for keepX.opt
+        error.per.class.keepX.opt[[comp]] = result[[measure]]$confusion[[1]]
+        error.per.class.keepX.opt.mean[, comp] = apply(result[[measure]]$confusion[[1]], 1, mean)
+        
+        # error rate for best keepX
+        error.opt.per.comp[, comp] = mat.error.rate[[comp]][result[[measure]]$ind.keepX.opt[[1]], ]
+        
+        # best keepX
+        already.tested.X = result[[measure]]$choice.keepX
+        
+        if (light.output == FALSE)
+        {
+          #prediction of each samples for each fold and each repeat, on each comp
+          class.all[[comp]] = result$class.comp[[1]]
+        }
       }
+      
+      ## ----------- END tune components ----------- #
+      
+      ## ----------- output ----------- 
+      
+      rownames(mat.mean.error) = rownames(result[[measure]]$mat.error.rate[[1]])
+      colnames(mat.mean.error) = paste0("comp", comp.real)
+      names(mat.error.rate) = c(paste0("comp", comp.real))
+      names(error.per.class.keepX.opt) = c(paste0("comp", comp.real))
+      if (nrepeat > 1)
+      {
+        rownames(mat.sd.error) = rownames(result[[measure]]$mat.error.rate[[1]])
+        colnames(mat.sd.error) = paste0("comp", comp.real)
+      }
+      
+      
+      # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
+      if (nrepeat > 2 & length(comp.real) > 1)
+      {
+        error.keepX = error.opt.per.comp
+        opt = t.test.process(error.opt.per.comp, alpha = signif.threshold)
+        ncomp_opt = comp.real[opt]
+      } else {
+        ncomp_opt = error.keepX = NULL
+      }
+      
+      
+      result = list(
+        error.rate = mat.mean.error,
+        error.rate.sd = mat.sd.error,
+        error.rate.all = mat.error.rate,
+        choice.keepX = already.tested.X,
+        choice.ncomp = list(ncomp = ncomp_opt, values = error.keepX),
+        error.rate.class = error.per.class.keepX.opt
+      )
+      
+      result$measure = measure.input
+      result$call = match.call()
+      
+      class(result) = "tune.block.splsda"
+      
+      return(result)
+      
     }
-    
-    ## ----------- END tune components ----------- #
-    
-    ## ----------- output ----------- 
-    
-    rownames(mat.mean.error) = rownames(result[[measure]]$mat.error.rate[[1]])
-    colnames(mat.mean.error) = paste0("comp", comp.real)
-    names(mat.error.rate) = c(paste0("comp", comp.real))
-    names(error.per.class.keepX.opt) = c(paste0("comp", comp.real))
-    if (nrepeat > 1)
-    {
-      rownames(mat.sd.error) = rownames(result[[measure]]$mat.error.rate[[1]])
-      colnames(mat.sd.error) = paste0("comp", comp.real)
-    }
-    
-    
-    # calculating the number of optimal component based on t.tests and the error.rate.all, if more than 3 error.rates(repeat>3)
-    if (nrepeat > 2 & length(comp.real) > 1)
-    {
-      error.keepX = error.opt.per.comp
-      opt = t.test.process(error.opt.per.comp, alpha = signif.threshold)
-      ncomp_opt = comp.real[opt]
-    } else {
-      ncomp_opt = error.keepX = NULL
-    }
-    
-    
-    result = list(
-      error.rate = mat.mean.error,
-      error.rate.sd = mat.sd.error,
-      error.rate.all = mat.error.rate,
-      choice.keepX = already.tested.X,
-      choice.ncomp = list(ncomp = ncomp_opt, values = error.keepX),
-      error.rate.class = error.per.class.keepX.opt
-    )
-    
-    result$measure = measure.input
-    result$call = match.call()
-    
-    class(result) = "tune.block.splsda"
-    
-    return(result)
-    
   }

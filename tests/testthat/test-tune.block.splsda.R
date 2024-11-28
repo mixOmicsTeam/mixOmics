@@ -157,4 +157,52 @@ test_that("tune.block.splsda works independently and in tune wrapper the same", 
     BPPARAM = SerialParam(), seed = 42
   )
   expect_equal(tune11$choice.keepX, tune41$choice.keepX)
+  
+  # check can plot outputs
+  pdf(NULL)
+  on.exit(dev.off())
+  expect_silent(plot(tune41))
+  expect_silent(plot(tune11))
+
+})
+
+test_that("tune.block.splsda works when test.keepX = NULL and gives same result as perf()", code = {
+  
+  data("breast.TCGA")
+  data = list(
+    mrna = breast.TCGA$data.train$mrna,
+    mirna = breast.TCGA$data.train$mirna,
+    protein = breast.TCGA$data.train$protein
+  )
+  
+  design = 'full'
+  ncomp <- 2
+  folds <- 3
+  nrep <- 3
+  test.keepX = list(
+    mrna = c(10, 20),
+    mirna = c(20, 30),
+    protein = c(3, 6)
+  )
+  
+  set.seed(100)
+  subset <- mixOmics:::stratified.subsampling(breast.TCGA$data.train$subtype, folds = 4)[[1]][[1]]
+  X <- lapply(data, function(omic) omic[subset,])
+  Y <- breast.TCGA$data.train$subtype[subset]
+  
+  # tune on components only
+  tune_res <- suppressWarnings(
+    tune.block.splsda(X, Y, ncomp = 3, design = design,
+              nrepeat = 1, folds = 3,
+              test.keepX = NULL, seed = 20)
+  )
+  
+  # run perf
+  block.splsda_res <- block.splsda(X, Y, ncomp = 3, design = design)
+  perf_res <- suppressWarnings(
+    perf(block.splsda_res, ncomp = 3, nrepeat = 1, folds = 3, dist = "max.dist", seed = 20)
+  )
+  
+  # check results match
+  expect_equal(tune_res$error.rate$mrna[1,1], perf_res$error.rate$mrna[1,1])
 })

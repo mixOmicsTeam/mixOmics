@@ -31,6 +31,7 @@
 
 ## -------------------------------- (s)PLS -------------------------------- ##
 #' @rdname perf.assess
+#' @method perf.assess mixo_pls
 #' @export
 perf.assess.mixo_pls <- function(object,
                           validation = c("Mfold", "loo"),
@@ -41,6 +42,7 @@ perf.assess.mixo_pls <- function(object,
                           seed = NULL,
                           ...)
 {
+
     # checking args and initialize params
     ncomp = object$ncomp
     spls.model <- is(object, 'mixo_spls')
@@ -65,7 +67,7 @@ perf.assess.mixo_pls <- function(object,
     measures <- as.data.frame(measures)
 
     # Add this line to remove rows with NAs that correspond to components < ncomp
-    measures <- dplyr::filter(measures, comp == ncomp)
+    measures <- dplyr::filter(measures, .data$comp == ncomp)
     
     ## R CMD check stuff
     measure <- feature <- comp <- block <- stability <- value <- NULL
@@ -132,6 +134,7 @@ perf.assess.mixo_pls <- function(object,
 }
 
 #' @rdname perf.assess
+#' @method perf.assess mixo_spls
 #' @export
 perf.assess.mixo_spls  <- perf.assess.mixo_pls
 
@@ -145,6 +148,10 @@ perf.assess.mixo_spls  <- perf.assess.mixo_pls
 
 {
 # changes to bypass the loop for the Q2
+
+    ## R CMD check stuff
+    measure <- feature <- comp <- block <- stability <- value <- NULL
+    lower <- upper <- keepX <- keepY <- NULL
     
     ## -------- checks -------- ##
     if (object$mode == 'invariant')

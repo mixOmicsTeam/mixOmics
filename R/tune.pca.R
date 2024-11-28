@@ -52,17 +52,14 @@
 #' for more details.
 #' @keywords algebra
 #' @export
-#' @examples
-#' data(liver.toxicity)
-#' tune <- tune.pca(liver.toxicity$gene, center = TRUE, scale = TRUE)
-#' tune
-#' plot(tune)
+#' @example ./examples/tune.pca-examples.R
+
 tune.pca <-
     function(X,
              ncomp = NULL,
              center = TRUE, 	# sets the mean of the data to zero, ensures that the first PC describes the direction of the maximum variance
-             scale = FALSE, 	# variance is unit across different units
-             max.iter = 500,
+             scale = TRUE, 	# variance is unit across different units
+             max.iter = 100,
              tol = 1e-09,
              logratio = c('none','CLR','ILR'),
              V = NULL,

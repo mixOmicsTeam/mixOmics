@@ -33,8 +33,6 @@ library(BiocParallel)
 #' \code{"Mfolds"} (M-folds). See Details.
 #' @param folds positive integer. Number of folds to use if
 #' \code{validation="Mfold"}. Defaults to \code{folds=10}.
-#' @param plot logical argument indicating whether an image map should be
-#' plotted by calling the \code{imgCV} function.
 #' @param BPPARAM a BiocParallel parameter object; see \code{BiocParallel::bpparam} 
 #' for details. Default is \code{MulticoreParam()} for parallel processing.
 #' @param seed set a number here if you want the function to give reproducible outputs. 
@@ -50,14 +48,8 @@ library(BiocParallel)
 #' details.
 #' @keywords multivariate dplot
 #' @export
-#' @examples
-#' data(nutrimouse)
-#' X <- nutrimouse$lipid
-#' Y <- nutrimouse$gene
-#' 
-#' ## this can take some seconds
-#' 
-#' tune.rcc(X, Y, validation = "Mfold")
+#' @example ./examples/tune.rcc-examples.R
+
 tune.rcc <-
     function(X, 
              Y, 
@@ -65,7 +57,6 @@ tune.rcc <-
              grid2 = seq(0.001, 1, length = 5), 
              validation = c("loo", "Mfold"), 
              folds = 10,
-             plot = TRUE,
              BPPARAM = SerialParam(),
              seed = NULL)
     {
@@ -118,9 +109,6 @@ tune.rcc <-
         cv.score = unlist(cv.score)
         cv.score.grid = cbind(grid, cv.score)
         mat = matrix(cv.score, nrow = length(grid1), ncol = length(grid2))
-        
-        if (isTRUE(plot))
-            image.tune.rcc(list(grid1 = grid1, grid2 = grid2, mat = mat))
         
         opt = cv.score.grid[cv.score.grid[, 3] == max(cv.score.grid[, 3]), ]
         

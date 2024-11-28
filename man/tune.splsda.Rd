@@ -8,23 +8,23 @@ tune.splsda(
   X,
   Y,
   ncomp = 1,
-  test.keepX = c(5, 10, 15),
+  test.keepX = NULL,
   already.tested.X,
+  scale = TRUE,
+  logratio = c("none", "CLR"),
+  max.iter = 100,
+  tol = 1e-06,
+  near.zero.var = FALSE,
+  multilevel = NULL,
   validation = "Mfold",
   folds = 10,
+  nrepeat = 1,
+  signif.threshold = 0.01,
   dist = "max.dist",
   measure = "BER",
-  scale = TRUE,
   auc = FALSE,
   progressBar = FALSE,
-  tol = 1e-06,
-  max.iter = 100,
-  near.zero.var = FALSE,
-  nrepeat = 1,
-  logratio = c("none", "CLR"),
-  multilevel = NULL,
   light.output = TRUE,
-  signif.threshold = 0.01,
   BPPARAM = SerialParam(),
   seed = NULL
 )
@@ -38,11 +38,29 @@ responses (for multi-response models) \code{NA}s are allowed.}
 \item{ncomp}{the number of components to include in the model.}
 
 \item{test.keepX}{numeric vector for the different number of variables to
-test from the \eqn{X} data set}
+test from the \eqn{X} data set. If set to NULL, tuning will be performed on ncomp
+using all variables in the \eqn{X} data set.}
 
 \item{already.tested.X}{Optional, if \code{ncomp > 1} A numeric vector
 indicating the number of variables to select from the \eqn{X} data set on
 the firsts components.}
+
+\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
+means and unit variances (default: TRUE)}
+
+\item{logratio}{one of ('none','CLR'). Default to 'none'}
+
+\item{max.iter}{integer, the maximum number of iterations.}
+
+\item{tol}{Convergence stopping value.}
+
+\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
+function (should be set to TRUE in particular for data with many zero
+values). Default value is FALSE}
+
+\item{multilevel}{Design matrix for multilevel analysis (for repeated
+measurements) that indicates the repeated measures on each individual, i.e.
+the individuals ID. See Details.}
 
 \item{validation}{character. What kind of (internal) validation to use,
 matching one of \code{"Mfold"} or \code{"loo"} (short for 'leave-one-out').
@@ -50,16 +68,20 @@ Default is \code{"Mfold"}.}
 
 \item{folds}{the folds in the Mfold cross-validation. See Details.}
 
+\item{nrepeat}{Number of times the Cross-Validation process is repeated.}
+
+\item{signif.threshold}{numeric between 0 and 1 indicating the significance
+threshold required for improvement in error rate of the components. Default
+to 0.01.}
+
 \item{dist}{distance metric to use for \code{splsda} to estimate the
-classification error rate, should be a subset of \code{"centroids.dist"},
-\code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
+classification error rate, should one of \code{"centroids.dist"},
+\code{"mahalanobis.dist"} or \code{"max.dist"} (see Details). 
+If \code{test.keepX = NULL} multiple distances can be inputted or "all".}
 
 \item{measure}{Three misclassification measure are available: overall
 misclassification error \code{overall}, the Balanced Error Rate \code{BER}
-or the Area Under the Curve \code{AUC}}
-
-\item{scale}{Logical. If scale = TRUE, each block is standardized to zero
-means and unit variances (default: TRUE)}
+or the Area Under the Curve \code{AUC}. Only used when \code{test.keepX} is not NULL.}
 
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)
 performance of the model based on the optimisation measure \code{measure}.}
@@ -67,28 +89,8 @@ performance of the model based on the optimisation measure \code{measure}.}
 \item{progressBar}{by default set to \code{TRUE} to output the progress bar
 of the computation.}
 
-\item{tol}{Convergence stopping value.}
-
-\item{max.iter}{integer, the maximum number of iterations.}
-
-\item{near.zero.var}{Logical, see the internal \code{\link{nearZeroVar}}
-function (should be set to TRUE in particular for data with many zero
-values). Default value is FALSE}
-
-\item{nrepeat}{Number of times the Cross-Validation process is repeated.}
-
-\item{logratio}{one of ('none','CLR'). Default to 'none'}
-
-\item{multilevel}{Design matrix for multilevel analysis (for repeated
-measurements) that indicates the repeated measures on each individual, i.e.
-the individuals ID. See Details.}
-
 \item{light.output}{if set to FALSE, the prediction/classification of each
 sample for each of \code{test.keepX} and each comp is returned.}
-
-\item{signif.threshold}{numeric between 0 and 1 indicating the significance
-threshold required for improvement in error rate of the components. Default
-to 0.01.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples in \code{?tune.spca}.}
@@ -107,6 +109,14 @@ components for the model fitted with \code{$choice.keepX} }
 \item{error.rate.class}{returns the error rate for each level of \code{Y}
 and for each component computed with the optimal keepX}
 
+If test.keepX = FALSE,produces a matrix of classification
+error rate estimation. The dimensions correspond to the components in the
+model and to the prediction method used, respectively. Note that error rates
+reported in any component include the performance of the model in earlier
+components for the specified \code{keepX} parameters (e.g. error rate
+reported for component 3 for \code{keepX = 20} already includes the fitted
+model on components 1 and 2 for \code{keepX = 20}).
+
 \item{predict}{Prediction values for each sample, each \code{test.keepX},
 each comp and each repeat. Only if light.output=FALSE}
 \item{class}{Predicted class for each sample, each \code{test.keepX}, each
@@ -120,8 +130,7 @@ between latent variables.}
 }
 \description{
 Computes M-fold or Leave-One-Out Cross-Validation scores on a user-input
-grid to determine optimal values for the sparsity parameters in
-\code{splsda}.
+grid to determine optimal values for the parameters in \code{splsda}.
 }
 \details{
 This tuning function should be used to tune the parameters in the
@@ -183,32 +192,47 @@ towards majority classes during the performance assessment.
 
 More details about the prediction distances in \code{?predict} and the
 supplemental material of the mixOmics article (Rohart et al. 2017).
+
+If test.keepX is set to NULL, the \code{perf()} function will be run internally,
+which performs cross-validation to identify optimal number of components and 
+distance measure. Running tuning initially using \code{test.keepX = NULL} speeds
+up the parameter tuning workflow, as then a lower ncomp value can be used for 
+variable selection tuning.
 }
 \examples{
 ## First example: analysis with sPLS-DA
-
 data(breast.tumors)
 X = breast.tumors$gene.exp
 Y = as.factor(breast.tumors$sample$treatment)
-tune = tune.splsda(X, Y, ncomp = 1, nrepeat = 10, logratio = "none",
-test.keepX = c(5, 10, 15), folds = 10, dist = "max.dist",
-progressBar = TRUE)
 
-\dontrun{
-# 5 components, optimising 'keepX' and 'ncomp'
-tune = tune.splsda(X, Y, ncomp = 5, test.keepX = c(5, 10, 15),
-folds = 10, dist = "max.dist", nrepeat = 5, progressBar = FALSE)
+# first tune on components only
+tune = tune.splsda(X, Y, ncomp = 5, logratio = "none",
+                   nrepeat = 10, folds = 10,
+                   test.keepX = NULL, 
+                   dist = "all",
+                   progressBar = TRUE,
+                   seed = 20) # set for reproducibility of example only
+plot(tune) # optimal distance = centroids.dist
+tune$choice.ncomp # optimal component number = 3
 
-tune$choice.ncomp
-tune$choice.keepX
+# then tune optimal keepX for each component
+tune = tune.splsda(X, Y, ncomp = 3, logratio = "none",
+                   nrepeat = 10, folds = 10, 
+                   test.keepX = c(5, 10, 15), dist = "centroids.dist",
+                   progressBar = TRUE,
+                   seed = 20)
+
 plot(tune)
+tune$choice.keepX # optimal number of variables to keep c(15, 5, 15)
 
-## only tune component 3 and 4
-# keeping 5 and 10 variables on the first two components respectively
-
-tune = tune.splsda(X = X,Y = Y, ncomp = 4,
-already.tested.X = c(5,10),
-test.keepX = seq(1,10,2), progressBar = TRUE)
+## With already tested variables:
+tune = tune.splsda(X, Y, ncomp = 3, logratio = "none",
+                   nrepeat = 10, folds = 10, 
+                   test.keepX = c(5, 10, 15), already.tested.X = c(5, 10),
+                   dist = "centroids.dist",
+                   progressBar = TRUE,
+                   seed = 20)
+plot(tune)
 
 ## Second example: multilevel one-factor analysis with sPLS-DA
 
@@ -218,10 +242,17 @@ Y = vac18$stimulation
 # sample indicates the repeated measurements
 design = data.frame(sample = vac18$sample)
 
-tune = tune.splsda(X, Y = Y, ncomp = 3, nrepeat = 10, logratio = "none",
-test.keepX = c(5,50,100),folds = 10, dist = "max.dist", multilevel = design)
+# tune on components
+tune = tune.splsda(X, Y = Y, ncomp = 5, nrepeat = 10, logratio = "none",
+                   test.keepX = NULL, folds = 10, dist = "max.dist", multilevel = design)
 
-}
+plot(tune)
+
+# tune on variables
+tune = tune.splsda(X, Y = Y, ncomp = 3, nrepeat = 10, logratio = "none",
+                   test.keepX = c(5,50,100),folds = 10, dist = "max.dist", multilevel = design)
+
+plot(tune)
 }
 \references{
 mixOmics article:

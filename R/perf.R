@@ -110,6 +110,7 @@
 #' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 #' Note 'seed' is not required or used in perf.mint.plsda as this method uses loo cross-validation
 #' @param ... not used
+#' 
 #' @return For PLS and sPLS models, \code{perf} produces a list with the
 #' following components for every repeat: 
 #' \item{MSEP}{Mean Square Error Prediction for each \eqn{Y} variable, only 
@@ -141,19 +142,25 @@
 #' \item{cor.tpred, cor.upred}{Correlation between the 
 #' predicted and actual components for X (t) and Y (u)} 
 #' \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
-#' predicted and actual components for X (t) and Y (u)} 
-#' \item{error.rate}{ For
-#' PLS-DA and sPLS-DA models, \code{perf} produces a matrix of classification
+#' predicted and actual components for X (t) and Y (u)}
+#' 
+#' 
+#'
+#' For PLS-DA and sPLS-DA models, \code{perf} produces a matrix of classification
 #' error rate estimation. The dimensions correspond to the components in the
 #' model and to the prediction method used, respectively. Note that error rates
 #' reported in any component include the performance of the model in earlier
 #' components for the specified \code{keepX} parameters (e.g. error rate
 #' reported for component 3 for \code{keepX = 20} already includes the fitted
-#' model on components 1 and 2 for \code{keepX = 20}). For more advanced usage
-#' of the \code{perf} function, see \url{www.mixomics.org/methods/spls-da/} and
-#' consider using the \code{predict} function.} 
-#' \item{auc}{Averaged AUC values
-#' over the \code{nrepeat}}
+#' model on components 1 and 2 for \code{keepX = 20}).
+#' \item{error.rate}{Prediction error rate for each dist and measure}
+#' \item{auc}{AUC values per component averaged over the \code{nrepeat}}
+#' \item{auc.all}{AUC values per component per repeat}
+#' \item{predict}{A list of length ncomp that os predicted values of each sample for each class}
+#' \item{features}{a list of features selected across the folds ($stable.X) for the keepX parameters from the input object.}
+#' \item{choice.ncomp}{Otimal number of components for the model for each prediction distance using one-sided t-tests that test 
+#' for a significant difference in the mean error rate (gain in prediction) when components are added to the model.}
+#' \item{class}{A list which gives the predicted class of each sample for each dist and each of the ncomp components}
 #' 
 #' For mint.splsda models, \code{perf} produces the following outputs:
 #' \item{study.specific.error}{A list that gives BER, overall error rate and
@@ -166,7 +173,7 @@
 #' \item{auc}{AUC values} \item{auc.study}{AUC values for each study in mint
 #' models}
 #' 
-#' For sgccda models, \code{perf} produces the following outputs:
+#' For sgccda models (i.e. block (s)PLS-DA models), \code{perf} produces the following outputs:
 #' \item{error.rate}{Prediction error rate for each block of \code{object$X}
 #' and each \code{dist}} \item{error.rate.per.class}{Prediction error rate for
 #' each block of \code{object$X}, each \code{dist} and each class}
@@ -197,12 +204,14 @@
 #' \item{WeightedVote.error.rate}{if more than one block, returns the error
 #' rate of the \code{WeightedVote} output} \item{weights}{Returns the weights
 #' of each block used for the weighted predictions, for each nrepeat and each
-#' fold} \item{choice.ncomp}{For supervised models; returns the optimal number
+#' fold} 
+#' \item{choice.ncomp}{For supervised models; returns the optimal number
 #' of components for the model for each prediction distance using one-sided
 #' t-tests that test for a significant difference in the mean error rate (gain
 #' in prediction) when components are added to the model. See more details in
 #' Rohart et al 2017 Suppl. For more than one block, an optimal ncomp is
 #' returned for each prediction framework.}
+#' 
 #' @author Ignacio González, Amrit Singh, Kim-Anh Lê Cao, Benoit Gautier,
 #' Florian Rohart, Al J Abadi
 #' @seealso \code{\link{predict}}, \code{\link{nipals}},

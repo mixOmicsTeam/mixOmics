@@ -27,14 +27,18 @@
 
 
 # ========================================================================================================
-# tune.spls: chose the optimal number of parameters per component on a spls method
+# tune.spls: Tuning hyperparameters on a spls method
 # ========================================================================================================
-# TODO details on nrepeat
-# TODO details on pls vs spls
-# TODO tidy outputs preferably in an array
-#' Tuning functions for sPLS and PLS functions
 #' 
-#' @template description/tune
+#' Tuning functions for sPLS method
+#' 
+#' Computes M-fold or Leave-One-Out Cross-Validation scores on a user-input
+#' grid to determine optimal values for the parameters in \code{spls}.
+#'
+#' 
+#' This tuning function should be used to tune the parameters in the
+#' \code{spls} function (number of components and number of variables to select).
+#' 
 #' 
 #' @template section/folds
 #' @template section/nrepeat
@@ -49,19 +53,26 @@
 #' @template arg/ncomp
 #' @template arg/test.keepX-X.matrix
 #' @template arg/test.keepY
-#' @templateVar modes \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}
-#' @template arg/mode
 #' @template arg/validation
 #' @template arg/folds
 #' @template arg/nrepeat
-#' @param measure The tuning measure to use. See details.
+#' @param measure The tuning measure to use. Cannot be NULL when applied to sPLS1 object. See details.
+#' @templateVar modes \code{"regression"}, \code{"canonical"}, \code{"invariant"} or \code{"classic"}
+#' @template arg/mode
+#' @param scale Logical. If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE
+#' @param tol Positive numeric used as convergence criteria/tolerance during the iterative process. Default to 1e-06.
+#' @param max.iter Integer, the maximum number of iterations. Default to 100.
+#' @param near.zero.var Logical, see the internal nearZeroVar function (should be set to TRUE in particular for data with many zero values). Setting this argument to FALSE (when appropriate) will speed up the computations. Default value is FALSE.
+#' @param logratio Character, one of ('none','CLR') specifies the log ratio transformation to deal with compositional values that may arise from specific normalisation in sequencing data. Default to 'none'. See ?logratio.transfo for details.
+#' @param multilevel Numeric, design matrix for repeated measurement analysis, where multilevel decomposition is required. For a one factor decomposition, the repeated measures on each individual, i.e. the individuals ID is input as the first column. For a 2 level factor decomposition then 2nd AND 3rd columns indicate those factors. See examples.
 #' @template arg/progressBar
 #' @template arg/BPPARAM
 #' @param seed set a number here if you want the function to give reproducible outputs. 
 #' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
-#' @param limQ2 Q2 threshold for recommending optimal \code{ncomp}.
 #' @param ... Optional parameters passed to \code{\link{spls}}
-#' @return A list that contains: \item{cor.pred}{The correlation of predicted vs
+#' @return 
+#' If \code{test.keepX != NULL} and \code{test.keepY != NULL} returns a list that contains: 
+#' \item{cor.pred}{The correlation of predicted vs
 #'   actual components from X (t) and Y (u) for each
 #'   component}\item{RSS.pred}{The Residual Sum of Squares of predicted vs
 #'   actual components from X (t) and Y (u) for each component}
@@ -71,6 +82,39 @@
 #'   \item{choice.ncomp}{returns the optimal number of components for the model
 #'   fitted with \code{$choice.keepX} and \code{$choice.keepY} } \item{call}{The
 #'   functioncal call including the parameteres used.}
+#' 
+#' If \code{test.keepX = NULL} and \code{test.keepY = NULL} returns a list with the following components for every repeat:
+#' \item{MSEP}{Mean Square Error Prediction for each \eqn{Y} variable, only 
+#' applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
+#' available when in regression (s)PLS.} 
+#' \item{RMSEP}{Root Mean Square Error Prediction for each \eqn{Y} variable, only 
+#' applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
+#' available when in regression (s)PLS.} 
+#' \item{R2}{a matrix of \eqn{R^2} values of the \eqn{Y}-variables for models 
+#' with \eqn{1, \ldots ,}\code{ncomp} components, only applies to object
+#' inherited from \code{"pls"}, and \code{"spls"}. Only available when in 
+#' regression (s)PLS.}
+#' \item{Q2}{if \eqn{Y} contains one variable, a vector of \eqn{Q^2} values
+#' else a list with a matrix of \eqn{Q^2} values for each \eqn{Y}-variable.
+#' Note that in the specific case of an sPLS model, it is better to have a look
+#' at the Q2.total criterion, only applies to object inherited from
+#' \code{"pls"}, and \code{"spls"}. Only available when in regression (s)PLS.} 
+#' \item{Q2.total}{a vector of \eqn{Q^2}-total values for models with \eqn{1, 
+#' \ldots ,}\code{ncomp} components, only applies to object inherited from 
+#' \code{"pls"}, and \code{"spls"}. Available in both (s)PLS modes.}
+#' \item{RSS}{Residual Sum of Squares across all selected features and the 
+#' components.}
+#' \item{PRESS}{Predicted Residual Error Sum of Squares across all selected 
+#' features and the components.}
+#' \item{features}{a list of features selected across the 
+#' folds (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
+#' \code{keepY} parameters from the input object. Note, this will be \code{NULL} 
+#' if using standard (non-sparse) PLS.} 
+#' \item{cor.tpred, cor.upred}{Correlation between the 
+#' predicted and actual components for X (t) and Y (u)} 
+#' \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
+#' predicted and actual components for X (t) and Y (u)} 
+#' 
 #' @author Kim-Anh Lê Cao, Al J Abadi, Benoit Gautier, Francois Bartolo,
 #' Florian Rohart,
 #' @seealso \code{\link{splsda}}, \code{\link{predict.splsda}} and
@@ -106,23 +150,8 @@
 #' 4:e1845.
 #' @keywords regression multivariate
 #' @export
-#' @examples
+#' @example ./examples/tune.spls-examples.R
 #' 
-#' \dontrun{
-#' data(liver.toxicity)
-#' X <- liver.toxicity$gene
-#' Y <- liver.toxicity$clinic
-#' set.seed(42)
-#' tune.res = tune.spls( X, Y, ncomp = 3,
-#'                   test.keepX = c(5, 10, 15),
-#'                   test.keepY = c(3, 6, 8), measure = "cor",
-#'                   folds = 5, nrepeat = 3, progressBar = TRUE)
-#' tune.res$choice.ncomp
-#' tune.res$choice.keepX
-#' tune.res$choice.keepY
-#' # plot the results
-#' plot(tune.res)
-#' }
 # TODO change this so that it simply wraps perf
 tune.spls <- 
   function(X,
@@ -130,21 +159,35 @@ tune.spls <-
            test.keepX = NULL,
            test.keepY = NULL,
            ncomp,
+           # params related to spls model building
+           mode = c('regression', 'canonical', 'classic'),
+           scale = TRUE,
+           logratio = "none",
+           tol = 1e-09,
+           max.iter = 100,
+           near.zero.var = FALSE,
+           multilevel = NULL,
+           # params related to CV
            validation = c('Mfold', 'loo'),
            nrepeat = 1,
            folds,
-           mode = c('regression', 'canonical', 'classic'),
            measure = NULL,
+           # params related to running tune
            BPPARAM = SerialParam(),
            seed = NULL,
            progressBar = FALSE,
-           limQ2 = 0.0975,
            ...
   ) {
+
+    #-- checking general input parameters --------------------------------------#
+    #---------------------------------------------------------------------------#
     out = list()
     mode <- match.arg(mode)
     
     BPPARAM$RNGseed <- seed
+
+    # hardcode to streamline
+    limQ2 <- 0.0975
     
     X <- .check_numeric_matrix(X, block_name = 'X')
     Y <- .check_numeric_matrix(Y, block_name = 'Y')
@@ -156,6 +199,20 @@ tune.spls <-
     nrepeat <- check_cv$nrepeat
     folds <- check_cv$folds
     
+    #-- test.keepX 
+    #-> if test.keepX set to NULL run perf() i.e. parameter tuning of just ncomp using all features
+    if (is.null(test.keepX) && is.null(test.keepY)){
+      print("test.keepX and test.keepY are set to NULL, tuning only for number of components...")
+      spls_res <- spls(X, Y, ncomp, keepX = ncol(X), keepY = ncol(Y),
+                  mode = mode, scale = scale, logratio = logratio, tol = tol, max.iter = max.iter, near.zero.var = near.zero.var, multilevel = multilevel)
+      perf_res <- perf(spls_res, 
+                validation = validation, folds = folds, nrepeat = nrepeat,
+                dist = dist,
+                BPPARAM = BPPARAM, seed = seed, progressBar = progressBar)
+      return(perf_res)
+
+    } else {
+
     test.keepX <- .change_if_null(arg = test.keepX, default = ncol(X))
     test.keepY <- .change_if_null(arg = test.keepY, default = ncol(Y))
     
@@ -244,7 +301,11 @@ tune.spls <-
       pls.model <- spls(X = X, Y = Y, 
                         keepX = c(choice.keepX, keepX), 
                         keepY = c(choice.keepY, keepY), 
-                        ncomp = comp, mode = mode, ...)
+                        ncomp = comp, mode = mode, 
+                        scale = scale, tol = tol, max.iter = max.iter,
+                        near.zero.var = near.zero.var, logratio = logratio,
+                        multilevel = multilevel,
+                        ...)
       
       # run perf in serial to avoid nested parallel processes, but make sure seed is passed into perf
       pls.perf <- perf(pls.model, validation = validation, folds = folds, nrepeat = nrepeat,
@@ -456,4 +517,5 @@ tune.spls <-
     class <- c('tune.pls')
     class(out) <- if (spls.model) class <- c(class, 'tune.spls')
     return(out)
+    }
   }

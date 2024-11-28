@@ -28,7 +28,7 @@ perf.assess(object, ...)
   ...
 )
 
-\method{perf}{assess.mint.plsda}(
+\method{perf.assess}{mint.plsda}(
   object,
   dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   auc = FALSE,
@@ -37,7 +37,7 @@ perf.assess(object, ...)
   ...
 )
 
-\method{perf}{assess.mint.splsda}(
+\method{perf.assess}{mint.splsda}(
   object,
   dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   auc = FALSE,
@@ -46,7 +46,7 @@ perf.assess(object, ...)
   ...
 )
 
-\method{perf}{assess.mixo_pls}(
+\method{perf.assess}{mixo_pls}(
   object,
   validation = c("Mfold", "loo"),
   folds,
@@ -57,7 +57,7 @@ perf.assess(object, ...)
   ...
 )
 
-\method{perf}{assess.mixo_spls}(
+\method{perf.assess}{mixo_spls}(
   object,
   validation = c("Mfold", "loo"),
   folds,
@@ -68,7 +68,7 @@ perf.assess(object, ...)
   ...
 )
 
-\method{perf}{assess.mixo_plsda}(
+\method{perf.assess}{mixo_plsda}(
   object,
   dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   validation = c("Mfold", "loo"),
@@ -82,7 +82,7 @@ perf.assess(object, ...)
   ...
 )
 
-\method{perf}{assess.mixo_splsda}(
+\method{perf.assess}{mixo_splsda}(
   object,
   dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   validation = c("Mfold", "loo"),
@@ -98,7 +98,7 @@ perf.assess(object, ...)
 }
 \arguments{
 \item{object}{object of class inherited from \code{"pls"}, \code{"plsda"},
-\code{"spls"}, \code{"splsda"} or \code{"mint.splsda"}. The function will
+\code{"spls"}, \code{"splsda"}. \code{"sgccda"} or \code{"mint.splsda"}. The function will
 retrieve some key parameters stored in that object.}
 
 \item{...}{not used}
@@ -109,15 +109,15 @@ performance of the model. Should be a subset of \code{"max.dist"},
 \code{"centroids.dist"}, \code{"mahalanobis.dist"}. Default is \code{"all"}.
 See \code{\link{predict}}.}
 
-\item{validation}{character.  What kind of (internal) validation to use,
+\item{validation}{a character string.  What kind of (internal) validation to use,
 matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
-\code{"Mfold"}.}
+\code{"Mfold"}. For MINT methods only \code{"loo"} will be used.}
 
-\item{folds}{the folds in the Mfold cross-validation. See Details.}
+\item{folds}{numeric. Number of folds in the Mfold cross-validation. See Details.}
 
-\item{nrepeat}{Number of times the Cross-Validation process is repeated.
+\item{nrepeat}{numierc. Number of times the Cross-Validation process is repeated.
 This is an important argument to ensure the estimation of the performance to
-be as accurate as possible.}
+be as accurate as possible. Default it 1.}
 
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)
 performance of the model.}
@@ -137,15 +137,15 @@ Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM'
 Note 'seed' is not required or used in perf.mint.plsda as this method uses loo cross-validation}
 }
 \value{
-For PLS and sPLS models, \code{perf} produces a list with the
-following components for every repeat: 
+For PLS and sPLS models:
 \item{MSEP}{Mean Square Error Prediction for each \eqn{Y} variable, only 
 applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
 available when in regression (s)PLS.} 
 \item{RMSEP}{Root Mean Square Error Prediction for each \eqn{Y} variable, only 
 applies to object inherited from \code{"pls"}, and \code{"spls"}. Only 
 available when in regression (s)PLS.} 
-\item{R2}{a matrix of \eqn{R^2} values of the \eqn{Y}-variables. Only applies to object
+\item{R2}{a matrix of \eqn{R^2} values of the \eqn{Y}-variables for models 
+with \eqn{1, \ldots ,}\code{ncomp} components, only applies to object
 inherited from \code{"pls"}, and \code{"spls"}. Only available when in 
 regression (s)PLS.}
 \item{Q2}{if \eqn{Y} contains one variable, a vector of \eqn{Q^2} values
@@ -153,41 +153,44 @@ else a list with a matrix of \eqn{Q^2} values for each \eqn{Y}-variable.
 Note that in the specific case of an sPLS model, it is better to have a look
 at the Q2.total criterion, only applies to object inherited from
 \code{"pls"}, and \code{"spls"}. Only available when in regression (s)PLS.} 
-\item{Q2.total}{a vector of \eqn{Q^2}-total values for model, only applies to object inherited from 
+\item{Q2.total}{a vector of \eqn{Q^2}-total values for models with \eqn{1, 
+\ldots ,}\code{ncomp} components, only applies to object inherited from 
 \code{"pls"}, and \code{"spls"}. Available in both (s)PLS modes.}
-\item{RSS}{Residual Sum of Squares across all selected features.}
+\item{RSS}{Residual Sum of Squares across all selected features}
 \item{PRESS}{Predicted Residual Error Sum of Squares across all selected features}
-\item{features}{a list of features selected across the 
-folds (\code{$stable.X} and \code{$stable.Y}) for the \code{keepX} and
-\code{keepY} parameters from the input object. Note, this will be \code{NULL} 
-if using standard (non-sparse) PLS.} 
 \item{cor.tpred, cor.upred}{Correlation between the 
 predicted and actual components for X (t) and Y (u)} 
 \item{RSS.tpred, RSS.upred}{Residual Sum of Squares between the
-predicted and actual components for X (t) and Y (u)} 
-\item{error.rate}{ For
-PLS-DA and sPLS-DA models, \code{perf} produces a matrix of classification
-error rate estimation using overall and BER error rates across different distance methods. 
-Although error rates are only reported for the number of components used in the final model, 
-Note that are calculated including the performance of the model in a smaller number of
-components for the specified \code{keepX} parameters (e.g. error rate
-reported for component 3 for \code{keepX = 20} already includes the fitted
-model on components 1 and 2 for \code{keepX = 20}). For more advanced usage
-of the \code{perf} function, see \url{www.mixomics.org/methods/spls-da/} and
-consider using the \code{predict} function.} 
-\item{auc}{Averaged AUC values
-over the \code{nrepeat}}
+predicted and actual components for X (t) and Y (u)}
 
-#' For sgccda models, \code{perf} produces the following outputs:
+
+
+For PLS-DA and sPLS-DA models:
+\item{error.rate}{Prediction error rate for each dist and measure}
+\item{auc}{AUC value averaged over the \code{nrepeat}}
+\item{auc.all}{AUC values per repeat}
+\item{predict}{Predicted values of each sample for each class}
+\item{class}{A list which gives the predicted class of each sample for each dist and each of the ncomp components}
+
+For mint.splsda models:
+\item{study.specific.error}{A list that gives BER, overall error rate and
+error rate per class, for each study} 
+\item{global.error}{A list that gives
+BER, overall error rate and error rate per class for all samples}
+\item{predict}{A list of length \code{ncomp} that produces the predicted
+values of each sample for each class} 
+\item{class}{A list which gives the
+predicted class of each sample for each \code{dist}.}
+\item{auc}{AUC values} \item{auc.study}{AUC values for each study in mint models}
+
+For sgccda models (i.e. block (s)PLS-DA models):
 \item{error.rate}{Prediction error rate for each block of \code{object$X}
 and each \code{dist}} 
 \item{error.rate.per.class}{Prediction error rate for
 each block of \code{object$X}, each \code{dist} and each class}
-\item{predict}{Predicted values of each sample for each class and each block.} 
-\item{class}{Predicted class of each sample for each block, each \code{dist}, and each nrepeat} 
-\item{features}{a list of features selected across the folds (\code{$stable.X} and
-\code{$stable.Y}) for the \code{keepX} and \code{keepY} parameters from the
-input object.} 
+\item{predict}{Predicted values of each sample for each class and each block} 
+\item{class}{Predicted class of each sample for each
+block, each \code{dist}, and each nrepeat} 
 \item{AveragedPredict.class}{if more than one block, returns
 the average predicted class over the blocks (averaged of the \code{Predict}
 output and prediction using the \code{max.dist} distance)}
@@ -210,15 +213,7 @@ the predicted class for this particular sample over the blocks.}
 \item{WeightedVote.error.rate}{if more than one block, returns the error
 rate of the \code{WeightedVote} output} 
 \item{weights}{Returns the weights of each block used for the weighted predictions, for each nrepeat and each
-fold} 
-
-For mint.splsda models, \code{perf} produces the following outputs:
-\item{study.specific.error}{A list that gives BER, overall error rate and
-error rate per class, for each study} 
-\item{global.error}{A list that gives BER, overall error rate and error rate per class for all samples}
-\item{predict}{A list of the predicted values of each sample for each class} 
-\item{class}{A list which gives the predicted class of each sample for each \code{dist}. Directly obtained from the \code{predict} output.}
-\item{auc}{AUC values} \item{auc.study}{AUC values for each study}
+fold}
 }
 \description{
 Function to evaluate the performance of the fitted PLS, sparse PLS, PLS-DA,
@@ -256,16 +251,6 @@ MSEP, \eqn{R^2}, and \eqn{Q^2} criteria are averaged across all folds. Note
 that for PLS and sPLS objects, perf is performed on the pre-processed data
 after log ratio transform and multilevel analysis, if any.
 
-Sparse methods. The sPLS, sPLS-DA and sgccda functions are run on several
-and different subsets of data (the cross-folds) and will certainly lead to
-different subset of selected features. Those are summarised in the output
-\code{features$stable} (see output Value below) to assess how often the
-variables are selected across all folds. Note that for PLS-DA and sPLS-DA
-objects, perf is performed on the original data, i.e. before the
-pre-processing step of the log ratio transform and multilevel analysis, if
-any. In addition for these methods, the classification error rate is
-averaged across all folds.
-
 The mint.sPLS-DA function estimates errors based on Leave-one-group-out
 cross validation (where each levels of object$study is left out (and
 predicted) once) and provides study-specific outputs
@@ -285,8 +270,7 @@ details. Our multivariate supervised methods already use a prediction
 threshold based on distances (see \code{predict}) that optimally determine
 class membership of the samples tested. As such AUC and ROC are not needed
 to estimate the performance of the model. We provide those outputs as
-complementary performance measures. See more details in our mixOmics
-article.
+complementary performance measures.
 
 Prediction distances. See details from \code{?predict}, and also our
 supplemental material in the mixOmics article.
@@ -309,141 +293,102 @@ given block with the outcome variable Y.
 More details about the PLS modes in \code{?pls}.
 }
 \examples{
-## validation for objects of class 'pls' (regression)
-# ----------------------------------------
-data(liver.toxicity)
-X <- liver.toxicity$gene
-Y <- liver.toxicity$clinic
+## PLS-DA example
 
-# try tune the number of component to choose
-# ---------------------
-# first learn the full model
-liver.pls <- pls(X, Y, ncomp = 5)
+data(liver.toxicity) # rats gex and clinical measurements/treatments
+unique(liver.toxicity$treatment$Treatment.Group) # 16 groups
+length(liver.toxicity$treatment$Treatment.Group) # 64 samples
 
-# with 5-fold cross validation: we use the same parameters as in model above
-# but we perform cross validation to compute the MSEP, Q2 and R2 criteria
-# ---------------------------
-liver.val <- perf(liver.pls, validation = "Mfold", folds = 5)
+plsda.res <- plsda(liver.toxicity$gene, liver.toxicity$treatment$Treatment.Group, ncomp = 2)
 
-# see available criteria
-names(liver.val$measures)
-# see values for all repeats
-liver.val$measures$Q2.total$values
-# see summary over repeats
-liver.val$measures$Q2.total$summary
-# Q2 total should decrease until it reaches a threshold
-liver.val$measures$Q2.total
+performance <- perf.assess(plsda.res, 
+                        # to make sure each fold has all classes represented
+                           validation = "Mfold", folds = 3, nrepeat = 10, 
+                           seed = 12) # for reproducibility, remove for analysis
 
-# ncomp = 2 is enough
-plot(liver.val, criterion  = 'Q2.total')
+performance$error.rate$BER
 
-\dontrun{
+## sPLS-DA example
 
-# have a look at the other criteria
-# ----------------------
-# R2
-plot(liver.val, criterion  = 'R2')
-## correlation of components (see docs)
-plot(liver.val, criterion  = 'cor.tpred')
+splsda.res <- splsda(liver.toxicity$gene, liver.toxicity$treatment$Treatment.Group,
+                     keepX = c(25, 25), ncomp = 2)
 
-# MSEP
-plot(liver.val, criterion  = 'MSEP')
-## validation for objects of class 'spls' (regression)
-# ----------------------------------------
-ncomp = 7
-# first, learn the model on the whole data set
-model.spls = spls(X, Y, ncomp = ncomp, mode = 'regression',
-                  keepX = c(rep(10, ncomp)), keepY = c(rep(4,ncomp)))
+performance <- perf.assess(splsda.res,
+                           validation = "Mfold", folds = 3, nrepeat = 10, 
+                           seed = 12)
 
+performance$error.rate$BER # can see slight improvement in error rate over PLS-DA example
 
-# with leave-one-out cross validation
-model.spls.val <- perf(model.spls, validation = "Mfold", folds = 5, seed = 45 )
+## PLS example
 
-#Q2 total
-model.spls.val$measures$Q2$summary
+ncol(liver.toxicity$clinic) # 10 Y variables as output of PLS model
 
-# R2: we can see how the performance degrades when ncomp increases
-plot(model.spls.val, criterion="R2")
+pls.res <- pls(liver.toxicity$gene, liver.toxicity$clinic, ncomp = 2)
 
-## validation for objects of class 'splsda' (classification)
-# ----------------------------------------
-data(srbct)
-X <- srbct$gene
-Y <- srbct$class
+performance <- perf.assess(pls.res, 
+                           validation = "Mfold", folds = 3, nrepeat = 10,
+                           seed = 12)
 
-ncomp = 2
+# see Q2 which gives indication of predictive ability for each of the 10 Y outputs
+performance$measures$Q2$summary 
 
-srbct.splsda <- splsda(X, Y, ncomp = ncomp, keepX = rep(10, ncomp))
+## sPLS example
 
-# with Mfold
-# ---------
-error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", auc = TRUE, seed = 45)
-error
-error$auc
+spls.res <- spls(liver.toxicity$gene, liver.toxicity$clinic, ncomp = 2, keepX = c(50, 50))
 
-plot(error)
+performance <- perf.assess(spls.res, 
+                           validation = "Mfold", folds = 3, nrepeat = 10, 
+                           seed = 12)
 
-# parallel code
-library(BiocParallel)
-error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", auc = TRUE, BPPARAM = SnowParam(workers = 2), seed = 45)
-
-# with 5 components and nrepeat=5, to get a $choice.ncomp
-ncomp = 5
-srbct.splsda <- splsda(X, Y, ncomp = ncomp, keepX = rep(10, ncomp))
-
-error <- perf(srbct.splsda, validation = "Mfold", folds = 8,
-dist = "all", nrepeat = 5, seed = 45)
-error$choice.ncomp
-
-plot(error)
+# see Q2 which gives indication of predictive ability for each of the 10 Y outputs
+performance$measures$Q2$summary
 
 
-## validation for objects of class 'mint.splsda' (classification)
-# ----------------------------------------
+## block PLS-DA example
 
-data(stemcells)
-res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, 
-                  ncomp = 3, keepX = c(10, 5, 15),
-                  study = stemcells$study)
+data("breast.TCGA")
+mrna <- breast.TCGA$data.train$mrna
+mirna <- breast.TCGA$data.train$mirna
+data <- list(mrna = mrna, mirna = mirna)
+design <- matrix(1, ncol = length(data), nrow = length(data), dimnames = list(names(data), names(data)))
+diag(design) <-  0
 
-out = perf(res, auc = TRUE)
-out
-plot(out)
-out$auc
-out$auc.study
+block.plsda.res <- block.plsda(X = data, Y = breast.TCGA$data.train$subtype, 
+                               ncomp = 2, design = design)
 
-## validation for objects of class 'sgccda' (classification)
-# ----------------------------------------
+performance <- perf.assess(block.plsda.res)
 
-data(nutrimouse)
-Y = nutrimouse$diet
-data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+performance$error.rate.per.class # error rate per class per distance metric
 
-nutrimouse.sgccda <- block.splsda(X=data,
-Y = Y,
-design = 'full',
-keepX = list(gene=c(10,10), lipid=c(15,15)),
-ncomp = 2)
+## block sPLS-DA example
 
-perf = perf(nutrimouse.sgccda)
-perf
-plot(perf)
+block.splsda.res <- block.splsda(X = data, Y = breast.TCGA$data.train$subtype, 
+                                 ncomp = 2, design = design,
+                                 keepX = list(mrna = c(8,8), mirna = c(8,8)))
 
+performance <- perf.assess(block.splsda.res)
 
-# with 5 components and nrepeat=5 to get $choice.ncomp
-nutrimouse.sgccda <- block.splsda(X=data,
-Y = Y,
-design = 'full',
-keepX = list(gene=c(10,10), lipid=c(15,15)),
-ncomp = 5)
+performance$error.rate.per.class
 
-perf = perf(nutrimouse.sgccda, folds = 5, nrepeat = 5)
-perf
-plot(perf)
-perf$choice.ncomp
-}
+## MINT PLS-DA example
+
+data("stemcells")
+
+mint.plsda.res <- mint.plsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 3,
+                             study = stemcells$study)
+
+performance <- perf.assess(mint.plsda.res)
+
+performance$global.error$BER # global error per distance metric
+
+## MINT sPLS-DA example
+
+mint.splsda.res <- mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 3, 
+                               keepX = c(10, 5, 15), study = stemcells$study)
+
+performance <- perf.assess(mint.splsda.res)
+
+performance$global.error$BER # error slightly higher in this sparse model verses non-sparse
 }
 \references{
 Singh A., Shannon C., Gautier B., Rohart F., Vacher M., Tebbutt S.

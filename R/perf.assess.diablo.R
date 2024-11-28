@@ -33,7 +33,6 @@
 #           folds - number of folds if validation = "Mfold"
 # ----------------------------------------------------------------------------------------------------------
 #' @rdname perf.assess
-#' @importFrom utils relist
 #' @method perf.assess sgccda
 #' @export
 perf.assess.sgccda <- 
