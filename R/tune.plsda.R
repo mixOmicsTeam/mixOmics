@@ -194,9 +194,6 @@ tune.plsda <-
             if (!is.null(ncol(Y)) && !ncol(Y) %in% c(0,1,2))# multilevel 1 or 2 factors
                 stop("'Y' should either be a factor, a single column data.frame containing a factor, or a 2-columns data.frame containing 2 factors.")
             
-            multilevel = data.frame(multilevel, Y)
-            multilevel[, 1] = as.numeric(factor(multilevel[, 1])) # we want numbers for the repeated measurements
-            
         }
         
         
