@@ -26,4 +26,4 @@ design <- data.frame(sample = repeat.indiv)
 tune.res <- tune.pls(X, Y1, ncomp = 10, measure = "cor", multilevel = design,
                      folds = 5, nrepeat = 3, progressBar = TRUE)
 
-plot(tune)
+plot(tune.res)
