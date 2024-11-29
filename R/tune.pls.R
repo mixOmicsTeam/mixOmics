@@ -186,7 +186,6 @@ tune.pls <-
                   mode = mode, scale = scale, logratio = logratio, tol = tol, max.iter = max.iter, near.zero.var = near.zero.var, multilevel = multilevel)
     perf_res <- perf(pls_res, 
                 validation = validation, folds = folds, nrepeat = nrepeat,
-                dist = dist,
                 BPPARAM = BPPARAM, seed = seed, progressBar = progressBar)
     return(perf_res)
 
