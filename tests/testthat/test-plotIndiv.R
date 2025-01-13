@@ -782,7 +782,8 @@ test_that("plotIndiv works for rcc (3d style)", {
   Y <- nutrimouse$gene
   nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
   
-  # Clear any existing rgl plots
+  # Clear any existing rgl plots and disable plot rendering for non-interactive environments
+  options(rgl.useNULL = TRUE)
   clear3d()
   pl.res <- suppressWarnings(suppressMessages(plotIndiv(nutri.res, style = "3d")))
   
