@@ -48,10 +48,12 @@ jobs:
             bioc="latest"
             r="$r_release"
           else
-            bioc="3.20"
-            r="$r_release"
+            ## bioc="3.20"
+            ## r="$r_release"
             ## bioc="devel" comment this out for now as bioc version 3.21 requires r version 4.5, but also doesnt seem to like 'release' or 'devel' as arg here
             ## r="$r_devel" comment this out for now as R version 4.5 doesn't exist so fails on build
+            bioc="devel"
+            r="$r_devel"
           fi
           echo "r=$r" >> $GITHUB_OUTPUT
           echo "bioc=$bioc" >> $GITHUB_OUTPUT
