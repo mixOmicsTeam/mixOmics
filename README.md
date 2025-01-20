@@ -13,19 +13,19 @@ status](https://github.com/mixOmicsteam/mixOmics/workflows/R-CMD-check.yml/badge
 
 This repository contains the `R` package which is [hosted on
 Bioconductor](http://bioconductor.org/packages/release/bioc/html/mixOmics.html)
-and our stable and development `GitHub` versions.
+and our development `GitHub` versions. Go to www.mixomics.org for
+information on how to use mixOmics.
 
 ## Installation
 
 (**macOS users only:** Ensure you have installed
 [XQuartz](https://www.xquartz.org/) first.)
 
-### From Bioconductor
+### From Bioconductor (recommended)
 
 The best way to install `mixOmics` is using `Bioconductor`. You can see
 the landing page for the release version of `mixOmics` on Bioconductor
 [here](https://bioconductor.org/packages/release/bioc/html/mixOmics.html).
-
 Make sure you have the latest R version and the latest `BiocManager`
 package installed following [these
 instructions](https://www.bioconductor.org/install/).
@@ -45,22 +45,20 @@ library(mixOmics)
 ### From Github
 
 Bioconductor versions are updated twice a year, between these updates
-you can downlod the latest stable version of `mixOmics` from `Github`
-using:
+you can download the latest version of `mixOmics` from `Github`. Note
+that this latest version of mixOmics is under development and may not be
+stable, check the gitHub page for releases which have passed package
+testing.
 
 ``` r
-BiocManager::install('mixOmicsTeam/mixOmics')
+## install devtools
+install.packages("devtools")
+
+## install latest github version of mixOmics
+devtools::install_github("mixOmicsTeam/mixOmics")
 ```
 
-You can also install the [development
-version](https://github.com/mixOmicsTeam/mixOmics/tree/development) for
-new features yet to be widely tested:
-
-``` r
-BiocManager::install("mixOmicsTeam/mixOmics@development")
-```
-
-### From `Docker` container
+### From Docker container
 
 You can install our latest stable Github version of `mixOmics` via our
 Docker container. You can do this by downloading and using the Docker
@@ -211,59 +209,6 @@ discussions on choices of multivariate analyses, as well as comments and
 suggestions to improve the package. We hope to create an active
 community of users, data analysts, developers and R programmers alike!
 Thank you!
-
-## About the `mixOmics` team
-
-`mixOmics` is collaborative project between Australia (Melbourne),
-France (Toulouse), and Canada (Vancouver). The core team includes
-Kim-Anh Lê Cao - <https://lecao-lab.science.unimelb.edu.au> (University
-of Melbourne), Florian Rohart - <http://florian.rohart.free.fr>
-(Toulouse) and Sébastien Déjean -
-<https://perso.math.univ-toulouse.fr/dejean/>. We also have key
-contributors, past (Benoît Gautier, François Bartolo) and present (Al
-Abadi, University of Melbourne) and several collaborators including
-Amrit Singh (University of British Columbia), Olivier Chapleur (IRSTEA,
-Paris), Antoine Bodein (Universite de Laval) - **it could be you too, if
-you wish to be involved!**.
-
-The project started at the *Institut de Mathématiques de Toulouse* in
-France, and has been fully implemented in Australia, at the *University
-of Queensland*, Brisbane (2009 – 2016) and at the *University of
-Melbourne*, Australia (from 2017). We focus on the development of
-computational and statistical methods for biological data integration
-and their implementation in `mixOmics`.
-
-## Why this toolkit?
-
-`mixOmics` offers a wide range of novel multivariate methods for the
-exploration and integration of biological datasets with a particular
-focus on variable selection. Single ’omics analysis does not provide
-enough information to give a deep understanding of a biological system,
-but we can obtain a more holistic view of a system by combining multiple
-’omics analyses. Our `mixOmics` R package proposes a whole range of
-multivariate methods that we developed and validated on many biological
-studies to gain more insight into ’omics biological studies.
-
-## Want to know more?
-
-www.mixOmics.org (tutorials and resources)
-
-Our latest bookdown vignette:
-<https://mixomicsteam.github.io/mixOmics-Vignette/>
-
-## Different types of methods
-
-We have developed 17 novel multivariate methods (the package includes 19
-methods in total). The names are full of acronyms, but are represented
-in this diagram. *PLS* stands for *Projection to Latent Structures*
-(also called Partial Least Squares, but not our preferred nomenclature),
-*CCA* for *Canonical Correlation Analysis*.
-
-That’s it! Ready! Set! Go!
-
-Thank you for using `mixOmics`!
-
-![](http://mixomics.org/wp-content/uploads/2012/04/framework-mixOmics-June2016.jpg)
 
 ## What’s New
 
