@@ -199,6 +199,7 @@ setMethod("mixOmics", signature = c(X = "MultiAssayExperiment"), function(
         col.var = col.var, MINT = MINT, ...)
     # Run analysis
     res <- do.call(internal_mixOmics, args)
+    res$call <- NULL
     return(res)
     }
 )
@@ -212,6 +213,7 @@ setMethod("mixOmics", signature = c(X = "SummarizedExperiment"), function(
         se = X, assay.type = assay.type, col.var = col.var, ...)
     # Run analysis
     res <- do.call(internal_mixOmics, args)
+    res$call <- NULL
     return(res)
     }
 )
