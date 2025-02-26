@@ -87,6 +87,7 @@
 #' function (should be set to TRUE in particular for data with many zero
 #' values). Setting this argument to FALSE (when appropriate) will speed up the
 #' computations. Default value is FALSE
+#' @param ... Additional arguments.
 #' @return none
 #' @author Florian Rohart, Kim-Anh Lê Cao, Al J Abadi
 #' @seealso \code{\link{pls}}, \code{\link{spls}}, \code{\link{plsda}},

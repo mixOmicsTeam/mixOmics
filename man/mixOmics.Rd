@@ -55,6 +55,8 @@ mixOmics(X, ...)
 MultiAssayExperiment object. Data should be arranged in samples x
 variables, with samples order matching in all data sets.}
 
+\item{...}{Additional arguments.}
+
 \item{experiments}{A character or integer vector specifying experiments from
 \code{X} when it is MultiAssayExperiment.}
 
