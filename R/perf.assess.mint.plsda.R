@@ -41,7 +41,6 @@ perf.assess.mint.plsda <- function (object,
                              dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
                              auc = FALSE,
                              progressBar = FALSE,
-                             signif.threshold = 0.01,
                              ...
 )
 {   #-- checking general input parameters --------------------------------------#

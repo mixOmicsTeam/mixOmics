@@ -35,8 +35,8 @@
 #' @export
 perf.assess.mixo_plsda <- function(object,
                             validation = c("Mfold", "loo"),
-                            folds = 10,
-                            nrepeat = 10,
+                            folds,
+                            nrepeat = 1,
                             dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
                             auc = FALSE,
                             progressBar = FALSE,

@@ -37,13 +37,12 @@
 #' @export
 perf.assess.sgccda <- 
   function (object,
-            dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
             validation = c("Mfold", "loo"),
-            folds = 10,
+            folds,
             nrepeat = 1,
+            dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
             auc = FALSE,
             progressBar = FALSE,
-            signif.threshold = 0.01,
             BPPARAM = SerialParam(),
             seed = NULL,
             ...)
