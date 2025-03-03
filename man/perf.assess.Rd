@@ -70,13 +70,12 @@ perf.assess(object, ...)
 
 \method{perf.assess}{mixo_plsda}(
   object,
-  dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   validation = c("Mfold", "loo"),
   folds = 10,
-  nrepeat = 1,
+  nrepeat = 10,
+  dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   auc = FALSE,
   progressBar = FALSE,
-  signif.threshold = 0.01,
   BPPARAM = SerialParam(),
   seed = NULL,
   ...
@@ -84,13 +83,12 @@ perf.assess(object, ...)
 
 \method{perf.assess}{mixo_splsda}(
   object,
-  dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   validation = c("Mfold", "loo"),
   folds = 10,
-  nrepeat = 1,
+  nrepeat = 10,
+  dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   auc = FALSE,
   progressBar = FALSE,
-  signif.threshold = 0.01,
   BPPARAM = SerialParam(),
   seed = NULL,
   ...
