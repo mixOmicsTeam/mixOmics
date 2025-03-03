@@ -36,8 +36,8 @@
 perf.assess.mixo_pls <- function(object,
                           validation = c("Mfold", "loo"),
                           folds,
-                          progressBar = FALSE,
                           nrepeat = 1,
+                          progressBar = FALSE,
                           BPPARAM = SerialParam(),
                           seed = NULL,
                           ...)
@@ -53,8 +53,7 @@ perf.assess.mixo_pls <- function(object,
     repeat_names <- .name_list(char = seq_len(nrepeat))
     result <- bplapply(X = repeat_names, FUN = function(nrep) {
         ## progress bar
-        if (progressBar == TRUE)
-            .progressBar(nrep/nrepeat)
+        if (progressBar == TRUE){.progressBar(nrep/nrepeat)}
         ## CV
         .perf.assess.mixo_pls_cv(object, validation = validation, folds = folds, nrep = nrep)
     }, BPPARAM = BPPARAM)

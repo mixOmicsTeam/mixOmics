@@ -50,8 +50,8 @@ perf.assess(object, ...)
   object,
   validation = c("Mfold", "loo"),
   folds,
-  progressBar = FALSE,
   nrepeat = 1,
+  progressBar = FALSE,
   BPPARAM = SerialParam(),
   seed = NULL,
   ...
@@ -61,8 +61,8 @@ perf.assess(object, ...)
   object,
   validation = c("Mfold", "loo"),
   folds,
-  progressBar = FALSE,
   nrepeat = 1,
+  progressBar = FALSE,
   BPPARAM = SerialParam(),
   seed = NULL,
   ...
