@@ -17,7 +17,7 @@ perf.assess(object, ...)
 \method{perf.assess}{sgccda}(
   object,
   validation = c("Mfold", "loo"),
-  folds,
+  folds = 3,
   nrepeat = 1,
   dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   auc = FALSE,
@@ -126,10 +126,6 @@ of parallelisation. See examples in \code{?tune.spca}.}
 \item{seed}{set a number here if you want the function to give reproducible outputs. 
 Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
 Note 'seed' is not required or used in perf.mint.plsda as this method uses loo cross-validation}
-
-\item{signif.threshold}{numeric between 0 and 1 indicating the significance
-threshold required for improvement in error rate of the components. Default
-to 0.01.}
 }
 \value{
 For PLS and sPLS models:

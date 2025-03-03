@@ -38,7 +38,7 @@
 perf.assess.sgccda <- 
   function (object,
             validation = c("Mfold", "loo"),
-            folds,
+            folds = 3,
             nrepeat = 1,
             dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
             auc = FALSE,
