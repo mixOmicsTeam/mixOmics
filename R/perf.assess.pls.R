@@ -58,10 +58,8 @@ perf.assess.mixo_pls <- function(object,
         .perf.assess.mixo_pls_cv(object, validation = validation, folds = folds, nrep = nrep)
     }, BPPARAM = BPPARAM)
     
-    measures <- lapply(result, function(x){
-        x$measures
-    })
-    
+    # extract measures
+    measures <- lapply(result, function(x){x$measures})
     measures <- Reduce(rbind, measures)
     measures <- as.data.frame(measures)
 
@@ -72,6 +70,7 @@ perf.assess.mixo_pls <- function(object,
     measure <- feature <- comp <- block <- stability <- value <- NULL
     lower <- upper <- keepX <- keepY <- NULL
     
+    # extract measures
     measure.names <- .name_list(unique(measures$measure))
     measures <- lapply(measure.names, function(meas) {
         ## ------ value of measures across repeats
