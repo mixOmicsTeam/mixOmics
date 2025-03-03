@@ -345,7 +345,10 @@ data("breast.TCGA")
 mrna <- breast.TCGA$data.train$mrna
 mirna <- breast.TCGA$data.train$mirna
 data <- list(mrna = mrna, mirna = mirna)
-design <- matrix(1, ncol = length(data), nrow = length(data), dimnames = list(names(data), names(data)))
+design <- matrix(1, 
+   ncol = length(data), 
+   nrow = length(data), 
+   dimnames = list(names(data), names(data)))
 diag(design) <-  0
 
 block.plsda.res <- block.plsda(X = data, Y = breast.TCGA$data.train$subtype, 
