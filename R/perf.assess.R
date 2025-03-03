@@ -94,9 +94,6 @@
 #' performance of the model.
 #' @param progressBar by default set to \code{FALSE} to output the progress bar
 #' of the computation.
-#' @param signif.threshold numeric between 0 and 1 indicating the significance
-#' threshold required for improvement in error rate of the components. Default
-#' to 0.01.
 #' @template arg/BPPARAM 
 #' @param seed set a number here if you want the function to give reproducible outputs. 
 #' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 

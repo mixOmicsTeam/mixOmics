@@ -84,10 +84,22 @@
 #' @param already.tested.X Optional, if \code{ncomp > 1} A numeric vector
 #' indicating the number of variables to select from the \eqn{X} data set on
 #' the firsts components.
+#' @param scale Logical. If scale = TRUE, each block is standardized to zero
+#' means and unit variances (default: TRUE)
+#' @param tol Convergence stopping value.
+#' @param max.iter integer, the maximum number of iterations.
+#' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
+#' function (should be set to TRUE in particular for data with many zero
+#' values). Default value is FALSE
+#' @param logratio one of ('none','CLR'). Default to 'none'
+#' @param multilevel Design matrix for multilevel analysis (for repeated
+#' measurements) that indicates the repeated measures on each individual, i.e.
+#' the individuals ID. See Details.
 #' @param validation character. What kind of (internal) validation to use,
 #'   matching one of \code{"Mfold"} or \code{"loo"} (short for 'leave-one-out').
 #'   Default is \code{"Mfold"}.
 #' @param folds the folds in the Mfold cross-validation. See Details.
+#' @param nrepeat Number of times the Cross-Validation process is repeated.
 #' @param dist distance metric to use for \code{splsda} to estimate the
 #' classification error rate, should one of \code{"centroids.dist"},
 #' \code{"mahalanobis.dist"} or \code{"max.dist"} (see Details). 
@@ -95,27 +107,15 @@
 #' @param measure Three misclassification measure are available: overall
 #' misclassification error \code{overall}, the Balanced Error Rate \code{BER}
 #' or the Area Under the Curve \code{AUC}. Only used when \code{test.keepX} is not NULL. 
-#' @param scale Logical. If scale = TRUE, each block is standardized to zero
-#' means and unit variances (default: TRUE)
+#' @param signif.threshold numeric between 0 and 1 indicating the significance
+#' threshold required for improvement in error rate of the components. Default
+#' to 0.01.
 #' @param auc if \code{TRUE} calculate the Area Under the Curve (AUC)
 #' performance of the model based on the optimisation measure \code{measure}.
 #' @param progressBar by default set to \code{TRUE} to output the progress bar
 #' of the computation.
-#' @param tol Convergence stopping value.
-#' @param max.iter integer, the maximum number of iterations.
-#' @param near.zero.var Logical, see the internal \code{\link{nearZeroVar}}
-#' function (should be set to TRUE in particular for data with many zero
-#' values). Default value is FALSE
-#' @param nrepeat Number of times the Cross-Validation process is repeated.
-#' @param logratio one of ('none','CLR'). Default to 'none'
-#' @param multilevel Design matrix for multilevel analysis (for repeated
-#' measurements) that indicates the repeated measures on each individual, i.e.
-#' the individuals ID. See Details.
 #' @param light.output if set to FALSE, the prediction/classification of each
 #' sample for each of \code{test.keepX} and each comp is returned.
-#' @param signif.threshold numeric between 0 and 1 indicating the significance
-#' threshold required for improvement in error rate of the components. Default
-#' to 0.01.
 #' @template arg/BPPARAM
 #' @param seed set a number here if you want the function to give reproducible outputs. 
 #' Not recommended during exploratory analysis. Note if RNGseed is set in 'BPPARAM', this will be overwritten by 'seed'. 
