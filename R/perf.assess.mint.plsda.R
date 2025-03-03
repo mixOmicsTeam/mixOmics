@@ -70,9 +70,6 @@ perf.assess.mint.plsda <- function (object,
     
     if (!is.logical(progressBar))
         stop("'progressBar' must be either TRUE or FALSE")
-    
-    #-- check significance threshold
-    signif.threshold <- .check_alpha(signif.threshold)
 
     near.zero.var = !is.null(object$nzv) # if near.zero.var was used, we set it to TRUE. if not used, object$nzv is NULL
     

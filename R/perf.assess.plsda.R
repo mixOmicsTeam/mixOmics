@@ -117,9 +117,6 @@ perf.assess.mixo_plsda <- function(object,
         stop("Choose one of the two following logratio transformation: 'none' or 'CLR'")
     #fold is checked in 'MCVfold'
     
-    #-- check significance threshold
-    signif.threshold <- .check_alpha(signif.threshold)
-    
     #---------------------------------------------------------------------------#
     #-- logration + multilevel approach ----------------------------------------#
 

@@ -77,9 +77,6 @@ perf.assess.sgccda <-
     
     ### Start: Check parameter validation / set up sample
     
-    #-- check significance threshold
-    signif.threshold <- .check_alpha(signif.threshold)
-    
     if (length(validation) > 1 )
       validation = validation [1]
     
