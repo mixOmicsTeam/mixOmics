@@ -71,6 +71,12 @@ perf.assess.sgccda <-
     } else {
       dist.select = dist
     }
+
+    if (any(table(object$Y) <= 1)) {
+      stop(paste("Cannot evaluate performance when a class level ('", 
+                names(table(object$Y))[which(table(object$Y) == 1)],
+                "') has only a single associated sample.", sep = ""))
+    }
     ### End: Initialization parameters
     
     dist = match.arg(dist.select, choices = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"), several.ok = TRUE)

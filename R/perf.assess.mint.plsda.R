@@ -72,6 +72,12 @@ perf.assess.mint.plsda <- function (object,
         stop("'progressBar' must be either TRUE or FALSE")
 
     near.zero.var = !is.null(object$nzv) # if near.zero.var was used, we set it to TRUE. if not used, object$nzv is NULL
+
+    if (any(table(object$Y) <= 1)) {
+      stop(paste("Cannot evaluate performance when a class level ('", 
+                names(table(object$Y))[which(table(object$Y) == 1)],
+                "') has only a single associated sample.", sep = ""))
+    }
     
     #-- end checking --#
     #------------------#
