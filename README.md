@@ -212,6 +212,24 @@ Thank you!
 
 ## What’s New
 
+#### March 2025
+
+- enhancement request
+  [\#353](https://github.com/mixOmicsTeam/mixOmics/issues/353) better
+  error message in `perf()` when one sample in a class
+- enhancement request
+  [\#340](https://github.com/mixOmicsTeam/mixOmics/issues/340) expand
+  test coverage for main functions
+- enhancement request
+  [\#336](https://github.com/mixOmicsTeam/mixOmics/issues/336)
+  streamline multiblock functions by removing `scheme` and `init` args
+
+Also explored potential bugs in handling of near zero variance in
+`block.splsda`
+[\#352](https://github.com/mixOmicsTeam/mixOmics/issues/352) and of
+`perf()` giving incorrect per-class error rates
+[\#355](https://github.com/mixOmicsTeam/mixOmics/issues/355).
+
 #### November 2024
 
 - enhancement request
