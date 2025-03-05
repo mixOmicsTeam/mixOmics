@@ -13,6 +13,7 @@ permissions: read-all
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
+    timeout-minutes: 720
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
