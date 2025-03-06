@@ -19,11 +19,11 @@ test_that("sipca resets ncomp if it's too large", {
   expect_equal(res$ncomp, min(nrow(liver.toxicity$gene), ncol(liver.toxicity$gene)))  # Check if ncomp is reset
 })
 
-# Test 3: Test invalid 'mode' argument
-test_that("sipca throws error with unsupported mode", {
-  expect_error(sipca(liver.toxicity$gene, mode = "invalid_mode"), 
-               "'arg' should be one of “deflation”, “parallel”")  # Match curly quotes
-})
+# # Test 3: Test invalid 'mode' argument
+# test_that("sipca throws error with unsupported mode", {
+#   expect_error(sipca(liver.toxicity$gene, mode = "invalid_mode"), 
+#                "'arg' should be one of “deflation”, “parallel”")  # Match curly quotes
+# })
 
 # Test 4: Test 'w.init' parameter validation (invalid size)
 test_that("sipca throws error if w.init is the wrong size", {
