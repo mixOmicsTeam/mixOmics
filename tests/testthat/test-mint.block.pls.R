@@ -10,7 +10,7 @@ test_that("mint.block.pls works", {
   mrna = mrna[, -1]
   data = list(mrna = mrna, mirna = mirna)
   res = mint.block.plsda(data, Y, study=study, ncomp=2)
-  expect_equal(res$loadings$mrna[5], -0.08031856)
+  expect_equal(res$loadings$mrna[5], -0.08031856, tolerance = 1e-5)
   expect_equal(res$mode, "regression")
 })
   

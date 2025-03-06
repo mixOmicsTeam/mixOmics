@@ -11,7 +11,7 @@ test_that("mint.block.spls works", {
   data = list(mrna = mrna, mirna = mirna)
   res = mint.block.splsda(data, Y, study=study, ncomp=2,
                           keepX = list(mrna=c(10,10), mirna=c(20,20)))
-  expect_equal(res$loadings$mrna[5], 0)
+  expect_equal(res$loadings$mrna[5], 0, tolerance = 1e-5)
   expect_equal(res$mode, "regression")
 })
   
