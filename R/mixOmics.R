@@ -694,7 +694,7 @@ internal_arguments_from_MAE <- function(
     is_index <- is.numeric(experiments) && all(experiments%%1==0) &&
         all(experiments>0&experiments<=length(experiments(mae)))
     is_name <- is.character(experiments) &&
-        all(experiments %in% names(experiments(mae)))
+        all(experiments %in% names(mae))
     if( !( is_index || is_name ) ){
         stop("'experiments' must specify experiments from 'experiments(mae)'.",
             call. = FALSE)
@@ -775,10 +775,10 @@ internal_arguments_from_MAE <- function(
         }
         # For MINT, provide also study parameter that tells from where which
         # sample comes from
-        args[["study"]] <- rep(names(experiments(mae)), lengths(colnames(mae)))
+        args[["study"]] <- rep(names(mae), lengths(colnames(mae)))
     } else{
         # For DIABLO, give name for the X. It is a list of experiments
-        names( args[["X"]] ) <- names(experiments(mae))
+        names( args[["X"]] ) <- names(mae)
     }
     return(args)
 }
