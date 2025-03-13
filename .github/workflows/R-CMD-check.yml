@@ -93,11 +93,26 @@ jobs:
       - name: Check out repo ⬇️
         uses: actions/checkout@v2
 
-      - name: Set up R ▶️
-        uses: r-lib/actions/setup-r@v2
-        if: matrix.config.image == null
-        with:
-          r-version: ${{ matrix.config.r }}
+      - name: Install dependencies for manual R installation
+        run: |
+          brew install wget
+          wget https://cran.r-project.org/src/base/R-4/R-4.5.0.tar.gz
+          tar -xzvf R-4.5.0.tar.gz
+          cd R-4.5.0
+          ./configure --enable-R-shlib
+          make
+          sudo make install
+
+      - name: Set up R manually
+        run: |
+          export PATH=/usr/local/bin:$PATH
+          R --version
+
+      # - name: Set up R ▶️
+      #   uses: r-lib/actions/setup-r@v2
+      #   if: matrix.config.image == null
+      #   with:
+      #     r-version: ${{ matrix.config.r }}
 
       - name: Create slug/short variables
         uses: rlespinasse/github-slug-action@v3.x
