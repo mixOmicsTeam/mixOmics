@@ -850,7 +850,7 @@ internal_graphicModule <-
                            col =  c(NA, col.per.group, NA, NA, rep("black",
                                                                    nlevels(df$pch.levels))),
                            legend = c(legend.title, levels(df$group), "",
-                                      legend.title.pch, levels(df$pch.levels)),
+                                      legend.title.pch, levels(df$pch)),
                            pch = c(NA, rep(16, length(col.per.group)), NA, NA, values.pch),
                            cex = max(c(size.legend.title, size.legend)),
                            lty = 0,
