@@ -82,17 +82,17 @@ Default to \code{'X'}.}
 
 \item{ind.names}{either a character vector of names for the individuals to
 be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
-the first (or second) data matrix is used as names (see Details).}
+the first (or second) data matrix is used as names (see Details). If `pch` is set this
+will overwrite the names as shapes. Default is \code{TRUE}.}
 
 \item{group}{Factor indicating the group membership for each sample.}
 
 \item{cutoff}{numeric between 0 and 1. Variables with correlations below
 this cutoff in absolute value are not plotted (see Details).}
 
-\item{col.per.group}{character (or symbol) color to be used when 'group' is
-defined. Vector of the same length as the number of groups.}
-
-\item{col}{character (or symbol) color to be used, possibly vector.}
+\item{col}{character (or symbol) color to be used. If `group` is provided, should be a 
+vector of the same length as groups, order of colours will be respected to correspond to 
+order of `group` levels.}
 
 \item{ind.names.size}{Numeric, sample name size.}
 
@@ -100,8 +100,10 @@ defined. Vector of the same length as the number of groups.}
 
 \item{ind.names.repel}{Logical, whether to repel away label names.}
 
-\item{pch}{plot character. A character string or a vector of single
-characters or integers. See \code{\link{points}} for all alternatives.}
+\item{pch}{factor indicating a second group membership for each sample by which
+to set the plotting character. Default is \code{NULL}. If \code{pch} is
+missing, a single layer legend is shown. Order of levels will reflect the
+order the groups appear in legends and correspond to the order of set shapes.}
 
 \item{pch.levels}{If \code{pch} is a factor, a named vector providing the
 point characters to use. See examples.}

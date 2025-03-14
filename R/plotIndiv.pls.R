@@ -10,7 +10,6 @@ plotIndiv.mixo_pls <-
              rep.space  = NULL,
              ind.names  = TRUE,
              group,
-             col.per.group,
              style = "ggplot2",
              ellipse  = FALSE,
              ellipse.level  = 0.95,
@@ -28,7 +27,6 @@ plotIndiv.mixo_pls <-
              col,
              cex,
              pch,
-             pch.levels,
              alpha = 0.2,
              axes.box  = "box",
              layout = NULL,
@@ -132,7 +130,7 @@ plotIndiv.mixo_pls <-
         out = shape.input.plotIndiv(object = object, n = n, blocks  = blocks, x = x, y = y, z = z, ind.names  = ind.names, group = group,
                                     col.per.group = col.per.group, style = style, study = "global", ellipse  = ellipse, ellipse.level  = ellipse.level,
                                     centroid = centroid, star = star, title = title, xlim  = xlim, ylim  = ylim, 
-                                    col = col, cex = cex, pch = pch, pch.levels = pch.levels, display.names = display.names, plot_parameters = plot_parameters)
+                                    col = col, cex = cex, pch = pch, display.names = display.names, plot_parameters = plot_parameters)
         #-- retrieve outputs
         df = out$df
         df.ellipse = out$df.ellipse

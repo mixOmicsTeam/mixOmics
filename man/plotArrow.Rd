@@ -33,14 +33,14 @@ project the individuals.}
 
 \item{ind.names}{either a character vector of names for the individuals to
 be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
-the first (or second) data matrix is used as names (see Details).}
+the first (or second) data matrix is used as names (see Details). If `pch` is set this
+will overwrite the names as shapes. Default is \code{TRUE}.}
 
 \item{group}{Factor indicating the group membership for each sample.}
 
-\item{col.per.group}{character (or symbol) color to be used when 'group' is
-defined. Vector of the same length as the number of groups.}
-
-\item{col}{character (or symbol) color to be used, possibly vector.}
+\item{col}{character (or symbol) color to be used. If `group` is provided, should be a 
+vector of the same length as groups, order of colours will be respected to correspond to 
+order of `group` levels.}
 
 \item{ind.names.position}{One of c('start', 'end') indicating where to show
 the ind.names . Not used in block analyses, where centroids are used.}

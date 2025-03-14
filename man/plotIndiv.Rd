@@ -21,7 +21,6 @@ plotIndiv(object, ...)
   study = "global",
   rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
   group,
-  col.per.group,
   style = "ggplot2",
   ellipse = FALSE,
   ellipse.level = 0.95,
@@ -59,7 +58,6 @@ plotIndiv(object, ...)
   study = "global",
   rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
   group,
-  col.per.group,
   style = "ggplot2",
   ellipse = FALSE,
   ellipse.level = 0.95,
@@ -97,7 +95,6 @@ plotIndiv(object, ...)
   study = "global",
   rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
   group,
-  col.per.group,
   style = "ggplot2",
   ellipse = FALSE,
   ellipse.level = 0.95,
@@ -135,7 +132,6 @@ plotIndiv(object, ...)
   study = "global",
   rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
   group,
-  col.per.group,
   style = "ggplot2",
   ellipse = FALSE,
   ellipse.level = 0.95,
@@ -172,7 +168,6 @@ plotIndiv(object, ...)
   comp = NULL,
   ind.names = TRUE,
   group,
-  col.per.group,
   style = "ggplot2",
   ellipse = FALSE,
   ellipse.level = 0.95,
@@ -189,7 +184,6 @@ plotIndiv(object, ...)
   col,
   cex,
   pch,
-  pch.levels,
   alpha = 0.2,
   axes.box = "box",
   layout = NULL,
@@ -213,7 +207,6 @@ plotIndiv(object, ...)
   rep.space = NULL,
   ind.names = TRUE,
   group,
-  col.per.group,
   style = "ggplot2",
   ellipse = FALSE,
   ellipse.level = 0.95,
@@ -231,7 +224,6 @@ plotIndiv(object, ...)
   col,
   cex,
   pch,
-  pch.levels,
   alpha = 0.2,
   axes.box = "box",
   layout = NULL,
@@ -256,7 +248,6 @@ plotIndiv(object, ...)
   blocks = NULL,
   ind.names = TRUE,
   group,
-  col.per.group,
   style = "ggplot2",
   ellipse = FALSE,
   ellipse.level = 0.95,
@@ -274,7 +265,6 @@ plotIndiv(object, ...)
   col,
   cex,
   pch,
-  pch.levels,
   alpha = 0.2,
   axes.box = "box",
   layout = NULL,
@@ -298,7 +288,6 @@ plotIndiv(object, ...)
   blocks = NULL,
   ind.names = TRUE,
   group,
-  col.per.group,
   style = "ggplot2",
   ellipse = FALSE,
   ellipse.level = 0.95,
@@ -316,7 +305,6 @@ plotIndiv(object, ...)
   col,
   cex,
   pch,
-  pch.levels,
   alpha = 0.2,
   axes.box = "box",
   layout = NULL,
@@ -356,13 +344,12 @@ is a panel plot representing each data subspace. For objects of class
 data set to represent needs to be specified.}
 
 \item{group}{factor indicating the group membership for each sample, useful
-for ellipse plots. Coded as default for the supervised methods \code{PLS-DA,
+for colouring samples by groups, adding ellipses, centroids and stars.
+Coded as default for the supervised methods \code{PLS-DA,
 SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
-\code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. Order of levels will reflect
-order in legends and correspond to any set colours.}
-
-\item{col.per.group}{character (or symbol) color to be used when 'group' is
-defined. Vector of the same length as the number of groups.}
+\code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. 
+Order of levels will reflect the order the groups appear in legends and 
+correspond to the order of set colours in `col`.}
 
 \item{style}{argument to be set to either \code{'graphics'},
 \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
@@ -411,12 +398,16 @@ plotted? Default set to \code{FALSE}}
 \item{xlim, ylim}{numeric list of vectors of length 2 and length
 =length(blocks), giving the x and y coordinates ranges.}
 
-\item{col}{character (or symbol) color to be used, possibly vector.}
+\item{col}{character (or symbol) color to be used. If `group` is provided, should be a 
+vector of the same length as groups, order of colours will be respected to correspond to 
+order of `group` levels.}
 
 \item{cex}{numeric character (or symbol) expansion, possibly vector.}
 
-\item{pch}{plot character. A character string or a vector of single
-characters or integers. See \code{\link{points}} for all alternatives.}
+\item{pch}{factor indicating a second group membership for each sample by which
+to set the plotting character. Default is \code{NULL}. If \code{pch} is
+missing, a single layer legend is shown. Order of levels will reflect the
+order the groups appear in legends and correspond to the order of set shapes.}
 
 \item{layout}{layout parameter passed to mfrow. Only used when \code{study}
 is not "global"}
@@ -448,13 +439,10 @@ FALSE}}
 
 \item{ind.names}{either a character vector of names for the individuals to
 be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
-the first (or second) data matrix is used as names (see Details).}
+the first (or second) data matrix is used as names (see Details). If `pch` is set this
+will overwrite the names as shapes. Default is \code{TRUE}.}
 
 \item{Z.label}{z axis titles (when style = '3d').}
-
-\item{pch.levels}{Only used when \code{pch} is different from \code{col} or
-\code{col.per.group}, ie when \code{pch} creates a second factor. Only used
-for the legend.}
 
 \item{alpha}{Semi-transparent colors (0 < \code{'alpha'} < 1)}
 

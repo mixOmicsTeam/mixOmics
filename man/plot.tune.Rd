@@ -37,8 +37,10 @@ One of c('cor', 'RSS').}
 
 \item{comp}{Integer of length 2 denoting the components to plot.}
 
-\item{pch}{plot character. A character string or a vector of single
-characters or integers. See \code{\link{points}} for all alternatives.}
+\item{pch}{factor indicating a second group membership for each sample by which
+to set the plotting character. Default is \code{NULL}. If \code{pch} is
+missing, a single layer legend is shown. Order of levels will reflect the
+order the groups appear in legends and correspond to the order of set shapes.}
 
 \item{cex}{numeric character (or symbol) expansion, possibly vector.}
 

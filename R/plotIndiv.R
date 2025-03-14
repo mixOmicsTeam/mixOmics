@@ -80,7 +80,7 @@
 #' SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
 #' \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. 
 #' Order of levels will reflect the order the groups appear in legends and 
-#' correspond to the order of set colours in `col.per.group`. 
+#' correspond to the order of set colours in `col`. 
 #' @param col character (or symbol) color to be used. If `group` is provided, should be a 
 #' vector of the same length as groups, order of colours will be respected to correspond to 
 #' order of `group` levels. 

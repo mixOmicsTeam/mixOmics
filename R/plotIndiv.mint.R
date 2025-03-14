@@ -10,8 +10,6 @@ plotIndiv.mint.pls <-
              study = "global",
              rep.space = c("X-variate","XY-variate", "Y-variate", "multi"),
              group,
-             # factor indicating the group membership for each sample, useful for ellipse plots. Coded as default for the -da methods, but needs to be input for the unsupervised methods (PCA, IPCA...)
-             col.per.group,
              style = "ggplot2",
              # can choose between graphics, lattice or ggplot2
              ellipse = FALSE,

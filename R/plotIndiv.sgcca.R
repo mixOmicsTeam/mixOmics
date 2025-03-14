@@ -10,7 +10,6 @@ plotIndiv.sgcca <-
            blocks = NULL,
            ind.names = TRUE,
            group,
-           col.per.group,
            style = "ggplot2",
            ellipse = FALSE,
            ellipse.level = 0.95,
@@ -28,7 +27,6 @@ plotIndiv.sgcca <-
            col,
            cex,
            pch,
-           pch.levels,
            alpha = 0.2,
            axes.box = "box",
            layout = NULL,
@@ -186,7 +184,6 @@ plotIndiv.sgcca <-
       col = col,
       cex = cex,
       pch = pch,
-      pch.levels = pch.levels,
       display.names = display.names,
       plot_parameters = plot_parameters
     )
