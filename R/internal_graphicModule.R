@@ -550,7 +550,7 @@ internal_graphicModule <-
                                         pch = c(NA, rep(16, length(col.per.group)), NA, NA,
                                                 values.pch),
                                         text = list(outcome = c(legend.title, levels(df$group),
-                                                                "", legend.title.pch, levels(df$pch.levels)))
+                                                                "", legend.title.pch, levels(df$pch)))
                                    )
                                    
                                }
