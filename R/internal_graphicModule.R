@@ -233,9 +233,17 @@ internal_graphicModule <-
                 #if there's more than 10 levels, R/ggplot orders characters
                 #different than values 1, 10, 11, 2, 3, etc
             } else {
-                # if pch different factor, then second legend
-                p = p + scale_shape_manual(values = values.pch,
-                    name = legend.title.pch, labels = values.pch)
+                # if pch different factor, then can't plot samples per group as done before, restart plot
+                p = ggplot(df, aes(x = x, y = y, color = group, shape = pch)) +
+                  labs(title=title, x = X.label, y = Y.label) +
+                  theme_bw() + 
+                  theme(strip.text = element_text(size = size.subtitle, face = "bold")) + 
+                  geom_point(data = df,
+                             size = df$cex[1], 
+                             stroke = point.lwd) + 
+                  scale_shape_manual(values = values.pch,
+                    name = legend.title.pch, labels = values.pch) +
+                  scale_color_manual(values = col.per.group, name = legend.title)
             }
             
             p = p + #labs(list(title = title, x = X.label, y = Y.label)) +
