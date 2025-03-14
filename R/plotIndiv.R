@@ -63,19 +63,27 @@
 #' @param study Indicates which study-specific outputs to plot. A character
 #' vector containing some levels of \code{object$study}, "all.partial" to plot
 #' all studies or "global" is expected. Default to "global".
-#' @param ind.names either a character vector of names for the individuals to
-#' be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
-#' the first (or second) data matrix is used as names (see Details).
-#' @param group factor indicating the group membership for each sample, useful
-#' for ellipse plots. Coded as default for the supervised methods \code{PLS-DA,
-#' SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
-#' \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. Order of levels will reflect
-#' order in legends and correspond to any set colours. 
-#' @template arg/col.per.group
+#' @param layout layout parameter passed to mfrow. Only used when \code{study}
+#' is not "global"
 #' @param style argument to be set to either \code{'graphics'},
 #' \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
 #' Default set to 'ggplot2'. See details. \code{3d} is not available for MINT
 #' objects.
+#' @param ind.names either a character vector of names for the individuals to
+#' be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
+#' the first (or second) data matrix is used as names (see Details). If `pch` is set this
+#' will overwrite the names as shapes. Default is \code{TRUE}.
+#' 
+#' @param group factor indicating the group membership for each sample, useful
+#' for colouring samples by groups, adding ellipses, centroids and stars.
+#' Coded as default for the supervised methods \code{PLS-DA,
+#' SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
+#' \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. 
+#' Order of levels will reflect the order the groups appear in legends and 
+#' correspond to the order of set colours in `col.per.group`. 
+#' @param col character (or symbol) color to be used. If `group` is provided, should be a 
+#' vector of the same length as groups, order of colours will be respected to correspond to 
+#' order of `group` levels. 
 #' @param ellipse Logical indicating if ellipse plots should be plotted. In the
 #' non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
 #' sGCCA} ellipse plot is only be plotted if the argument \code{group} is
@@ -97,6 +105,12 @@
 #' plot is only be plotted if the argument \code{group} is provided. In the
 #' supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the star plot is plotted
 #' according to the outcome \code{Y}.
+#' 
+#' @param pch factor indicating a second group membership for each sample by which
+#' to set the plotting character. Default is \code{NULL}. If \code{pch} is
+#' missing, a single layer legend is shown. Order of levels will reflect the
+#' order the groups appear in legends and correspond to the order of set shapes. 
+#' 
 #' @param title set of characters indicating the title plot.
 #' @param subtitle subtitle for each plot, only used when several \code{block}
 #' or \code{study} are plotted.
@@ -108,18 +122,12 @@
 #' plotted? Default set to \code{FALSE}
 #' @param xlim,ylim numeric list of vectors of length 2 and length
 #' =length(blocks), giving the x and y coordinates ranges.
-#' @param col character (or symbol) color to be used, possibly vector.
 #' @param cex numeric character (or symbol) expansion, possibly vector.
-#' @param pch plot character. A character string or a vector of single
-#' characters or integers. See \code{\link{points}} for all alternatives.
-#' @param pch.levels Only used when \code{pch} is different from \code{col} or
-#' \code{col.per.group}, ie when \code{pch} creates a second factor. Only used
-#' for the legend.
+
 #' @param alpha Semi-transparent colors (0 < \code{'alpha'} < 1)
 #' @param axes.box for style '3d', argument to be set to either \code{'axes'},
 #' \code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.
-#' @param layout layout parameter passed to mfrow. Only used when \code{study}
-#' is not "global"
+
 #' @param size.title size of the title
 #' @param size.subtitle size of the subtitle
 #' @param size.xlabel size of xlabel
@@ -157,11 +165,9 @@ plotIndiv  <- function(object, ...) {
 check.input.plotIndiv <-
   function(object,
            comp = NULL,
-           blocks = NULL,
-           # to choose which block data to plot, when using GCCA module
+           blocks = NULL, # to choose which block data to plot, when using GCCA module
            ind.names = TRUE,
-           style = "ggplot2",
-           # can choose between graphics, 3d, lattice or ggplot2
+           style = "ggplot2", # can choose between graphics, 3d, lattice or ggplot2
            #study = "global",
            ellipse = FALSE,
            ellipse.level = 0.95,
@@ -581,7 +587,6 @@ shape.input.plotIndiv <-
            col,
            cex,
            pch,
-           pch.levels,
            display.names,
            plot_parameters
   )
@@ -789,6 +794,8 @@ shape.input.plotIndiv <-
     #           not independent from class.object: for the title of the plot, either "PlotIndiv" or "block:.."
     # --------------------------------------------------------------------------------------
     
+    pch.levels = pch
+
     #-- pch argument
     if (missing(pch) & !any(class.object%in%object.mint))
     {

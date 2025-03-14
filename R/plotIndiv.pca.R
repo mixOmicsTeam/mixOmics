@@ -26,7 +26,6 @@ plotIndiv.pca <-
              col,
              cex,
              pch,
-             pch.levels,
              alpha = 0.2,
              axes.box = "box",
              layout = NULL,
@@ -157,7 +156,6 @@ plotIndiv.pca <-
             col = col,
             cex = cex,
             pch = pch,
-            pch.levels = pch.levels,
             display.names = display.names,
             plot_parameters = plot_parameters
         )
