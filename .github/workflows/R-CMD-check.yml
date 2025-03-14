@@ -48,10 +48,10 @@ jobs:
             bioc="latest"
             r="$r_release"
           else
-            ##bioc="3.20"
-            ##r="$r_release"
-            bioc="devel" ## comment this out for now as bioc version 3.21 requires r version 4.5, but also doesnt seem to like 'release' or 'devel' as arg here
-            r="$r_devel" ## comment this out for now as R version 4.5 doesn't exist so fails on build
+            bioc="3.20"
+            r="$r_release"
+            ##bioc="devel" ## comment this out for now as bioc version 3.21 requires r version 4.5, but also doesnt seem to like 'release' or 'devel' as arg here
+            ##r="$r_devel" ## comment this out for now as R version 4.5 doesn't exist so fails on build
           fi
           echo "r=$r" >> $GITHUB_OUTPUT
           echo "bioc=$bioc" >> $GITHUB_OUTPUT
@@ -93,26 +93,11 @@ jobs:
       - name: Check out repo ⬇️
         uses: actions/checkout@v2
 
-      - name: Install dependencies for manual R installation
-        run: |
-          brew install wget
-          wget https://cran.r-project.org/src/base/R-4/R-4.5.0.tar.gz
-          tar -xzvf R-4.5.0.tar.gz
-          cd R-4.5.0
-          ./configure --enable-R-shlib
-          make
-          sudo make install
-
-      - name: Set up R manually
-        run: |
-          export PATH=/usr/local/bin:$PATH
-          R --version
-
-      # - name: Set up R ▶️
-      #   uses: r-lib/actions/setup-r@v2
-      #   if: matrix.config.image == null
-      #   with:
-      #     r-version: ${{ matrix.config.r }}
+      - name: Set up R ▶️
+        uses: r-lib/actions/setup-r@v2
+        if: matrix.config.image == null
+        with:
+          r-version: ${{ matrix.config.r }}
 
       - name: Create slug/short variables
         uses: rlespinasse/github-slug-action@v3.x
