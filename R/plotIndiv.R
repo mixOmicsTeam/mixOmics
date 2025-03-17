@@ -667,12 +667,7 @@ shape.input.plotIndiv <-
         }
         
         
-      } else if (!missing(col.per.group) & !missing(col)) { # we ignore 'col'
-        warning("'col' is ignored as 'group' has been set.")
-        
-      } else if (!missing(col.per.group) & missing(col)) {# all good
-        
-      }
+      } 
       
       if(length(col.per.group) !=  nlevels(group))
         stop("Length of 'col.per.group' should be of length ", nlevels(group), " (the number of groups).")

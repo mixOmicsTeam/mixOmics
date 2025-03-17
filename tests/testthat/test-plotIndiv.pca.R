@@ -12,7 +12,7 @@ test_that("plotIndiv works for (s)pca", {
   groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
   pl.res <- plotIndiv(pca.srbct, group = groups, ind.names = FALSE, # plot the samples projected
             legend = TRUE, title = 'PCA on SRBCT, comp 1 - 2',
-            col.per.group = c("red", "blue", "green", "black")) # onto the PCA subspace
+            col = c("red", "blue", "green", "black")) # onto the PCA subspace
   
   # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], 10.13857)
@@ -42,7 +42,7 @@ test_that("plotIndiv works for (s)pca (lattice style)", {
   groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
   pl.res <- plotIndiv(pca.srbct, group = groups, ind.names = FALSE, # plot the samples projected
                       legend = TRUE, title = 'PCA on SRBCT, comp 1 - 2',
-                      col.per.group = c("red", "blue", "green", "black"),
+                      col = c("red", "blue", "green", "black"),
                       style = "lattice") # onto the PCA subspace
   
   # check coordinates
@@ -73,7 +73,7 @@ test_that("plotIndiv works for (s)pca (graphics style)", {
   groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
   pl.res <- plotIndiv(pca.srbct, group = groups, ind.names = FALSE, # plot the samples projected
                       legend = TRUE, title = 'PCA on SRBCT, comp 1 - 2',
-                      col.per.group = c("red", "blue", "green", "black"),
+                      col = c("red", "blue", "green", "black"),
                       style = "graphics") # onto the PCA subspace
   
   # check coordinates
@@ -108,7 +108,7 @@ test_that("plotIndiv works for (s)pca (3d style)", {
   clear3d()
   pl.res <- suppressWarnings(suppressMessages(plotIndiv(pca.srbct, group = groups, ind.names = FALSE, 
                                                         legend = TRUE, title = 'PCA on SRBCT, comp 1 - 2',
-                                                        col.per.group = c("red", "blue", "green", "black"),
+                                                        col = c("red", "blue", "green", "black"),
                                                         style = "3d")))
   
   # Check coordinates
