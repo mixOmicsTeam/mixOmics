@@ -26,7 +26,7 @@ plotIndiv.mixo_pls <-
              ylim  = NULL,
              col,
              cex,
-             pch,
+             pch = 1,
              alpha = 0.2,
              axes.box  = "box",
              layout = NULL,
