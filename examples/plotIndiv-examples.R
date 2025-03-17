@@ -49,7 +49,6 @@ plotIndiv(toxicity.spls)
 plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
 group = liver.toxicity$treatment[, 'Time.Group'], # first factor
 pch = as.factor(liver.toxicity$treatment$Dose.Group), #second factor
-pch.levels =liver.toxicity$treatment$Dose.Group, 
 legend = TRUE)
 
 

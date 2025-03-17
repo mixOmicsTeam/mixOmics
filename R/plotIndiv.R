@@ -795,6 +795,7 @@ shape.input.plotIndiv <-
       {
         # a pch per study, forced
         pch = as.numeric(object$study)
+        pch.levels = pch
       } else {
         if (length(pch)!= length(object$study))
           stop("'pch' needs to be of length 'object$study' as each of 'pch' represents a specific study", call. = FALSE)
