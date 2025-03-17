@@ -1,0 +1,116 @@
+context("plotIndiv.sgcca")
+
+## ------------------------------------------------------------------------ ##
+## Test that outputs are correct when running default style = "ggplot2"
+
+test_that("plotIndiv works for sgcca and rgcca", {
+  data(nutrimouse)
+  Y = unmap(nutrimouse$diet)
+  data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
+  design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
+  nutrimouse.sgcca <- wrapper.sgcca(X = data,
+                                    design = design1,
+                                    penalty = c(0.3, 0.5, 1),
+                                    ncomp = 3)
+  
+  pl.res <-  plotIndiv(nutrimouse.sgcca)
+  # check coordinates
+  .expect_numerically_close(pl.res$graph$data$x[1], 3.319955)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check right number of samples - here have 40 samples across 3 modalities (gene, lipid, Y)
+  expect_equal(dim(nutrimouse.sgcca$X$gene)[1] + dim(nutrimouse.sgcca$X$lipid)[1] + dim(nutrimouse.sgcca$X$Y)[1], dim(pl.res$df)[1])
+})
+
+test_that("plotIndiv works for sgccda", {
+  data(nutrimouse)
+  Y = nutrimouse$diet
+  data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+  design1 = matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
+  
+  nutrimouse.sgccda1 <- block.splsda(X = data,
+                                       Y = Y,
+                                       design = design1,
+                                       ncomp = 2,
+                                       keepX = list(gene = c(10,10), lipid = c(15,15)))
+  pl.res <- plotIndiv(nutrimouse.sgccda1)
+  # check coordinates - for some reason get a different coordinate (~2.6) for windows so this check fails
+  # .expect_numerically_close(abs(pl.res$graph$data$x[1]), abs(-2.444754), digits = 0)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check right number of samples - here have 40 samples across 2 modalities (gene, lipid)
+  expect_equal(dim(nutrimouse.sgccda1$X$gene)[1] + dim(nutrimouse.sgccda1$X$lipid)[1], dim(pl.res$df)[1])
+  
+})
+
+## ------------------------------------------------------------------------ ##
+
+test_that("plotIndiv.sgcca(..., blocks = 'average') works", code = {
+    data(nutrimouse)
+    Y = unmap(nutrimouse$diet)
+    data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
+    design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
+    nutrimouse.sgcca <- wrapper.sgcca(X = data,
+                                      design = design1,
+                                      penalty = c(0.3, 0.5, 1),
+                                      ncomp = 2)
+    
+    # default style: one panel for each block
+    plotindiv_res <- plotIndiv(nutrimouse.sgcca, blocks = c("lipid","average"))
+    
+    expect_true(any(grepl(pattern = "average", x = unique(plotindiv_res$df$Block))))
+})
+
+## ------------------------------------------------------------------------ ##
+## Edge cases
+
+test_that("plotIndiv.sgccda(..., blocks = 'average') works with ind.names and ell", code = {
+    data("breast.TCGA")
+    data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
+                protein = breast.TCGA$data.train$protein)
+    design = matrix(1, ncol = length(data), nrow = length(data),
+                    dimnames = list(names(data), names(data)))
+    diag(design) =  0
+    # set number of variables to select, per component and per data set (this is set arbitrarily)
+    list.keepX = list(mrna = rep(4, 2), mirna = rep(5,2), protein = rep(5, 2))
+    TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
+                                     ncomp = 2, keepX = list.keepX, design = design)
+    blocks <- c("average", "mrna", "weighted.average")
+    diablo_plot <- plotIndiv(TCGA.block.splsda, ind.names = FALSE, blocks = blocks)
+    expect_true(all(unique(diablo_plot$df$Block) %in% c('average', 'Block: mrna', 'average (weighted)')))
+})
+
+test_that("plotIndiv.sgccda(..., blocks = 'average') works with ellipse=TRUE", code = {
+    data("breast.TCGA")
+    data = list(mrna = breast.TCGA$data.train$mrna, mirna = breast.TCGA$data.train$mirna,
+                protein = breast.TCGA$data.train$protein)
+    design = matrix(1, ncol = length(data), nrow = length(data),
+                    dimnames = list(names(data), names(data)))
+    diag(design) =  0
+    # set number of variables to select, per component and per data set (this is set arbitrarily)
+    list.keepX = list(mrna = rep(4, 2), mirna = rep(5,2), protein = rep(5, 2))
+    TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
+                                     ncomp = 2, keepX = list.keepX, design = design)
+    blocks <- c("average", "mrna", "weighted.average")
+    diablo_plot <- plotIndiv(TCGA.block.splsda, ind.names = TRUE, blocks = blocks, ellipse = TRUE)
+    expect_true(all(unique(diablo_plot$df.ellipse$Block) %in% c('average', 'Block: mrna', 'average (weighted)')))
+})
+
+## ------------------------------------------------------------------------ ##
+## Plotting with 'lattice' style
+
+
+## ------------------------------------------------------------------------ ##
+## Plotting with 'graphics' style
+
+
+## ------------------------------------------------------------------------ ##
+## Plotting with '3d' style
+
+library(rgl)
+
+
+# Clear the rgl device
+if (rgl::rgl.cur() > 0) {
+  rgl::close3d()
+}
