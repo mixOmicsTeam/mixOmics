@@ -404,10 +404,17 @@ order of `group` levels.}
 
 \item{cex}{numeric character (or symbol) expansion, possibly vector.}
 
-\item{pch}{factor indicating a second group membership for each sample by which
-to set the plotting character. Default is \code{NULL}. If \code{pch} is
-missing, a single layer legend is shown. Order of levels will reflect the
-order the groups appear in legends and correspond to the order of set shapes.}
+\item{pch}{value or vector, controls shape of points to be plotted. 
+Can be used in 3 different ways. 
+1) If \code{pch} is one numeric value, shape of all points will be this. 
+2) If \code{pch} is a vector of numeric values length equal to the number of groups 
+set in \code{group}, then each group will have the given different shape. 
+3) If \code{pch} is a character vector of length equal to the number of samples, then the shape will
+correspond to the given vector, i.e. can control the shape of each sample and therefore
+visualise a second group membership. In this case, the elements of the vector should be
+the names of the second group membership, as these will appear in the legend. The shapes
+of the second group membership will be 1, 2, 3, etc by default, control of the shape is 
+only possible by reordering the levels of the second group membership.}
 
 \item{layout}{layout parameter passed to mfrow. Only used when \code{study}
 is not "global"}
@@ -559,8 +566,7 @@ plotIndiv(toxicity.spls)
 # and a second with Dose.Group and 'pch'
 plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
 group = liver.toxicity$treatment[, 'Time.Group'], # first factor
-pch = as.numeric(factor(liver.toxicity$treatment$Dose.Group)), #second factor
-pch.levels =liver.toxicity$treatment$Dose.Group, 
+pch = as.factor(liver.toxicity$treatment$Dose.Group), #second factor
 legend = TRUE)
 
 
@@ -621,19 +627,19 @@ ellipse = TRUE, style = "lattice", cex = c(1, 1))
 plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
 pch = c(15,16), legend = TRUE)
 
-# creating a second grouping factor with a pch of length 3,
-#  which is recycled to obtain a vector of length n
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = c(15,16,17), legend = TRUE)
+# # creating a second grouping factor with a pch of length 3,
+# #  which is recycled to obtain a vector of length n
+# plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
+# pch = c(15,16,17), legend = TRUE)
 
-#same thing as
-pch.indiv = c(rep(15:17,15), 15, 16) # length n
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = pch.indiv, legend = TRUE)
+# #same thing as
+# pch.indiv = c(rep(15:17,15), 15, 16) # length n
+# plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
+# pch = pch.indiv, legend = TRUE)
 
-# change the names of the second legend with pch.levels
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = 15:17, pch.levels = c("a","b","c"),legend = TRUE)
+# # change the names of the second legend with pch.levels
+# plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
+# pch = 15:17, pch.levels = c("a","b","c"),legend = TRUE)
 
 
 ## plot of individuals for objects of class 'mint.plsda' or 'mint.splsda'
@@ -645,11 +651,11 @@ res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2,
 plotIndiv(res)
 
 
-#plot study-specific outputs for all studies
-plotIndiv(res, study = "all.partial")
-
-#plot study-specific outputs for study "2"
-plotIndiv(res, study = "2")
+# #plot study-specific outputs for all studies
+# plotIndiv(res, study = "all.partial")
+# 
+# #plot study-specific outputs for study "2"
+# plotIndiv(res, study = "2")
 
 
 ## variable representation for objects of class 'sgcca' (or 'rgcca')

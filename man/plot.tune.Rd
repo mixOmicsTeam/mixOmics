@@ -37,10 +37,17 @@ One of c('cor', 'RSS').}
 
 \item{comp}{Integer of length 2 denoting the components to plot.}
 
-\item{pch}{factor indicating a second group membership for each sample by which
-to set the plotting character. Default is \code{NULL}. If \code{pch} is
-missing, a single layer legend is shown. Order of levels will reflect the
-order the groups appear in legends and correspond to the order of set shapes.}
+\item{pch}{value or vector, controls shape of points to be plotted. 
+Can be used in 3 different ways. 
+1) If \code{pch} is one numeric value, shape of all points will be this. 
+2) If \code{pch} is a vector of numeric values length equal to the number of groups 
+set in \code{group}, then each group will have the given different shape. 
+3) If \code{pch} is a character vector of length equal to the number of samples, then the shape will
+correspond to the given vector, i.e. can control the shape of each sample and therefore
+visualise a second group membership. In this case, the elements of the vector should be
+the names of the second group membership, as these will appear in the legend. The shapes
+of the second group membership will be 1, 2, 3, etc by default, control of the shape is 
+only possible by reordering the levels of the second group membership.}
 
 \item{cex}{numeric character (or symbol) expansion, possibly vector.}
 
