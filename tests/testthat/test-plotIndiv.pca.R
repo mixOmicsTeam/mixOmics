@@ -109,7 +109,7 @@ test_that("plotIndiv works for (s)pca (3d style)", {
   pl.res <- suppressWarnings(suppressMessages(plotIndiv(pca.srbct, group = groups, ind.names = FALSE, 
                                                         legend = TRUE, title = 'PCA on SRBCT, comp 1 - 2',
                                                         col = c("red", "blue", "green", "black"),
-                                                        style = "3d")))
+                                                        style = "3d", pch = "sphere")))
   
   # Check coordinates
   .expect_numerically_close(pl.res$df[1,1], 10.13857)
