@@ -24,7 +24,7 @@ plotIndiv.pca <-
              ylim = NULL,
              col,
              cex,
-             pch = 1,
+             pch,
              alpha = 0.2,
              axes.box = "box",
              layout = NULL,

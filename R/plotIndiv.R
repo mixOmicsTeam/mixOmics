@@ -777,8 +777,6 @@ shape.input.plotIndiv <-
     # --------------------------------------------------------------------------------------
     #           not independent from class.object: for the title of the plot, either "PlotIndiv" or "block:.."
     # --------------------------------------------------------------------------------------
-    
-    pch.levels = pch
 
     #-- pch argument
     if (missing(pch) & !any(class.object%in%object.mint))
