@@ -37,7 +37,7 @@ test_that("plotIndiv works for (s)pls", {
   pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
                       group = factor(liver.toxicity$treatment$Time.Group),
                       legend.title = 'Time',
-                      col.per.group = c("red", "blue", "green", "black"),
+                      col = c("red", "blue", "green", "black"),
                       pch = factor(liver.toxicity$treatment$Dose.Group),
                       legend.title.pch = 'Dose',
                       legend = TRUE)
@@ -83,7 +83,7 @@ test_that("plotIndiv works for (s)plsda and ellipses", {
   Y <- srbct$class
   srbct.splsda <- splsda(X, Y, ncomp = 10)
   groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
-  pl.res <- plotIndiv(srbct.splsda , comp = 1:2, col.per.group = c("red", "blue", "green", "black"),
+  pl.res <- plotIndiv(srbct.splsda , comp = 1:2, col = c("red", "blue", "green", "black"),
             group = groups, ind.names = FALSE,  # colour points by class
             ellipse = TRUE, # include 95% confidence ellipse for each class
             legend = TRUE, title = '(a) PLSDA with confidence ellipses')
@@ -178,7 +178,7 @@ test_that("plotIndiv works for (s)pls (lattice style)", {
   pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
                       group = factor(liver.toxicity$treatment$Time.Group),
                       legend.title = 'Time',
-                      col.per.group = c("red", "blue", "green", "black"),
+                      col = c("red", "blue", "green", "black"),
                       pch = factor(liver.toxicity$treatment$Dose.Group),
                       legend.title.pch = 'Dose',
                       legend = TRUE, style = "lattice")
@@ -254,7 +254,7 @@ test_that("plotIndiv works for (s)pls (graphics style)", {
   pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
                       group = factor(liver.toxicity$treatment$Time.Group),
                       legend.title = 'Time',
-                      col.per.group = c("red", "blue", "green", "black"),
+                      col = c("red", "blue", "green", "black"),
                       pch = factor(liver.toxicity$treatment$Dose.Group),
                       legend.title.pch = 'Dose',
                       legend = TRUE, style = "graphics")
@@ -308,7 +308,7 @@ test_that("plotIndiv works for rcc (3d style)", {
   # Clear any existing rgl plots and disable plot rendering for non-interactive environments
   options(rgl.useNULL = TRUE)
   clear3d()
-  pl.res <- suppressWarnings(suppressMessages(plotIndiv(nutri.res, style = "3d")))
+  pl.res <- suppressWarnings(suppressMessages(plotIndiv(nutri.res, style = "3d", pch = "sphere")))
   
   # Check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
@@ -317,7 +317,7 @@ test_that("plotIndiv works for rcc (3d style)", {
   
   clear3d()
   pl.res <- suppressWarnings(suppressMessages(plotIndiv(nutri.res, rep.space = 'XY-variate', group = nutrimouse$genotype,
-                                                        legend = TRUE, style = "3d")))
+                                                        legend = TRUE, style = "3d", pch = "sphere")))
   
   # Check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
@@ -339,7 +339,7 @@ test_that("plotIndiv works for (s)pls (3d style)", {
   expect_error(suppressWarnings(suppressMessages(plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
                                                            group = factor(liver.toxicity$treatment$Time.Group),
                                                            legend.title = 'Time',
-                                                           col.per.group = c("red", "blue", "green", "black"),
+                                                           col = c("red", "blue", "green", "black"),
                                                            pch = factor(liver.toxicity$treatment$Dose.Group),
                                                            legend.title.pch = 'Dose',
                                                            legend = TRUE, style = "3d"))),
@@ -354,7 +354,7 @@ test_that("plotIndiv works for (s)pls (3d style)", {
   pl.res <- suppressWarnings(suppressMessages(plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
                                                         group = factor(liver.toxicity$treatment$Time.Group),
                                                         legend.title = 'Time',
-                                                        col.per.group = c("red", "blue", "green", "black"),
+                                                        col = c("red", "blue", "green", "black"),
                                                         pch = pchs,
                                                         legend.title.pch = 'Dose',
                                                         legend = TRUE, style = "3d")))
@@ -382,7 +382,7 @@ test_that("plotIndiv works for (s)plsda (3d style)", {
   splsda.breast <- splsda(X, Y, keepX=c(10,10), ncomp=3)
   
   clear3d()
-  pl.res <- suppressWarnings(suppressMessages(plotIndiv(splsda.breast, style = "3d")))
+  pl.res <- suppressWarnings(suppressMessages(plotIndiv(splsda.breast, style = "3d", pch = "cube")))
   
   # Check coordinates
   .expect_numerically_close(pl.res$df[1,1], -1.075222)

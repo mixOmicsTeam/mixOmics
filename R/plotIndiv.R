@@ -646,32 +646,23 @@ shape.input.plotIndiv <-
     
     #at this stage, we have a 'group' - user defined or DA, or by default 1 single group
     
-    # col and col.per.group
-    if(!missing.group) # group is user defined or DA; we require a col.per.group input, if only a 'col' input: we use it as col.per.group
-    {
-      if(missing(col.per.group) & !missing(col))  # we use col as a col.per.group
-      {
+    # if there are groups
+    if(!missing.group){
+      # if col set, we use col as a col.per.group
+      if(!missing(col)) {
         if(length(col) !=  nlevels(group))
           stop("Length of 'col' should be of length ", nlevels(group), " (the number of groups).")
         col.per.group = col
-        
-      } else if (missing(col.per.group) & missing(col)) { # we create a col.per.group
-        
-        if (nlevels(group) < 10)
-        {
-          #only 10 colors in color.mixo
-          col.per.group = color.mixo(1:nlevels(group))
+        # if col not set, use default colours
         } else {
-          #use color.jet
-          col.per.group = color.jet(nlevels(group))
+            if (nlevels(group) < 10) {
+            # only 10 colors in color.mixo
+            col.per.group = color.mixo(1:nlevels(group))
+            } else {
+            # use color.jet
+            col.per.group = color.jet(nlevels(group))
+            }
         }
-        
-        
-      } 
-      
-      if(length(col.per.group) !=  nlevels(group))
-        stop("Length of 'col.per.group' should be of length ", nlevels(group), " (the number of groups).")
-      
       
       # make a vector of one color per sample from col.per.group
       levels.color = vector(, n)
@@ -685,9 +676,7 @@ shape.input.plotIndiv <-
       
     } else { #missing group, we require a 'col' of length n (or repeated to length n) and not a 'col.per.group'
       # col creates a group argument, which creates a col.per.group (levels from 'col')
-      if(!missing(col.per.group))
-        warning("'col.per.group' is ignored as 'group' has not been set.")
-      
+
       if(!missing(col))
       {
         if (length(col) > n)
