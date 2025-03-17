@@ -789,7 +789,6 @@ shape.input.plotIndiv <-
       } else {
         pch = as.numeric(group)
       }
-      pch.levels = pch
       
     }else if (any(class.object%in%object.mint)) {
       if (missing(pch))
@@ -800,7 +799,6 @@ shape.input.plotIndiv <-
         if (length(pch)!= length(object$study))
           stop("'pch' needs to be of length 'object$study' as each of 'pch' represents a specific study", call. = FALSE)
       }
-      pch.levels = pch
       
     } else {
       if (style == "3d")
@@ -808,24 +806,19 @@ shape.input.plotIndiv <-
         if (!all(unlist(pch) %in% c("sphere", "tetra", "cube", "octa", "icosa", "dodeca")))
           stop("pch' must be a simple character or character vector from {'sphere', 'tetra', 'cube', 'octa', 'icosa', 'dodeca'}.",
                call. = FALSE)
-        pch.levels = pch
       }
       
       if (length(pch) == 1)
       {
         pch = rep(pch, n)
-        pch.levels = rep(pch.levels, n)
         
       } else if (length(pch) > n) {
         stop("Length of 'pch' should be of length inferior or equal to ", n, ".")
       } else if (length(pch) == length(unique(group)) & length(pch)!=n ) { # prevent from reordering pch when 1 group per sample (length(pch)=length(group)=n)
         pch = pch[as.factor(group)]
-        pch.levels = pch.levels[as.factor(group)]
         
       } else {
         pch = rep(pch, ceiling(n/length(pch)))[1 : n]
-        pch.levels = pch
-        pch.levels = rep(pch.levels, ceiling(n/length(pch.levels)))[1 : n]
       }
       # if pch is given and ind.names is TRUE, pch takes over
       display.names = FALSE
@@ -885,7 +878,7 @@ shape.input.plotIndiv <-
       if (display.names)
         df$names = rep(ind.names, length(x))
       
-      df$pch = pch; df$pch.levels = pch.levels
+      df$pch = pch; df$pch.levels = pch
       df$cex = cex
       #df$col.per.group = levels.color#[group] #FR: don't understand what is that changing as levels.color is already group?
       df$col = levels.color#as.character(col)
