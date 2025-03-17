@@ -808,13 +808,6 @@ shape.input.plotIndiv <-
         if (!all(unlist(pch) %in% c("sphere", "tetra", "cube", "octa", "icosa", "dodeca")))
           stop("pch' must be a simple character or character vector from {'sphere', 'tetra', 'cube', 'octa', 'icosa', 'dodeca'}.",
                call. = FALSE)
-      }
-      
-      if(!missing(pch.levels))
-      {
-        if(length(pch.levels) != length(pch))
-          stop("'pch.levels' needs to be a vector of the same length as 'pch': ", length(pch))
-      } else {
         pch.levels = pch
       }
       
@@ -831,6 +824,7 @@ shape.input.plotIndiv <-
         
       } else {
         pch = rep(pch, ceiling(n/length(pch)))[1 : n]
+        pch.levels = pch
         pch.levels = rep(pch.levels, ceiling(n/length(pch.levels)))[1 : n]
       }
       # if pch is given and ind.names is TRUE, pch takes over
