@@ -48,7 +48,7 @@ plotIndiv(toxicity.spls)
 # and a second with Dose.Group and 'pch'
 plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
 group = liver.toxicity$treatment[, 'Time.Group'], # first factor
-pch = as.numeric(factor(liver.toxicity$treatment$Dose.Group)), #second factor
+pch = as.factor(liver.toxicity$treatment$Dose.Group), #second factor
 pch.levels =liver.toxicity$treatment$Dose.Group, 
 legend = TRUE)
 
@@ -110,19 +110,19 @@ ellipse = TRUE, style = "lattice", cex = c(1, 1))
 plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
 pch = c(15,16), legend = TRUE)
 
-# creating a second grouping factor with a pch of length 3,
-#  which is recycled to obtain a vector of length n
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = c(15,16,17), legend = TRUE)
+# # creating a second grouping factor with a pch of length 3,
+# #  which is recycled to obtain a vector of length n
+# plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
+# pch = c(15,16,17), legend = TRUE)
 
-#same thing as
-pch.indiv = c(rep(15:17,15), 15, 16) # length n
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = pch.indiv, legend = TRUE)
+# #same thing as
+# pch.indiv = c(rep(15:17,15), 15, 16) # length n
+# plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
+# pch = pch.indiv, legend = TRUE)
 
-# change the names of the second legend with pch.levels
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = 15:17, pch.levels = c("a","b","c"),legend = TRUE)
+# # change the names of the second legend with pch.levels
+# plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
+# pch = 15:17, pch.levels = c("a","b","c"),legend = TRUE)
 
 
 ## plot of individuals for objects of class 'mint.plsda' or 'mint.splsda'
@@ -134,11 +134,11 @@ res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2,
 plotIndiv(res)
 
 
-#plot study-specific outputs for all studies
-plotIndiv(res, study = "all.partial")
-
-#plot study-specific outputs for study "2"
-plotIndiv(res, study = "2")
+# #plot study-specific outputs for all studies
+# plotIndiv(res, study = "all.partial")
+# 
+# #plot study-specific outputs for study "2"
+# plotIndiv(res, study = "2")
 
 
 ## variable representation for objects of class 'sgcca' (or 'rgcca')
