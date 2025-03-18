@@ -1,22 +1,41 @@
 context("plotIndiv.pls")
 
+## rcc model
+data(nutrimouse)
+X <- nutrimouse$lipid
+Y <- nutrimouse$gene
+rcc.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
+
+## spls model
+data(liver.toxicity)
+X <- liver.toxicity$gene
+Y <- liver.toxicity$clinic
+spls.res <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
+                      keepY = c(10, 10, 10))
+
+## splsda models
+data(breast.tumors)
+X <- breast.tumors$gene.exp
+Y <- breast.tumors$sample$treatment
+splsda.breast <- splsda(X, Y,keepX=c(10,10), ncomp=2)
+
+data(srbct)
+X <- srbct$gene
+Y <- srbct$class
+srbct.splsda <- splsda(X, Y, ncomp = 10)
 
 ## ------------------------------------------------------------------------ ##
 ## Test that outputs are correct when running default style = "ggplot2"
 
 test_that("plotIndiv works for rcc", {
-  data(nutrimouse)
-  X <- nutrimouse$lipid
-  Y <- nutrimouse$gene
-  nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
   
-  pl.res <- plotIndiv(nutri.res)
+  pl.res <- plotIndiv(rcc.res)
   # check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
   # check coordinates
   .expect_numerically_close(pl.res$graph$data$x[1], 0.87088852)
   
-  pl.res <- plotIndiv(nutri.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
+  pl.res <- plotIndiv(rcc.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
                       legend = TRUE)
   # check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
@@ -28,13 +47,8 @@ test_that("plotIndiv works for rcc", {
 })
 
 test_that("plotIndiv works for (s)pls", {
-  data(liver.toxicity)
-  X <- liver.toxicity$gene
-  Y <- liver.toxicity$clinic
-  toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
-                        keepY = c(10, 10, 10))
   
-  pl.res <- plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
+  pl.res <- plotIndiv(spls.res, rep.space="X-variate", ind.name = FALSE,
                       group = factor(liver.toxicity$treatment$Time.Group),
                       legend.title = 'Time',
                       col = c("red", "blue", "green", "black"),
@@ -52,7 +66,7 @@ test_that("plotIndiv works for (s)pls", {
   expect_equal(unique(pl.res$df$col[pl.res$df$group == 24]), "green")
   expect_equal(unique(pl.res$df$col[pl.res$df$group == 48]), "black")
   # check right number of samples
-  expect_equal(dim(toxicity.spls$X)[1], dim(pl.res$df)[1])
+  expect_equal(dim(spls.res$X)[1], dim(pl.res$df)[1])
   # check groups
   expect_true(!is.null(pl.res$df$group))
   expect_equal(length(unique(pl.res$df$group)), length(unique(liver.toxicity$treatment$Time.Group)))
@@ -60,10 +74,6 @@ test_that("plotIndiv works for (s)pls", {
 })
 
 test_that("plotIndiv works for (s)plsda", {
-  data(breast.tumors)
-  X <- breast.tumors$gene.exp
-  Y <- breast.tumors$sample$treatment
-  splsda.breast <- splsda(X, Y,keepX=c(10,10), ncomp=2)
   
   pl.res <- plotIndiv(splsda.breast)
   # check coordinates
@@ -78,10 +88,7 @@ test_that("plotIndiv works for (s)plsda", {
 })
 
 test_that("plotIndiv works for (s)plsda and ellipses", {
-  data(srbct)
-  X <- srbct$gene
-  Y <- srbct$class
-  srbct.splsda <- splsda(X, Y, ncomp = 10)
+  
   groups <- factor(srbct$class, levels = c("RMS", "NB", "EWS", "BL"))
   pl.res <- plotIndiv(srbct.splsda , comp = 1:2, col = c("red", "blue", "green", "black"),
             group = groups, ind.names = FALSE,  # colour points by class
@@ -399,3 +406,270 @@ test_that("plotIndiv works for (s)plsda (3d style)", {
 if (rgl::rgl.cur() > 0) {
   rgl::close3d()
 }
+
+## ------------------------------------------------------------------------ ##
+## ------------------------------------------------------------------------ ##
+## vdiffr testing - "ggplot2" with rcc object
+library(vdiffr)
+
+test_that("plotIndiv works for rcc with sample names (default)", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # simple plot showing sample names
+  expect_doppelganger(
+    title = "rCCA plot sample names", 
+    fig = plotIndiv(rcc.res))
+  # samples coloured by primary groups, sample names, default colours
+  expect_doppelganger(
+    title = "rCCA plot sample names coloured by primary groups",
+    fig = plotIndiv(rcc.res, group = nutrimouse$diet))
+  # samples coloured by primary groups, sample names, user-defined colours
+  expect_doppelganger(
+    title = "PCA plot sample names coloured by primary groups custom cols",
+    fig = plotIndiv(rcc.res, group = nutrimouse$diet, col = c("red", "blue", "black", "pink", "grey"), legend = TRUE))
+})
+
+test_that("plotIndiv works for rcc without sample names", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # simple plot
+  expect_doppelganger(
+    title = "rCCA plot", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE))
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups
+  expect_doppelganger(
+    title = "rCCA plot coloured by primary groups", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE,
+                    group = nutrimouse$diet, legend = TRUE))
+  # samples coloured by primary groups, user-defined colours, groups reordered, by default shapes also match primary groups
+  expect_doppelganger(
+    title = "rCCA plot coloured by primary groups custom cols reordered groups", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE,
+                    group = factor(nutrimouse$diet, levels = c("coc", "lin", "ref", "sun", "fish")), 
+                    col = c("red", "blue", "black", "pink", "grey"), legend = TRUE))
+})
+
+test_that("plotIndiv works for rcc with ellipse on groups", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, ellipse
+  expect_doppelganger(
+    title = "rCCA plot with ellipse coloured by primary groups", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE, group = nutrimouse$diet, ellipse = TRUE, legend = TRUE))
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, ellipse confidence
+  expect_doppelganger(
+    title = "rCCA plot with ellipse coloured by primary groups, ellipse level 0.5", 
+    fig = plotIndiv(rcc.res, ind.names = TRUE, group = nutrimouse$diet, ellipse = TRUE, 
+                    legend = TRUE, ellipse.level = 0.5))
+})
+
+test_that("plotIndiv works for rcc with centroids on groups", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, centroid
+  expect_doppelganger(
+    title = "rCCA plot with centroids coloured by primary groups", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE, group = nutrimouse$diet, centroid = TRUE, 
+                    legend = TRUE))
+})
+
+test_that("plotIndiv works for rcc controlling colours and pch", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # force pch to be the same for all samples, so groups only coloured differently
+  expect_doppelganger(
+    title = "rCCA plot coloured by primary groups custom cols with set pch (circle) for all samples", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE, group = nutrimouse$diet, 
+                    legend = TRUE, pch = 1))
+  # control the pch of each of the primary groups by setting pch with length = levels(primary_groups)
+  expect_doppelganger(
+    title = "rCCA plot coloured by primary groups with set pch for each group", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE, group = nutrimouse$diet, 
+                    legend = TRUE, pch = c(2, 4, 6, 3, 1)))
+  # use pch to show a whole new grouping (secondary groups)
+  expect_doppelganger(
+    title = "rCCA plot coloured by primary groups with pch for secondary groups", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE, group = nutrimouse$diet, 
+                    legend = TRUE, pch = as.factor(c(rep("A", 20), rep("B", 20)))))
+  # only pch grouping
+  expect_doppelganger(
+    title = "rCCA plot with pch for primary groups, col consistent", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE, col = "purple",
+                    legend = TRUE, pch = as.factor(c(rep("A", 20), rep("B", 20))), legend.title.pch = "Groups"))
+})
+
+test_that("plotIndiv works for rcc with different rep space", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples projected on XY variate space
+  expect_doppelganger(
+    title = "rCCA plot on XY variate space", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE, rep.space = "XY-variate"))
+  # samples projected on X variate space
+  expect_doppelganger(
+    title = "rCCA plot on X variate space", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE, rep.space = "X-variate"))
+  # samples projected on Y variate space
+  expect_doppelganger(
+    title = "rCCA plot on Y variate space", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE, rep.space = "Y-variate"))
+  # samples projected on multivariate space
+  expect_doppelganger(
+    title = "rCCA plot on multi variate space", 
+    fig = plotIndiv(rcc.res, ind.names = FALSE, rep.space = "multi"))
+})
+
+## ------------------------------------------------------------------------ ##
+## ------------------------------------------------------------------------ ##
+## vdiffr testing - "ggplot2" with pls object
+
+test_that("plotIndiv works for sPLS with sample names (default)", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # simple plot showing sample names
+  expect_doppelganger(
+    title = "sPLS plot sample names", 
+    fig = plotIndiv(spls.res))
+  # samples coloured by primary groups, sample names, default colours
+  expect_doppelganger(
+    title = "sPLS plot sample names coloured by primary groups",
+    fig = plotIndiv(spls.res, group = liver.toxicity$treatment$Treatment.Group))
+})
+
+test_that("plotIndiv works for sPLS without sample names", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # simple plot
+  expect_doppelganger(
+    title = "sPLS plot", 
+    fig = plotIndiv(spls.res, ind.names = FALSE))
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups
+  expect_doppelganger(
+    title = "sPLS plot coloured by primary groups", 
+    fig = plotIndiv(spls.res, ind.names = FALSE,
+                    group = liver.toxicity$treatment$Treatment.Group, legend = TRUE))
+})
+
+test_that("plotIndiv works for sPLS with ellipse on groups", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, ellipse
+  expect_doppelganger(
+    title = "sPLS plot with ellipse coloured by primary groups", 
+    fig = plotIndiv(spls.res, ind.names = FALSE, group = liver.toxicity$treatment$Treatment.Group, ellipse = TRUE, legend = TRUE))
+})
+
+test_that("plotIndiv works for spls with centroids on groups", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, centroid
+  expect_doppelganger(
+    title = "sPLS plot with centroids and stars coloured by primary groups", 
+    fig = plotIndiv(spls.res, ind.names = FALSE, group = liver.toxicity$treatment$Treatment.Group, centroid = TRUE, 
+                    legend = TRUE, star = TRUE))
+})
+
+test_that("plotIndiv works for sPLS with different rep space", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples projected on XY variate space
+  expect_doppelganger(
+    title = "sPLS plot on XY variate space", 
+    fig = plotIndiv(spls.res, ind.names = FALSE, rep.space = "XY-variate"))
+  # samples projected on X variate space
+  expect_doppelganger(
+    title = "sPLS plot on X variate space", 
+    fig = plotIndiv(spls.res, ind.names = FALSE, rep.space = "X-variate"))
+  # samples projected on Y variate space
+  expect_doppelganger(
+    title = "sPLS plot on Y variate space", 
+    fig = plotIndiv(spls.res, ind.names = FALSE, rep.space = "Y-variate"))
+  # samples projected on multivariate space
+  expect_doppelganger(
+    title = "sPLS plot on multi variate space", 
+    fig = plotIndiv(spls.res, ind.names = FALSE, rep.space = "multi"))
+})
+
+## ------------------------------------------------------------------------ ##
+## ------------------------------------------------------------------------ ##
+## vdiffr testing - "ggplot2" with plsda object
+
+test_that("plotIndiv works for sPLSDA with sample names (default)", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # simple plot showing sample names, by default coloured by groups
+  expect_doppelganger(
+    title = "sPLSDA plot sample names", 
+    fig = plotIndiv(srbct.splsda))
+  # samples coloured by custom groups, sample names
+  expect_doppelganger(
+    title = "sPLSDA plot sample names coloured by custom groups",
+    fig = plotIndiv(srbct.splsda, group = as.factor(c(rep("A", 30), rep("B", 33)))))
+})
+
+test_that("plotIndiv works for sPLSDA without sample names", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # coloured and shapes by default by extracted groups
+  expect_doppelganger(
+    title = "sPLSDA plot coloured by extracted groups", 
+    fig = plotIndiv(srbct.splsda, ind.names = FALSE, legend = TRUE))
+})
+
+test_that("plotIndiv works for sPLSDA with ellipse from predictions", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, ellipse
+  expect_doppelganger(
+    title = "sPLSDA plot with ellipse", 
+    fig = plotIndiv(srbct.splsda, ind.names = FALSE, ellipse = TRUE, legend = TRUE))
+  # samples coloured by primary groups and ellipse on custom groups
+  expect_doppelganger(
+    title = "sPLSDA plot with ellipse on custom groups", 
+    fig = plotIndiv(srbct.splsda, ind.names = FALSE, group = as.factor(c(rep("A", 30), rep("B", 33))),
+                    ellipse = TRUE, legend = TRUE))
+})
+
+test_that("plotIndiv works for sPLSDA with centroids on groups", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, centroid
+  expect_doppelganger(
+    title = "sPLSDA plot with centroids and stars", 
+    fig = plotIndiv(srbct.splsda, ind.names = FALSE, centroid = TRUE, 
+                    legend = TRUE, star = TRUE))
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, centroid, custom cols
+  expect_doppelganger(
+    title = "sPLSDA plot with centroids and stars, custom cols", 
+    fig = plotIndiv(srbct.splsda, ind.names = FALSE, centroid = TRUE, 
+                    legend = TRUE, star = TRUE,
+                    col = c("red", "purple", "orange", "yellow")))
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, centroid, custom cols, pch on secondary groups
+  expect_doppelganger(
+    title = "sPLSDA plot with centroids and stars, custom cols, pch on second grouping", 
+    fig = plotIndiv(srbct.splsda, ind.names = FALSE, centroid = TRUE, 
+                    legend = TRUE, star = TRUE,
+                    col = c("red", "purple", "orange", "yellow"),
+                    pch = as.factor(c(rep("A", 30), rep("B", 33)))))
+})
+
+test_that("plotIndiv works for sPLSDA with different rep space", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples projected on XY variate space
+  expect_doppelganger(
+    title = "sPLSDA plot on XY variate space", 
+    fig = plotIndiv(srbct.splsda, ind.names = FALSE, rep.space = "XY-variate"))
+  # samples projected on X variate space
+  expect_doppelganger(
+    title = "sPLSDA plot on X variate space", 
+    fig = plotIndiv(srbct.splsda, ind.names = FALSE, rep.space = "X-variate"))
+  # samples projected on Y variate space
+  expect_doppelganger(
+    title = "sPLSDA plot on Y variate space", 
+    fig = plotIndiv(srbct.splsda, ind.names = FALSE, rep.space = "Y-variate"))
+  # samples projected on multivariate space
+  expect_doppelganger(
+    title = "sPLSDA plot on multi variate space", 
+    fig = plotIndiv(srbct.splsda, ind.names = FALSE, rep.space = "multi"))
+})
