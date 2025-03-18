@@ -33,7 +33,8 @@ Suggests:
     rmarkdown,
     testthat,
     microbenchmark,
-    magick
+    magick,
+    vdiffr
 Authors@R: 
     c(person("Kim-Anh", "Le Cao", role = "aut", email = "kimanh.lecao@unimelb.edu.au"), 
       person("Florian", "Rohart", role = "aut"), 
