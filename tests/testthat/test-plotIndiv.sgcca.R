@@ -40,7 +40,7 @@ test_that("plotIndiv works for sgccda", {
 
   pl.res <- plotIndiv(nutrimouse.sgccda1)
   # check coordinates - for some reason get a different coordinate (~2.6) for windows so this check fails
-  # .expect_numerically_close(abs(pl.res$graph$data$x[1]), abs(-2.444754), digits = 0)
+  .expect_numerically_close(abs(pl.res$graph$data$x[1]), abs(-2.654198), digits = 0)
   # check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
   # check right number of samples - here have 40 samples across 2 modalities (gene, lipid)
@@ -100,7 +100,7 @@ test_that("plotIndiv works for sgcca and rgcca - lattice", {
   
   pl.res <-  plotIndiv(nutrimouse.sgcca, style = "lattice")
   # check coordinates
-  .expect_numerically_close(pl.res$graph$data$x[1], 3.319955)
+  .expect_numerically_close(pl.res$df$x[1], 3.319955)
   # check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
   # check right number of samples - here have 40 samples across 3 modalities (gene, lipid, Y)
@@ -115,7 +115,7 @@ test_that("plotIndiv works for sgcca and rgcca - graphics", {
   
   pl.res <-  plotIndiv(nutrimouse.sgcca, style = "graphics")
   # check coordinates
-  .expect_numerically_close(pl.res$graph$data$x[1], 3.319955)
+  .expect_numerically_close(pl.res$df$x[1], 3.319955)
   # check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
   # check right number of samples - here have 40 samples across 3 modalities (gene, lipid, Y)
@@ -129,9 +129,9 @@ library(rgl)
 
 test_that("plotIndiv works for sgcca and rgcca - 3d", {
   
-  pl.res <- plotIndiv(nutrimouse.sgcca, style = "3d")
+  pl.res <- suppressWarnings(plotIndiv(nutrimouse.sgcca, style = "3d"))
   # check coordinates
-  .expect_numerically_close(pl.res$graph$data$x[1], 3.319955)
+  .expect_numerically_close(pl.res$df$x[1], 3.319955)
   # check correct output structure
   expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
   # check right number of samples - here have 40 samples across 3 modalities (gene, lipid, Y)
@@ -142,3 +142,64 @@ test_that("plotIndiv works for sgcca and rgcca - 3d", {
 if (rgl::rgl.cur() > 0) {
   rgl::close3d()
 }
+
+## ------------------------------------------------------------------------ ##
+## ------------------------------------------------------------------------ ##
+## vdiffr testing - "ggplot2" with sgccda object
+library(vdiffr)
+
+test_that("plotIndiv works for block sPLSDA with different blocks plotted", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples plotted across all modalities, default
+  expect_doppelganger(
+    title = "block sPLSDA plot basic, sample names", 
+    fig = plotIndiv(nutrimouse.sgccda1, ind.names = TRUE))
+  # samples plotted on just block 1 
+  expect_doppelganger(
+    title = "block sPLSDA plot on 1st block, sample names", 
+    fig = plotIndiv(nutrimouse.sgccda1, ind.names = TRUE, blocks = 1))
+  # samples plotted on just block 1 
+  expect_doppelganger(
+    title = "block sPLSDA plot on 1st and 2nd block, sample names", 
+    fig = plotIndiv(nutrimouse.sgccda1, ind.names = TRUE, blocks = c(1,2)))
+  
+})
+
+test_that("plotIndiv works for block sPLSDA with ellipse from predictions", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, ellipse
+  expect_doppelganger(
+    title = "block sPLSDA plot with ellipse", 
+    fig = plotIndiv(nutrimouse.sgccda1, ind.names = FALSE, ellipse = TRUE, legend = TRUE))
+  # samples coloured by primary groups and ellipse on custom groups
+  expect_doppelganger(
+    title = "block sPLSDA plot with ellipse on custom groups", 
+    fig = plotIndiv(nutrimouse.sgccda1, ind.names = FALSE, group = as.factor(c(rep("A", 20), rep("B", 20))),
+                    ellipse = TRUE, legend = TRUE))
+})
+
+test_that("plotIndiv works for block sPLSDA with centroids on groups", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, centroid
+  expect_doppelganger(
+    title = "block sPLSDA plot with centroids and stars", 
+    fig = plotIndiv(nutrimouse.sgccda1, ind.names = FALSE, centroid = TRUE, 
+                    legend = TRUE, star = TRUE))
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, centroid, custom cols
+  expect_doppelganger(
+    title = "block sPLSDA plot with centroids and stars, custom cols", 
+    fig = plotIndiv(nutrimouse.sgccda1, ind.names = FALSE, centroid = TRUE, 
+                    legend = TRUE, star = TRUE,
+                    col = c("red", "purple", "orange", "yellow", "green")))
+  # samples coloured by primary groups, default colours, by default shapes also match primary groups, centroid, custom cols, pch on secondary groups
+  expect_doppelganger(
+    title = "block sPLSDA plot with centroids and stars, custom cols, pch on second grouping", 
+    fig = plotIndiv(nutrimouse.sgccda1, ind.names = FALSE, centroid = TRUE, 
+                    legend = TRUE, star = TRUE,
+                    col = c("red", "purple", "orange", "yellow", "green"),
+                    pch = as.factor(c(rep("A", 20), rep("B", 20)))))
+})
+
