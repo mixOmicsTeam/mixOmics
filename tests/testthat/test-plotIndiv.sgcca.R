@@ -1,17 +1,31 @@
 context("plotIndiv.sgcca")
 
+## create block-PLS-DA model
+data(nutrimouse)
+Y = unmap(nutrimouse$diet)
+data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
+design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
+nutrimouse.sgcca <- wrapper.sgcca(X = data,
+                                  design = design1,
+                                  penalty = c(0.3, 0.5, 1),
+                                  ncomp = 3)
+
+## create block-sPLS-DA model
+data(nutrimouse)
+Y = nutrimouse$diet
+data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+design1 = matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
+
+nutrimouse.sgccda1 <- block.splsda(X = data,
+                                   Y = Y,
+                                   design = design1,
+                                   ncomp = 2,
+                                   keepX = list(gene = c(10,10), lipid = c(15,15)))
+
 ## ------------------------------------------------------------------------ ##
 ## Test that outputs are correct when running default style = "ggplot2"
 
 test_that("plotIndiv works for sgcca and rgcca", {
-  data(nutrimouse)
-  Y = unmap(nutrimouse$diet)
-  data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
-  design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
-  nutrimouse.sgcca <- wrapper.sgcca(X = data,
-                                    design = design1,
-                                    penalty = c(0.3, 0.5, 1),
-                                    ncomp = 3)
   
   pl.res <-  plotIndiv(nutrimouse.sgcca)
   # check coordinates
@@ -23,16 +37,7 @@ test_that("plotIndiv works for sgcca and rgcca", {
 })
 
 test_that("plotIndiv works for sgccda", {
-  data(nutrimouse)
-  Y = nutrimouse$diet
-  data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
-  design1 = matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
-  
-  nutrimouse.sgccda1 <- block.splsda(X = data,
-                                       Y = Y,
-                                       design = design1,
-                                       ncomp = 2,
-                                       keepX = list(gene = c(10,10), lipid = c(15,15)))
+
   pl.res <- plotIndiv(nutrimouse.sgccda1)
   # check coordinates - for some reason get a different coordinate (~2.6) for windows so this check fails
   # .expect_numerically_close(abs(pl.res$graph$data$x[1]), abs(-2.444754), digits = 0)
@@ -46,14 +51,6 @@ test_that("plotIndiv works for sgccda", {
 ## ------------------------------------------------------------------------ ##
 
 test_that("plotIndiv.sgcca(..., blocks = 'average') works", code = {
-    data(nutrimouse)
-    Y = unmap(nutrimouse$diet)
-    data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
-    design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
-    nutrimouse.sgcca <- wrapper.sgcca(X = data,
-                                      design = design1,
-                                      penalty = c(0.3, 0.5, 1),
-                                      ncomp = 2)
     
     # default style: one panel for each block
     plotindiv_res <- plotIndiv(nutrimouse.sgcca, blocks = c("lipid","average"))
@@ -99,16 +96,47 @@ test_that("plotIndiv.sgccda(..., blocks = 'average') works with ellipse=TRUE", c
 ## ------------------------------------------------------------------------ ##
 ## Plotting with 'lattice' style
 
+test_that("plotIndiv works for sgcca and rgcca - lattice", {
+  
+  pl.res <-  plotIndiv(nutrimouse.sgcca, style = "lattice")
+  # check coordinates
+  .expect_numerically_close(pl.res$graph$data$x[1], 3.319955)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check right number of samples - here have 40 samples across 3 modalities (gene, lipid, Y)
+  expect_equal(dim(nutrimouse.sgcca$X$gene)[1] + dim(nutrimouse.sgcca$X$lipid)[1] + dim(nutrimouse.sgcca$X$Y)[1], dim(pl.res$df)[1])
+})
+
 
 ## ------------------------------------------------------------------------ ##
 ## Plotting with 'graphics' style
 
+test_that("plotIndiv works for sgcca and rgcca - graphics", {
+  
+  pl.res <-  plotIndiv(nutrimouse.sgcca, style = "graphics")
+  # check coordinates
+  .expect_numerically_close(pl.res$graph$data$x[1], 3.319955)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check right number of samples - here have 40 samples across 3 modalities (gene, lipid, Y)
+  expect_equal(dim(nutrimouse.sgcca$X$gene)[1] + dim(nutrimouse.sgcca$X$lipid)[1] + dim(nutrimouse.sgcca$X$Y)[1], dim(pl.res$df)[1])
+})
 
 ## ------------------------------------------------------------------------ ##
 ## Plotting with '3d' style
 
 library(rgl)
 
+test_that("plotIndiv works for sgcca and rgcca - 3d", {
+  
+  pl.res <- plotIndiv(nutrimouse.sgcca, style = "3d")
+  # check coordinates
+  .expect_numerically_close(pl.res$graph$data$x[1], 3.319955)
+  # check correct output structure
+  expect_equal(names(pl.res), c("df", "df.ellipse", "graph"))
+  # check right number of samples - here have 40 samples across 3 modalities (gene, lipid, Y)
+  expect_equal(dim(nutrimouse.sgcca$X$gene)[1] + dim(nutrimouse.sgcca$X$lipid)[1] + dim(nutrimouse.sgcca$X$Y)[1], dim(pl.res$df)[1])
+})
 
 # Clear the rgl device
 if (rgl::rgl.cur() > 0) {
