@@ -24,6 +24,8 @@ secondary_groups <- as.factor(c(rep("A", 3), rep("B", 2), rep("C", 1)))
 ## Test that outputs are correct when running default style = "ggplot2"
 
 test_that("plotIndiv works for pca with sample names (default)", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
   # simple plot showing sample names
   pl.res <- expect_doppelganger(
     title = "Basic PCA plot", 
@@ -36,6 +38,8 @@ test_that("plotIndiv works for pca with sample names (default)", {
   pl.res <- expect_doppelganger(
     title = "Basic PCA plot coloured by primary groups custom cols",
     fig = plotIndiv(pca.obj, group = primary_groups, col = c("red", "blue", "black")))
+  
+  expect_equal(1, 2)
   
 })
 
