@@ -134,3 +134,49 @@ test_that("plotIndiv works for mint sPLSDA with background", {
     fig = plotIndiv(res, background = background, legend = TRUE))
   ))
 })
+
+## vdiffr testing - "ggplot2" with MINT sPLS object
+res = mint.pls(X = stemcells$gene[,-1], Y = stemcells$gene[,1], ncomp = 3,
+               study = stemcells$study)
+
+test_that("plotIndiv works for mint PLS plotting studies separately and together", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  invisible(capture.output(
+    # all studies in one plot
+    expect_doppelganger(
+      title = "mint sPLS plot global",
+      fig = plotIndiv(res, study = "global"))
+  ))
+  invisible(capture.output(
+    # studies in separate plots
+    expect_doppelganger(
+      title = "mint PLS plot studies facetted",
+      fig = plotIndiv(res, study = "all.partial"))
+  ))
+  invisible(capture.output(
+    # studies in separate plots - different layout
+    expect_doppelganger(
+      title = "mint sPLS plot studies facetted different layout",
+      fig = plotIndiv(res, study = "all.partial", layout = c(3,4)))
+  ))
+})
+
+test_that("plotIndiv works for mint PLS plotting controlled groups cols, ellipse, etc", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  invisible(capture.output(
+    # default groups custom cols
+    expect_doppelganger(
+      title = "mint PLS plot custom cols default groups",
+      fig = plotIndiv(res, col = c("red", "yellow", "blue")))
+  ))
+  invisible(capture.output(
+    # default cols custom groups
+    expect_doppelganger(
+      title = "mint PLS plot default cols custom groups",
+      fig = plotIndiv(res, group = as.factor(c(rep("A", 50), rep("B", 50), rep("C", 25))),
+                      legend = TRUE))
+  ))
+  
+})
