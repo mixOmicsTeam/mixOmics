@@ -83,16 +83,17 @@ Default to \code{'X'}.}
 \item{ind.names}{either a character vector of names for the individuals to
 be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
 the first (or second) data matrix is used as names (see Details). If `pch` is set this
-will overwrite the names as shapes. Default is \code{TRUE}.}
+will overwrite the names as shapes. Default is \code{TRUE}. 
+Not avaliable for MINT objects.}
 
 \item{group}{Factor indicating the group membership for each sample.}
 
 \item{cutoff}{numeric between 0 and 1. Variables with correlations below
 this cutoff in absolute value are not plotted (see Details).}
 
-\item{col}{character (or symbol) color to be used. If `group` is provided, should be a 
+\item{col}{character (or symbol) color to be used. If \code{group} provided, should be a 
 vector of the same length as groups, order of colours will be respected to correspond to 
-order of `group` levels.}
+order of \code{group} levels.}
 
 \item{ind.names.size}{Numeric, sample name size.}
 
@@ -100,17 +101,9 @@ order of `group` levels.}
 
 \item{ind.names.repel}{Logical, whether to repel away label names.}
 
-\item{pch}{value or vector, controls shape of points to be plotted. 
-Can be used in 3 different ways. 
-1) If \code{pch} is one numeric value, shape of all points will be this. 
-2) If \code{pch} is a vector of numeric values length equal to the number of groups 
-set in \code{group}, then each group will have the given different shape. 
-3) If \code{pch} is a character vector of length equal to the number of samples, then the shape will
-correspond to the given vector, i.e. can control the shape of each sample and therefore
-visualise a second group membership. In this case, the elements of the vector should be
-the names of the second group membership, as these will appear in the legend. The shapes
-of the second group membership will be 1, 2, 3, etc by default, control of the shape is 
-only possible by reordering the levels of the second group membership.}
+\item{pch}{value or vector, controls shape of points to be plotted. Can be used 
+to control the shape of the points directly or to create a second group membership
+and legend. See details.}
 
 \item{pch.levels}{If \code{pch} is a factor, a named vector providing the
 point characters to use. See examples.}

@@ -1,8 +1,8 @@
 #' Plot of Individuals (Experimental Units)
 #' 
-#' This function provides scatter plots for individuals (experimental units)
-#' representation in (sparse)(I)PCA, (regularized)CCA, (sparse)PLS(DA) and
-#' (sparse)(R)GCCA(DA).
+#' This function provides scatter plots for individuals (observations)
+#' representation in (s)(I)PCA, (r)CCA, (s)PLS(DA), multiblock (s)PLS(DA) and
+#' MINT models. 
 #' 
 #' \code{plotIndiv} method makes scatter plot for individuals representation
 #' depending on the subspace of projection. Each point corresponds to an
@@ -13,20 +13,24 @@
 #' \code{pch} is an input, then \code{ind.names} is set to FALSE as we do not
 #' show both names and shapes.
 #' 
-#' \code{plotIndiv} can have a two layers legend. This is especially convenient
-#' when you have two grouping factors, such as a gender effect and a study
-#' effect, and you want to highlight both simulatenously on the graphical
-#' output. A first layer is coded by the \code{group} factor, the second by the
-#' \code{pch} argument. When \code{pch} is missing, a single layer legend is
-#' shown. If the \code{group} factor is missing, the \code{col} argument is
-#' used to create the grouping factor \code{group}. When a second grouping
-#' factor is needed and added via \code{pch}, \code{pch} needs to be a vector
-#' of length the number of samples. In the case where \code{pch} is a vector or
-#' length the number of groups, then we consider that the user wants a
-#' different \code{pch} for each level of \code{group}. This leads to a single
-#' layer legend and we merge \code{col} and \code{pch}. In the similar case
-#' where \code{pch} is a single value, then this value is used to represent all
-#' samples. See examples below for object of class plsda and splsda.
+#' The outputs of \code{"ellipse", "ellipse.level", "centroid", "star"} are:
+#' 1) based on the sample group membership (specified with the \code{group}) for unsupervised
+#' models such as \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
+#' sGCCA} or 2) based on the outcome \code{Y} for supervised models such as  \code{PLS-DA, SPLS-DA,sGCCDA}
+#' 
+#' The argument \code{group} is used to colour the samples by group membership, and by 
+#' default the shape of samples will also correspond to these groups. Sample shapes can
+#' be further customised using the \code{pch} argument. This can be done in 3 ways:
+#' 1) If \code{pch} is one numeric value, shape of all points will be this. 
+#' 2) If \code{pch} is a vector of numeric values length equal to the number of groups 
+#' set in \code{group}, then each group will have the given different shape. 
+#' 3) If \code{pch} is a character vector of length equal to the number of samples, then the shape will
+#' correspond to the given vector, i.e. can control the shape of each sample and therefore
+#' visualise a second group membership. In this case, the elements of the vector should be
+#' the names of the second group membership, as these will appear in the legend. The shapes
+#' of the second group membership will be 1, 2, 3, etc by default, control of the shape is 
+#' only possible by reordering the levels of the second group membership.
+#' See examples for more details.
 #' 
 #' In the specific case of a single `omics supervised model
 #' (\code{\link{plsda}}, \code{\link{splsda}}), users can overlay prediction
@@ -48,90 +52,73 @@
 #' Note: the ellipse options were borrowed from the \pkg{ellipse}.
 #' 
 #' @param object object of class inherited from any \pkg{mixOmics}: \code{PLS,
-#' sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA}
+#' sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA, MINT}
 #' @param comp integer vector of length two (or three to 3d). The components
 #' that will be used on the horizontal and the vertical axis respectively to
 #' project the individuals.
-#' @param rep.space Only for objects of class \code{"pca", "plsda", "plsda"} default
-#' is \code{"X-variate"}.
-#' @param blocks integer value or name(s) of block(s) to be plotted using the
+#' @param rep.space - only for objects of class \code{"pca", "plsda", "plsda"}. Can be 
+#' \code{"X-variate", "Y-variate", "XY-variate", "multi"}.
+#' @param blocks - only for multiblock objects. Integer value or name(s) of block(s) to be plotted using the
 #' GCCA module. "average" and "weighted.average" will create average and
 #' weighted average plots, respectively. See details and examples.
-#' @param study Indicates which study-specific outputs to plot. A character
-#' vector containing some levels of \code{object$study}, "all.partial" to plot
-#' all studies or "global" is expected. Default to "global".
-#' @param layout layout parameter passed to mfrow. Only used when \code{study}
-#' is not "global"
+#' @param study - only for MINT models. Indicates whether to plot all studies together
+#' \code{"global"} or separately \code{"all.partial"}. Default is "global".
+#' @param layout layout parameter passed to mfrow. Only for MINT model and only 
+#' used when \code{study} is "all.partial"
 #' @param style argument to be set to either \code{'graphics'},
 #' \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
-#' Default set to 'ggplot2'. See details. \code{3d} is not available for MINT
-#' objects.
+#' Default set to 'ggplot2'. See details. \code{3d} is not available for MINT objects.
 #' @param ind.names either a character vector of names for the individuals to
 #' be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
 #' the first (or second) data matrix is used as names (see Details). If `pch` is set this
-#' will overwrite the names as shapes. Default is \code{TRUE}.
-#' 
+#' will overwrite the names as shapes. Default is \code{TRUE}. 
+#' Not avaliable for MINT objects. 
 #' @param group factor indicating the group membership for each sample, useful
 #' for colouring samples by groups, adding ellipses, centroids and stars.
 #' Coded as default for the supervised methods \code{PLS-DA,
 #' SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
 #' \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. 
 #' Order of levels will reflect the order the groups appear in legends and 
-#' correspond to the order of set colours in `col`. 
-#' @param col character (or symbol) color to be used. If `group` is provided, should be a 
+#' correspond to the order of set colours in \code{col}. 
+#' @param col character (or symbol) color to be used. If \code{group} provided, should be a 
 #' vector of the same length as groups, order of colours will be respected to correspond to 
-#' order of `group` levels. 
-#' @param ellipse Logical indicating if ellipse plots should be plotted. In the
-#' non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
-#' sGCCA} ellipse plot is only be plotted if the argument \code{group} is
-#' provided. In the \code{PLS-DA, SPLS-DA,sGCCDA} supervised object, by default
-#' the ellipse will be plotted accoding to the outcome \code{Y}.
+#' order of \code{group} levels. 
+#' @param ellipse Logical indicating if ellipse plots should be plotted. See details. 
 #' @param ellipse.level Numerical value indicating the confidence level of
 #' ellipse being plotted when \code{ellipse =TRUE} (i.e. the size of the
-#' ellipse). The default is set to 0.95, for a 95\% region.
+#' ellipse). The default is set to 0.95, for a 95\% region. See details. 
 #' @param centroid Logical indicating whether centroid points should be
-#' plotted. In the non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS,
-#' sPLS, rCC, rGCCA, sGCCA} the centroid will only be plotted if the argument
-#' \code{group} is provided. The centroid will be calculated based on the group
-#' categories. In the supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the
-#' centroid will be calculated according to the outcome \code{Y}.
+#' plotted. See details. 
 #' @param star Logical indicating whether a star plot should be plotted, with
 #' arrows starting from the centroid (see argument \code{centroid}, and ending
-#' for each sample belonging to each group or outcome. In the non supervised
-#' objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA} star
-#' plot is only be plotted if the argument \code{group} is provided. In the
-#' supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the star plot is plotted
-#' according to the outcome \code{Y}.
-#' 
-#' @param pch value or vector, controls shape of points to be plotted. 
-#' Can be used in 3 different ways. 
-#' 1) If \code{pch} is one numeric value, shape of all points will be this. 
-#' 2) If \code{pch} is a vector of numeric values length equal to the number of groups 
-#' set in \code{group}, then each group will have the given different shape. 
-#' 3) If \code{pch} is a character vector of length equal to the number of samples, then the shape will
-#' correspond to the given vector, i.e. can control the shape of each sample and therefore
-#' visualise a second group membership. In this case, the elements of the vector should be
-#' the names of the second group membership, as these will appear in the legend. The shapes
-#' of the second group membership will be 1, 2, 3, etc by default, control of the shape is 
-#' only possible by reordering the levels of the second group membership.
-#' 
+#' for each sample belonging to each group or outcome. See details. 
+#' @param background color the background by the predicted class, see
+#' \code{\link{background.predict}}
+#' @param pch value or vector, controls shape of points to be plotted. Can be used 
+#' to control the shape of the points directly or to create a second group membership
+#' and legend. See details.
 #' @param title set of characters indicating the title plot.
 #' @param subtitle subtitle for each plot, only used when several \code{block}
 #' or \code{study} are plotted.
 #' @param legend Logical. Whether the legend should be added. Default is FALSE.
+#' @param legend.title title of the legend
+#' @param legend.title.pch title of the second legend created by \code{pch}, if
+#' any.
+#' @param legend.position position of the legend, one of "bottom", "left",
+#' "top" and "right".
 #' @param X.label x axis titles.
 #' @param Y.label y axis titles.
 #' @param Z.label z axis titles (when style = '3d').
+#' @param axes.box for style '3d', argument to be set to either \code{'axes'},
+#' \code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.
 #' @param abline should the vertical and horizontal line through the center be
 #' plotted? Default set to \code{FALSE}
 #' @param xlim,ylim numeric list of vectors of length 2 and length
 #' =length(blocks), giving the x and y coordinates ranges.
 #' @param cex numeric character (or symbol) expansion, possibly vector.
-
 #' @param alpha Semi-transparent colors (0 < \code{'alpha'} < 1)
-#' @param axes.box for style '3d', argument to be set to either \code{'axes'},
-#' \code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.
-
+#' @param point.lwd \code{lwd} of the points, used when \code{ind.names =
+#' FALSE}
 #' @param size.title size of the title
 #' @param size.subtitle size of the subtitle
 #' @param size.xlabel size of xlabel
@@ -139,15 +126,6 @@
 #' @param size.axis size of the axis
 #' @param size.legend size of the legend
 #' @param size.legend.title size of the legend title
-#' @param legend.title title of the legend
-#' @param legend.title.pch title of the second legend created by \code{pch}, if
-#' any.
-#' @param legend.position position of the legend, one of "bottom", "left",
-#' "top" and "right".
-#' @param point.lwd \code{lwd} of the points, used when \code{ind.names =
-#' FALSE}
-#' @param background color the background by the predicted class, see
-#' \code{\link{background.predict}}
 #' @param ... Optional arguments or type par can be added with \code{style =
 #' 'graphics'}
 #' @return none
