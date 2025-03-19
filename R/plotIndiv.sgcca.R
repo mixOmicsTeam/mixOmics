@@ -8,28 +8,31 @@ plotIndiv.sgcca <-
   function(object,
            comp = NULL,
            blocks = NULL,
+           style = "ggplot2",
            ind.names = TRUE,
            group,
-           style = "ggplot2",
+           col,
            ellipse = FALSE,
            ellipse.level = 0.95,
            centroid = FALSE,
            star = FALSE,
+           pch,
            title = NULL,
            subtitle,
            legend = FALSE,
+           legend.title = "Legend",
+           legend.title.pch = "Legend",
+           legend.position = "right",
            X.label = NULL,
            Y.label = NULL,
            Z.label = NULL,
            abline = FALSE,
            xlim = NULL,
            ylim = NULL,
-           col,
-           cex,
-           pch,
-           alpha = 0.2,
            axes.box = "box",
-           layout = NULL,
+           cex,
+           alpha = 0.2,
+           point.lwd = 1,
            size.title = rel(2),
            size.subtitle = rel(1.5),
            size.xlabel = rel(1),
@@ -37,10 +40,6 @@ plotIndiv.sgcca <-
            size.axis = rel(0.8),
            size.legend = rel(1),
            size.legend.title = rel(1.1),
-           legend.title = "Legend",
-           legend.title.pch = "Legend",
-           legend.position = "right",
-           point.lwd = 1,
            ...
            
   )
@@ -65,7 +64,7 @@ plotIndiv.sgcca <-
     
     #-- rep.space
     rep.space = "multi" # rep.space is not used afterwards, put to "multi" to plot all blocks
-    
+    layout = NULL
     input_average_blocks <- NULL
     valid_average_blocks <- c('average', 'weighted.average')
     
