@@ -7,27 +7,30 @@
 plotIndiv.mint.pls <- 
     function(object,
              comp = NULL,
-             study = "global",
              rep.space = c("X-variate","XY-variate", "Y-variate", "multi"),
+             study = "global",
+             layout = NULL,
+             style = "ggplot2", # can choose between graphics, lattice or ggplot2
              group,
-             style = "ggplot2",
-             # can choose between graphics, lattice or ggplot2
+             col,
              ellipse = FALSE,
              ellipse.level = 0.95,
              centroid = FALSE,
              star = FALSE,
+             background = NULL,
+             pch,
              title = NULL,
              subtitle,
              legend = FALSE,
+             legend.title = "Legend",
+             legend.position = "right",
              X.label = NULL,
              Y.label = NULL,
-             abline = FALSE,
              xlim = NULL,
              ylim = NULL,
-             col,
+             abline = FALSE,
+             point.lwd = 1,
              cex,
-             pch,
-             layout = NULL,
              size.title = rel(2),
              size.subtitle = rel(1.5),
              size.xlabel = rel(1),
@@ -35,10 +38,6 @@ plotIndiv.mint.pls <-
              size.axis = rel(0.8),
              size.legend = rel(1),
              size.legend.title = rel(1.1),
-             legend.title = "Legend",
-             legend.position = "right",
-             point.lwd = 1,
-             background = NULL,
              ...
              
     )
@@ -60,7 +59,12 @@ plotIndiv.mint.pls <-
         if (any(class(object)%in%c("mint.block.pls", "mint.block.spls", "mint.block.plsda", "mint.block.splsda")))
             stop("No plotIndiv for the following functions at this stage: mint.block.pls, mint.block.spls, mint.block.plsda, mint.block.splsda.")
         
+        if (!missing(pch))
+            stop("pch argument is not available for plotting MINT objects, pch is used to display different studies")
         
+        if (style == "3D")
+            stop("3D plot is not available for MINT objects")
+
         #-- rep.space
         rep.space <- match.arg(rep.space)
         
