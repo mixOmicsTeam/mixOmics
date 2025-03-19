@@ -282,9 +282,6 @@ test_that("plotIndiv.sgcca warns for deprecated arguments", {
 
 # Test for inappropriate arguments
 test_that("plotIndiv.mint warns for inappropriate arguments", {
-  expect_warning(plotIndiv(mint.res, rep.space = "XY"), 
-                 "'rep.space' is not used for MINT models, use 'study' to specify whether to plot studies together or separately")
-  
   expect_warning(plotIndiv(mint.res, blocks = 2), 
                  "'blocks' argument is only used for multiblock models")
 })

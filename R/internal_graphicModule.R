@@ -341,7 +341,7 @@ internal_graphicModule <-
                                                            levels(df$group)[i]),
                                          aes(x = x0, y = y0, xend = x, yend = y),
                                          #label = "Block"),
-                                         color = unique(col.per.group)[i],size = point.lwd)
+                                         color = unique(col.per.group)[i], linewidth = point.lwd)
                 }
             }
             
@@ -467,7 +467,8 @@ internal_graphicModule <-
                                                            levels(df$group)[i]),
                                          aes(x = x0, y = y0, xend = x, yend = y),
                                          #label = "Block"),
-                                         color = unique(col.per.group)[i],size = point.lwd)
+                                         color = unique(col.per.group)[i],
+                                         linewidth = point.lwd)
                 }
             }
             
