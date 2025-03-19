@@ -7,27 +7,30 @@
 plotIndiv.pca <- 
     function(object,
              comp = NULL,
+             style = "ggplot2",
              ind.names = TRUE,
              group,
-             style = "ggplot2",
+             col,
              ellipse = FALSE,
              ellipse.level = 0.95,
              centroid = FALSE,
              star = FALSE,
+             pch,
              title = NULL,
              legend = FALSE,
+             legend.title.pch = "Legend",
+             legend.title = "Legend",
+             legend.position = "right",
              X.label = NULL,
              Y.label = NULL,
              Z.label = NULL,
-             abline = FALSE,
              xlim = NULL,
              ylim = NULL,
-             col,
-             cex,
-             pch,
-             alpha = 0.2,
              axes.box = "box",
-             layout = NULL,
+             abline = FALSE,
+             cex,
+             alpha = 0.2,
+             point.lwd = 1,
              size.title = rel(2),
              size.subtitle = rel(1.5),
              size.xlabel = rel(1),
@@ -35,10 +38,6 @@ plotIndiv.pca <-
              size.axis = rel(0.8),
              size.legend = rel(1),
              size.legend.title = rel(1.1),
-             legend.title = "Legend",
-             legend.title.pch = "Legend",
-             legend.position = "right",
-             point.lwd = 1,
              ...
              
              
@@ -60,6 +59,7 @@ plotIndiv.pca <-
         
         blocks = "X"
         rep.space = "X-variate"
+        layout = NULL
         
         check = check.input.plotIndiv(
             object = object,
