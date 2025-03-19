@@ -594,6 +594,15 @@ test_that("plotIndiv works for sPLS with different rep space", {
 ## ------------------------------------------------------------------------ ##
 ## vdiffr testing - "ggplot2" with plsda object
 
+test_that("plotIndiv works for sPLSDA with background", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  background = background.predict(srbct.splsda, comp.predicted=2, dist = "max.dist")
+  expect_doppelganger(
+    title = "mint sPLSDA plot with background", 
+    fig = plotIndiv(srbct.splsda, background = background, legend = TRUE))
+})
+
 test_that("plotIndiv works for sPLSDA with sample names (default)", {
   skip_on_ci() # only run the vdiffr tests locally
   
