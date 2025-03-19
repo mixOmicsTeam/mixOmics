@@ -8,28 +8,32 @@ plotIndiv.mixo_pls <-
     function(object,
              comp  = NULL,
              rep.space  = NULL,
+             style = "ggplot2",
              ind.names  = TRUE,
              group,
-             style = "ggplot2",
+             col,
              ellipse  = FALSE,
              ellipse.level  = 0.95,
              centroid = FALSE,
              star = FALSE,
+             background = NULL,
+             pch,
              title = NULL,
              subtitle,
              legend = FALSE,
+             legend.title = "Legend",
+             legend.title.pch = "Legend",
+             legend.position = "right",
              X.label  = NULL,
              Y.label  = NULL,
              Z.label  = NULL,
              abline  = FALSE,
              xlim  = NULL,
              ylim  = NULL,
-             col,
-             cex,
-             pch,
-             alpha = 0.2,
              axes.box  = "box",
-             layout = NULL,
+             cex,
+             alpha = 0.2,
+             point.lwd = 1,
              size.title = rel(2),
              size.subtitle = rel(1.5),
              size.xlabel = rel(1),
@@ -37,15 +41,29 @@ plotIndiv.mixo_pls <-
              size.axis = rel(0.8),
              size.legend = rel(1),
              size.legend.title = rel(1.1),
-             legend.title = "Legend",
-             legend.title.pch = "Legend",
-             legend.position = "right",
-             point.lwd = 1,
-             background = NULL,
              ...
              
     )
     {
+        # check for inappropriate args
+        extra_args <- list(...)
+        if ("study" %in% names(extra_args) || "layout" %in% names(extra_args)) {
+            warning("'study' and 'layout' arguments are only used for MINT models")
+        }
+        if ("blocks" %in% names(extra_args)) {
+            warning("'blocks' argument is only used for multiblock models")
+        }
+        # check for deprecated args
+        if ("col.per.group" %in% names(extra_args)) {
+            warning("'col.per.group' is deprecated, please use 'col' to specify colours for each group")
+        }
+        if ("pch.levels" %in% names(extra_args)) {
+            warning("'pch.levels' is deprecated, please use 'pch' to specify point types")
+        }
+        if ("cols" %in% names(extra_args)) {
+            warning("'cols' is not a valid argument, did you mean 'col' ?")
+        }
+
         plot_parameters = list(size.title = size.title, size.subtitle = size.subtitle, size.xlabel = size.xlabel, size.ylabel = size.ylabel,
                                size.axis = size.axis, size.legend = size.legend, size.legend.title = size.legend.title, legend.title = legend.title,
                                legend.title.pch = legend.title.pch, legend.position = legend.position, point.lwd = point.lwd)
@@ -53,6 +71,8 @@ plotIndiv.mixo_pls <-
         if (inherits(object, c("mint.block.pls", "mint.block.spls", "mint.block.plsda", "mint.block.splsda")))
             stop("No plotIndiv for the following functions at this stage: mint.block.pls, mint.block.spls, mint.block.plsda, mint.block.splsda.")
         
+        layout = NULL
+
         #-- choose rep.space
         if (is.null(rep.space) && inherits(object, "DA"))#"splsda", "plsda", "mlsplsda")))
         {

@@ -44,6 +44,27 @@ plotIndiv.sgcca <-
            
   )
   {
+
+    # check for inappropriate args
+    extra_args <- list(...)
+    if ("rep.space" %in% names(extra_args)) {
+        warning("'rep.space' is not used for multiblock models, use 'blocks' to specify which data blocks to plot")
+    }
+    if ("study" %in% names(extra_args) || "layout" %in% names(extra_args)) {
+        warning("'study' and 'layout' arguments are only used for MINT models")
+    }
+    # check for deprecated args
+    if ("col.per.group" %in% names(extra_args)) {
+        warning("'col.per.group' is deprecated, please use 'col' to specify colours for each group")
+    }      
+    if ("pch.levels" %in% names(extra_args)) {
+         warning("'pch.levels' is deprecated, please use 'pch' to specify point types")
+    }
+    if ("cols" %in% names(extra_args)) {
+         warning("'cols' is not a valid argument, did you mean 'col' ?")
+    }
+    
+
     plot_parameters = list(
       size.title = size.title,
       size.subtitle = size.subtitle,

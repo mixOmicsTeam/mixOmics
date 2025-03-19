@@ -7,7 +7,7 @@
 plotIndiv.mint.pls <- 
     function(object,
              comp = NULL,
-             rep.space = c("X-variate","XY-variate", "Y-variate", "multi"),
+             rep.space = NULL,
              study = "global",
              layout = NULL,
              style = "ggplot2", # can choose between graphics, lattice or ggplot2
@@ -42,6 +42,36 @@ plotIndiv.mint.pls <-
              
     )
     {
+        # check for inappropriate args
+        extra_args <- list(...)
+        if ("blocks" %in% names(extra_args)) {
+            warning("'blocks' argument is only used for multiblock models")
+        }
+        if ("ind.names" %in% names(extra_args)) {
+            warning("'ind.names' argument is not used in MINT models, samples shapes are determined by study")
+        }
+        # check for deprecated args
+        if ("col.per.group" %in% names(extra_args)) {
+            warning("'col.per.group' is deprecated, please use 'col' to specify colours for each group")
+        }
+        if ("pch.levels" %in% names(extra_args)) {
+            warning("'pch.levels' is deprecated, please use 'pch' to specify point types")
+        }
+        if ("cols" %in% names(extra_args)) {
+            warning("'cols' is not a valid argument, did you mean 'col' ?")
+        }
+
+        #-- choose rep.space
+        if (is.null(rep.space) && inherits(object, "DA"))#"splsda", "plsda", "mlsplsda")))
+        {
+            rep.space = "X-variate"
+        } else if (is.null(rep.space)) {
+            rep.space = "multi"
+        }
+        rep.space  = match.arg(rep.space, c("XY-variate", "X-variate", "Y-variate", "multi"))
+        #c("XY-variate", "X-variate", "Y-variate", "multi")[pmatch(rep.space, c("XY-variate", "X-variate", "Y-variate", "multi"))]
+        
+
         plot_parameters = list(
             size.title = size.title,
             size.subtitle = size.subtitle,
@@ -64,11 +94,9 @@ plotIndiv.mint.pls <-
         
         if (style == "3D")
             stop("3D plot is not available for MINT objects")
-
-        #-- rep.space
-        rep.space <- match.arg(rep.space)
         
         ind.names = FALSE
+
         # --------------------------------------------------------------------------------------
         #           need study
         # --------------------------------------------------------------------------------------
@@ -257,7 +285,7 @@ plotIndiv.mint.pls <-
             #-- check inputs
             # check style as we do not do 3d at the moment:
             if (!style %in% c("ggplot2", "lattice", "graphics"))
-                stop("'style' must be one of 'ggplot2', 'lattice' or 'graphics'.",
+                stop("'style' must be one of 'ggplot2', 'lattice' or 'graphics', 3d is not supported for MINT models.",
                      call. = FALSE)
             
             check = check.input.plotIndiv(

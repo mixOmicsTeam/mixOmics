@@ -52,11 +52,8 @@
 #' @param comp integer vector of length two (or three to 3d). The components
 #' that will be used on the horizontal and the vertical axis respectively to
 #' project the individuals.
-#' @param rep.space For objects of class \code{"pca", "plsda", "plsda"} default
-#' is \code{"X-variate"}.  For the objects of class \code{"pls", "rcc"} default
-#' is a panel plot representing each data subspace. For objects of class
-#' \code{"rgcca"} and \code{"sgcca"}, numerical value(s) indicating the block
-#' data set to represent needs to be specified.
+#' @param rep.space Only for objects of class \code{"pca", "plsda", "plsda"} default
+#' is \code{"X-variate"}.
 #' @param blocks integer value or name(s) of block(s) to be plotted using the
 #' GCCA module. "average" and "weighted.average" will create average and
 #' weighted average plots, respectively. See details and examples.

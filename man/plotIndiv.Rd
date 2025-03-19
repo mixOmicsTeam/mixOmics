@@ -18,26 +18,30 @@ plotIndiv(object, ...)
 \method{plotIndiv}{mint.pls}(
   object,
   comp = NULL,
-  study = "global",
   rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
-  group,
+  study = "global",
+  layout = NULL,
   style = "ggplot2",
+  group,
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  background = NULL,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
-  abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
+  abline = FALSE,
+  point.lwd = 1,
   cex,
-  pch,
-  layout = NULL,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -45,36 +49,36 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
-  background = NULL,
   ...
 )
 
 \method{plotIndiv}{mint.spls}(
   object,
   comp = NULL,
-  study = "global",
   rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
-  group,
+  study = "global",
+  layout = NULL,
   style = "ggplot2",
+  group,
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  background = NULL,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
-  abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
+  abline = FALSE,
+  point.lwd = 1,
   cex,
-  pch,
-  layout = NULL,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -82,36 +86,36 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
-  background = NULL,
   ...
 )
 
 \method{plotIndiv}{mint.plsda}(
   object,
   comp = NULL,
-  study = "global",
   rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
-  group,
+  study = "global",
+  layout = NULL,
   style = "ggplot2",
+  group,
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  background = NULL,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
-  abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
+  abline = FALSE,
+  point.lwd = 1,
   cex,
-  pch,
-  layout = NULL,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -119,36 +123,36 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
-  background = NULL,
   ...
 )
 
 \method{plotIndiv}{mint.splsda}(
   object,
   comp = NULL,
-  study = "global",
   rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
-  group,
+  study = "global",
+  layout = NULL,
   style = "ggplot2",
+  group,
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  background = NULL,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
-  abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
+  abline = FALSE,
+  point.lwd = 1,
   cex,
-  pch,
-  layout = NULL,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -156,37 +160,36 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
-  background = NULL,
   ...
 )
 
 \method{plotIndiv}{pca}(
   object,
   comp = NULL,
+  style = "ggplot2",
   ind.names = TRUE,
   group,
-  style = "ggplot2",
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  pch,
   title = NULL,
   legend = FALSE,
+  legend.title.pch = "Legend",
+  legend.title = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
   Z.label = NULL,
-  abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
-  cex,
-  pch,
-  alpha = 0.2,
   axes.box = "box",
-  layout = NULL,
+  abline = FALSE,
+  cex,
+  alpha = 0.2,
+  point.lwd = 1,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -194,10 +197,6 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.title.pch = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
   ...
 )
 
@@ -205,28 +204,32 @@ plotIndiv(object, ...)
   object,
   comp = NULL,
   rep.space = NULL,
+  style = "ggplot2",
   ind.names = TRUE,
   group,
-  style = "ggplot2",
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  background = NULL,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.title.pch = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
   Z.label = NULL,
   abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
-  cex,
-  pch,
-  alpha = 0.2,
   axes.box = "box",
-  layout = NULL,
+  cex,
+  alpha = 0.2,
+  point.lwd = 1,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -234,11 +237,6 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.title.pch = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
-  background = NULL,
   ...
 )
 
@@ -246,28 +244,31 @@ plotIndiv(object, ...)
   object,
   comp = NULL,
   blocks = NULL,
+  style = "ggplot2",
   ind.names = TRUE,
   group,
-  style = "ggplot2",
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.title.pch = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
   Z.label = NULL,
   abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
-  cex,
-  pch,
-  alpha = 0.2,
   axes.box = "box",
-  layout = NULL,
+  cex,
+  alpha = 0.2,
+  point.lwd = 1,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -275,10 +276,6 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.title.pch = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
   ...
 )
 
@@ -286,28 +283,31 @@ plotIndiv(object, ...)
   object,
   comp = NULL,
   blocks = NULL,
+  style = "ggplot2",
   ind.names = TRUE,
   group,
-  style = "ggplot2",
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.title.pch = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
   Z.label = NULL,
   abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
-  cex,
-  pch,
-  alpha = 0.2,
   axes.box = "box",
-  layout = NULL,
+  cex,
+  alpha = 0.2,
+  point.lwd = 1,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -315,10 +315,6 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.title.pch = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
   ...
 )
 }
@@ -333,15 +329,23 @@ sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA}}
 that will be used on the horizontal and the vertical axis respectively to
 project the individuals.}
 
-\item{study}{Indicates which study-specific outputs to plot. A character
-vector containing some levels of \code{object$study}, "all.partial" to plot
-all studies or "global" is expected. Default to "global".}
-
 \item{rep.space}{For objects of class \code{"pca", "plsda", "plsda"} default
 is \code{"X-variate"}.  For the objects of class \code{"pls", "rcc"} default
 is a panel plot representing each data subspace. For objects of class
 \code{"rgcca"} and \code{"sgcca"}, numerical value(s) indicating the block
 data set to represent needs to be specified.}
+
+\item{study}{Indicates which study-specific outputs to plot. A character
+vector containing some levels of \code{object$study}, "all.partial" to plot
+all studies or "global" is expected. Default to "global".}
+
+\item{layout}{layout parameter passed to mfrow. Only used when \code{study}
+is not "global"}
+
+\item{style}{argument to be set to either \code{'graphics'},
+\code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
+Default set to 'ggplot2'. See details. \code{3d} is not available for MINT
+objects.}
 
 \item{group}{factor indicating the group membership for each sample, useful
 for colouring samples by groups, adding ellipses, centroids and stars.
@@ -351,10 +355,9 @@ SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
 Order of levels will reflect the order the groups appear in legends and 
 correspond to the order of set colours in `col`.}
 
-\item{style}{argument to be set to either \code{'graphics'},
-\code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
-Default set to 'ggplot2'. See details. \code{3d} is not available for MINT
-objects.}
+\item{col}{character (or symbol) color to be used. If `group` is provided, should be a 
+vector of the same length as groups, order of colours will be respected to correspond to 
+order of `group` levels.}
 
 \item{ellipse}{Logical indicating if ellipse plots should be plotted. In the
 non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
@@ -381,28 +384,8 @@ plot is only be plotted if the argument \code{group} is provided. In the
 supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the star plot is plotted
 according to the outcome \code{Y}.}
 
-\item{title}{set of characters indicating the title plot.}
-
-\item{subtitle}{subtitle for each plot, only used when several \code{block}
-or \code{study} are plotted.}
-
-\item{legend}{Logical. Whether the legend should be added. Default is FALSE.}
-
-\item{X.label}{x axis titles.}
-
-\item{Y.label}{y axis titles.}
-
-\item{abline}{should the vertical and horizontal line through the center be
-plotted? Default set to \code{FALSE}}
-
-\item{xlim, ylim}{numeric list of vectors of length 2 and length
-=length(blocks), giving the x and y coordinates ranges.}
-
-\item{col}{character (or symbol) color to be used. If `group` is provided, should be a 
-vector of the same length as groups, order of colours will be respected to correspond to 
-order of `group` levels.}
-
-\item{cex}{numeric character (or symbol) expansion, possibly vector.}
+\item{background}{color the background by the predicted class, see
+\code{\link{background.predict}}}
 
 \item{pch}{value or vector, controls shape of points to be plotted. 
 Can be used in 3 different ways. 
@@ -416,8 +399,32 @@ the names of the second group membership, as these will appear in the legend. Th
 of the second group membership will be 1, 2, 3, etc by default, control of the shape is 
 only possible by reordering the levels of the second group membership.}
 
-\item{layout}{layout parameter passed to mfrow. Only used when \code{study}
-is not "global"}
+\item{title}{set of characters indicating the title plot.}
+
+\item{subtitle}{subtitle for each plot, only used when several \code{block}
+or \code{study} are plotted.}
+
+\item{legend}{Logical. Whether the legend should be added. Default is FALSE.}
+
+\item{legend.title}{title of the legend}
+
+\item{legend.position}{position of the legend, one of "bottom", "left",
+"top" and "right".}
+
+\item{X.label}{x axis titles.}
+
+\item{Y.label}{y axis titles.}
+
+\item{xlim, ylim}{numeric list of vectors of length 2 and length
+=length(blocks), giving the x and y coordinates ranges.}
+
+\item{abline}{should the vertical and horizontal line through the center be
+plotted? Default set to \code{FALSE}}
+
+\item{point.lwd}{\code{lwd} of the points, used when \code{ind.names =
+FALSE}}
+
+\item{cex}{numeric character (or symbol) expansion, possibly vector.}
 
 \item{size.title}{size of the title}
 
@@ -433,31 +440,20 @@ is not "global"}
 
 \item{size.legend.title}{size of the legend title}
 
-\item{legend.title}{title of the legend}
-
-\item{legend.position}{position of the legend, one of "bottom", "left",
-"top" and "right".}
-
-\item{point.lwd}{\code{lwd} of the points, used when \code{ind.names =
-FALSE}}
-
-\item{background}{color the background by the predicted class, see
-\code{\link{background.predict}}}
-
 \item{ind.names}{either a character vector of names for the individuals to
 be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
 the first (or second) data matrix is used as names (see Details). If `pch` is set this
 will overwrite the names as shapes. Default is \code{TRUE}.}
 
-\item{Z.label}{z axis titles (when style = '3d').}
+\item{legend.title.pch}{title of the second legend created by \code{pch}, if
+any.}
 
-\item{alpha}{Semi-transparent colors (0 < \code{'alpha'} < 1)}
+\item{Z.label}{z axis titles (when style = '3d').}
 
 \item{axes.box}{for style '3d', argument to be set to either \code{'axes'},
 \code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.}
 
-\item{legend.title.pch}{title of the second legend created by \code{pch}, if
-any.}
+\item{alpha}{Semi-transparent colors (0 < \code{'alpha'} < 1)}
 
 \item{blocks}{integer value or name(s) of block(s) to be plotted using the
 GCCA module. "average" and "weighted.average" will create average and
