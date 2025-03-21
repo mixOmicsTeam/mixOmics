@@ -27,12 +27,7 @@ vignette: >
 
 ```{r}
 library(BiocParallel)
-
-if (!is.na(Sys.getenv("_R_CHECK_LIMIT_CORES_", unset = NA))) {
-  BPPARAM <- SnowParam(workers = 2)
-} else {
-  BPPARAM <- SnowParam(workers = parallel::detectCores())
-}
+BPPARAM <- SnowParam(workers = 2)
 ```
 
 ```{r 00-options, include=FALSE, eval=TRUE}
