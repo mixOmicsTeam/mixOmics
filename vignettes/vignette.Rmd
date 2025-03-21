@@ -27,7 +27,6 @@ vignette: >
 
 ```{r}
 library(BiocParallel)
-BPPARAM <- SnowParam(workers = 2)
 ```
 
 ```{r 00-options, include=FALSE, eval=TRUE}
@@ -915,7 +914,7 @@ tune.spls.liver <- tune.spls(X, Y, test.keepX = list.keepX,
                              measure = 'cor', 
                             #   the following uses two CPUs for faster computation
                             # it can be commented out
-                            BPPARAM = BiocParallel::SnowParam(workers = 14)
+                            BPPARAM = BiocParallel::SnowParam(workers = 2)
                             )
 
 plot(tune.spls.liver)
