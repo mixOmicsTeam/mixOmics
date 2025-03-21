@@ -10,7 +10,6 @@ NULL
              ind.names = TRUE,
              group = NULL,
              cutoff = 0,
-             col.per.group=NULL,
              col = NULL,
              ind.names.size = 3,
              ind.names.col = color.mixo(4),
@@ -35,6 +34,15 @@ NULL
              ...
     )
     {
+    
+        # check for inappropriate args
+        extra_args <- list(...)
+        # check for deprecated args
+        if ("col.per.group" %in% names(extra_args)) {
+        warning("'col.per.group' is deprecated, please use 'col' to specify colours for each group")
+        }
+        col.per.group <- col
+
         object <- x
         rm(x)
         ## for implicit support of non-pca objects - experimental
