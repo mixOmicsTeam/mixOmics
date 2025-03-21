@@ -18,21 +18,7 @@
 #' models such as \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
 #' sGCCA} or 2) based on the outcome \code{Y} for supervised models such as  \code{PLS-DA, SPLS-DA,sGCCDA}
 #' 
-#' The argument \code{group} is used to colour the samples by group membership, and by 
-#' default the shape of samples will also correspond to these groups. Sample shapes can
-#' be further customised using the \code{pch} argument. This can be done in 3 ways:
-#' 1) If \code{pch} is one numeric value, shape of all points will be this. 
-#' 2) If \code{pch} is a vector of numeric values length equal to the number of groups 
-#' set in \code{group}, then each group will have the given different shape. 
-#' 3) If \code{pch} is a character vector of length equal to the number of samples, then the shape will
-#' correspond to the given vector, i.e. can control the shape of each sample and therefore
-#' visualise a second group membership. In this case, the elements of the vector should be
-#' the names of the second group membership, as these will appear in the legend. The shapes
-#' of the second group membership will be 1, 2, 3, etc by default, control of the shape is 
-#' only possible by reordering the levels of the second group membership.
-#' See examples for more details.
-#' 
-#' In the specific case of a single `omics supervised model
+#' #' In the specific case of a single `omics supervised model
 #' (\code{\link{plsda}}, \code{\link{splsda}}), users can overlay prediction
 #' results to sample plots in order to visualise the prediction areas of each
 #' class, via the \code{background} input parameter. Note that this
@@ -41,10 +27,19 @@
 #' 2D representation in a meaningful way. For more details, see
 #' \code{\link{background.predict}}
 #' 
-#' The argument \code{block = 'average'} averages the components from all blocks
-#' to produce a consensus plot. The argument \code{block='weighted.average'} is
-#' a weighted average of the components according to their correlation with the
-#' outcome Y.
+#' The \code{group} parameter is used to colour the samples by group membership, and by 
+#' default the shape of samples will also correspond to these groups. Sample shapes can
+#' be further customised using the \code{pch} parameter. This can be done in 3 ways:
+#' 1) If \code{pch} is one numeric value, shape of all points will be this. 
+#' 2) If \code{pch} is a vector of numeric values length equal to the number of groups 
+#' set in \code{group}, then each group will have the given different shape. 
+#' 3) If \code{pch} is a character vector of length equal to the number of samples, then the
+#' shape of each sample will correspond to this grouping, i.e. this allows users to visualise
+#' second group membership. In case 3), the elements of the vector should be the names of the 
+#' second group membership, as these will appear in the legend. The shapes of the second group
+#' membership will be 1, 2, 3, etc by default, control of the shape is only possible by
+#' reordering the levels of the second group membership.
+#' See examples.
 #' 
 #' For customized plots (i.e. adding points, text), use the style = 'graphics'
 #' (default is ggplot2).
@@ -56,11 +51,12 @@
 #' @param comp integer vector of length two (or three to 3d). The components
 #' that will be used on the horizontal and the vertical axis respectively to
 #' project the individuals.
-#' @param rep.space - only for objects of class \code{"pca", "plsda", "plsda"}. Can be 
+#' @param rep.space - only for objects of class \code{"pca", "plsda", "plsda", "rcc"}. Can be 
 #' \code{"X-variate", "Y-variate", "XY-variate", "multi"}.
-#' @param blocks - only for multiblock objects. Integer value or name(s) of block(s) to be plotted using the
-#' GCCA module. "average" and "weighted.average" will create average and
-#' weighted average plots, respectively. See details and examples.
+#' @param blocks - only for multiblock objects. Integer value or name(s) of block(s) to be plotted OR
+#' "average" (averages the components from all blocks to produce a consensus plot) OR
+#' "weighted.average" (weighted average of the components according to their correlation with the
+#' outcome Y). See examples.
 #' @param study - only for MINT models. Indicates whether to plot all studies together
 #' \code{"global"} or separately \code{"all.partial"}. Default is "global".
 #' @param layout layout parameter passed to mfrow. Only for MINT model and only 
