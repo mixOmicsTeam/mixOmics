@@ -21,7 +21,7 @@ plotArrow(spls.obj,  group = as.factor(liver.toxicity$treatment[, 'Time.Group'])
 data(nutrimouse)
 Y <- nutrimouse$diet
 data <- list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
-design1 <- matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
+design <- matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
 sgccda.obj <- 
     wrapper.sgccda(X = data,
                    Y = Y,
