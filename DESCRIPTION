@@ -34,7 +34,8 @@ Suggests:
     testthat,
     microbenchmark,
     magick,
-    vdiffr
+    vdiffr,
+    kableExtra
 Authors@R: 
     c(person("Kim-Anh", "Le Cao", role = "aut", email = "kimanh.lecao@unimelb.edu.au"), 
       person("Florian", "Rohart", role = "aut"), 
