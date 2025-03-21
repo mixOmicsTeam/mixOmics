@@ -576,7 +576,7 @@ plotIndiv(spls.obj, group = liver.toxicity$treatment$Time.Group, centroid = TRUE
 
 ## 'splsda' class - examples demonstrate how to add ellipses and backgrounds based on 
 # predicted classes
-# -----------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------
 
 # create model
 data(breast.tumors)
@@ -614,7 +614,8 @@ plotIndiv(sgccda.obj, blocks = "gene")
 # plot samples by averaging components from all blocks
 plotIndiv(sgccda.obj, blocks = "average")
 
-# plot samples by the weighted average of the components according to their correlation with Y
+# plot samples by the weighted average of the components according to their correlation 
+# with Y
 plotIndiv(sgccda.obj, blocks = "weighted.average")
 
 
