@@ -13,7 +13,6 @@
   ind.names = TRUE,
   group = NULL,
   cutoff = 0,
-  col.per.group = NULL,
   col = NULL,
   ind.names.size = 3,
   ind.names.col = color.mixo(4),
@@ -45,7 +44,6 @@
   ind.names = TRUE,
   group = NULL,
   cutoff = 0,
-  col.per.group = NULL,
   col = NULL,
   ind.names.size = 3,
   ind.names.col = color.mixo(4),
@@ -167,6 +165,17 @@ data("nutrimouse")
 ## --------- pca ---------- ##
 pca.lipid <- pca(nutrimouse$lipid, ncomp = 3, scale = TRUE)
 # seed for reproducible geom_text_repel
+
+data("nutrimouse")
+## --------- pca ---------- ##
+pca.lipid <- pca(nutrimouse$lipid, ncomp = 3, scale = TRUE)
+# seed for reproducible geom_text_repel
+set.seed(42)
+biplot(pca.lipid, group = as.factor(c(rep("A", 20), rep("B", 20))))
+
+biplot(pca.lipid, group = as.factor(c(rep("A", 20), rep("B", 20))),
+       col = c("red", "blue"))
+
 set.seed(42)
 biplot(pca.lipid)
 ## correlation cutoff to filter features
