@@ -527,7 +527,8 @@ plotIndiv(pca.obj, ind.names = FALSE,
           group = primary_groups, legend = TRUE,
           pch = secondary_groups)
 
-# plot samples coloured by primary groups, use shapes to visualise secondary grouping and change order of secondary groups
+# plot samples coloured by primary groups, use shapes to visualise secondary grouping 
+# and change order of secondary groups
 plotIndiv(pca.obj, ind.names = FALSE,
           group = primary_groups, legend = TRUE,
           pch = factor(secondary_groups, levels = c("B", "C", "A")))
@@ -573,7 +574,8 @@ plotIndiv(spls.obj, group = liver.toxicity$treatment$Time.Group, centroid = TRUE
 
 
 
-## 'splsda' class - examples demonstrate how to add ellipses and backgrounds based on predicted classes
+## 'splsda' class - examples demonstrate how to add ellipses and backgrounds based on 
+# predicted classes
 # -----------------------------------------------------------------------------------------------------
 
 # create model
