@@ -156,7 +156,7 @@ plotArrow <- function(object,
       col.per.group <- col.group$col.per.group}
     pch.legend <- TRUE
     
-    if (is(object, 'DA'))
+    if (is(object, 'DA') && is.null(pch))
     {
         pch <- seq_len(length(blocks)+1)[-8][seq_along(blocks)] ## keep pch = 8 for centroids
         names(pch) <- blocks
