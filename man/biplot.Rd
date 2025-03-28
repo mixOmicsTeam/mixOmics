@@ -13,13 +13,11 @@
   ind.names = TRUE,
   group = NULL,
   cutoff = 0,
-  col.per.group = NULL,
   col = NULL,
   ind.names.size = 3,
   ind.names.col = color.mixo(4),
   ind.names.repel = TRUE,
   pch = 19,
-  pch.levels = NULL,
   pch.size = 2,
   var.names = TRUE,
   var.names.col = "grey40",
@@ -45,13 +43,11 @@
   ind.names = TRUE,
   group = NULL,
   cutoff = 0,
-  col.per.group = NULL,
   col = NULL,
   ind.names.size = 3,
   ind.names.col = color.mixo(4),
   ind.names.repel = TRUE,
   pch = 19,
-  pch.levels = NULL,
   pch.size = 2,
   var.names = TRUE,
   var.names.col = "grey40",
@@ -82,17 +78,18 @@ Default to \code{'X'}.}
 
 \item{ind.names}{either a character vector of names for the individuals to
 be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
-the first (or second) data matrix is used as names (see Details).}
+the first (or second) data matrix is used as names (see Details). If `pch` is set this
+will overwrite the names as shapes. Default is \code{TRUE}. 
+Not avaliable for MINT objects.}
 
 \item{group}{Factor indicating the group membership for each sample.}
 
 \item{cutoff}{numeric between 0 and 1. Variables with correlations below
 this cutoff in absolute value are not plotted (see Details).}
 
-\item{col.per.group}{character (or symbol) color to be used when 'group' is
-defined. Vector of the same length as the number of groups.}
-
-\item{col}{character (or symbol) color to be used, possibly vector.}
+\item{col}{character (or symbol) color to be used. If \code{group} provided, should be a 
+vector of the same length as groups, order of colours will be respected to correspond to 
+order of \code{group} levels.}
 
 \item{ind.names.size}{Numeric, sample name size.}
 
@@ -100,11 +97,10 @@ defined. Vector of the same length as the number of groups.}
 
 \item{ind.names.repel}{Logical, whether to repel away label names.}
 
-\item{pch}{plot character. A character string or a vector of single
-characters or integers. See \code{\link{points}} for all alternatives.}
-
-\item{pch.levels}{If \code{pch} is a factor, a named vector providing the
-point characters to use. See examples.}
+\item{pch}{A single character or numeric value, or a factor. If a factor, the
+levels of the factor are used to define the point types. If a character or
+numeric value, the same point type is used for all points. If \code{NULL},
+the default point type is used. See examples.}
 
 \item{pch.size}{Numeric, sample point character size.}
 
@@ -161,16 +157,29 @@ For \code{pls} objects it is possible to use either \code{'X'} or \code{'Y'}
 latent space using \code{block} argument.
 }
 \examples{
-data("nutrimouse")
-## --------- pca ---------- ##
-pca.lipid <- pca(nutrimouse$lipid, ncomp = 3, scale = TRUE)
-# seed for reproducible geom_text_repel
+
+## 'pca' class - examples demonstrate how to control sample colours and customise plots
+# -------------------------------------------------------------------------------------
 set.seed(42)
-biplot(pca.lipid)
+data("nutrimouse")
+pca.lipid <- pca(nutrimouse$lipid, ncomp = 3, scale = TRUE)
+
+# colors indicate diet
+biplot(pca.lipid, group = nutrimouse$diet)
+
+# colors indicate genotype
+biplot(pca.lipid, group = nutrimouse$genotype)
+
+# customise colours
+biplot(pca.lipid, group = nutrimouse$genotype,
+       col = c("red", "blue"))
+
 ## correlation cutoff to filter features
 biplot(pca.lipid, cutoff = c(0.8))
+
 ## tailor threshold for each component
 biplot(pca.lipid, cutoff = c(0.8, 0.7))
+
 ## customise components
 biplot(pca.lipid, cutoff = c(0.8), comp = c(1,3))
 
@@ -182,9 +191,6 @@ biplot(pca.lipid) + theme_linedraw() +
     geom_hline(yintercept = 0, col = 'green') +
     # customise labs
     labs(x = 'Principal Component 1', y = 'Principal Component 2')
-
-## group samples
-biplot(pca.lipid, group = nutrimouse$diet, legend.title = 'Diet')
 
 ## customise variable labels
 biplot(pca.lipid, 
@@ -202,32 +208,38 @@ biplot(pca.lipid, group = nutrimouse$diet, legend.title = 'Diet',
        var.arrow.col = NULL, var.names.col = 'black', 
        vline = TRUE, hline = TRUE)
 
-## --------- spca
-## example with spca
-spca.lipid <- spca(nutrimouse$lipid, ncomp = 2, scale = TRUE, keepX = c(8, 6))
-biplot(spca.lipid, var.names.col = 'black', group = nutrimouse$diet, 
-       legend.title = 'Diet')
+## 'pls' class - examples demonstrate how to control cutoffs
+# -------------------------------------------------------------------------------------
 
-## --------- pls ---------- ##
 data("nutrimouse")
 pls.nutrimouse <- pls(X = nutrimouse$gene, Y = nutrimouse$lipid, ncomp = 2)
+
 biplot(pls.nutrimouse, group = nutrimouse$genotype, block = 'X',
        legend.title = 'Genotype', cutoff = 0.878) 
 
 biplot(pls.nutrimouse, group = nutrimouse$genotype, block = 'Y',
        legend.title = 'Genotype', cutoff = 0.8) 
 
-## --------- plsda ---------- ##
+
+## 'plsda' class - examples demonstrate how to control point shapes
+# -------------------------------------------------------------------------------------
+
 data(breast.tumors)
 X <- breast.tumors$gene.exp
 colnames(X) <- paste0('GENE_', colnames(X))
 rownames(X) <- paste0('SAMPLE_', rownames(X))
 Y <- breast.tumors$sample$treatment
+nrow(X)
+grouping <- factor(c(rep("A", 20), rep("B", 20), rep("C", 7)))
 
 plsda.breast <- plsda(X, Y, ncomp = 2)
-biplot(plsda.breast, cutoff = 0.72)
-## remove arrows
-biplot(plsda.breast, cutoff = 0.72, var.arrow.col = NULL, var.names.size = 4)
+
+biplot(plsda.breast, cutoff = 0.72, ind.names = FALSE)
+
+biplot(plsda.breast, cutoff = 0.72, ind.names = FALSE, pch = 2, pch.size = 5)
+
+biplot(plsda.breast, cutoff = 0.72, pch = grouping, pch.size = 5)
+
 }
 \author{
 Al J Abadi

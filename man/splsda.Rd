@@ -131,7 +131,7 @@ keepX = c(30, 137, 123))
 
 # set up colors for plotIndiv
 col.stim <- c("darkblue", "purple", "green4","red3")
-plotIndiv(res.1level, ind.names = Y, col.per.group = col.stim)
+plotIndiv(res.1level, ind.names = Y, col = col.stim)
 
 ## Third example: two-factor analysis with sPLS-DA, selecting a subset of variables
 # as in the paper Liquet et al.

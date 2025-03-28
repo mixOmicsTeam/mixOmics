@@ -18,27 +18,30 @@ plotIndiv(object, ...)
 \method{plotIndiv}{mint.pls}(
   object,
   comp = NULL,
+  rep.space = NULL,
   study = "global",
-  rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
-  group,
-  col.per.group,
+  layout = NULL,
   style = "ggplot2",
+  group,
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  background = NULL,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
-  abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
+  abline = FALSE,
+  point.lwd = 1,
   cex,
-  pch,
-  layout = NULL,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -46,37 +49,36 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
-  background = NULL,
   ...
 )
 
 \method{plotIndiv}{mint.spls}(
   object,
   comp = NULL,
+  rep.space = NULL,
   study = "global",
-  rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
-  group,
-  col.per.group,
+  layout = NULL,
   style = "ggplot2",
+  group,
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  background = NULL,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
-  abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
+  abline = FALSE,
+  point.lwd = 1,
   cex,
-  pch,
-  layout = NULL,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -84,37 +86,36 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
-  background = NULL,
   ...
 )
 
 \method{plotIndiv}{mint.plsda}(
   object,
   comp = NULL,
+  rep.space = NULL,
   study = "global",
-  rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
-  group,
-  col.per.group,
+  layout = NULL,
   style = "ggplot2",
+  group,
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  background = NULL,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
-  abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
+  abline = FALSE,
+  point.lwd = 1,
   cex,
-  pch,
-  layout = NULL,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -122,37 +123,36 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
-  background = NULL,
   ...
 )
 
 \method{plotIndiv}{mint.splsda}(
   object,
   comp = NULL,
+  rep.space = NULL,
   study = "global",
-  rep.space = c("X-variate", "XY-variate", "Y-variate", "multi"),
-  group,
-  col.per.group,
+  layout = NULL,
   style = "ggplot2",
+  group,
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  background = NULL,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
-  abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
+  abline = FALSE,
+  point.lwd = 1,
   cex,
-  pch,
-  layout = NULL,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -160,39 +160,36 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
-  background = NULL,
   ...
 )
 
 \method{plotIndiv}{pca}(
   object,
   comp = NULL,
+  style = "ggplot2",
   ind.names = TRUE,
   group,
-  col.per.group,
-  style = "ggplot2",
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  pch,
   title = NULL,
   legend = FALSE,
+  legend.title.pch = "Legend",
+  legend.title = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
   Z.label = NULL,
-  abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
-  cex,
-  pch,
-  pch.levels,
-  alpha = 0.2,
   axes.box = "box",
-  layout = NULL,
+  abline = FALSE,
+  cex,
+  alpha = 0.2,
+  point.lwd = 1,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -200,10 +197,6 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.title.pch = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
   ...
 )
 
@@ -211,30 +204,32 @@ plotIndiv(object, ...)
   object,
   comp = NULL,
   rep.space = NULL,
+  style = "ggplot2",
   ind.names = TRUE,
   group,
-  col.per.group,
-  style = "ggplot2",
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  background = NULL,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.title.pch = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
   Z.label = NULL,
   abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
-  cex,
-  pch,
-  pch.levels,
-  alpha = 0.2,
   axes.box = "box",
-  layout = NULL,
+  cex,
+  alpha = 0.2,
+  point.lwd = 1,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -242,11 +237,6 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.title.pch = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
-  background = NULL,
   ...
 )
 
@@ -254,30 +244,31 @@ plotIndiv(object, ...)
   object,
   comp = NULL,
   blocks = NULL,
+  style = "ggplot2",
   ind.names = TRUE,
   group,
-  col.per.group,
-  style = "ggplot2",
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.title.pch = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
   Z.label = NULL,
   abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
-  cex,
-  pch,
-  pch.levels,
-  alpha = 0.2,
   axes.box = "box",
-  layout = NULL,
+  cex,
+  alpha = 0.2,
+  point.lwd = 1,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -285,10 +276,6 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.title.pch = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
   ...
 )
 
@@ -296,30 +283,31 @@ plotIndiv(object, ...)
   object,
   comp = NULL,
   blocks = NULL,
+  style = "ggplot2",
   ind.names = TRUE,
   group,
-  col.per.group,
-  style = "ggplot2",
+  col,
   ellipse = FALSE,
   ellipse.level = 0.95,
   centroid = FALSE,
   star = FALSE,
+  pch,
   title = NULL,
   subtitle,
   legend = FALSE,
+  legend.title = "Legend",
+  legend.title.pch = "Legend",
+  legend.position = "right",
   X.label = NULL,
   Y.label = NULL,
   Z.label = NULL,
   abline = FALSE,
   xlim = NULL,
   ylim = NULL,
-  col,
-  cex,
-  pch,
-  pch.levels,
-  alpha = 0.2,
   axes.box = "box",
-  layout = NULL,
+  cex,
+  alpha = 0.2,
+  point.lwd = 1,
   size.title = rel(2),
   size.subtitle = rel(1.5),
   size.xlabel = rel(1),
@@ -327,16 +315,12 @@ plotIndiv(object, ...)
   size.axis = rel(0.8),
   size.legend = rel(1),
   size.legend.title = rel(1.1),
-  legend.title = "Legend",
-  legend.title.pch = "Legend",
-  legend.position = "right",
-  point.lwd = 1,
   ...
 )
 }
 \arguments{
 \item{object}{object of class inherited from any \pkg{mixOmics}: \code{PLS,
-sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA}}
+sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA, MINT}}
 
 \item{...}{Optional arguments or type par can be added with \code{style =
 'graphics'}}
@@ -345,54 +329,50 @@ sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA}}
 that will be used on the horizontal and the vertical axis respectively to
 project the individuals.}
 
-\item{study}{Indicates which study-specific outputs to plot. A character
-vector containing some levels of \code{object$study}, "all.partial" to plot
-all studies or "global" is expected. Default to "global".}
+\item{rep.space}{- only for objects of class \code{"pca", "plsda", "plsda", "rcc"}. Can be 
+\code{"X-variate", "Y-variate", "XY-variate", "multi"}.}
 
-\item{rep.space}{For objects of class \code{"pca", "plsda", "plsda"} default
-is \code{"X-variate"}.  For the objects of class \code{"pls", "rcc"} default
-is a panel plot representing each data subspace. For objects of class
-\code{"rgcca"} and \code{"sgcca"}, numerical value(s) indicating the block
-data set to represent needs to be specified.}
+\item{study}{- only for MINT models. Indicates whether to plot all studies together
+\code{"global"} or separately \code{"all.partial"}. Default is "global".}
 
-\item{group}{factor indicating the group membership for each sample, useful
-for ellipse plots. Coded as default for the supervised methods \code{PLS-DA,
-SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
-\code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. Order of levels will reflect
-order in legends and correspond to any set colours.}
-
-\item{col.per.group}{character (or symbol) color to be used when 'group' is
-defined. Vector of the same length as the number of groups.}
+\item{layout}{layout parameter passed to mfrow. Only for MINT model and only 
+used when \code{study} is "all.partial"}
 
 \item{style}{argument to be set to either \code{'graphics'},
 \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
-Default set to 'ggplot2'. See details. \code{3d} is not available for MINT
-objects.}
+Default set to 'ggplot2'. See details. \code{3d} is not available for MINT objects.}
 
-\item{ellipse}{Logical indicating if ellipse plots should be plotted. In the
-non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
-sGCCA} ellipse plot is only be plotted if the argument \code{group} is
-provided. In the \code{PLS-DA, SPLS-DA,sGCCDA} supervised object, by default
-the ellipse will be plotted accoding to the outcome \code{Y}.}
+\item{group}{factor indicating the group membership for each sample, useful
+for colouring samples by groups, adding ellipses, centroids and stars.
+Coded as default for the supervised methods \code{PLS-DA,
+SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
+\code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. 
+Order of levels will reflect the order the groups appear in legends and 
+correspond to the order of set colours in \code{col}.}
+
+\item{col}{character (or symbol) color to be used. If \code{group} provided, should be a 
+vector of the same length as groups, order of colours will be respected to correspond to 
+order of \code{group} levels.}
+
+\item{ellipse}{Logical indicating if ellipse plots should be plotted. See details.}
 
 \item{ellipse.level}{Numerical value indicating the confidence level of
 ellipse being plotted when \code{ellipse =TRUE} (i.e. the size of the
-ellipse). The default is set to 0.95, for a 95\% region.}
+ellipse). The default is set to 0.95, for a 95\% region. See details.}
 
 \item{centroid}{Logical indicating whether centroid points should be
-plotted. In the non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS,
-sPLS, rCC, rGCCA, sGCCA} the centroid will only be plotted if the argument
-\code{group} is provided. The centroid will be calculated based on the group
-categories. In the supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the
-centroid will be calculated according to the outcome \code{Y}.}
+plotted. See details.}
 
 \item{star}{Logical indicating whether a star plot should be plotted, with
 arrows starting from the centroid (see argument \code{centroid}, and ending
-for each sample belonging to each group or outcome. In the non supervised
-objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA} star
-plot is only be plotted if the argument \code{group} is provided. In the
-supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the star plot is plotted
-according to the outcome \code{Y}.}
+for each sample belonging to each group or outcome. See details.}
+
+\item{background}{color the background by the predicted class, see
+\code{\link{background.predict}}}
+
+\item{pch}{value or vector, controls shape of points to be plotted. Can be used 
+to control the shape of the points directly or to create a second group membership
+and legend. See details.}
 
 \item{title}{set of characters indicating the title plot.}
 
@@ -401,25 +381,25 @@ or \code{study} are plotted.}
 
 \item{legend}{Logical. Whether the legend should be added. Default is FALSE.}
 
+\item{legend.title}{title of the legend}
+
+\item{legend.position}{position of the legend, one of "bottom", "left",
+"top" and "right".}
+
 \item{X.label}{x axis titles.}
 
 \item{Y.label}{y axis titles.}
 
-\item{abline}{should the vertical and horizontal line through the center be
-plotted? Default set to \code{FALSE}}
-
 \item{xlim, ylim}{numeric list of vectors of length 2 and length
 =length(blocks), giving the x and y coordinates ranges.}
 
-\item{col}{character (or symbol) color to be used, possibly vector.}
+\item{abline}{should the vertical and horizontal line through the center be
+plotted? Default set to \code{FALSE}}
+
+\item{point.lwd}{\code{lwd} of the points, used when \code{ind.names =
+FALSE}}
 
 \item{cex}{numeric character (or symbol) expansion, possibly vector.}
-
-\item{pch}{plot character. A character string or a vector of single
-characters or integers. See \code{\link{points}} for all alternatives.}
-
-\item{layout}{layout parameter passed to mfrow. Only used when \code{study}
-is not "global"}
 
 \item{size.title}{size of the title}
 
@@ -435,46 +415,34 @@ is not "global"}
 
 \item{size.legend.title}{size of the legend title}
 
-\item{legend.title}{title of the legend}
-
-\item{legend.position}{position of the legend, one of "bottom", "left",
-"top" and "right".}
-
-\item{point.lwd}{\code{lwd} of the points, used when \code{ind.names =
-FALSE}}
-
-\item{background}{color the background by the predicted class, see
-\code{\link{background.predict}}}
-
 \item{ind.names}{either a character vector of names for the individuals to
 be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
-the first (or second) data matrix is used as names (see Details).}
-
-\item{Z.label}{z axis titles (when style = '3d').}
-
-\item{pch.levels}{Only used when \code{pch} is different from \code{col} or
-\code{col.per.group}, ie when \code{pch} creates a second factor. Only used
-for the legend.}
-
-\item{alpha}{Semi-transparent colors (0 < \code{'alpha'} < 1)}
-
-\item{axes.box}{for style '3d', argument to be set to either \code{'axes'},
-\code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.}
+the first (or second) data matrix is used as names (see Details). If `pch` is set this
+will overwrite the names as shapes. Default is \code{TRUE}. 
+Not avaliable for MINT objects.}
 
 \item{legend.title.pch}{title of the second legend created by \code{pch}, if
 any.}
 
-\item{blocks}{integer value or name(s) of block(s) to be plotted using the
-GCCA module. "average" and "weighted.average" will create average and
-weighted average plots, respectively. See details and examples.}
+\item{Z.label}{z axis titles (when style = '3d').}
+
+\item{axes.box}{for style '3d', argument to be set to either \code{'axes'},
+\code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.}
+
+\item{alpha}{Semi-transparent colors (0 < \code{'alpha'} < 1)}
+
+\item{blocks}{- only for multiblock objects. Integer value or name(s) of block(s) to be plotted OR
+"average" (averages the components from all blocks to produce a consensus plot) OR
+"weighted.average" (weighted average of the components according to their correlation with the
+outcome Y). See examples.}
 }
 \value{
 none
 }
 \description{
-This function provides scatter plots for individuals (experimental units)
-representation in (sparse)(I)PCA, (regularized)CCA, (sparse)PLS(DA) and
-(sparse)(R)GCCA(DA).
+This function provides scatter plots for individuals (observations)
+representation in (s)(I)PCA, (r)CCA, (s)PLS(DA), multiblock (s)PLS(DA) and
+MINT models.
 }
 \details{
 \code{plotIndiv} method makes scatter plot for individuals representation
@@ -486,22 +454,12 @@ If \code{ind.names=TRUE} and row names is \code{NULL}, then
 \code{pch} is an input, then \code{ind.names} is set to FALSE as we do not
 show both names and shapes.
 
-\code{plotIndiv} can have a two layers legend. This is especially convenient
-when you have two grouping factors, such as a gender effect and a study
-effect, and you want to highlight both simulatenously on the graphical
-output. A first layer is coded by the \code{group} factor, the second by the
-\code{pch} argument. When \code{pch} is missing, a single layer legend is
-shown. If the \code{group} factor is missing, the \code{col} argument is
-used to create the grouping factor \code{group}. When a second grouping
-factor is needed and added via \code{pch}, \code{pch} needs to be a vector
-of length the number of samples. In the case where \code{pch} is a vector or
-length the number of groups, then we consider that the user wants a
-different \code{pch} for each level of \code{group}. This leads to a single
-layer legend and we merge \code{col} and \code{pch}. In the similar case
-where \code{pch} is a single value, then this value is used to represent all
-samples. See examples below for object of class plsda and splsda.
+The outputs of \code{"ellipse", "ellipse.level", "centroid", "star"} are:
+1) based on the sample group membership (specified with the \code{group}) for unsupervised
+models such as \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
+sGCCA} or 2) based on the outcome \code{Y} for supervised models such as  \code{PLS-DA, SPLS-DA,sGCCDA}
 
-In the specific case of a single `omics supervised model
+#' In the specific case of a single `omics supervised model
 (\code{\link{plsda}}, \code{\link{splsda}}), users can overlay prediction
 results to sample plots in order to visualise the prediction areas of each
 class, via the \code{background} input parameter. Note that this
@@ -510,10 +468,19 @@ the surfaces obtained for higher order components cannot be projected onto a
 2D representation in a meaningful way. For more details, see
 \code{\link{background.predict}}
 
-The argument \code{block = 'average'} averages the components from all blocks
-to produce a consensus plot. The argument \code{block='weighted.average'} is
-a weighted average of the components according to their correlation with the
-outcome Y.
+The \code{group} parameter is used to colour the samples by group membership, and by 
+default the shape of samples will also correspond to these groups. Sample shapes can
+be further customised using the \code{pch} parameter. This can be done in 3 ways:
+1) If \code{pch} is one numeric value, shape of all points will be this. 
+2) If \code{pch} is a vector of numeric values length equal to the number of groups 
+set in \code{group}, then each group will have the given different shape. 
+3) If \code{pch} is a character vector of length equal to the number of samples, then the
+shape of each sample will correspond to this grouping, i.e. this allows users to visualise
+second group membership. In case 3), the elements of the vector should be the names of the 
+second group membership, as these will appear in the legend. The shapes of the second group
+membership will be 1, 2, 3, etc by default, control of the shape is only possible by
+reordering the levels of the second group membership.
+See examples.
 
 For customized plots (i.e. adding points, text), use the style = 'graphics'
 (default is ggplot2).
@@ -521,217 +488,152 @@ For customized plots (i.e. adding points, text), use the style = 'graphics'
 Note: the ellipse options were borrowed from the \pkg{ellipse}.
 }
 \examples{
+## 'pca' class - examples demonstrate how to control sample colours and shapes
+# -----------------------------------------------------------------------------
+
+# subset data and create model
+data("srbct")
+X <- srbct$gene[1:6, ]
+rownames(X) <- c(paste0("Sample_", 1:6))
+pca.obj <- pca(X, ncomp = 3)
+
+primary_groups <- as.factor(c(rep("Group_1", 2), rep("Group_2", 2), rep("Group_3", 2)))
+# [1] Group_1 Group_1 Group_2 Group_2 Group_3 Group_3
+# Levels: Group_1 Group_2 Group_3
+secondary_groups <- as.factor(c(rep("A", 3), rep("B", 2), rep("C", 1)))
+# [1] A A A B B C
+# Levels: A B C
+
+# plot samples coloured by primary groups, show sample names
+plotIndiv(pca.obj, ind.names = TRUE,
+          group = primary_groups, legend = TRUE)
+
+# plot samples coloured using custom colours by primary groups, show sample names
+plotIndiv(pca.obj, ind.names = TRUE,
+          group = primary_groups, legend = TRUE,
+          col = c("red", "pink", "blue"))
+
+# plot samples coloured by primary groups, by default shapes match primary groups
+plotIndiv(pca.obj, ind.names = FALSE,
+          group = primary_groups, legend = TRUE)
+
+# plot samples coloured by primary groups, force all samples to have the same shape (2 = triangle)
+plotIndiv(pca.obj, ind.names = FALSE,
+          group = primary_groups, legend = TRUE,
+          pch = 2)
+
+# plot samples coloured by primary groups, use shapes to visualise secondary grouping
+plotIndiv(pca.obj, ind.names = FALSE,
+          group = primary_groups, legend = TRUE,
+          pch = secondary_groups)
+
+# plot samples coloured by primary groups, use shapes to visualise secondary grouping 
+# and change order of secondary groups
+plotIndiv(pca.obj, ind.names = FALSE,
+          group = primary_groups, legend = TRUE,
+          pch = factor(secondary_groups, levels = c("B", "C", "A")))
 
 
-## plot of individuals for objects of class 'rcc'
-# ----------------------------------------------------
+## 'rcc' class - examples demonstrate how to control rep.space
+# ------------------------------------------------------------
+
+# create model
 data(nutrimouse)
 X <- nutrimouse$lipid
 Y <- nutrimouse$gene
-nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
+rcc.obj <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
 
-# default, panel plot for X and Y subspaces
-plotIndiv(nutri.res)
+# plot samples, by default makes a panel plot for X and Y subspaces (multi)
+plotIndiv(rcc.obj)
 
+# plot samples only on X-variate subspace
+plotIndiv(rcc.obj, rep.space = "X-variate")
 
-\dontrun{
-
-# ellipse with respect to genotype in the XY space,
-# names also indicate genotype
-plotIndiv(nutri.res, rep.space= 'XY-variate',
-ellipse = TRUE, ellipse.level = 0.9,
-group = nutrimouse$genotype, ind.names = nutrimouse$genotype)
-
-# ellipse with respect to genotype in the XY space, with legend
-plotIndiv(nutri.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
-legend = TRUE)
+# plot samples only on XY-variate subspace
+plotIndiv(rcc.obj, rep.space = "XY-variate")
 
 
-# lattice style
-plotIndiv(nutri.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
-legend = TRUE, style = 'lattice')
+## 'spls' class - examples demonstrate how to add ellipses and centroids/stars on groups
+# --------------------------------------------------------------------------------------
 
-# classic style, in the Y space
-plotIndiv(nutri.res, rep.space= 'Y-variate', group = nutrimouse$genotype,
-legend = TRUE, style = 'graphics')
-
-## plot of individuals for objects of class 'pls' or 'spls'
-# ----------------------------------------------------
+# create model
 data(liver.toxicity)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
-toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
-keepY = c(10, 10, 10))
+spls.obj <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
+                      keepY = c(10, 10, 10))
 
-#default
-plotIndiv(toxicity.spls)
+# plot samples with ellipse on groups
+plotIndiv(spls.obj, group = liver.toxicity$treatment$Time.Group, ellipse = TRUE)
 
+# plot samples with centroids on groups
+plotIndiv(spls.obj, group = liver.toxicity$treatment$Time.Group, centroid = TRUE)
 
-# two layers legend: a first grouping with Time.Group and 'group'
-# and a second with Dose.Group and 'pch'
-plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
-group = liver.toxicity$treatment[, 'Time.Group'], # first factor
-pch = as.numeric(factor(liver.toxicity$treatment$Dose.Group)), #second factor
-pch.levels =liver.toxicity$treatment$Dose.Group, 
-legend = TRUE)
+# plot samples with centroids and stars on groups
+plotIndiv(spls.obj, group = liver.toxicity$treatment$Time.Group, centroid = TRUE, star = TRUE)
 
 
 
-# indicating the centroid
-plotIndiv(toxicity.spls, rep.space= 'X-variate', ind.names = FALSE,
-group = liver.toxicity$treatment[, 'Time.Group'], centroid = TRUE)
+## 'splsda' class - examples demonstrate how to add ellipses and backgrounds based on 
+# predicted classes
+# ------------------------------------------------------------------------------------
 
-# indicating the star and centroid
-plotIndiv(toxicity.spls, rep.space= 'X-variate', ind.names = FALSE,
-group = liver.toxicity$treatment[, 'Time.Group'], centroid = TRUE, star = TRUE)
-
-
-# indicating the star and ellipse
-plotIndiv(toxicity.spls, rep.space= 'X-variate', ind.names = FALSE,
-group = liver.toxicity$treatment[, 'Time.Group'], centroid = TRUE,
-star = TRUE, ellipse = TRUE)
-
-
-
-# in the Y space, colors indicate time of necropsy, text is the dose
-plotIndiv(toxicity.spls, rep.space= 'Y-variate',
-group = liver.toxicity$treatment[, 'Time.Group'],
-ind.names = liver.toxicity$treatment[, 'Dose.Group'],
-legend = TRUE)
-
-
-## plot of individuals for objects of class 'plsda' or 'splsda'
-# ----------------------------------------------------
+# create model
 data(breast.tumors)
 X <- breast.tumors$gene.exp
 Y <- breast.tumors$sample$treatment
+splsda.obj <- splsda(X, Y,keepX=c(10,10),ncomp=2)
 
-splsda.breast <- splsda(X, Y,keepX=c(10,10),ncomp=2)
+# plot samples with ellipse on groups, note groups do not have to be defined
+plotIndiv(splsda.obj, ellipse = TRUE, ellipse.level = 0.8)
 
-# default option: note the outcome color is included by default!
-plotIndiv(splsda.breast)
-
-# also check ?background.predict for to visualise the prediction
-# area with a plsda or splsda object!
-
-
-
-# default option with no ind name: pch and color are set automatically
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2))
-
-# default option with no ind name: pch and color are set automatically, 
-# with legend
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2), legend = TRUE)
-
-# trying the different styles
-plotIndiv(splsda.breast, ind.names = TRUE, comp = c(1, 2),
-ellipse = TRUE, style = "ggplot2", cex = c(1, 1))
-plotIndiv(splsda.breast, ind.names = TRUE, comp = c(1, 2),
-ellipse = TRUE, style = "lattice", cex = c(1, 1))
-
-# changing pch of the two groups
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = c(15,16), legend = TRUE)
-
-# creating a second grouping factor with a pch of length 3,
-#  which is recycled to obtain a vector of length n
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = c(15,16,17), legend = TRUE)
-
-#same thing as
-pch.indiv = c(rep(15:17,15), 15, 16) # length n
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = pch.indiv, legend = TRUE)
-
-# change the names of the second legend with pch.levels
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = 15:17, pch.levels = c("a","b","c"),legend = TRUE)
+# plot samples with background coloured by predicted classes
+background <- background.predict(splsda.obj, comp.predicted = 2, dist = "max.dist")
+plotIndiv(splsda.obj, background = background)
 
 
-## plot of individuals for objects of class 'mint.plsda' or 'mint.splsda'
-# ----------------------------------------------------
+
+## 'sgccda' class - examples demonstrate how to control which data blocks are plotted
+# ------------------------------------------------------------------------------------
+
+# create model
+data(nutrimouse)
+Y <- nutrimouse$diet
+data <- list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+design <- matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
+sgccda.obj <- wrapper.sgccda(X = data, Y = Y, design = design, ncomp = 2,
+                             keepX = list(gene = c(10,10), lipid = c(15,15)))
+
+# plot samples, by default one data block for each plot
+plotIndiv(sgccda.obj)
+
+# plot samples for just the gene data block
+plotIndiv(sgccda.obj, blocks = 1)
+plotIndiv(sgccda.obj, blocks = "gene")
+
+# plot samples by averaging components from all blocks
+plotIndiv(sgccda.obj, blocks = "average")
+
+# plot samples by the weighted average of the components according to their correlation 
+# with Y
+plotIndiv(sgccda.obj, blocks = "weighted.average")
+
+
+
+## 'mint.splsda' class - examples demonstrate how to control which studies are plotted
+# ------------------------------------------------------------------------------------
+
+# create model
 data(stemcells)
-res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2, 
+mint.obj <- mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2, 
                   keepX = c(10, 5), study = stemcells$study)
 
-plotIndiv(res)
+# plot samples, by default samples are plotted together coloured by groups and pch by study
+plotIndiv(mint.obj, legend = TRUE)
 
-
-#plot study-specific outputs for all studies
-plotIndiv(res, study = "all.partial")
-
-#plot study-specific outputs for study "2"
-plotIndiv(res, study = "2")
-
-
-## variable representation for objects of class 'sgcca' (or 'rgcca')
-# ----------------------------------------------------
-
-data(nutrimouse)
-Y = unmap(nutrimouse$diet)
-data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
-design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
-nutrimouse.sgcca <- wrapper.sgcca(X = data,
-design = design1,
-penalty = c(0.3, 0.5, 1),
-ncomp = 3)
-
-# default style: one panel for each block
-plotIndiv(nutrimouse.sgcca)
-
-# for the block 'lipid' with ellipse plots and legend, different styles
-plotIndiv(nutrimouse.sgcca, group = nutrimouse$diet, legend =TRUE,
-ellipse = TRUE, ellipse.level = 0.5, blocks = "lipid", title = 'my plot')
-plotIndiv(nutrimouse.sgcca, style = "lattice", group = nutrimouse$diet,
-legend = TRUE, ellipse = TRUE, ellipse.level = 0.5, blocks = "lipid",
-title = 'my plot')
-plotIndiv(nutrimouse.sgcca, style = "graphics", group = nutrimouse$diet,
-legend = TRUE, ellipse = TRUE, ellipse.level = 0.5, blocks = "lipid",
-title = 'my plot')
-
-
-## variable representation for objects of class 'sgccda'
-# ----------------------------------------------------
-
-# Note: the code differs from above as we use a 'supervised' GCCA analysis
-data(nutrimouse)
-Y = nutrimouse$diet
-data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
-design1 = matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
-
-nutrimouse.sgccda1 <- wrapper.sgccda(X = data,
-Y = Y,
-design = design1,
-ncomp = 2,
-keepX = list(gene = c(10,10), lipid = c(15,15)))
-
-
-# plotIndiv
-# ----------
-
-# displaying all blocks. bu default colors correspond to outcome Y
-plotIndiv(nutrimouse.sgccda1)
-
-
-# displaying only 2 blocks
-plotIndiv(nutrimouse.sgccda1, blocks = c(1,2), group = nutrimouse$diet)
-
-# include the average plot (average the components across datasets)
-plotIndiv(nutrimouse.sgccda1, blocks = "average", group = nutrimouse$diet)
-
-# include the weighted average plot (average of components weighted by 
-# correlation of each dataset with Y)
-plotIndiv(
-    nutrimouse.sgccda1,
-    blocks = c("average", "weighted.average"),
-    group = nutrimouse$diet
-)
-
-# with some ellipse, legend and title
-plotIndiv(nutrimouse.sgccda1, blocks = c(1,2), group = nutrimouse$diet,
-ellipse = TRUE, legend = TRUE, title = 'my sample plot')
-
-}
+# plot samples separated by study, can control layout
+plotIndiv(mint.obj, legend = TRUE, study = "all.partial")
+plotIndiv(mint.obj, legend = TRUE, study = "all.partial", layout = c(1,1))
 }
 \seealso{
 \code{\link{text}}, \code{\link{background.predict}},

@@ -1,211 +1,146 @@
+## 'pca' class - examples demonstrate how to control sample colours and shapes
+# -----------------------------------------------------------------------------
+
+# subset data and create model
+data("srbct")
+X <- srbct$gene[1:6, ]
+rownames(X) <- c(paste0("Sample_", 1:6))
+pca.obj <- pca(X, ncomp = 3)
+
+primary_groups <- as.factor(c(rep("Group_1", 2), rep("Group_2", 2), rep("Group_3", 2)))
+# [1] Group_1 Group_1 Group_2 Group_2 Group_3 Group_3
+# Levels: Group_1 Group_2 Group_3
+secondary_groups <- as.factor(c(rep("A", 3), rep("B", 2), rep("C", 1)))
+# [1] A A A B B C
+# Levels: A B C
+
+# plot samples coloured by primary groups, show sample names
+plotIndiv(pca.obj, ind.names = TRUE,
+          group = primary_groups, legend = TRUE)
+
+# plot samples coloured using custom colours by primary groups, show sample names
+plotIndiv(pca.obj, ind.names = TRUE,
+          group = primary_groups, legend = TRUE,
+          col = c("red", "pink", "blue"))
+
+# plot samples coloured by primary groups, by default shapes match primary groups
+plotIndiv(pca.obj, ind.names = FALSE,
+          group = primary_groups, legend = TRUE)
+
+# plot samples coloured by primary groups, force all samples to have the same shape (2 = triangle)
+plotIndiv(pca.obj, ind.names = FALSE,
+          group = primary_groups, legend = TRUE,
+          pch = 2)
+
+# plot samples coloured by primary groups, use shapes to visualise secondary grouping
+plotIndiv(pca.obj, ind.names = FALSE,
+          group = primary_groups, legend = TRUE,
+          pch = secondary_groups)
+
+# plot samples coloured by primary groups, use shapes to visualise secondary grouping 
+# and change order of secondary groups
+plotIndiv(pca.obj, ind.names = FALSE,
+          group = primary_groups, legend = TRUE,
+          pch = factor(secondary_groups, levels = c("B", "C", "A")))
 
 
-## plot of individuals for objects of class 'rcc'
-# ----------------------------------------------------
+## 'rcc' class - examples demonstrate how to control rep.space
+# ------------------------------------------------------------
+
+# create model
 data(nutrimouse)
 X <- nutrimouse$lipid
 Y <- nutrimouse$gene
-nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
+rcc.obj <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
 
-# default, panel plot for X and Y subspaces
-plotIndiv(nutri.res)
+# plot samples, by default makes a panel plot for X and Y subspaces (multi)
+plotIndiv(rcc.obj)
 
+# plot samples only on X-variate subspace
+plotIndiv(rcc.obj, rep.space = "X-variate")
 
-\dontrun{
-
-# ellipse with respect to genotype in the XY space,
-# names also indicate genotype
-plotIndiv(nutri.res, rep.space= 'XY-variate',
-ellipse = TRUE, ellipse.level = 0.9,
-group = nutrimouse$genotype, ind.names = nutrimouse$genotype)
-
-# ellipse with respect to genotype in the XY space, with legend
-plotIndiv(nutri.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
-legend = TRUE)
+# plot samples only on XY-variate subspace
+plotIndiv(rcc.obj, rep.space = "XY-variate")
 
 
-# lattice style
-plotIndiv(nutri.res, rep.space= 'XY-variate', group = nutrimouse$genotype,
-legend = TRUE, style = 'lattice')
+## 'spls' class - examples demonstrate how to add ellipses and centroids/stars on groups
+# --------------------------------------------------------------------------------------
 
-# classic style, in the Y space
-plotIndiv(nutri.res, rep.space= 'Y-variate', group = nutrimouse$genotype,
-legend = TRUE, style = 'graphics')
-
-## plot of individuals for objects of class 'pls' or 'spls'
-# ----------------------------------------------------
+# create model
 data(liver.toxicity)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
-toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
-keepY = c(10, 10, 10))
+spls.obj <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
+                      keepY = c(10, 10, 10))
 
-#default
-plotIndiv(toxicity.spls)
+# plot samples with ellipse on groups
+plotIndiv(spls.obj, group = liver.toxicity$treatment$Time.Group, ellipse = TRUE)
 
+# plot samples with centroids on groups
+plotIndiv(spls.obj, group = liver.toxicity$treatment$Time.Group, centroid = TRUE)
 
-# two layers legend: a first grouping with Time.Group and 'group'
-# and a second with Dose.Group and 'pch'
-plotIndiv(toxicity.spls, rep.space="X-variate", ind.name = FALSE,
-group = liver.toxicity$treatment[, 'Time.Group'], # first factor
-pch = as.numeric(factor(liver.toxicity$treatment$Dose.Group)), #second factor
-pch.levels =liver.toxicity$treatment$Dose.Group, 
-legend = TRUE)
+# plot samples with centroids and stars on groups
+plotIndiv(spls.obj, group = liver.toxicity$treatment$Time.Group, centroid = TRUE, star = TRUE)
 
 
 
-# indicating the centroid
-plotIndiv(toxicity.spls, rep.space= 'X-variate', ind.names = FALSE,
-group = liver.toxicity$treatment[, 'Time.Group'], centroid = TRUE)
+## 'splsda' class - examples demonstrate how to add ellipses and backgrounds based on 
+# predicted classes
+# ------------------------------------------------------------------------------------
 
-# indicating the star and centroid
-plotIndiv(toxicity.spls, rep.space= 'X-variate', ind.names = FALSE,
-group = liver.toxicity$treatment[, 'Time.Group'], centroid = TRUE, star = TRUE)
-
-
-# indicating the star and ellipse
-plotIndiv(toxicity.spls, rep.space= 'X-variate', ind.names = FALSE,
-group = liver.toxicity$treatment[, 'Time.Group'], centroid = TRUE,
-star = TRUE, ellipse = TRUE)
-
-
-
-# in the Y space, colors indicate time of necropsy, text is the dose
-plotIndiv(toxicity.spls, rep.space= 'Y-variate',
-group = liver.toxicity$treatment[, 'Time.Group'],
-ind.names = liver.toxicity$treatment[, 'Dose.Group'],
-legend = TRUE)
-
-
-## plot of individuals for objects of class 'plsda' or 'splsda'
-# ----------------------------------------------------
+# create model
 data(breast.tumors)
 X <- breast.tumors$gene.exp
 Y <- breast.tumors$sample$treatment
+splsda.obj <- splsda(X, Y,keepX=c(10,10),ncomp=2)
 
-splsda.breast <- splsda(X, Y,keepX=c(10,10),ncomp=2)
+# plot samples with ellipse on groups, note groups do not have to be defined
+plotIndiv(splsda.obj, ellipse = TRUE, ellipse.level = 0.8)
 
-# default option: note the outcome color is included by default!
-plotIndiv(splsda.breast)
-
-# also check ?background.predict for to visualise the prediction
-# area with a plsda or splsda object!
-
-
-
-# default option with no ind name: pch and color are set automatically
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2))
-
-# default option with no ind name: pch and color are set automatically, 
-# with legend
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2), legend = TRUE)
-
-# trying the different styles
-plotIndiv(splsda.breast, ind.names = TRUE, comp = c(1, 2),
-ellipse = TRUE, style = "ggplot2", cex = c(1, 1))
-plotIndiv(splsda.breast, ind.names = TRUE, comp = c(1, 2),
-ellipse = TRUE, style = "lattice", cex = c(1, 1))
-
-# changing pch of the two groups
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = c(15,16), legend = TRUE)
-
-# creating a second grouping factor with a pch of length 3,
-#  which is recycled to obtain a vector of length n
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = c(15,16,17), legend = TRUE)
-
-#same thing as
-pch.indiv = c(rep(15:17,15), 15, 16) # length n
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = pch.indiv, legend = TRUE)
-
-# change the names of the second legend with pch.levels
-plotIndiv(splsda.breast, ind.names = FALSE, comp = c(1, 2),
-pch = 15:17, pch.levels = c("a","b","c"),legend = TRUE)
+# plot samples with background coloured by predicted classes
+background <- background.predict(splsda.obj, comp.predicted = 2, dist = "max.dist")
+plotIndiv(splsda.obj, background = background)
 
 
-## plot of individuals for objects of class 'mint.plsda' or 'mint.splsda'
-# ----------------------------------------------------
+
+## 'sgccda' class - examples demonstrate how to control which data blocks are plotted
+# ------------------------------------------------------------------------------------
+
+# create model
+data(nutrimouse)
+Y <- nutrimouse$diet
+data <- list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
+design <- matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
+sgccda.obj <- wrapper.sgccda(X = data, Y = Y, design = design, ncomp = 2,
+                             keepX = list(gene = c(10,10), lipid = c(15,15)))
+
+# plot samples, by default one data block for each plot
+plotIndiv(sgccda.obj)
+
+# plot samples for just the gene data block
+plotIndiv(sgccda.obj, blocks = 1)
+plotIndiv(sgccda.obj, blocks = "gene")
+
+# plot samples by averaging components from all blocks
+plotIndiv(sgccda.obj, blocks = "average")
+
+# plot samples by the weighted average of the components according to their correlation 
+# with Y
+plotIndiv(sgccda.obj, blocks = "weighted.average")
+
+
+
+## 'mint.splsda' class - examples demonstrate how to control which studies are plotted
+# ------------------------------------------------------------------------------------
+
+# create model
 data(stemcells)
-res = mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2, 
+mint.obj <- mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2, 
                   keepX = c(10, 5), study = stemcells$study)
 
-plotIndiv(res)
+# plot samples, by default samples are plotted together coloured by groups and pch by study
+plotIndiv(mint.obj, legend = TRUE)
 
-
-#plot study-specific outputs for all studies
-plotIndiv(res, study = "all.partial")
-
-#plot study-specific outputs for study "2"
-plotIndiv(res, study = "2")
-
-
-## variable representation for objects of class 'sgcca' (or 'rgcca')
-# ----------------------------------------------------
-
-data(nutrimouse)
-Y = unmap(nutrimouse$diet)
-data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
-design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
-nutrimouse.sgcca <- wrapper.sgcca(X = data,
-design = design1,
-penalty = c(0.3, 0.5, 1),
-ncomp = 3)
-
-# default style: one panel for each block
-plotIndiv(nutrimouse.sgcca)
-
-# for the block 'lipid' with ellipse plots and legend, different styles
-plotIndiv(nutrimouse.sgcca, group = nutrimouse$diet, legend =TRUE,
-ellipse = TRUE, ellipse.level = 0.5, blocks = "lipid", title = 'my plot')
-plotIndiv(nutrimouse.sgcca, style = "lattice", group = nutrimouse$diet,
-legend = TRUE, ellipse = TRUE, ellipse.level = 0.5, blocks = "lipid",
-title = 'my plot')
-plotIndiv(nutrimouse.sgcca, style = "graphics", group = nutrimouse$diet,
-legend = TRUE, ellipse = TRUE, ellipse.level = 0.5, blocks = "lipid",
-title = 'my plot')
-
-
-## variable representation for objects of class 'sgccda'
-# ----------------------------------------------------
-
-# Note: the code differs from above as we use a 'supervised' GCCA analysis
-data(nutrimouse)
-Y = nutrimouse$diet
-data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
-design1 = matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
-
-nutrimouse.sgccda1 <- wrapper.sgccda(X = data,
-Y = Y,
-design = design1,
-ncomp = 2,
-keepX = list(gene = c(10,10), lipid = c(15,15)))
-
-
-# plotIndiv
-# ----------
-
-# displaying all blocks. bu default colors correspond to outcome Y
-plotIndiv(nutrimouse.sgccda1)
-
-
-# displaying only 2 blocks
-plotIndiv(nutrimouse.sgccda1, blocks = c(1,2), group = nutrimouse$diet)
-
-# include the average plot (average the components across datasets)
-plotIndiv(nutrimouse.sgccda1, blocks = "average", group = nutrimouse$diet)
-
-# include the weighted average plot (average of components weighted by 
-# correlation of each dataset with Y)
-plotIndiv(
-    nutrimouse.sgccda1,
-    blocks = c("average", "weighted.average"),
-    group = nutrimouse$diet
-)
-
-# with some ellipse, legend and title
-plotIndiv(nutrimouse.sgccda1, blocks = c(1,2), group = nutrimouse$diet,
-ellipse = TRUE, legend = TRUE, title = 'my sample plot')
-
-}
+# plot samples separated by study, can control layout
+plotIndiv(mint.obj, legend = TRUE, study = "all.partial")
+plotIndiv(mint.obj, legend = TRUE, study = "all.partial", layout = c(1,1))

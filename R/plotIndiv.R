@@ -1,8 +1,8 @@
 #' Plot of Individuals (Experimental Units)
 #' 
-#' This function provides scatter plots for individuals (experimental units)
-#' representation in (sparse)(I)PCA, (regularized)CCA, (sparse)PLS(DA) and
-#' (sparse)(R)GCCA(DA).
+#' This function provides scatter plots for individuals (observations)
+#' representation in (s)(I)PCA, (r)CCA, (s)PLS(DA), multiblock (s)PLS(DA) and
+#' MINT models. 
 #' 
 #' \code{plotIndiv} method makes scatter plot for individuals representation
 #' depending on the subspace of projection. Each point corresponds to an
@@ -13,22 +13,12 @@
 #' \code{pch} is an input, then \code{ind.names} is set to FALSE as we do not
 #' show both names and shapes.
 #' 
-#' \code{plotIndiv} can have a two layers legend. This is especially convenient
-#' when you have two grouping factors, such as a gender effect and a study
-#' effect, and you want to highlight both simulatenously on the graphical
-#' output. A first layer is coded by the \code{group} factor, the second by the
-#' \code{pch} argument. When \code{pch} is missing, a single layer legend is
-#' shown. If the \code{group} factor is missing, the \code{col} argument is
-#' used to create the grouping factor \code{group}. When a second grouping
-#' factor is needed and added via \code{pch}, \code{pch} needs to be a vector
-#' of length the number of samples. In the case where \code{pch} is a vector or
-#' length the number of groups, then we consider that the user wants a
-#' different \code{pch} for each level of \code{group}. This leads to a single
-#' layer legend and we merge \code{col} and \code{pch}. In the similar case
-#' where \code{pch} is a single value, then this value is used to represent all
-#' samples. See examples below for object of class plsda and splsda.
+#' The outputs of \code{"ellipse", "ellipse.level", "centroid", "star"} are:
+#' 1) based on the sample group membership (specified with the \code{group}) for unsupervised
+#' models such as \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
+#' sGCCA} or 2) based on the outcome \code{Y} for supervised models such as  \code{PLS-DA, SPLS-DA,sGCCDA}
 #' 
-#' In the specific case of a single `omics supervised model
+#' #' In the specific case of a single `omics supervised model
 #' (\code{\link{plsda}}, \code{\link{splsda}}), users can overlay prediction
 #' results to sample plots in order to visualise the prediction areas of each
 #' class, via the \code{background} input parameter. Note that this
@@ -37,10 +27,19 @@
 #' 2D representation in a meaningful way. For more details, see
 #' \code{\link{background.predict}}
 #' 
-#' The argument \code{block = 'average'} averages the components from all blocks
-#' to produce a consensus plot. The argument \code{block='weighted.average'} is
-#' a weighted average of the components according to their correlation with the
-#' outcome Y.
+#' The \code{group} parameter is used to colour the samples by group membership, and by 
+#' default the shape of samples will also correspond to these groups. Sample shapes can
+#' be further customised using the \code{pch} parameter. This can be done in 3 ways:
+#' 1) If \code{pch} is one numeric value, shape of all points will be this. 
+#' 2) If \code{pch} is a vector of numeric values length equal to the number of groups 
+#' set in \code{group}, then each group will have the given different shape. 
+#' 3) If \code{pch} is a character vector of length equal to the number of samples, then the
+#' shape of each sample will correspond to this grouping, i.e. this allows users to visualise
+#' second group membership. In case 3), the elements of the vector should be the names of the 
+#' second group membership, as these will appear in the legend. The shapes of the second group
+#' membership will be 1, 2, 3, etc by default, control of the shape is only possible by
+#' reordering the levels of the second group membership.
+#' See examples.
 #' 
 #' For customized plots (i.e. adding points, text), use the style = 'graphics'
 #' (default is ggplot2).
@@ -48,78 +47,74 @@
 #' Note: the ellipse options were borrowed from the \pkg{ellipse}.
 #' 
 #' @param object object of class inherited from any \pkg{mixOmics}: \code{PLS,
-#' sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA}
+#' sPLS, PLS-DA, SPLS-DA, rCC, PCA, sPCA, IPCA, sIPCA, rGCCA, sGCCA, sGCCDA, MINT}
 #' @param comp integer vector of length two (or three to 3d). The components
 #' that will be used on the horizontal and the vertical axis respectively to
 #' project the individuals.
-#' @param rep.space For objects of class \code{"pca", "plsda", "plsda"} default
-#' is \code{"X-variate"}.  For the objects of class \code{"pls", "rcc"} default
-#' is a panel plot representing each data subspace. For objects of class
-#' \code{"rgcca"} and \code{"sgcca"}, numerical value(s) indicating the block
-#' data set to represent needs to be specified.
-#' @param blocks integer value or name(s) of block(s) to be plotted using the
-#' GCCA module. "average" and "weighted.average" will create average and
-#' weighted average plots, respectively. See details and examples.
-#' @param study Indicates which study-specific outputs to plot. A character
-#' vector containing some levels of \code{object$study}, "all.partial" to plot
-#' all studies or "global" is expected. Default to "global".
-#' @param ind.names either a character vector of names for the individuals to
-#' be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
-#' the first (or second) data matrix is used as names (see Details).
-#' @param group factor indicating the group membership for each sample, useful
-#' for ellipse plots. Coded as default for the supervised methods \code{PLS-DA,
-#' SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
-#' \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. Order of levels will reflect
-#' order in legends and correspond to any set colours. 
-#' @template arg/col.per.group
+#' @param rep.space - only for objects of class \code{"pca", "plsda", "plsda", "rcc"}. Can be 
+#' \code{"X-variate", "Y-variate", "XY-variate", "multi"}.
+#' @param blocks - only for multiblock objects. Integer value or name(s) of block(s) to be plotted OR
+#' "average" (averages the components from all blocks to produce a consensus plot) OR
+#' "weighted.average" (weighted average of the components according to their correlation with the
+#' outcome Y). See examples.
+#' @param study - only for MINT models. Indicates whether to plot all studies together
+#' \code{"global"} or separately \code{"all.partial"}. Default is "global".
+#' @param layout layout parameter passed to mfrow. Only for MINT model and only 
+#' used when \code{study} is "all.partial"
 #' @param style argument to be set to either \code{'graphics'},
 #' \code{'lattice'}, \code{'ggplot2'} or \code{'3d'} for a style of plotting.
-#' Default set to 'ggplot2'. See details. \code{3d} is not available for MINT
-#' objects.
-#' @param ellipse Logical indicating if ellipse plots should be plotted. In the
-#' non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA,
-#' sGCCA} ellipse plot is only be plotted if the argument \code{group} is
-#' provided. In the \code{PLS-DA, SPLS-DA,sGCCDA} supervised object, by default
-#' the ellipse will be plotted accoding to the outcome \code{Y}.
+#' Default set to 'ggplot2'. See details. \code{3d} is not available for MINT objects.
+#' @param ind.names either a character vector of names for the individuals to
+#' be plotted, or \code{FALSE} for no names. If \code{TRUE}, the row names of
+#' the first (or second) data matrix is used as names (see Details). If `pch` is set this
+#' will overwrite the names as shapes. Default is \code{TRUE}. 
+#' Not avaliable for MINT objects. 
+#' @param group factor indicating the group membership for each sample, useful
+#' for colouring samples by groups, adding ellipses, centroids and stars.
+#' Coded as default for the supervised methods \code{PLS-DA,
+#' SPLS-DA,sGCCDA}, but needs to be input for the unsupervised methods
+#' \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA}. 
+#' Order of levels will reflect the order the groups appear in legends and 
+#' correspond to the order of set colours in \code{col}. 
+#' @param col character (or symbol) color to be used. If \code{group} provided, should be a 
+#' vector of the same length as groups, order of colours will be respected to correspond to 
+#' order of \code{group} levels. 
+#' @param ellipse Logical indicating if ellipse plots should be plotted. See details. 
 #' @param ellipse.level Numerical value indicating the confidence level of
 #' ellipse being plotted when \code{ellipse =TRUE} (i.e. the size of the
-#' ellipse). The default is set to 0.95, for a 95\% region.
+#' ellipse). The default is set to 0.95, for a 95\% region. See details. 
 #' @param centroid Logical indicating whether centroid points should be
-#' plotted. In the non supervised objects \code{PCA, sPCA, IPCA, sIPCA, PLS,
-#' sPLS, rCC, rGCCA, sGCCA} the centroid will only be plotted if the argument
-#' \code{group} is provided. The centroid will be calculated based on the group
-#' categories. In the supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the
-#' centroid will be calculated according to the outcome \code{Y}.
+#' plotted. See details. 
 #' @param star Logical indicating whether a star plot should be plotted, with
 #' arrows starting from the centroid (see argument \code{centroid}, and ending
-#' for each sample belonging to each group or outcome. In the non supervised
-#' objects \code{PCA, sPCA, IPCA, sIPCA, PLS, sPLS, rCC, rGCCA, sGCCA} star
-#' plot is only be plotted if the argument \code{group} is provided. In the
-#' supervised objects \code{PLS-DA, SPLS-DA,sGCCDA} the star plot is plotted
-#' according to the outcome \code{Y}.
+#' for each sample belonging to each group or outcome. See details. 
+#' @param background color the background by the predicted class, see
+#' \code{\link{background.predict}}
+#' @param pch value or vector, controls shape of points to be plotted. Can be used 
+#' to control the shape of the points directly or to create a second group membership
+#' and legend. See details.
 #' @param title set of characters indicating the title plot.
 #' @param subtitle subtitle for each plot, only used when several \code{block}
 #' or \code{study} are plotted.
 #' @param legend Logical. Whether the legend should be added. Default is FALSE.
+#' @param legend.title title of the legend
+#' @param legend.title.pch title of the second legend created by \code{pch}, if
+#' any.
+#' @param legend.position position of the legend, one of "bottom", "left",
+#' "top" and "right".
 #' @param X.label x axis titles.
 #' @param Y.label y axis titles.
 #' @param Z.label z axis titles (when style = '3d').
+#' @param axes.box for style '3d', argument to be set to either \code{'axes'},
+#' \code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.
 #' @param abline should the vertical and horizontal line through the center be
 #' plotted? Default set to \code{FALSE}
 #' @param xlim,ylim numeric list of vectors of length 2 and length
 #' =length(blocks), giving the x and y coordinates ranges.
-#' @param col character (or symbol) color to be used, possibly vector.
 #' @param cex numeric character (or symbol) expansion, possibly vector.
-#' @param pch plot character. A character string or a vector of single
-#' characters or integers. See \code{\link{points}} for all alternatives.
-#' @param pch.levels Only used when \code{pch} is different from \code{col} or
-#' \code{col.per.group}, ie when \code{pch} creates a second factor. Only used
-#' for the legend.
 #' @param alpha Semi-transparent colors (0 < \code{'alpha'} < 1)
-#' @param axes.box for style '3d', argument to be set to either \code{'axes'},
-#' \code{'box'}, \code{'bbox'} or \code{'all'}, defining the shape of the box.
-#' @param layout layout parameter passed to mfrow. Only used when \code{study}
-#' is not "global"
+#' @param point.lwd \code{lwd} of the points, used when \code{ind.names =
+#' FALSE}
 #' @param size.title size of the title
 #' @param size.subtitle size of the subtitle
 #' @param size.xlabel size of xlabel
@@ -127,15 +122,6 @@
 #' @param size.axis size of the axis
 #' @param size.legend size of the legend
 #' @param size.legend.title size of the legend title
-#' @param legend.title title of the legend
-#' @param legend.title.pch title of the second legend created by \code{pch}, if
-#' any.
-#' @param legend.position position of the legend, one of "bottom", "left",
-#' "top" and "right".
-#' @param point.lwd \code{lwd} of the points, used when \code{ind.names =
-#' FALSE}
-#' @param background color the background by the predicted class, see
-#' \code{\link{background.predict}}
 #' @param ... Optional arguments or type par can be added with \code{style =
 #' 'graphics'}
 #' @return none
@@ -157,11 +143,9 @@ plotIndiv  <- function(object, ...) {
 check.input.plotIndiv <-
   function(object,
            comp = NULL,
-           blocks = NULL,
-           # to choose which block data to plot, when using GCCA module
+           blocks = NULL, # to choose which block data to plot, when using GCCA module
            ind.names = TRUE,
-           style = "ggplot2",
-           # can choose between graphics, 3d, lattice or ggplot2
+           style = "ggplot2", # can choose between graphics, 3d, lattice or ggplot2
            #study = "global",
            ellipse = FALSE,
            ellipse.level = 0.95,
@@ -581,7 +565,6 @@ shape.input.plotIndiv <-
            col,
            cex,
            pch,
-           pch.levels,
            display.names,
            plot_parameters
   )
@@ -641,37 +624,23 @@ shape.input.plotIndiv <-
     
     #at this stage, we have a 'group' - user defined or DA, or by default 1 single group
     
-    # col and col.per.group
-    if(!missing.group) # group is user defined or DA; we require a col.per.group input, if only a 'col' input: we use it as col.per.group
-    {
-      if(missing(col.per.group) & !missing(col))  # we use col as a col.per.group
-      {
+    # if there are groups
+    if(!missing.group){
+      # if col set, we use col as a col.per.group
+      if(!missing(col)) {
         if(length(col) !=  nlevels(group))
           stop("Length of 'col' should be of length ", nlevels(group), " (the number of groups).")
         col.per.group = col
-        
-      } else if (missing(col.per.group) & missing(col)) { # we create a col.per.group
-        
-        if (nlevels(group) < 10)
-        {
-          #only 10 colors in color.mixo
-          col.per.group = color.mixo(1:nlevels(group))
+        # if col not set, use default colours
         } else {
-          #use color.jet
-          col.per.group = color.jet(nlevels(group))
+            if (nlevels(group) < 10) {
+            # only 10 colors in color.mixo
+            col.per.group = color.mixo(1:nlevels(group))
+            } else {
+            # use color.jet
+            col.per.group = color.jet(nlevels(group))
+            }
         }
-        
-        
-      } else if (!missing(col.per.group) & !missing(col)) { # we ignore 'col'
-        warning("'col' is ignored as 'group' has been set.")
-        
-      } else if (!missing(col.per.group) & missing(col)) {# all good
-        
-      }
-      
-      if(length(col.per.group) !=  nlevels(group))
-        stop("Length of 'col.per.group' should be of length ", nlevels(group), " (the number of groups).")
-      
       
       # make a vector of one color per sample from col.per.group
       levels.color = vector(, n)
@@ -685,9 +654,7 @@ shape.input.plotIndiv <-
       
     } else { #missing group, we require a 'col' of length n (or repeated to length n) and not a 'col.per.group'
       # col creates a group argument, which creates a col.per.group (levels from 'col')
-      if(!missing(col.per.group))
-        warning("'col.per.group' is ignored as 'group' has not been set.")
-      
+
       if(!missing(col))
       {
         if (length(col) > n)
@@ -788,7 +755,7 @@ shape.input.plotIndiv <-
     # --------------------------------------------------------------------------------------
     #           not independent from class.object: for the title of the plot, either "PlotIndiv" or "block:.."
     # --------------------------------------------------------------------------------------
-    
+
     #-- pch argument
     if (missing(pch) & !any(class.object%in%object.mint))
     {
@@ -800,18 +767,17 @@ shape.input.plotIndiv <-
       } else {
         pch = as.numeric(group)
       }
-      pch.levels = pch
       
     }else if (any(class.object%in%object.mint)) {
       if (missing(pch))
       {
         # a pch per study, forced
         pch = as.numeric(object$study)
+        pch.levels = pch
       } else {
         if (length(pch)!= length(object$study))
           stop("'pch' needs to be of length 'object$study' as each of 'pch' represents a specific study", call. = FALSE)
       }
-      pch.levels = pch
       
     } else {
       if (style == "3d")
@@ -821,28 +787,17 @@ shape.input.plotIndiv <-
                call. = FALSE)
       }
       
-      if(!missing(pch.levels))
-      {
-        if(length(pch.levels) != length(pch))
-          stop("'pch.levels' needs to be a vector of the same length as 'pch': ", length(pch))
-      } else {
-        pch.levels = pch
-      }
-      
       if (length(pch) == 1)
       {
         pch = rep(pch, n)
-        pch.levels = rep(pch.levels, n)
         
       } else if (length(pch) > n) {
         stop("Length of 'pch' should be of length inferior or equal to ", n, ".")
       } else if (length(pch) == length(unique(group)) & length(pch)!=n ) { # prevent from reordering pch when 1 group per sample (length(pch)=length(group)=n)
         pch = pch[as.factor(group)]
-        pch.levels = pch.levels[as.factor(group)]
         
       } else {
         pch = rep(pch, ceiling(n/length(pch)))[1 : n]
-        pch.levels = rep(pch.levels, ceiling(n/length(pch.levels)))[1 : n]
       }
       # if pch is given and ind.names is TRUE, pch takes over
       display.names = FALSE
@@ -902,7 +857,7 @@ shape.input.plotIndiv <-
       if (display.names)
         df$names = rep(ind.names, length(x))
       
-      df$pch = pch; df$pch.levels = pch.levels
+      df$pch = pch; df$pch.levels = pch
       df$cex = cex
       #df$col.per.group = levels.color#[group] #FR: don't understand what is that changing as levels.color is already group?
       df$col = levels.color#as.character(col)

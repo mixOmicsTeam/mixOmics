@@ -7,29 +7,30 @@
 plotIndiv.mint.pls <- 
     function(object,
              comp = NULL,
+             rep.space = NULL,
              study = "global",
-             rep.space = c("X-variate","XY-variate", "Y-variate", "multi"),
+             layout = NULL,
+             style = "ggplot2", # can choose between graphics, lattice or ggplot2
              group,
-             # factor indicating the group membership for each sample, useful for ellipse plots. Coded as default for the -da methods, but needs to be input for the unsupervised methods (PCA, IPCA...)
-             col.per.group,
-             style = "ggplot2",
-             # can choose between graphics, lattice or ggplot2
+             col,
              ellipse = FALSE,
              ellipse.level = 0.95,
              centroid = FALSE,
              star = FALSE,
+             background = NULL,
+             pch,
              title = NULL,
              subtitle,
              legend = FALSE,
+             legend.title = "Legend",
+             legend.position = "right",
              X.label = NULL,
              Y.label = NULL,
-             abline = FALSE,
              xlim = NULL,
              ylim = NULL,
-             col,
+             abline = FALSE,
+             point.lwd = 1,
              cex,
-             pch,
-             layout = NULL,
              size.title = rel(2),
              size.subtitle = rel(1.5),
              size.xlabel = rel(1),
@@ -37,14 +38,40 @@ plotIndiv.mint.pls <-
              size.axis = rel(0.8),
              size.legend = rel(1),
              size.legend.title = rel(1.1),
-             legend.title = "Legend",
-             legend.position = "right",
-             point.lwd = 1,
-             background = NULL,
              ...
              
     )
     {
+        # check for inappropriate args
+        extra_args <- list(...)
+        if ("blocks" %in% names(extra_args)) {
+            warning("'blocks' argument is only used for multiblock models")
+        }
+        if ("ind.names" %in% names(extra_args)) {
+            warning("'ind.names' argument is not used in MINT models, samples shapes are determined by study")
+        }
+        # check for deprecated args
+        if ("col.per.group" %in% names(extra_args)) {
+            warning("'col.per.group' is deprecated, please use 'col' to specify colours for each group")
+        }
+        if ("pch.levels" %in% names(extra_args)) {
+            warning("'pch.levels' is deprecated, please use 'pch' to specify point types")
+        }
+        if ("cols" %in% names(extra_args)) {
+            warning("'cols' is not a valid argument, did you mean 'col' ?")
+        }
+
+        #-- choose rep.space
+        if (is.null(rep.space) && inherits(object, "DA"))#"splsda", "plsda", "mlsplsda")))
+        {
+            rep.space = "X-variate"
+        } else if (is.null(rep.space)) {
+            rep.space = "multi"
+        }
+        rep.space  = match.arg(rep.space, c("XY-variate", "X-variate", "Y-variate", "multi"))
+        #c("XY-variate", "X-variate", "Y-variate", "multi")[pmatch(rep.space, c("XY-variate", "X-variate", "Y-variate", "multi"))]
+        
+
         plot_parameters = list(
             size.title = size.title,
             size.subtitle = size.subtitle,
@@ -62,11 +89,14 @@ plotIndiv.mint.pls <-
         if (any(class(object)%in%c("mint.block.pls", "mint.block.spls", "mint.block.plsda", "mint.block.splsda")))
             stop("No plotIndiv for the following functions at this stage: mint.block.pls, mint.block.spls, mint.block.plsda, mint.block.splsda.")
         
+        if (!missing(pch))
+            stop("pch argument is not available for plotting MINT objects, pch is used to display different studies")
         
-        #-- rep.space
-        rep.space <- match.arg(rep.space)
+        if (style == "3D")
+            stop("3D plot is not available for MINT objects")
         
         ind.names = FALSE
+
         # --------------------------------------------------------------------------------------
         #           need study
         # --------------------------------------------------------------------------------------
@@ -255,7 +285,7 @@ plotIndiv.mint.pls <-
             #-- check inputs
             # check style as we do not do 3d at the moment:
             if (!style %in% c("ggplot2", "lattice", "graphics"))
-                stop("'style' must be one of 'ggplot2', 'lattice' or 'graphics'.",
+                stop("'style' must be one of 'ggplot2', 'lattice' or 'graphics', 3d is not supported for MINT models.",
                      call. = FALSE)
             
             check = check.input.plotIndiv(

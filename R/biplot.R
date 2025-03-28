@@ -10,13 +10,11 @@ NULL
              ind.names = TRUE,
              group = NULL,
              cutoff = 0,
-             col.per.group=NULL,
              col = NULL,
              ind.names.size = 3,
              ind.names.col = color.mixo(4),
              ind.names.repel = TRUE,
              pch = 19,
-             pch.levels=NULL,
              pch.size = 2,
              var.names = TRUE,
              var.names.col = 'grey40',
@@ -35,6 +33,21 @@ NULL
              ...
     )
     {
+    
+        pch.levels <- pch
+
+        # check for inappropriate args
+        extra_args <- list(...)
+        # check for deprecated args
+        if ("col.per.group" %in% names(extra_args)) {
+        warning("'col.per.group' is deprecated, please use 'col' to specify colours for each group")
+        }
+        if ("pch.levels" %in% names(extra_args)) {
+            warning("'pch.levels' is deprecated, please use 'pch' to specify point types")
+        }
+
+        col.per.group <- col
+
         object <- x
         rm(x)
         ## for implicit support of non-pca objects - experimental
@@ -135,8 +148,8 @@ NULL
                 if (isTRUE(pch.legend)) {
                     pch_legend <- guide_legend(title = pch.legend.title, override.aes = list(size = 5))
                 }
-                gg_biplot <- gg_biplot + 
-                    scale_shape_manual(values = pch.levels, guide = pch_legend)
+                # gg_biplot <- gg_biplot + 
+                #     scale_shape_manual(values = pch.levels, guide = pch_legend)
             }
             else
             {
@@ -212,7 +225,7 @@ NULL
                         ),
                         col = var.arrow.col,
                         arrow = arrow(length = unit(var.arrow.length, "cm")),
-                        size = var.arrow.size,
+                        linewidth = var.arrow.size,
                         show.legend = FALSE
                     )
             }
@@ -266,8 +279,10 @@ NULL
 #' @param ind.names.size Numeric, sample name size.
 #' @param ind.names.col Character, sample name colour.
 #' @template arg/pch.size
-#' @param pch.levels If \code{pch} is a factor, a named vector providing the
-#'   point characters to use. See examples.
+#' @param pch A single character or numeric value, or a factor. If a factor, the
+#'   levels of the factor are used to define the point types. If a character or
+#'   numeric value, the same point type is used for all points. If \code{NULL},
+#'   the default point type is used. See examples. 
 #' @param var.names Logical indicating whether to show variable names. 
 #' Alternatively, a character.
 #' @param var.names.col Character, variable name colour.

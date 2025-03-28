@@ -25,6 +25,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r}
+library(BiocParallel)
+```
+
 ```{r 00-options, include=FALSE, eval=TRUE}
 library(knitr)
 # global options - probably better to put out.width='60%' for pdf output
@@ -63,19 +67,7 @@ colorize <- function(color, x) {
 }
 
 # The libraries to load
-#install.packages(kableExtra)
-#library(kableExtra)
-
-# load BiocStyle if needed
-if (requireNamespace("BiocStyle", quietly = TRUE)) {
-  BiocStyle::html_document()
-} else {
-  rmarkdown::html_document()
-}
-# load magick if needed
-if (!requireNamespace("magick", quietly = TRUE)) {
-  stop("Package 'magick' is needed to build the vignette. Please install it.")
-}
+library(kableExtra)
 ```
 
 ```{r 00-header-generation, echo=FALSE, eval=FALSE}
@@ -519,7 +511,7 @@ plotVar(final.pca.multi, comp = c(1, 2),
 
 (ref:03-pca-variable-plot) **Correlation Circle plot from the PCA performed on the `ABC.trans` data**. The plot shows groups of transporters that are highly correlated, and also contribute to PC1 - near the big circle on the right hand side of the plot (transporters grouped with those in `r colorize("orange", "orange")`), or PC1 and PC2 - top left and top bottom corner of the plot, transporters grouped with those in `r colorize("pink", "pink")` and `r colorize("yellow", "yellow")`.
 
-The plot in Figure \@ref(fig:03-pca-variable-plot) highlights a group of ABC transporters that contribute to PC1: `r colorize("orange", "ABCE1")`, and to some extent the group clustered with `r colorize("orange", "ABCB8")` that contributes positively to PC1, while `r colorize("green", "ABCA8")` contributes negatively. We also observe a group of transporters that contribute to both PC1 and PC2: the group clustered with `r colorize("pink", "ABCC2")` contributes positively to PC2 and negatively to PC1, and a cluster of `r colorize("yellow", "ABCC12")` and `r colorize("yellow", "ABCD2")` that contributes negatively to both PC1 and PC2. We observe that several transporters are inside the small circle. However, examining the third component (argument `comp = c(1, 3)`) does not appear to reveal further transporters that contribute to this third component. The additional argument `cutoff = 0.5` could further simplify this plot.
+The plot in Figure \@ref(fig:03-pca-variable-plot) highlights a group of ABC transporters that contribute to PC1: `r colorize("orange", "ABCE1")`, and to some extent the group clustered with `r colorize("orange", "ABCB8")` that contributes positively to PC1, while `r colorize("green", "ABCA8")` contributes negatively. We also observe a group of transporters that contribute to both PC1 and PC2: the group clustered with `r colorize("pink", "ABCC2")` contributes negatively both to PC1 and PC2, and a cluster of `r colorize("yellow", "ABCC12")` and `r colorize("yellow", "ABCD2")` that contributes negatively to PC1 and positively to PC2. We observe that several transporters are inside the small circle. However, examining the third component (argument `comp = c(1, 3)`) does not appear to reveal further transporters that contribute to this third component. The additional argument `cutoff = 0.5` could further simplify this plot.
 
 ### Biplot: samples and variables {#03:pca-biplot}
 
@@ -691,14 +683,14 @@ We can analyse these two data sets (genes and clinical measurements) using sPLS1
 
 ## Load the data {#04:load-data}
 
-```{r 04-load-data2, echo = FALSE, eval = FALSE}
+```{r 04-load-data2, echo = FALSE}
 devtools::install_github("mixOmicsTeam/mixOmics")
 data(liver.toxicity)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
 ```
 
-```{r 04-load-data, eval = TRUE}
+```{r 04-load-data, eval = FALSE}
 library(mixOmics)
 data(liver.toxicity)
 X <- liver.toxicity$gene
@@ -915,16 +907,6 @@ The optimal parameters can be output, along with a plot showing the tuning resul
 list.keepX <- c(seq(5, 50, 5))
 list.keepY <- c(3:10)
 
-# added this to avoid errors where num_workers exceeded limits set by devtools::check()
-    chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
-    if (nzchar(chk) && chk == "TRUE") {
-      # use 2 cores in CRAN/Travis/AppVeyor
-      num_workers <- 2L
-    } else {
-      # use all cores in devtools::test()
-      num_workers <- parallel::detectCores()
-    }
-
 set.seed(33)  # For reproducibility with this handbook, remove otherwise
 tune.spls.liver <- tune.spls(X, Y, test.keepX = list.keepX, 
                              test.keepY = list.keepY, ncomp = 2, 
@@ -932,7 +914,7 @@ tune.spls.liver <- tune.spls(X, Y, test.keepX = list.keepX,
                              measure = 'cor', 
                             #   the following uses two CPUs for faster computation
                             # it can be commented out
-                            BPPARAM = BiocParallel::SnowParam(workers = num_workers)
+                            BPPARAM = BiocParallel::SnowParam(workers = 2)
                             )
 
 plot(tune.spls.liver)
@@ -2174,7 +2156,7 @@ final.mint.plsda.stem <- mint.plsda(X = X, Y = Y, study = study, ncomp = 2)
 #final.mint.plsda.stem # Lists the different functions
 
 plotIndiv(final.mint.plsda.stem, legend = TRUE, title = 'MINT PLS-DA', 
-          subtitle = 'stem cell study', ellipse = TRUE)
+          subtitle = 'stem cell study', ellipse = T)
 ```
 
 (ref:07-plsda-sample-plot1)  **Sample plot from the MINT PLS-DA performed on the `stemcells` gene expression data**. Samples are projected into the space spanned by the first two components. Samples are coloured by their cell types and symbols indicate the study membership. Component 1 discriminates `r colorize("blue", "fibroblast")` vs. the others, while component 2 discriminates some of the `r colorize("grey", "hiPSC")` vs. `r colorize("orange", "hESC")`.  
@@ -2255,7 +2237,7 @@ The samples can be projected on the global components or alternatively using the
 ```{r 07-splsda-sample-plot1, echo = TRUE, results = 'hide', fig.show = 'hide', fig.path = 'Figures/MINT/'}
 plotIndiv(final.mint.splsda.stem, study = 'global', legend = TRUE, 
           title = 'Stem cells, MINT sPLS-DA', 
-          subtitle = 'Global', ellipse = TRUE)
+          subtitle = 'Global', ellipse = T)
 ```
 
 ```{r 07-splsda-sample-plot2, echo = TRUE, results = 'hide', fig.show = 'hide', fig.path = 'Figures/MINT/'}

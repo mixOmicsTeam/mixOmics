@@ -1,108 +1,64 @@
 
-## plot of individuals for objects with two datasets only (X and Y)
-# ----------------------------------------------------
-data(nutrimouse)
-X <- nutrimouse$lipid
-Y <- nutrimouse$gene
-nutri.res <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
-
-## plot of individuals for objects of class 'pls' or 'spls'
-# ----------------------------------------------------
-plotArrow(nutri.res)
-## customise the ggplot object as you wish
-plotArrow(nutri.res) + geom_vline(xintercept = 0, alpha = 0.5) + 
-    geom_hline(yintercept = 0, alpha = 0.5) +
-    labs(x = 'Dim 1' , y = 'Dim 2', title = 'Nutrimouse') +
-    theme_minimal()
-## individual name position
-plotArrow(nutri.res, ind.names.position = 'end')
-plotArrow(nutri.res, comp = c(1,3))
-## custom pch
-plotArrow(nutri.res, pch = 10, pch.size = 3)
-plotArrow(nutri.res, pch = c(X = 1, Y = 0))
-## custom arrow
-plotArrow(nutri.res, arrow.alpha = 0.6, arrow.size = 0.6, arrow.length = 0.15)
-
-## group samples
-plotArrow(nutri.res, group = nutrimouse$genotype)
-plotArrow(nutri.res, group = nutrimouse$genotype, legend.title = 'Genotype')
-
-## custom ind.names
-plotArrow(nutri.res,
-           ind.names = paste0('ID', rownames(nutrimouse$gene)), 
-           ind.names.size = 3)
-
-## plot of individuals for objects of class 'pls' or 'spls'
-# ----------------------------------------------------
+## 'spls' class - examples demonstrate how to control sample colours with sample names shown
+# ------------------------------------------------------
 data(liver.toxicity)
 X <- liver.toxicity$gene
 Y <- liver.toxicity$clinic
-toxicity.spls <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
-                      keepY = c(10, 10, 10))
+spls.obj <- spls(X, Y, ncomp = 3, keepX = c(50, 50, 50),
+                 keepY = c(10, 10, 10))
 
 # colors indicate time of necropsy, text is the dose, label at start of arrow
-plotArrow(toxicity.spls,  group = liver.toxicity$treatment[, 'Time.Group'],
-           ind.names  = liver.toxicity$treatment[, 'Dose.Group'],
-           legend = TRUE, position.names = 'start', legend.title = 'Time.Group')
+plotArrow(spls.obj,  group = as.factor(liver.toxicity$treatment[, 'Time.Group']),
+          col = c("red", "blue", "purple", "darkgreen"), 
+          ind.names  = liver.toxicity$treatment[, 'Dose.Group'],
+          legend = TRUE, position.names = 'start', legend.title = 'Time.Group')
 
-## individual representation for objects of class 'sgcca' (or 'rgcca')
-# ----------------------------------------------------
+
+## 'rcc' class - examples demonstrate how to control shape of all samples
+# -------------------------------------------------------------------------------
+
+# create model
 data(nutrimouse)
-Y = unmap(nutrimouse$diet)
-data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid, Y = Y)
-design1 = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
-nutrimouse.sgcca <- wrapper.sgcca(X = data,
-                                  design = design1,
-                                  penalty = c(0.3, 0.5, 1),
-                                  ncomp = 3)
+X <- nutrimouse$lipid
+Y <- nutrimouse$gene
+rcc.obj <- rcc(X, Y, ncomp = 3, lambda1 = 0.064, lambda2 = 0.008)
 
-plotArrow(nutrimouse.sgcca, group = nutrimouse$genotype, ind.names = TRUE, 
-           legend.title = 'Genotype' )
+primary_groups <- nutrimouse$diet
 
-## custom pch by block
-blocks <- names(nutrimouse.sgcca$variates)
-pch <- seq_along(blocks)
-names(pch) <- blocks
-pch
-#>   gene   lipid     Y 
-#>   1       2        3 
-p <- plotArrow(nutrimouse.sgcca, group = nutrimouse$genotype, ind.names = TRUE, 
-           pch = pch, legend.title = 'Genotype')
+# plot samples coloured by primary groups, by default shapes are all circles
+plotArrow(rcc.obj, ind.names = FALSE,
+          group = primary_groups, legend = TRUE)
 
-p
-
-### further customise the ggplot object
-# custom labels
-p + labs(x = 'Variate 1',
-         y = 'Variate 2') +
-    guides(
-        shape = guide_legend(title = 'BLOCK')
-    ) 
-# TODO include these customisations into function args
-## custom shapes
-p + scale_shape_manual(values = c(
-    centroid = 1,
-    gene = 2,
-    lipid = 3,
-    Y = 4
-))
-
-## individual representation for objects of class 'sgccda'
-# ----------------------------------------------------
-# Note: the code differs from above as we use a 'supervised' GCCA analysis
-data(nutrimouse)
-Y = nutrimouse$diet
-data = list(gene = nutrimouse$gene, lipid = nutrimouse$lipid)
-design1 = matrix(c(0,1,0,1), ncol = 2, nrow = 2, byrow = TRUE)
-
-nutrimouse.sgccda1 <- 
-    wrapper.sgccda(X = data,
-                   Y = Y,
-                   design = design1,
-                   ncomp = 2,
-                   keepX = list(gene = c(10,10), lipid = c(15,15)))
+# plot samples coloured by primary groups, force all samples to have a different shape (2 = triangle)
+plotArrow(rcc.obj, ind.names = FALSE,
+          group = primary_groups, legend = TRUE,
+          pch = 2)
 
 
-## Default colours correspond to outcome Y
-plotArrow(nutrimouse.sgccda1)
+## 'sgccda' class - examples demonstrate how to control shape of different blocks
+# --------------------------------------------------------------------------------
 
+data(breast.TCGA)
+idx = seq(1, length(breast.TCGA$data.train$subtype), 10)
+X <- list(mRNA = breast.TCGA$data.train$mrna[idx,],
+          miRNA = breast.TCGA$data.train$mirna[idx,],
+          protein = breast.TCGA$data.train$protein[idx,])
+Y <- breast.TCGA$data.train$subtype[idx] # set the response variable
+
+diablo.obj <- block.splsda(X, Y, ncomp = 2) # undergo multiblock sPLS-DA
+
+# plot the samples using an arrow plot - 
+plotArrow(diablo.obj, 
+          ind.names = FALSE,
+          legend = TRUE,
+          title = 'TCGA, DIABLO comp 1 - 2') 
+
+pchs <- c(3, 2, 1)
+names(pchs) <- c("miRNA", "mRNA", "protein")
+
+# plot the samples using an arrow plot changed shapes of data blocks
+plotArrow(diablo.obj, 
+          ind.names = FALSE,
+          legend = TRUE,
+          title = 'TCGA, DIABLO comp 1 - 2',
+          pch = pchs) 
