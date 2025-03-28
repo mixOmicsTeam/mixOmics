@@ -86,6 +86,9 @@ plotArrow <- function(object,
     if ("col.per.group" %in% names(extra_args)) {
       warning("'col.per.group' is deprecated, please use 'col' to specify colours for each group")
     }
+    if ("pch.levels" %in% names(extra_args)) {
+        warning("'pch.levels' is deprecated, please use 'pch' to specify point types")
+    }
     
     ## keep the plot components only and name columns as x and y
     variates <- mapply(arr = object$variates, block = names(object$variates), FUN = function(arr, block) {

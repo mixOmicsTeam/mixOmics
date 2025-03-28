@@ -238,12 +238,12 @@
     }
     else
     {
-        if ( length(setdiff(names(pch.levels),  levels(pch)) ) > 0 |
-             length(setdiff(levels(pch),  names(pch.levels)) ) > 0 )
-        {
-            stop("'pch.levels' must be a vector of pch values with names: ", 
-                 levels(pch), call. = FALSE)
-        }
+        # if ( length(setdiff(names(pch.levels),  levels(pch)) ) > 0 |
+        #      length(setdiff(levels(pch),  names(pch.levels)) ) > 0 )
+        # {
+        #     stop("'pch.levels' must be a vector of pch values with names: ", 
+        #          levels(pch), call. = FALSE)
+        # }
     }
 pch.legend <- pch.legend & ifelse(length(pch.levels) == 1, FALSE, TRUE)
     return(list(pch = pch, 
