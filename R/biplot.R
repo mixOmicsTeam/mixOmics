@@ -225,7 +225,7 @@ NULL
                         ),
                         col = var.arrow.col,
                         arrow = arrow(length = unit(var.arrow.length, "cm")),
-                        size = var.arrow.size,
+                        linewidth = var.arrow.size,
                         show.legend = FALSE
                     )
             }
