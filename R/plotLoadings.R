@@ -31,6 +31,46 @@
 #' 
 #' @aliases plotLoadings.pls plotLoadings.spls
 #' @param object object
+#' @param comp integer value, which component to plot. Default is 1.
+#' @param ndisplay integer indicating how many of the most important variables
+#' are to be plotted (ranked by decreasing weights in each component).
+#' Useful to lighten a graph.
+#' @param style argument to be set to either \code{'graphics'} or \code{'ggplot2'} 
+#' to indicate the style of the plot. Default is \code{'graphics'}.
+
+# aesthetics
+#' @param col color of barplot, only for non-DA methods.
+#' @param border Argument from \code{\link{barplot}}: indicates whether to draw
+#' a border on the barplot and in which colour. 
+
+
+# variable names
+#' @param size.name A numerical value giving the amount by which plotting the
+#' variable name text should be magnified or reduced relative to the default.
+#' @param name.var A character vector indicating the names of the variables.
+#' The names of the vector should match the names of the input data, see
+#' example.
+
+# title
+#' @param title Title of the plot. Default is NULL.
+#' @param size.title size of the title
+
+# layout and x axis
+#' @param layout Vector of two values (rows,cols) that indicates the layout of
+#' the plot. If \code{layout} is provided, the remaining empty subplots are
+#' still active. Only applies when style is set to \code{'graphics'}.
+#' @param xlim Argument from \code{\link{barplot}}: limit of the x-axis. When
+
+
+# remove this?
+#' @param name.var.complete Logical. If \code{name.var} is supplied with some
+#' empty names, \code{name.var.complete} allows you to use the initial variable
+#' names to complete the graph (from colnames(X)). Defaut to FALSE.
+#' @param plot Logical indicating of the plot should be output. If set to FALSE
+#' the user can extract the contribution matrix, see example. Default value is
+#' TRUE.
+
+
 #' @param contrib a character set to 'max' or 'min' indicating if the color of
 #' the bar should correspond to the group with the maximal or minimal
 #' expression levels / abundance.
@@ -42,36 +82,20 @@
 #' studies or "global" is expected.
 #' @param block A single value indicating which block to consider in a
 #' \code{sgccda} object.
-#' @param comp integer value indicating the component of interest from the
-#' object.
-#' @param col color used in the barplot, only for object from non Discriminant
-#' analysis
-#' @param plot Logical indicating of the plot should be output. If set to FALSE
-#' the user can extract the contribution matrix, see example. Default value is
-#' TRUE.
+
 #' @param show.ties Logical. If TRUE then tie groups appear in the color set by
 #' \code{col.ties}, which will appear in the legend. Ties can happen when
 #' dealing with count data type. By default set to TRUE.
 #' @param col.ties Color corresponding to ties, only used if
 #' \code{show.ties=TRUE} and ties are present.
-#' @param ndisplay integer indicating how many of the most important variables
-#' are to be plotted (ranked by decreasing weights in each PLS-component).
-#' Useful to lighten a graph.
-#' @param size.name A numerical value giving the amount by which plotting the
-#' variable name text should be magnified or reduced relative to the default.
+
+
 #' @param size.legend A numerical value giving the amount by which plotting the
 #' legend text should be magnified or reduced relative to the default.
-#' @param name.var A character vector indicating the names of the variables.
-#' The names of the vector should match the names of the input data, see
-#' example.
-#' @param name.var.complete Logical. If \code{name.var} is supplied with some
-#' empty names, \code{name.var.complete} allows you to use the initial variable
-#' names to complete the graph (from colnames(X)). Defaut to FALSE.
-#' @param title A set of characters to indicate the title of the plot. Default
-#' value is NULL.
+
+
 #' @param subtitle subtitle for each plot, only used when several \code{block}
 #' or \code{study} are plotted.
-#' @param size.title size of the title
 #' @param size.subtitle size of the subtitle
 #' @param legend Logical indicating if the legend indicating the group outcomes
 #' should be added to the plot. Default value is TRUE.
@@ -79,12 +103,8 @@
 #' See examples.
 #' @param legend.title A set of characters to indicate the title of the legend.
 #' Default value is NULL.
-#' @param layout Vector of two values (rows,cols) that indicates the layout of
-#' the plot. If \code{layout} is provided, the remaining empty subplots are
-#' still active
-#' @param border Argument from \code{\link{barplot}}: indicates whether to draw
-#' a border on the barplot.
-#' @param xlim Argument from \code{\link{barplot}}: limit of the x-axis. When
+
+
 #' plotting several \code{block}, a matrix is expected where each row is the
 #' \code{xlim} used for each of the blocks.
 #' @param \dots not used.
@@ -249,67 +269,118 @@ plotLoadings.rgcca <- plotLoadings.mixo_pls
 #' @rdname plotLoadings
 #' @method plotLoadings pca
 #' @export
-plotLoadings.pca <-
-    function(object,
-             comp = 1,
-             col = NULL,
-             ndisplay = NULL,
-             size.name = 0.7,
-             name.var = NULL,
-             name.var.complete = FALSE,
-             title = NULL,
-             size.title = rel(2),
-             layout = NULL,
-             border = NA,
-             xlim = NULL,
-             ...)
-    {
-        
-        # -- input checks
-        object$names$blocks = "X"
-        check = check.input.plotLoadings(object = object, block = "X", size.name = size.name, title = title, col = col, name.var = name.var, xlim = xlim)
-        
-        col = check$col
-        size.name = check$size.name
-        block = 1
-        object$X = list(X=object$X)
-        xlim = check$xlim
-        
-        
-        # -- layout
-        res = layout.plotLoadings(layout = layout, plot = TRUE, legend = FALSE, block = block)
-        reset.mfrow = res$reset.mfrow
-        opar = res$opar
-        omar = par("mar") #reset mar at the end
-        
-        res = get.loadings.ndisplay(object = object, comp = comp, block = block, name.var = name.var, name.var.complete = name.var.complete, ndisplay = ndisplay)
-        X = res$X
-        names.block = res$names.block
-        colnames.X = res$colnames.X
-        value.selected.var = res$value.selected.var
-        
-        df = data.frame(importance = value.selected.var) # contribution of the loading
-        
-        # barplot with contributions
-        par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/3), 4, 2))
-        
-        .plotLoadings_barplot(height = df$importance, col = col, names.arg = colnames.X, cex.name = size.name, border = border, xlim = xlim)
-        
-        if (is.null(title))
-        {
-            title(paste0('Loadings on comp ', comp), cex.main = size.title)
-        } else {
-            title(paste(title), cex.main = size.title)
-        }
-        
-        if (reset.mfrow)
-            par(opar)#par(mfrow = c(1,1))
-        
-        par(mar = omar) #reset mar
-        
-        # return the contribution matrix
-        return(invisible(df))
-    }
+plotLoadings.pca <- 
+  function(object, 
+           comp = 1, 
+           col = NULL, 
+           ndisplay = NULL, 
+           style = 'graphics', 
+           size.name = 0.7, 
+           size.axis = 0.7,
+           name.var = NULL, 
+           name.var.complete = FALSE, 
+           title = NULL, 
+           size.title = rel(2), 
+           layout = NULL, 
+           border = NA, 
+           xlim = NULL, 
+           X.label = NULL,
+           Y.label = NULL,
+           size.labs = 1,
+           ...) {
+    
+    # Input checks
+    if (!is.list(object) || is.null(object$X))
+      stop("The object must be a valid PCA object containing the 'X' matrix.")
+    if (!is.numeric(comp) || length(comp) != 1 || comp <= 0)
+      stop("'comp' must be a positive integer.")
+    if (!style %in% c('graphics', 'ggplot2'))
+      stop("'style' must be either 'graphics' or 'ggplot2'.")
+    
+    if (!is.null(col) && (length(col) != 1 || !col %in% colors()))
+      stop("'col' must be a single valid color.")
+    if (!is.null(ndisplay) && (!is.numeric(ndisplay) || length(ndisplay) != 1 || ndisplay <= 0))
+      stop("'ndisplay' must be a positive integer.")
+    
+    if (!is.null(title) && !is.character(title))
+      stop("'title' must be NULL or a character string.")
+    if (!is.null(xlim) && (!is.numeric(xlim) || length(xlim) != 2))
+      stop("'xlim' must be a numeric vector of length 2.")
+    if (!is.null(X.label) && !is.character(X.label))
+      stop("'X.label' must be NULL or a character string.")
+    if (!is.null(Y.label) && !is.character(Y.label))
+      stop("'Y.label' must be NULL or a character string.")
+    
+    if (!is.numeric(size.name) || size.name <= 0)
+      stop("'size.name' must be a positive numeric value.")
+    if (!is.numeric(size.title) || size.title <= 0)
+      stop("'size.title' must be a positive numeric value.")
+    if (!is.numeric(size.labs) || size.labs <= 0)
+      stop("'size.labs' must be a positive numeric value.")
+    if (!is.numeric(size.axis) || size.axis <= 0)
+      stop("'size.axis' must be a positive numeric value.")
+    
+    if (style == 'ggplot2' && !is.null(layout))
+      warning("layout is ignored when style is set to 'ggplot2'.")
+  
+  # -- input checks
+  object$names$blocks <- 'X'
+  check <- check.input.plotLoadings(object = object, block = 'X', size.name = size.name, title = title, col = col, name.var = name.var, xlim = xlim)
+  
+  col <- check$col
+  size.name <- check$size.name
+  block <- 1
+  object$X <- list(X = object$X)
+  xlim <- check$xlim
+  
+  # -- layout
+  res <- layout.plotLoadings(layout = layout, plot = TRUE, legend = FALSE, block = block)
+  reset.mfrow <- res$reset.mfrow
+  opar <- res$opar
+  omar <- par('mar')
+  
+  # -- title
+  default.title <- paste0("Loadings on comp ", comp)
+  plot.title <- ifelse(is.null(title), default.title, title)
+  
+  res <- get.loadings.ndisplay(object = object, comp = comp, block = block, name.var = name.var, name.var.complete = name.var.complete, ndisplay = ndisplay)
+  X <- res$X
+  colnames.X <- res$colnames.X
+  value.selected.var <- res$value.selected.var
+  
+  df <- data.frame(importance = value.selected.var, names = colnames.X)
+  
+  # -- Plotting based on style
+  if (style == 'ggplot2') {
+    p <- ggplot(df, aes(x = reorder(names, -abs(importance)), y = importance)) +
+      geom_bar(stat = 'identity', fill = col, color = border) +
+      theme_minimal() +
+      theme(axis.text.y = element_text(size = size.name * 10),
+            axis.text.x = element_text(size = size.axis * 10),
+            axis.title.x = element_text(size = size.labs),
+            axis.title.y = element_text(size = size.labs),
+            plot.title = element_text(face = "bold", hjust = 0.5, size = size.title)) +
+      labs(title = plot.title, y = X.label, x = Y.label)
+    
+    # optionally control x axis
+    if (!is.null(xlim)) {p <- p + scale_y_continuous(limits = xlim, expand = c(0,0))}
+    
+    # flip and print plot
+    p <- p + coord_flip()
+    print(p)
+    
+  } else {
+    par(mar = c(4, max(7, max(sapply(colnames.X, nchar), na.rm = TRUE) / 3), 4, 2))
+    .plotLoadings_barplot(height = df$importance, col = col, names.arg = colnames.X, cex.name = size.name, border = border, 
+                          xlim = xlim, xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
+    title(title %||% paste0('Loadings on comp ', comp), cex.main = size.title)
+  }
+  
+  if (reset.mfrow) par(opar)
+  par(mar = omar)
+  
+  return(invisible(df))
+}
 
 ## ----------------------- PLS-DA, SPLS-DA, sGCCDA ------------------------ ##
 

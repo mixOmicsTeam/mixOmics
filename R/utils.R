@@ -2,16 +2,29 @@
 #' plotLoadings helper
 #'
 #' @noRd
-.plotLoadings_barplot <- function(height, col, names.arg, cex.name, border, xlim) {
-    tryCatch({barplot(height, horiz = TRUE, las = 1, col = col, axisnames = TRUE, names.arg = names.arg, #names.arg = row.names(df),
-                      cex.names = cex.name, cex.axis = 0.7, beside = TRUE, border = border, xlim = xlim)},
-             error = function(e){
-                 if ( grepl(pattern = "figure margins too large", e) ){
-                     stop("\nplotLoadings encountered margin errors. Ensure feature names are not too long (see 'name.var' argument) and the 'Plots' pane is cleared and enlargened.\n", call. = FALSE)
-                 } else {
-                     stop(e$message, call. = FALSE)
-                 }
-             })
+# .plotLoadings_barplot <- function(height, col, names.arg, cex.name, border, xlim) {
+#     tryCatch({barplot(height, horiz = TRUE, las = 1, col = col, axisnames = TRUE, names.arg = names.arg, #names.arg = row.names(df),
+#                       cex.names = cex.name, cex.axis = 0.7, beside = TRUE, border = border, xlim = xlim)},
+#              error = function(e){
+#                  if ( grepl(pattern = "figure margins too large", e) ){
+#                      stop("\nplotLoadings encountered margin errors. Ensure feature names are not too long (see 'name.var' argument) and the 'Plots' pane is cleared and enlargened.\n", call. = FALSE)
+#                  } else {
+#                      stop(e$message, call. = FALSE)
+#                  }
+#              })
+# }
+
+.plotLoadings_barplot <- function(height, col, names.arg, cex.name, border, xlim, xlab, ylab, cex.lab = 1, cex.axis = size.axis) {
+  tryCatch({
+    barplot(height, horiz = TRUE, las = 1, col = col, names.arg = names.arg, cex.names = cex.name, cex.axis = cex.axis, beside = TRUE, 
+            border = border, xlim = xlim, xlab = xlab, ylab = ylab, cex.lab = cex.lab)
+  }, error = function(e) {
+    if (grepl('figure margins too large', e$message)) {
+      stop('plotLoadings encountered margin errors. Ensure feature names are not too long and the "Plots" pane is enlarged.', call. = FALSE)
+    } else {
+      stop(e$message, call. = FALSE)
+    }
+  })
 }
 
 ## --------------------------- .unexpected_err ---------------------------- ##
