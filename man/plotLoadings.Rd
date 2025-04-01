@@ -121,7 +121,9 @@ plotLoadings(object, ...)
   comp = 1,
   col = NULL,
   ndisplay = NULL,
+  style = "graphics",
   size.name = 0.7,
+  size.axis = 0.7,
   name.var = NULL,
   name.var.complete = FALSE,
   title = NULL,
@@ -129,6 +131,9 @@ plotLoadings(object, ...)
   layout = NULL,
   border = NA,
   xlim = NULL,
+  X.label = NULL,
+  Y.label = NULL,
+  size.labs = 1,
   ...
 )
 
@@ -313,14 +318,12 @@ plotLoadings(object, ...)
 \item{block}{A single value indicating which block to consider in a
 \code{sgccda} object.}
 
-\item{comp}{integer value indicating the component of interest from the
-object.}
+\item{comp}{integer value, which component to plot. Default is 1.}
 
-\item{col}{color used in the barplot, only for object from non Discriminant
-analysis}
+\item{col}{color of barplot, only for non-DA methods.}
 
 \item{ndisplay}{integer indicating how many of the most important variables
-are to be plotted (ranked by decreasing weights in each PLS-component).
+are to be plotted (ranked by decreasing weights in each component).
 Useful to lighten a graph.}
 
 \item{size.name}{A numerical value giving the amount by which plotting the
@@ -334,8 +337,7 @@ example.}
 empty names, \code{name.var.complete} allows you to use the initial variable
 names to complete the graph (from colnames(X)). Defaut to FALSE.}
 
-\item{title}{A set of characters to indicate the title of the plot. Default
-value is NULL.}
+\item{title}{Title of the plot. Default is NULL.}
 
 \item{subtitle}{subtitle for each plot, only used when several \code{block}
 or \code{study} are plotted.}
@@ -346,14 +348,15 @@ or \code{study} are plotted.}
 
 \item{layout}{Vector of two values (rows,cols) that indicates the layout of
 the plot. If \code{layout} is provided, the remaining empty subplots are
-still active}
+still active. Only applies when style is set to \code{'graphics'}.}
 
 \item{border}{Argument from \code{\link{barplot}}: indicates whether to draw
-a border on the barplot.}
+a border on the barplot and in which colour.}
 
-\item{xlim}{Argument from \code{\link{barplot}}: limit of the x-axis. When
-plotting several \code{block}, a matrix is expected where each row is the
-\code{xlim} used for each of the blocks.}
+\item{xlim}{Argument from \code{\link{barplot}}: limit of the x-axis. When}
+
+\item{style}{argument to be set to either \code{'graphics'} or \code{'ggplot2'} 
+to indicate the style of the plot. Default is \code{'graphics'}.}
 
 \item{contrib}{a character set to 'max' or 'min' indicating if the color of
 the bar should correspond to the group with the maximal or minimal
@@ -384,7 +387,9 @@ should be added to the plot. Default value is TRUE.}
 See examples.}
 
 \item{legend.title}{A set of characters to indicate the title of the legend.
-Default value is NULL.}
+Default value is NULL.
+plotting several \code{block}, a matrix is expected where each row is the
+\code{xlim} used for each of the blocks.}
 
 \item{study}{Indicates which study are to be plotted.  A character vector
 containing some levels of \code{object$study}, "all.partial" to plot all
