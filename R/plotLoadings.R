@@ -280,11 +280,11 @@ plotLoadings.mixo_pls <-
         p <- ggplot(df, aes(x = reorder(names, -abs(as.numeric(importance))), y = importance)) +
           geom_bar(stat = "identity", fill = col, color = border) +
           theme_minimal() +
-          theme(axis.text.y = element_text(size = size.name * 10),
-                axis.text.x = element_text(size = size.axis * 10),
-                axis.title.x = element_text(size = size.labs * 10),
-                axis.title.y = element_text(size = size.labs * 10),
-                plot.title = element_text(face = "bold", hjust = 0.5, size = size.title * 10)) +
+          theme(axis.text.y = element_text(size = size.name * 8),
+                axis.text.x = element_text(size = size.axis * 8),
+                axis.title.x = element_text(size = size.labs * 8),
+                axis.title.y = element_text(size = size.labs * 8),
+                plot.title = element_text(face = "bold", hjust = 0.5, size = size.title * 8)) +
           labs(title = plot.title, y = X.label, x = Y.label)
         
         # optionally control x axis
@@ -316,7 +316,7 @@ plotLoadings.mixo_pls <-
             layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
           )
         } else {
-          title_grob <- grid::textGrob(title, gp = grid::gpar(fontsize = size.title * 10, fontface = "bold"))
+          title_grob <- grid::textGrob(title, gp = grid::gpar(fontsize = size.title * 8, fontface = "bold"))
           plot_grobs <- gridExtra::arrangeGrob(
             grobs = plot_list,
             layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
@@ -453,11 +453,11 @@ plotLoadings.pca <-
     p <- ggplot(df, aes(x = reorder(names, -abs(importance)), y = importance)) +
       geom_bar(stat = 'identity', fill = col, color = border) +
       theme_minimal() +
-      theme(axis.text.y = element_text(size = size.name * 10),
-            axis.text.x = element_text(size = size.axis * 10),
-            axis.title.x = element_text(size = size.labs * 10),
-            axis.title.y = element_text(size = size.labs * 10),
-            plot.title = element_text(face = "bold", hjust = 0.5, size = size.title)) +
+      theme(axis.text.y = element_text(size = size.name * 8),
+            axis.text.x = element_text(size = size.axis * 8),
+            axis.title.x = element_text(size = size.labs * 8),
+            axis.title.y = element_text(size = size.labs * 8),
+            plot.title = element_text(face = "bold", hjust = 0.5, size = size.title * 8)) +
       labs(title = plot.title, y = X.label, x = Y.label)
     
     # optionally control x axis
@@ -498,8 +498,8 @@ plotLoadings.mixo_plsda <-
              size.name = 0.7,
              title = NULL,
              subtitle,
-             size.title = rel(1.8),
-             size.subtitle = rel(1.4),
+             size.title = 2,
+             size.subtitle = 1.6,
              size.axis = 0.7,
              X.label = NULL,
              Y.label = NULL,
@@ -537,7 +537,7 @@ plotLoadings.mixo_plsda <-
                                       title = title, subtitle = subtitle, size.title = size.title, size.subtitle = size.subtitle,
                                       xlim = xlim, layout = layout, size.axis = size.axis,
                                       X.label = X.label, Y.label = Y.label, size.labs = size.labs,
-                                      border = TRUE, col = "white")
+                                      border = TRUE, col = "white", style = style)
 
         } else {
             
@@ -560,6 +560,7 @@ plotLoadings.mixo_plsda <-
             
             
             contrib.df <- list()
+            plot_list <- list() # to store ggplot objects if style is ggplot2
             
             for (i in 1 : length(block))
             {
@@ -596,12 +597,13 @@ plotLoadings.mixo_plsda <-
                     colnames.X = rownames(df)
                 }
                 
-                # display barplot with names of variables
+                if (style == "graphics") {
+                    # display barplot with names of variables
                     if (!is.null(title) & length(block) > 1)
                     {
                         par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/3), 6, 2))
                     } else {
-                        par(mar = c(4, max(7, max(sapply(colnames.X, nchar), na.rm = TRUE)/3), 4, 2))
+                        par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/3), 4, 2))
                     }
                     
                     xlim <- xlim[1,]
@@ -629,12 +631,54 @@ plotLoadings.mixo_plsda <-
                                title = paste(legend.title),
                                cex = size.legend)
                     }
+                } else if (style == "ggplot2") {
+                    # Create ggplot version
+                    df$names <- colnames.X
+                    
+                    # Create the base plot
+                    p <- ggplot(df, aes(x = reorder(names, -abs(importance)), y = importance)) +
+                        geom_bar(stat = "identity", fill = df$color, color = border) +
+                        theme_minimal() +
+                        theme(axis.text.y = element_text(size = size.name * 8),
+                              axis.text.x = element_text(size = size.axis * 8),
+                              axis.title.x = element_text(size = size.labs * 8),
+                              axis.title.y = element_text(size = size.labs * 8),
+                              plot.title = element_text(face = "bold", hjust = 0.5, size = size.title * 8)) +
+                        labs(title = if(length(block) == 1 & is.null(title)) {
+                            paste0('Contribution on comp ', comp)
+                        } else if(length(block) == 1) {
+                            title
+                        } else if(length(block) > 1 & missing(subtitle)) {
+                            paste0('Contribution on comp ', comp, "\nBlock '", names.block,"'")
+                        } else {
+                            subtitle[i]
+                        },
+                        y = X.label, x = Y.label)
+                    
+                    # Add legend if requested
+                    if (legend) {
+                        p <- p + scale_color_manual(name = legend.title,
+                                                  values = legend.color[1:nlevels(Y)],
+                                                  labels = levels(Y))
+                    }
+                    
+                    # Control x axis limits if specified
+                    if (!is.null(xlim)) {
+                        p <- p + scale_y_continuous(limits = xlim[i,], expand = c(0,0))
+                    }
+                    
+                    # Flip coordinates for horizontal bar plot
+                    p <- p + coord_flip()
+                    
+                    plot_list[[i]] <- p
+                }
 
                 contrib.df <- c(contrib.df, list(df))
             }
             
             names(contrib.df) <- block
             
+            if (style == "graphics") {
                 # legend
                 if (length(block) > 1 & !is.null(title))
                     title(title, outer=TRUE, line = -2, cex.main = size.title)
@@ -643,6 +687,31 @@ plotLoadings.mixo_plsda <-
                     par(opar)#par(mfrow = omfrow)
                 
                 par(mar = omar) #reset mar
+            } else if (style == "ggplot2") {
+                # Arrange multiple plots if needed
+                if (length(plot_list) > 1) {
+                    grid::grid.newpage()
+                    if (is.null(layout)) {
+                        layout <- c(1, length(plot_list))
+                    }
+                    if(is.null(title)) {
+                        gridExtra::grid.arrange(
+                            grobs = plot_list,
+                            layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
+                        )
+                    } else {
+                        title_grob <- grid::textGrob(title, gp = grid::gpar(fontsize = size.title * 8, fontface = "bold"))
+                        plot_grobs <- gridExtra::arrangeGrob(
+                            grobs = plot_list,
+                            layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
+                        )
+                        combined <- gridExtra::arrangeGrob(title_grob, plot_grobs, ncol = 1, heights = c(0.1, 1))
+                        grid::grid.draw(combined)
+                    }
+                } else {
+                    print(plot_list[[1]])
+                }
+            }
             
             # return the contribution matrix
             return(invisible(contrib.df)) # df
@@ -1278,8 +1347,6 @@ layout.plotLoadings <- function(layout, plot, legend, block)
 {
     # layout
     # --
-    if(plot == TRUE)
-    {
         opar = par(no.readonly = TRUE)
         reset.mfrow = FALSE # if set to TRUE, the algorithm ends up with  par(mfrow=reset.mfrow)
         nResp = length(block) + length(block) * legend  #number of blocks *2 if legend is plotted
@@ -1321,10 +1388,6 @@ layout.plotLoadings <- function(layout, plot, legend, block)
                 devAskNewPage(TRUE)
         }
         
-    } else {
-        reset.mfrow = FALSE
-        opar = NULL
-    }
     
     return(list(reset.mfrow = reset.mfrow, opar = opar))
     
