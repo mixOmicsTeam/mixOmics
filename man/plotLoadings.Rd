@@ -23,114 +23,139 @@ plotLoadings(object, ...)
 
 \method{plotLoadings}{mixo_pls}(
   object,
-  block,
   comp = 1,
-  col = NULL,
+  style = "graphics",
   ndisplay = NULL,
-  size.name = 0.7,
+  xlim = NULL,
+  layout = NULL,
+  col = NULL,
+  border = NA,
   name.var = NULL,
   name.var.complete = FALSE,
+  size.name = 0.7,
   title = NULL,
   subtitle,
-  size.title = rel(2),
+  size.title = 2,
   size.subtitle = rel(1.5),
-  layout = NULL,
-  border = NA,
-  xlim = NULL,
+  size.axis = 0.7,
+  X.label = NULL,
+  Y.label = NULL,
+  size.labs = 1,
+  block,
   ...
 )
 
 \method{plotLoadings}{mixo_spls}(
   object,
-  block,
   comp = 1,
-  col = NULL,
+  style = "graphics",
   ndisplay = NULL,
-  size.name = 0.7,
+  xlim = NULL,
+  layout = NULL,
+  col = NULL,
+  border = NA,
   name.var = NULL,
   name.var.complete = FALSE,
+  size.name = 0.7,
   title = NULL,
   subtitle,
-  size.title = rel(2),
+  size.title = 2,
   size.subtitle = rel(1.5),
-  layout = NULL,
-  border = NA,
-  xlim = NULL,
+  size.axis = 0.7,
+  X.label = NULL,
+  Y.label = NULL,
+  size.labs = 1,
+  block,
   ...
 )
 
 \method{plotLoadings}{rcc}(
   object,
-  block,
   comp = 1,
-  col = NULL,
+  style = "graphics",
   ndisplay = NULL,
-  size.name = 0.7,
+  xlim = NULL,
+  layout = NULL,
+  col = NULL,
+  border = NA,
   name.var = NULL,
   name.var.complete = FALSE,
+  size.name = 0.7,
   title = NULL,
   subtitle,
-  size.title = rel(2),
+  size.title = 2,
   size.subtitle = rel(1.5),
-  layout = NULL,
-  border = NA,
-  xlim = NULL,
+  size.axis = 0.7,
+  X.label = NULL,
+  Y.label = NULL,
+  size.labs = 1,
+  block,
   ...
 )
 
 \method{plotLoadings}{sgcca}(
   object,
-  block,
   comp = 1,
-  col = NULL,
+  style = "graphics",
   ndisplay = NULL,
-  size.name = 0.7,
+  xlim = NULL,
+  layout = NULL,
+  col = NULL,
+  border = NA,
   name.var = NULL,
   name.var.complete = FALSE,
+  size.name = 0.7,
   title = NULL,
   subtitle,
-  size.title = rel(2),
+  size.title = 2,
   size.subtitle = rel(1.5),
-  layout = NULL,
-  border = NA,
-  xlim = NULL,
+  size.axis = 0.7,
+  X.label = NULL,
+  Y.label = NULL,
+  size.labs = 1,
+  block,
   ...
 )
 
 \method{plotLoadings}{rgcca}(
   object,
-  block,
   comp = 1,
-  col = NULL,
+  style = "graphics",
   ndisplay = NULL,
-  size.name = 0.7,
+  xlim = NULL,
+  layout = NULL,
+  col = NULL,
+  border = NA,
   name.var = NULL,
   name.var.complete = FALSE,
+  size.name = 0.7,
   title = NULL,
   subtitle,
-  size.title = rel(2),
+  size.title = 2,
   size.subtitle = rel(1.5),
-  layout = NULL,
-  border = NA,
-  xlim = NULL,
+  size.axis = 0.7,
+  X.label = NULL,
+  Y.label = NULL,
+  size.labs = 1,
+  block,
   ...
 )
 
 \method{plotLoadings}{pca}(
   object,
   comp = 1,
-  col = NULL,
-  ndisplay = NULL,
   style = "graphics",
-  size.name = 0.7,
-  size.axis = 0.7,
+  ndisplay = NULL,
+  xlim = NULL,
+  layout = NULL,
+  col = NULL,
+  border = NA,
   name.var = NULL,
   name.var.complete = FALSE,
+  size.name = 0.7,
   title = NULL,
   size.title = rel(2),
-  layout = NULL,
-  border = NA,
-  xlim = NULL,
+  size.axis = 0.7,
   X.label = NULL,
   Y.label = NULL,
   size.labs = 1,
@@ -315,19 +340,25 @@ plotLoadings(object, ...)
 
 \item{\dots}{not used.}
 
-\item{block}{A single value indicating which block to consider in a
-\code{sgccda} object.}
-
 \item{comp}{integer value, which component to plot. Default is 1.}
 
-\item{col}{color of barplot, only for non-DA methods.}
+\item{style}{argument to be set to either \code{'graphics'} or \code{'ggplot2'} 
+to indicate the style of the plot. Default is \code{'graphics'}.}
 
 \item{ndisplay}{integer indicating how many of the most important variables
 are to be plotted (ranked by decreasing weights in each component).
 Useful to lighten a graph.}
 
-\item{size.name}{A numerical value giving the amount by which plotting the
-variable name text should be magnified or reduced relative to the default.}
+\item{xlim}{Argument from \code{\link{barplot}}: limit of the x-axis. When}
+
+\item{layout}{Vector of two values (rows,cols) that indicates the layout of
+the plot. If \code{layout} is provided, the remaining empty subplots are
+still active. Only applies when style is set to \code{'graphics'}.}
+
+\item{col}{color of barplot, only for non-DA methods.}
+
+\item{border}{Argument from \code{\link{barplot}}: indicates whether to draw
+a border on the barplot and in which colour.}
 
 \item{name.var}{A character vector indicating the names of the variables.
 The names of the vector should match the names of the input data, see
@@ -336,6 +367,9 @@ example.}
 \item{name.var.complete}{Logical. If \code{name.var} is supplied with some
 empty names, \code{name.var.complete} allows you to use the initial variable
 names to complete the graph (from colnames(X)). Defaut to FALSE.}
+
+\item{size.name}{A numerical value giving the amount by which plotting the
+variable name text should be magnified or reduced relative to the default.}
 
 \item{title}{Title of the plot. Default is NULL.}
 
@@ -346,17 +380,8 @@ or \code{study} are plotted.}
 
 \item{size.subtitle}{size of the subtitle}
 
-\item{layout}{Vector of two values (rows,cols) that indicates the layout of
-the plot. If \code{layout} is provided, the remaining empty subplots are
-still active. Only applies when style is set to \code{'graphics'}.}
-
-\item{border}{Argument from \code{\link{barplot}}: indicates whether to draw
-a border on the barplot and in which colour.}
-
-\item{xlim}{Argument from \code{\link{barplot}}: limit of the x-axis. When}
-
-\item{style}{argument to be set to either \code{'graphics'} or \code{'ggplot2'} 
-to indicate the style of the plot. Default is \code{'graphics'}.}
+\item{block}{A single value indicating which block to consider in a
+\code{sgccda} object.}
 
 \item{contrib}{a character set to 'max' or 'min' indicating if the color of
 the bar should correspond to the group with the maximal or minimal
