@@ -487,28 +487,32 @@ plotLoadings.pca <-
 #' @export
 plotLoadings.mixo_plsda <- 
     function(object,
-             contrib = NULL,  # choose between 'max" or "min", NULL does not color the barplot
-             method = "mean", # choose between 'mean" or "median"
-             block, #single value, for sgccda object
              comp = 1,
-             plot = TRUE,
-             show.ties = TRUE,
-             col.ties = "white",
+             style = "graphics",
              ndisplay = NULL,
-             size.name = 0.7,
-             size.legend = 0.8,
+             xlim = NULL,
+             layout = NULL,
+             border = NA,
              name.var = NULL,
-             name.var.complete = FALSE,
+             name.var.complete = FALSE, # deprecated
+             size.name = 0.7,
              title = NULL,
              subtitle,
              size.title = rel(1.8),
              size.subtitle = rel(1.4),
+             size.axis = 0.7,
+             X.label = NULL,
+             Y.label = NULL,
+             size.labs = 1,
+             block, # only for sgccda object
+             contrib = NULL,  # choose between 'max" or "min", NULL does not color the barplot
+             method = "mean", # choose between 'mean" or "median"
+             show.ties = TRUE,
+             col.ties = "white",
              legend = TRUE,
              legend.color = NULL,
              legend.title = 'Outcome',
-             layout = NULL,
-             border = NA,
-             xlim = NULL,
+             size.legend = 0.8,
              ...
     ) {
         
@@ -527,26 +531,14 @@ plotLoadings.mixo_plsda <-
         # if contrib is NULL, then we switch to the classical plotLoadings (without contribution/colors)
         if(is.null(contrib))
         {
-            if(plot)
-            {
-                plotLoadings.mixo_pls(object = object, block = block, comp = comp, ndisplay = ndisplay,
-                                      size.name = size.name,
-                                      name.var = name.var,
-                                      name.var.complete = name.var.complete,
-                                      title = title,
-                                      subtitle = subtitle,
-                                      xlim = xlim,
-                                      layout = layout,
-                                      size.title = size.title,
-                                      size.subtitle = size.subtitle,
-                                      border = TRUE,
-                                      col = "white")
-            } else {
-                stop("'contrib' is NULL and 'plot' is FALSE => no results to show", call. = FALSE)
-            }
-            # stop the script without error message
-            # blankMsg <- sprintf("\r%s\r", paste(rep(" ", getOption("width")-1L), collapse=" "))
-            # stop(simpleError(blankMsg))
+            xlim <- xlim[1,]
+            plotLoadings.mixo_pls(object = object, block = block, comp = comp, ndisplay = ndisplay,
+                                      size.name = size.name, name.var = name.var, name.var.complete = name.var.complete,
+                                      title = title, subtitle = subtitle, size.title = size.title, size.subtitle = size.subtitle,
+                                      xlim = xlim, layout = layout, size.axis = size.axis,
+                                      X.label = X.label, Y.label = Y.label, size.labs = size.labs,
+                                      border = TRUE, col = "white")
+
         } else {
             
             # -- layout
@@ -605,8 +597,6 @@ plotLoadings.mixo_plsda <-
                 }
                 
                 # display barplot with names of variables
-                if (plot) # condition if all we need is the contribution stats
-                {
                     if (!is.null(title) & length(block) > 1)
                     {
                         par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/3), 6, 2))
@@ -614,7 +604,11 @@ plotLoadings.mixo_plsda <-
                         par(mar = c(4, max(7, max(sapply(colnames.X, nchar), na.rm = TRUE)/3), 4, 2))
                     }
                     
-                    .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, cex.name = size.name, border = border, xlim = xlim[i, ])
+                    xlim <- xlim[1,]
+
+                    .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, 
+                    cex.name = size.name, border = border, xlim = xlim[i, ], 
+                    xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
                     
                     if ( length(block) == 1 & is.null(title) )
                     {
@@ -635,15 +629,12 @@ plotLoadings.mixo_plsda <-
                                title = paste(legend.title),
                                cex = size.legend)
                     }
-                } # end if plot
+
                 contrib.df <- c(contrib.df, list(df))
             }
             
             names(contrib.df) <- block
             
-            
-            if(plot) # overall title and reset par if needed
-            {
                 # legend
                 if (length(block) > 1 & !is.null(title))
                     title(title, outer=TRUE, line = -2, cex.main = size.title)
@@ -652,7 +643,6 @@ plotLoadings.mixo_plsda <-
                     par(opar)#par(mfrow = omfrow)
                 
                 par(mar = omar) #reset mar
-            }
             
             # return the contribution matrix
             return(invisible(contrib.df)) # df

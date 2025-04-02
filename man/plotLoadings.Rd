@@ -164,82 +164,94 @@ plotLoadings(object, ...)
 
 \method{plotLoadings}{mixo_plsda}(
   object,
-  contrib = NULL,
-  method = "mean",
-  block,
   comp = 1,
-  plot = TRUE,
-  show.ties = TRUE,
-  col.ties = "white",
+  style = "graphics",
   ndisplay = NULL,
-  size.name = 0.7,
-  size.legend = 0.8,
+  xlim = NULL,
+  layout = NULL,
+  border = NA,
   name.var = NULL,
   name.var.complete = FALSE,
+  size.name = 0.7,
   title = NULL,
   subtitle,
   size.title = rel(1.8),
   size.subtitle = rel(1.4),
+  size.axis = 0.7,
+  X.label = NULL,
+  Y.label = NULL,
+  size.labs = 1,
+  block,
+  contrib = NULL,
+  method = "mean",
+  show.ties = TRUE,
+  col.ties = "white",
   legend = TRUE,
   legend.color = NULL,
   legend.title = "Outcome",
-  layout = NULL,
-  border = NA,
-  xlim = NULL,
+  size.legend = 0.8,
   ...
 )
 
 \method{plotLoadings}{mixo_splsda}(
   object,
-  contrib = NULL,
-  method = "mean",
-  block,
   comp = 1,
-  plot = TRUE,
-  show.ties = TRUE,
-  col.ties = "white",
+  style = "graphics",
   ndisplay = NULL,
-  size.name = 0.7,
-  size.legend = 0.8,
+  xlim = NULL,
+  layout = NULL,
+  border = NA,
   name.var = NULL,
   name.var.complete = FALSE,
+  size.name = 0.7,
   title = NULL,
   subtitle,
   size.title = rel(1.8),
   size.subtitle = rel(1.4),
+  size.axis = 0.7,
+  X.label = NULL,
+  Y.label = NULL,
+  size.labs = 1,
+  block,
+  contrib = NULL,
+  method = "mean",
+  show.ties = TRUE,
+  col.ties = "white",
   legend = TRUE,
   legend.color = NULL,
   legend.title = "Outcome",
-  layout = NULL,
-  border = NA,
-  xlim = NULL,
+  size.legend = 0.8,
   ...
 )
 
 \method{plotLoadings}{sgccda}(
   object,
-  contrib = NULL,
-  method = "mean",
-  block,
   comp = 1,
-  plot = TRUE,
-  show.ties = TRUE,
-  col.ties = "white",
+  style = "graphics",
   ndisplay = NULL,
-  size.name = 0.7,
-  size.legend = 0.8,
+  xlim = NULL,
+  layout = NULL,
+  border = NA,
   name.var = NULL,
   name.var.complete = FALSE,
+  size.name = 0.7,
   title = NULL,
   subtitle,
   size.title = rel(1.8),
   size.subtitle = rel(1.4),
+  size.axis = 0.7,
+  X.label = NULL,
+  Y.label = NULL,
+  size.labs = 1,
+  block,
+  contrib = NULL,
+  method = "mean",
+  show.ties = TRUE,
+  col.ties = "white",
   legend = TRUE,
   legend.color = NULL,
   legend.title = "Outcome",
-  layout = NULL,
-  border = NA,
-  xlim = NULL,
+  size.legend = 0.8,
   ...
 )
 
@@ -391,19 +403,12 @@ expression levels / abundance.}
 to assess the contribution. We recommend using median in the case of count
 or skewed data.}
 
-\item{plot}{Logical indicating of the plot should be output. If set to FALSE
-the user can extract the contribution matrix, see example. Default value is
-TRUE.}
-
 \item{show.ties}{Logical. If TRUE then tie groups appear in the color set by
 \code{col.ties}, which will appear in the legend. Ties can happen when
 dealing with count data type. By default set to TRUE.}
 
 \item{col.ties}{Color corresponding to ties, only used if
 \code{show.ties=TRUE} and ties are present.}
-
-\item{size.legend}{A numerical value giving the amount by which plotting the
-legend text should be magnified or reduced relative to the default.}
 
 \item{legend}{Logical indicating if the legend indicating the group outcomes
 should be added to the plot. Default value is TRUE.}
@@ -416,9 +421,16 @@ Default value is NULL.
 plotting several \code{block}, a matrix is expected where each row is the
 \code{xlim} used for each of the blocks.}
 
+\item{size.legend}{A numerical value giving the amount by which plotting the
+legend text should be magnified or reduced relative to the default.}
+
 \item{study}{Indicates which study are to be plotted.  A character vector
 containing some levels of \code{object$study}, "all.partial" to plot all
 studies or "global" is expected.}
+
+\item{plot}{Logical indicating of the plot should be output. If set to FALSE
+the user can extract the contribution matrix, see example. Default value is
+TRUE.}
 }
 \value{
 Invisibly returns a \code{data.frame} containing the contribution of 
