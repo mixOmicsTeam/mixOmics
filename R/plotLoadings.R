@@ -278,7 +278,8 @@ plotLoadings.mixo_pls <-
         df$names <- colnames.X
         
         p <- ggplot(df, aes(x = reorder(names, -abs(as.numeric(importance))), y = importance)) +
-          geom_bar(stat = "identity", fill = col, color = border) +
+          geom_bar(stat = "identity", aes(fill = col), color = border) +
+          scale_fill_identity() +  # This ensures the colors are used as-is
           theme_minimal() +
           theme(axis.text.y = element_text(size = size.name * 8),
                 axis.text.x = element_text(size = size.axis * 8),
@@ -637,7 +638,8 @@ plotLoadings.mixo_plsda <-
                     
                     # Create the base plot
                     p <- ggplot(df, aes(x = reorder(names, -abs(importance)), y = importance)) +
-                        geom_bar(stat = "identity", fill = df$color, color = border) +
+                        geom_bar(stat = "identity", aes(fill = color), color = border) +
+                        scale_fill_identity() +  # This ensures the colors are used as-is
                         theme_minimal() +
                         theme(axis.text.y = element_text(size = size.name * 8),
                               axis.text.x = element_text(size = size.axis * 8),
@@ -657,9 +659,16 @@ plotLoadings.mixo_plsda <-
                     
                     # Add legend if requested
                     if (legend) {
-                        p <- p + scale_color_manual(name = legend.title,
-                                                  values = legend.color[1:nlevels(Y)],
-                                                  labels = levels(Y))
+                        # Create invisible points for the legend
+                        legend_data <- data.frame(
+                            group = levels(Y),
+                            color = legend.color[1:nlevels(Y)]
+                        )
+                        p <- p + 
+                            geom_point(data = legend_data, aes(x = 0, y = 0, color = group)) +
+                            scale_color_manual(name = legend.title,
+                                             values = legend.color[1:nlevels(Y)],
+                                             labels = levels(Y))
                     }
                     
                     # Control x axis limits if specified
