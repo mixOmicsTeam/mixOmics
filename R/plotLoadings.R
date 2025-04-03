@@ -1212,7 +1212,9 @@ plotLoadings.mint.plsda <-
                     }
                 } else if (style == "ggplot2") {
                     # Create ggplot version
+                  if(!exists("col")){
                     if (col == "white" & is.na(border)){border <- "black"}
+                  }
                     p <- ggplot(df, aes(x = reorder(names, -abs(importance)), y = importance)) +
                         geom_bar(stat = "identity", aes(fill = color), color = border) +
                         scale_fill_identity() +  # This ensures the colors are used as-is
