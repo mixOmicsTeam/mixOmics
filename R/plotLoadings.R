@@ -1012,7 +1012,7 @@ plotLoadings.mint.plsda <-
                                     name.var.complete = name.var.complete,
                                     legend = legend,
                                     legend.color = legend.color,
-                                    title = title,
+                                    title = if(!is.null(title)){title}else{paste0('Contribution on comp ', comp, "\n All studies")},
                                     subtitle = subtitle,
                                     legend.title = legend.title,
                                     plot = plot,
@@ -1022,10 +1022,10 @@ plotLoadings.mint.plsda <-
                                     size.subtitle = size.subtitle,
                                     border = border,
                                     col.ties = col.ties,
+                                    size.axis = size.axis,
                                     X.label = X.label,
                                     Y.label = Y.label,
-                                    size.labs = size.labs,
-                                    size.axis = size.axis)
+                                    size.labs = size.labs)
             
         } else {
             
@@ -1035,7 +1035,6 @@ plotLoadings.mint.plsda <-
             
             size.name = check$size.name
             size.legend = check$size.legend
-            block = check$block # "X"
             
             #study needs to be either: from levels(object$study), numbers from 1:nlevels(study) or "global"
             if (any(!study%in%c(levels(object$study), "global" , "all.partial")))
@@ -1125,7 +1124,7 @@ plotLoadings.mint.plsda <-
             
             # swap loadings partial for loadings
             object$loadings.global = object$loadings
-            object$loadings = object$loadings.partial[[block]]
+            object$loadings = object$loadings.partial[["X"]]
             object$names$block = levels(object$study)
             
             X.study = study_split(X, study = object$study)
@@ -1136,7 +1135,7 @@ plotLoadings.mint.plsda <-
             for (i in 1 : length(block))
             {
                 
-                value.selected.var =  object$loadings.partial[[block]][[block[i]]][, comp] [name.selected.var]
+                value.selected.var =  object$loadings.partial[["X"]][[block[i]]][, comp] [name.selected.var]
                 
                 
                 #legend.color
@@ -1166,6 +1165,7 @@ plotLoadings.mint.plsda <-
                 } else {
                     # if contrib is NULL, then we plot the loadings without colors
                     df = data.frame(importance = value.selected.var, color = "white", stringsAsFactors = FALSE) # contribution of the loading
+                    border = TRUE
                 }
                 #  determine the colors/groups matching max contribution
                 
@@ -1180,7 +1180,7 @@ plotLoadings.mint.plsda <-
                 }
                 
                 .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, cex.name = size.name, border = border, xlim = xlim[i, ],
-                                      xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
+                                     xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
                 
                 if ( length(block) == 1 & is.null(title) )
                 {
