@@ -17,10 +17,10 @@ mint.splsda.obj = mint.splsda(X = data, Y = type.id, study = study.id, ncomp = 2
 # Basic Unit Tests
 test_that("plotLoadings.mint.plsda works", {
     # Test default behavior with graphics style
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, style = "graphics"))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, style = "graphics"))))
     
     # Test with ggplot2 style
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, style = "ggplot2"))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, style = "ggplot2"))))
     
     # Test with invalid style
     expect_error(plotLoadings(mint.splsda.obj, comp = 1, style = "invalid"),
@@ -39,86 +39,86 @@ test_that("plotLoadings.mint.plsda works", {
                  "'study' must from one of 'object\\$study', 'global' or 'all.partial', see help file")
     
     # Test with invalid block argument
-    expect_warning(plotLoadings(mint.splsda.obj, comp = 1, block = "X"),
+    expect_warning(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, block = "X"))),
                   "'block' argument is not used for mint.plsda or mint.splsda objects")
 })
 
 # Test study-specific functionality
 test_that("plotLoadings.mint.plsda handles different study options", {
     # Test single study
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, study = 2))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = 2))))
     
     # Test multiple studies
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, study = c(2, 3)))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = c(2, 3)))))
     
     # Test all.partial option
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, study = "all.partial"))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = "all.partial"))))
     
     # Test global option
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, study = "global"))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = "global"))))
 })
 
 # Test customization options
 test_that("plotLoadings.mint.plsda handles customization options", {
     # Test with custom title
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, title = "Custom Title"))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, title = "Custom Title"))))
     
     # Test with custom subtitle
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, study = c(1, 2), 
-                             subtitle = c("Subtitle 1", "Subtitle 2")))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = c(1, 2), 
+                             subtitle = c("Subtitle 1", "Subtitle 2")))))
     
     # Test with custom sizes
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, 
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
                              size.title = 2, 
                              size.subtitle = 1.6,
                              size.name = 0.7,
                              size.axis = 0.7,
-                             size.labs = 1))
+                             size.labs = 1))))
     
     # Test with custom labels
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, 
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
                              X.label = "Custom X Label",
-                             Y.label = "Custom Y Label"))
+                             Y.label = "Custom Y Label"))))
     
     # Test with custom colors
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, 
-                             legend.color = c("red", "blue", "green")))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
+                             legend.color = c("red", "blue", "green")))))
     
     # Test with custom legend title
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, 
-                             legend.title = "Custom Legend"))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
+                             legend.title = "Custom Legend"))))
 })
 
 # Test display options
 test_that("plotLoadings.mint.plsda handles display options", {
     # Test with ndisplay
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, ndisplay = 5))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, ndisplay = 5))))
     
     # Test with xlim
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, xlim = c(-1, 1)))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, xlim = c(-1, 1)))))
     
     # Test with layout
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, study = c(3, 4), 
-                             layout = c(1, 2)))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = c(3, 4), 
+                             layout = c(1, 2)))))
 })
 
 # Test contribution options
 test_that("plotLoadings.mint.plsda handles contribution options", {
     # Test with max contribution
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max"))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max"))))
     
     # Test with min contribution
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, contrib = "min"))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, contrib = "min"))))
     
     # Test with mean method
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max", method = "mean"))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max", method = "mean"))))
     
     # Test with median method
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max", method = "median"))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max", method = "median"))))
     
     # Test with ties handling
-    expect_silent(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max", 
-                             show.ties = TRUE, col.ties = "white"))
+    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max", 
+                             show.ties = TRUE, col.ties = "white"))))
 })
 
 # Test return value
@@ -142,48 +142,48 @@ test_that("plotLoadings.mint.plsda graphics style plots match", {
     # Simple plot
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.simple",
-        plotLoadings(mint.splsda.obj, comp = 1, style = "graphics")
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, style = "graphics")))
     )
     
     # Plot with all.partial
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.all.partial",
-        plotLoadings(mint.splsda.obj, comp = 1, study = "all.partial", style = "graphics")
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = "all.partial", style = "graphics")))
     )
     
     # Plot for specific study
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.specific.study",
-        plotLoadings(mint.splsda.obj, comp = 1, study = 1, style = "graphics")
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = 1, style = "graphics")))
     )
     
     # Change gene names
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.custom.names",
-        plotLoadings(mint.splsda.obj, comp = 1, name.var = paste0("Gene_", 1:ncol(data)), style = "graphics")
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, name.var = paste0("Gene_", 1:ncol(data)), style = "graphics")))
     )
     
     # Change labels and label sizes
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.custom.labels",
-        plotLoadings(mint.splsda.obj, comp = 1, 
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
                     X.label = "Custom X", Y.label = "Custom Y",
-                    size.name = 1, size.axis = 1, size.labs = 1.5, style = "graphics")
+                    size.name = 1, size.axis = 1, size.labs = 1.5, style = "graphics")))
     )
     
     # Change colors and borders
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.custom.colors",
-        plotLoadings(mint.splsda.obj, comp = 1, 
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
                     legend.color = c("red", "blue", "green"),
-                    border = "black", style = "graphics")
+                    border = "black", style = "graphics")))
     )
     
     # Change layout
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.custom.layout",
-        plotLoadings(mint.splsda.obj, comp = 1, study = c(1, 2), 
-                    layout = c(1, 2), style = "graphics")
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = c(1, 2), 
+                    layout = c(1, 2), style = "graphics")))
     )
 })
 
@@ -194,47 +194,47 @@ test_that("plotLoadings.mint.plsda ggplot2 style plots match", {
     # Simple plot
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.ggplot2.simple",
-        plotLoadings(mint.splsda.obj, comp = 1, style = "ggplot2")
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, style = "ggplot2")))
     )
     
     # Plot with all.partial
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.ggplot2.all.partial",
-        plotLoadings(mint.splsda.obj, comp = 1, study = "all.partial", style = "ggplot2")
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = "all.partial", style = "ggplot2")))
     )
     
     # Plot for specific study
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.ggplot2.specific.study",
-        plotLoadings(mint.splsda.obj, comp = 1, study = 3, style = "ggplot2")
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = 3, style = "ggplot2")))
     )
     
     # Change gene names
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.ggplot2.custom.names",
-        plotLoadings(mint.splsda.obj, comp = 1, name.var = paste0("Gene_", 1:ncol(data)), style = "ggplot2")
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, name.var = paste0("Gene_", 1:ncol(data)), style = "ggplot2")))
     )
     
     # Change labels and label sizes
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.ggplot2.custom.labels",
-        plotLoadings(mint.splsda.obj, comp = 1, 
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
                     X.label = "Custom X", Y.label = "Custom Y",
-                    size.name = 1, size.axis = 1, size.labs = 1.5, style = "ggplot2")
+                    size.name = 1, size.axis = 1, size.labs = 1.5, style = "ggplot2")))
     )
     
     # Change colors and borders
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.ggplot2.custom.colors",
-        plotLoadings(mint.splsda.obj, comp = 1, 
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
                     legend.color = c("red", "blue", "green"),
-                    border = "black", style = "ggplot2")
+                    border = "black", style = "ggplot2")))
     )
     
     # Change layout
     vdiffr::expect_doppelganger(
         "mint.plsda.loadings.ggplot2.custom.layout",
-        plotLoadings(mint.splsda.obj, comp = 1, study = c(2, 3), 
-                    layout = c(1, 2), style = "ggplot2")
+        invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = c(2, 3), 
+                    layout = c(1, 2), style = "ggplot2")))
     )
 }) 

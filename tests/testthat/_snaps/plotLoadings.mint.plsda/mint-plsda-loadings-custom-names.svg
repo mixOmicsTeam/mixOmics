@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' data-engine-version='2.0' width='720.00pt' height='576.00pt' viewBox='0 0 720.00 576.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA='>
+    <rect x='0.00' y='0.00' width='720.00' height='576.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<rect x='100.80' y='465.18' width='330.83' height='36.16' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<rect x='431.63' y='421.79' width='259.57' height='36.16' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<rect x='184.05' y='378.40' width='247.58' height='36.16' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<rect x='250.41' y='335.01' width='181.22' height='36.16' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<rect x='290.11' y='291.62' width='141.52' height='36.16' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<rect x='293.17' y='248.23' width='138.46' height='36.16' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<rect x='431.63' y='204.84' width='107.11' height='36.16' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<rect x='355.66' y='161.45' width='75.97' height='36.16' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<rect x='431.63' y='118.06' width='71.90' height='36.16' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<rect x='431.63' y='74.67' width='21.44' height='36.16' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<text x='86.40' y='486.14' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='34.57px' lengthAdjust='spacingAndGlyphs'>Gene_28</text>
+<text x='86.40' y='442.75' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='39.24px' lengthAdjust='spacingAndGlyphs'>Gene_191</text>
+<text x='86.40' y='399.37' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='39.24px' lengthAdjust='spacingAndGlyphs'>Gene_327</text>
+<text x='86.40' y='355.98' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='34.57px' lengthAdjust='spacingAndGlyphs'>Gene_21</text>
+<text x='86.40' y='312.59' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='39.24px' lengthAdjust='spacingAndGlyphs'>Gene_199</text>
+<text x='86.40' y='269.20' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='39.24px' lengthAdjust='spacingAndGlyphs'>Gene_222</text>
+<text x='86.40' y='225.81' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='29.90px' lengthAdjust='spacingAndGlyphs'>Gene_6</text>
+<text x='86.40' y='182.42' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='39.24px' lengthAdjust='spacingAndGlyphs'>Gene_246</text>
+<text x='86.40' y='139.03' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='39.24px' lengthAdjust='spacingAndGlyphs'>Gene_189</text>
+<text x='86.40' y='95.64' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='39.24px' lengthAdjust='spacingAndGlyphs'>Gene_294</text>
+<line x1='200.79' y1='518.40' x2='662.47' y2='518.40' style='stroke-width: 0.75;' />
+<line x1='200.79' y1='518.40' x2='200.79' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='316.21' y1='518.40' x2='316.21' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='431.63' y1='518.40' x2='431.63' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='547.05' y1='518.40' x2='547.05' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='662.47' y1='518.40' x2='662.47' y2='525.60' style='stroke-width: 0.75;' />
+<text x='200.79' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='14.47px' lengthAdjust='spacingAndGlyphs'>-0.4</text>
+<text x='316.21' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='14.47px' lengthAdjust='spacingAndGlyphs'>-0.2</text>
+<text x='431.63' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.0</text>
+<text x='547.05' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.2</text>
+<text x='662.47' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.4</text>
+<text x='396.00' y='28.80' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='248.17px' lengthAdjust='spacingAndGlyphs'>Contribution on comp 1</text>
+<text x='396.00' y='57.60' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='116.06px' lengthAdjust='spacingAndGlyphs'> All studies</text>
+</g>
+</svg>
