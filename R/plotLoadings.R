@@ -550,7 +550,7 @@ plotLoadings.mixo_plsda <-
                                       title = title, subtitle = subtitle, size.title = size.title, size.subtitle = size.subtitle,
                                       xlim = xlim, layout = layout, size.axis = size.axis,
                                       X.label = X.label, Y.label = Y.label, size.labs = size.labs,
-                                      border = TRUE, col = "white", style = style)
+                                      border = border, col = "white", style = style)
 
         } else {
             
@@ -1157,7 +1157,6 @@ plotLoadings.mint.plsda <-
                 } else {
                     # if contrib is NULL, then we plot the loadings without colors
                     df = data.frame(importance = value.selected.var, color = "white", stringsAsFactors = FALSE) # contribution of the loading
-                    border = TRUE
                 }
                 #  determine the colors/groups matching max contribution
                 
