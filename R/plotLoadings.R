@@ -768,21 +768,25 @@ plotLoadings.mint.pls <-
              size.name = 0.7,
              title = NULL,
              subtitle,
-             size.title = rel(1.8),
-             size.subtitle = rel(1.4),
+             size.title = 2,
+             size.subtitle = 1.6,
              size.axis = 0.7,
              X.label = NULL,
              Y.label = NULL,
              size.labs = 1,
              block,
              study = "global",
+             style = "graphics",
              ...
     ) {
         
         if(any(study == "global"))
         {
             # if study == "global" then we plot the results on the concatenated data, thus direct call to plotLoadings.plsda
-            plotLoadings.mixo_pls(object = object, comp = comp, ndisplay = ndisplay,
+            plotLoadings.mixo_pls(object = object, 
+                                comp = comp, 
+                                ndisplay = ndisplay,
+                                style = "graphics",
                                   size.name = size.name,
                                   name.var = name.var,
                                   name.var.complete = name.var.complete,
@@ -798,7 +802,9 @@ plotLoadings.mint.pls <-
                                   Y.label = Y.label,
                                   size.labs = size.labs,
                                   size.axis = size.axis,
-                                  block = block)
+                                  block = block,
+                                  ...
+                                  )
             
         } else {
             # if study != "global" then we plot the results on each study
@@ -906,46 +912,108 @@ plotLoadings.mint.pls <-
             object$names$block = levels(object$study)
             
             df.final = list()
+            plot_list = list()  # to store ggplot objects if needed
+            
             for (i in 1 : length(study))
             {
                 value.selected.var = object$loadings.partial[[selected_block]][[study[i]]][, comp] [name.selected.var]
                 
                 df = data.frame(importance = value.selected.var, color = col, stringsAsFactors = FALSE) # contribution of the loading
                 
-                #display barplot with names of variables
-                #added condition if all we need is the contribution stats
-                if (!is.null(title) & length(study) > 1)
-                {
-                    par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 6, 2))
-                } else {
-                    par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 4, 2))
-                }
-                .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, 
-                        cex.name = size.name, border = border, xlim = xlim,
-                        xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
-                
-                if ( length(study) == 1 & is.null(title) )
-                {
-                    title(paste0('Loadings on comp ', comp), line=1, cex.main = size.title)
-                } else if (length(study) == 1) {
-                    title(paste(title), line=0, cex.main = size.title)
-                } else if ((length(study) > 1 & missing(subtitle))) {
-                    title(paste0('Loadings on comp ', comp, "\nStudy '", study[i],"'"), line=0, cex.main = size.subtitle)
-                } else if (length(study) > 1 & !missing(subtitle)) {
-                    title(paste(subtitle[i]), line=0, cex.main = size.subtitle)
+                if (style == "graphics") {
+                    #display barplot with names of variables
+                    #added condition if all we need is the contribution stats
+                    if (!is.null(title) & length(study) > 1)
+                    {
+                        par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 6, 2))
+                    } else {
+                        par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 4, 2))
+                    }
+                    .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, 
+                            cex.name = size.name, border = border, xlim = xlim[i, ],
+                            xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
+                    
+                    if ( length(study) == 1 & is.null(title) )
+                    {
+                        title(paste0('Loadings on comp ', comp), line=1, cex.main = size.title)
+                    } else if (length(study) == 1) {
+                        title(paste(title), line=0, cex.main = size.title)
+                    } else if ((length(study) > 1 & missing(subtitle))) {
+                        title(paste0('Loadings on comp ', comp, "\nStudy '", study[i],"'"), line=0, cex.main = size.subtitle)
+                    } else if (length(study) > 1 & !missing(subtitle)) {
+                        title(paste(subtitle[i]), line=0, cex.main = size.subtitle)
+                    }
+                } else if (style == "ggplot2") {
+                    df$names <- colnames.X
+                    
+                    # Create the base plot
+                    p <- ggplot(df, aes(x = reorder(names, -abs(importance)), y = importance)) +
+                        geom_bar(stat = "identity", fill = col, color = border) +
+                        theme_minimal() +
+                        theme(axis.text.y = element_text(size = size.name * 8),
+                              axis.text.x = element_text(size = size.axis * 8),
+                              axis.title.x = element_text(size = size.labs * 8),
+                              axis.title.y = element_text(size = size.labs * 8),
+                              plot.title = element_text(face = "bold", hjust = 0.5, size = size.title * 8)) +
+                        labs(title = if(length(study) == 1 & is.null(title)) {
+                            paste0('Loadings on comp ', comp)
+                        } else if(length(study) == 1) {
+                            title
+                        } else if(length(study) > 1 & missing(subtitle)) {
+                            paste0('Loadings on comp ', comp, "\nStudy '", study[i],"'")
+                        } else {
+                            subtitle[i]
+                        },
+                        y = X.label, x = Y.label)
+                    
+                    # Control x axis limits if specified
+                    if (!is.null(xlim)) {
+                        p <- p + scale_y_continuous(limits = xlim[i,], expand = c(0,0))
+                    }
+                    
+                    # Flip coordinates for horizontal bar plot
+                    p <- p + coord_flip()
+                    
+                    plot_list[[i]] <- p
                 }
                 
                 df.final[[i]] = df
             }
             names(df.final) = study
             
-            if (length(study) > 1 & !is.null(title))
-                title(title, outer=TRUE, line = -2, cex.main = size.title)
-            
-            if (reset.mfrow)
-                par(opar)#par(mfrow = omfrow)
-            
-            par(mar = omar) #reset mar
+            if (style == "graphics") {
+                if (length(study) > 1 & !is.null(title))
+                    title(title, outer=TRUE, line = -2, cex.main = size.title)
+                
+                if (reset.mfrow)
+                    par(opar)#par(mfrow = omfrow)
+                
+                par(mar = omar) #reset mar
+            } else if (style == "ggplot2") {
+                # Arrange multiple plots if needed
+                if (length(plot_list) > 1) {
+                    grid::grid.newpage()
+                    if (is.null(layout)) {
+                        layout <- c(1, length(plot_list))
+                    }
+                    if(is.null(title)) {
+                        gridExtra::grid.arrange(
+                            grobs = plot_list,
+                            layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
+                        )
+                    } else {
+                        title_grob <- grid::textGrob(title, gp = grid::gpar(fontsize = size.title * 8, fontface = "bold"))
+                        plot_grobs <- gridExtra::arrangeGrob(
+                            grobs = plot_list,
+                            layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
+                        )
+                        combined <- gridExtra::arrangeGrob(title_grob, plot_grobs, ncol = 1, heights = c(0.1, 1))
+                        grid::grid.draw(combined)
+                    }
+                } else {
+                    print(plot_list[[1]])
+                }
+            }
             
             return(invisible(df.final))
             

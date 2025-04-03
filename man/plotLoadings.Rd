@@ -268,14 +268,15 @@ plotLoadings(object, ...)
   size.name = 0.7,
   title = NULL,
   subtitle,
-  size.title = rel(1.8),
-  size.subtitle = rel(1.4),
+  size.title = 2,
+  size.subtitle = 1.6,
   size.axis = 0.7,
   X.label = NULL,
   Y.label = NULL,
   size.labs = 1,
   block,
   study = "global",
+  style = "graphics",
   ...
 )
 
@@ -292,14 +293,15 @@ plotLoadings(object, ...)
   size.name = 0.7,
   title = NULL,
   subtitle,
-  size.title = rel(1.8),
-  size.subtitle = rel(1.4),
+  size.title = 2,
+  size.subtitle = 1.6,
   size.axis = 0.7,
   X.label = NULL,
   Y.label = NULL,
   size.labs = 1,
   block,
   study = "global",
+  style = "graphics",
   ...
 )
 
