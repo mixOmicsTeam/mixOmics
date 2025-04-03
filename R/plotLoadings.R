@@ -289,7 +289,7 @@ plotLoadings.mixo_pls <-
           }
 
         df$names <- colnames.X
-        
+        if(col == "white" & is.na(border)){border <- "black"}
         p <- ggplot(df, aes(x = reorder(names, -abs(as.numeric(importance))), y = importance)) +
           geom_bar(stat = "identity", aes(fill = col), color = border) +
           scale_fill_identity() +  # This ensures the colors are used as-is
@@ -966,6 +966,7 @@ plotLoadings.mint.spls <- plotLoadings.mint.pls
 plotLoadings.mint.plsda <- 
     function(object,
              comp = 1,
+             style = "graphics",
              ndisplay = NULL,
              xlim = NULL,
              layout = NULL,
@@ -975,8 +976,8 @@ plotLoadings.mint.plsda <-
              size.name = 0.7,
              title = NULL,
              subtitle,
-             size.title = rel(1.8),
-             size.subtitle = rel(1.4),
+             size.title = 2,
+             size.subtitle = 1.6,
              size.axis = 0.7,
              X.label = NULL,
              Y.label = NULL,
@@ -1002,6 +1003,10 @@ plotLoadings.mint.plsda <-
         # Check for block argument
         if (!missing(block))
             warning("'block' argument is not used for mint.plsda or mint.splsda objects as they are single block objects.")
+            
+        # Check style argument
+        if (!style %in% c('graphics', 'ggplot2'))
+            stop("'style' must be either 'graphics' or 'ggplot2'.")
         
         if(any(study == "global"))
         {
@@ -1025,7 +1030,8 @@ plotLoadings.mint.plsda <-
                                     size.axis = size.axis,
                                     X.label = X.label,
                                     Y.label = Y.label,
-                                    size.labs = size.labs)
+                                    size.labs = size.labs,
+                                    style = style)
             
         } else {
             
@@ -1132,6 +1138,8 @@ plotLoadings.mint.plsda <-
             Y.study = study_split(Y, study = object$study)
             
             df.final = list()
+            plot_list = list() # to store ggplot objects if style is ggplot2
+            
             for (i in 1 : length(block))
             {
                 
@@ -1167,53 +1175,127 @@ plotLoadings.mint.plsda <-
                     df = data.frame(importance = value.selected.var, color = "white", stringsAsFactors = FALSE) # contribution of the loading
                     border = TRUE
                 }
-                #  determine the colors/groups matching max contribution
                 
+                df$names = colnames.X
                 
-                #display barplot with names of variables
-                #added condition if all we need is the contribution stats
-                if (!is.null(title) & length(block) > 1)
-                {
-                    par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 6, 2))
-                } else {
-                    par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 4, 2))
-                }
-                
-                .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, cex.name = size.name, border = border, xlim = xlim[i, ],
-                                     xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
-                
-                if ( length(block) == 1 & is.null(title) )
-                {
-                    title(paste0('Contribution on comp ', comp, "\nStudy '", block[i],"'"), line=0, cex.main = size.title)
-                } else if (length(block) == 1) {
-                    title(paste(title), line=0, cex.main= size.title)
-                } else if ((length(block) > 1 & missing(subtitle))) {
-                    title(paste0('Contribution on comp ', comp, "\nStudy '", block[i],"'"), line=0, cex.main = size.subtitle)
-                } else if (length(block) > 1 & !missing(subtitle)) {
-                    title(paste(subtitle[i]), line=0, cex.main = size.subtitle)
-                }
-                
-                if (legend)
-                {
-                    par(mar = c(5, 0, 4, 3) + 0.1)
-                    plot(1,1, type = "n", axes = FALSE, ann = FALSE)
-                    legend(0.8, 1, col = legend.color[1:nlevels(Y)], legend = levels(Y), pch = 19,
-                           title = paste(legend.title),
-                           cex = size.legend)
+                if (style == "graphics") {
+                    #display barplot with names of variables
+                    #added condition if all we need is the contribution stats
+                    if (!is.null(title) & length(block) > 1)
+                    {
+                        par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 6, 2))
+                    } else {
+                        par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 4, 2))
+                    }
+                    
+                    .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, cex.name = size.name, border = border, xlim = xlim[i, ],
+                                         xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
+                    
+                    if ( length(block) == 1 & is.null(title) )
+                    {
+                        title(paste0('Contribution on comp ', comp, "\nStudy '", block[i],"'"), line=0, cex.main = size.title)
+                    } else if (length(block) == 1) {
+                        title(paste(title), line=0, cex.main= size.title)
+                    } else if ((length(block) > 1 & missing(subtitle))) {
+                        title(paste0('Contribution on comp ', comp, "\nStudy '", block[i],"'"), line=0, cex.main = size.subtitle)
+                    } else if (length(block) > 1 & !missing(subtitle)) {
+                        title(paste(subtitle[i]), line=0, cex.main = size.subtitle)
+                    }
+                    
+                    if (legend)
+                    {
+                        par(mar = c(5, 0, 4, 3) + 0.1)
+                        plot(1,1, type = "n", axes = FALSE, ann = FALSE)
+                        legend(0.8, 1, col = legend.color[1:nlevels(Y)], legend = levels(Y), pch = 19,
+                               title = paste(legend.title),
+                               cex = size.legend)
+                    }
+                } else if (style == "ggplot2") {
+                    # Create ggplot version
+                    if (col == "white" & is.na(border)){border <- "black"}
+                    p <- ggplot(df, aes(x = reorder(names, -abs(importance)), y = importance)) +
+                        geom_bar(stat = "identity", aes(fill = color), color = border) +
+                        scale_fill_identity() +  # This ensures the colors are used as-is
+                        theme_minimal() +
+                        theme(axis.text.y = element_text(size = size.name * 8),
+                              axis.text.x = element_text(size = size.axis * 8),
+                              axis.title.x = element_text(size = size.labs * 8),
+                              axis.title.y = element_text(size = size.labs * 8),
+                              plot.title = element_text(face = "bold", hjust = 0.5, size = size.title * 8)) +
+                        labs(title = if(length(block) == 1 & is.null(title)) {
+                            paste0('Contribution on comp ', comp, "\nStudy '", block[i],"'")
+                        } else if(length(block) == 1) {
+                            title
+                        } else if(length(block) > 1 & missing(subtitle)) {
+                            paste0('Contribution on comp ', comp, "\nStudy '", block[i],"'")
+                        } else {
+                            subtitle[i]
+                        },
+                        y = X.label, x = Y.label)
+                    
+                    # Add legend if requested
+                    if (legend) {
+                        # Create invisible points for the legend
+                        legend_data <- data.frame(
+                            group = levels(Y),
+                            color = legend.color[1:nlevels(Y)]
+                        )
+                        p <- p + 
+                            geom_point(data = legend_data, aes(x = 0, y = 0, color = group)) +
+                            scale_color_manual(name = legend.title,
+                                             values = legend.color[1:nlevels(Y)],
+                                             labels = levels(Y))
+                    }
+                    
+                    # Control x axis limits if specified
+                    if (!is.null(xlim)) {
+                        p <- p + scale_y_continuous(limits = xlim[i,], expand = c(0,0))
+                    }
+                    
+                    # Flip coordinates for horizontal bar plot
+                    p <- p + coord_flip()
+                    
+                    plot_list[[i]] <- p
                 }
                 
                 df.final[[i]] = df
             }
             names(df.final) = block
             
-            # legend
-            if (length(block) > 1 & !is.null(title))
-                title(title, outer=TRUE, line = -2, cex.main = size.title)
-            
-            if (reset.mfrow)
-                par(opar)#par(mfrow = omfrow)
-            
-            par(mar = omar) #reset mar
+            if (style == "graphics") {
+                # legend
+                if (length(block) > 1 & !is.null(title))
+                    title(title, outer=TRUE, line = -2, cex.main = size.title)
+                
+                if (reset.mfrow)
+                    par(opar)#par(mfrow = omfrow)
+                
+                par(mar = omar) #reset mar
+            } else if (style == "ggplot2") {
+                # Arrange multiple plots if needed
+                if (length(plot_list) > 1) {
+                    grid::grid.newpage()
+                    if (is.null(layout)) {
+                        layout <- c(1, length(plot_list))
+                    }
+                    if(is.null(title)) {
+                        gridExtra::grid.arrange(
+                            grobs = plot_list,
+                            layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
+                        )
+                    } else {
+                        title_grob <- grid::textGrob(title, gp = grid::gpar(fontsize = size.title * 8, fontface = "bold"))
+                        plot_grobs <- gridExtra::arrangeGrob(
+                            grobs = plot_list,
+                            layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
+                        )
+                        combined <- gridExtra::arrangeGrob(title_grob, plot_grobs, ncol = 1, heights = c(0.1, 1))
+                        grid::grid.draw(combined)
+                    }
+                } else {
+                    print(plot_list[[1]])
+                }
+            }
             
             return(invisible(df.final))
             
