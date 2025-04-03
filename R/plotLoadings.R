@@ -965,14 +965,13 @@ plotLoadings.mint.spls <- plotLoadings.mint.pls
 #' @export
 plotLoadings.mint.plsda <- 
     function(object,
-             
              comp = 1,
              ndisplay = NULL,
              xlim = NULL,
              layout = NULL,
              border = NA,
              name.var = NULL,
-             name.var.complete = FALSE, # remove
+             name.var.complete = FALSE,
              size.name = 0.7,
              title = NULL,
              subtitle,
@@ -986,14 +985,23 @@ plotLoadings.mint.plsda <-
              method = "mean", # choose between 'mean" or "median"
              show.ties = TRUE,
              col.ties = "white",
-             egend = TRUE,
+             legend = TRUE,
              legend.color = NULL,
              legend.title = 'Outcome',
              size.legend = 0.8,
              study = "global",
-             plot = TRUE, # remove
+             plot = TRUE,
+             block,  # for warning only
              ...
     ) {
+        
+        # Check for multiblock objects
+        if (inherits(object, c("sgccda", "block.plsda", "block.splsda")))
+            stop("This function is only for single block objects. For multiblock objects, use the appropriate plotLoadings function.")
+            
+        # Check for block argument
+        if (!missing(block))
+            warning("'block' argument is not used for mint.plsda or mint.splsda objects as they are single block objects.")
         
         if(any(study == "global"))
         {
