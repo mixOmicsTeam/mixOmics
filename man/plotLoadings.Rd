@@ -382,9 +382,10 @@ still active. Only applies when style is set to \code{'graphics'}.}
 \item{border}{Argument from \code{\link{barplot}}: indicates whether to draw
 a border on the barplot and in which colour.}
 
-\item{name.var}{A character vector indicating the names of the variables.
-The names of the vector should match the names of the input data, see
-example.}
+\item{name.var}{A character vector or list indicating the names of the variables.
+For single block analysis or when \code{study="all.partial"}, a vector of length equal to the number of variables in the block.
+For multi-block analysis, a list where each element is a vector of length equal to the number of variables in the corresponding block.
+The names of the vector should match the names of the input data, see example.}
 
 \item{name.var.complete}{Logical. If \code{name.var} is supplied with some
 empty names, \code{name.var.complete} allows you to use the initial variable

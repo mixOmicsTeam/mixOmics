@@ -59,9 +59,10 @@
 # variable names
 #' @param size.name A numerical value giving the amount by which plotting the
 #' variable name text should be magnified or reduced relative to the default.
-#' @param name.var A character vector indicating the names of the variables.
-#' The names of the vector should match the names of the input data, see
-#' example.
+#' @param name.var A character vector or list indicating the names of the variables.
+#' For single block analysis or when \code{study="all.partial"}, a vector of length equal to the number of variables in the block.
+#' For multi-block analysis, a list where each element is a vector of length equal to the number of variables in the corresponding block.
+#' The names of the vector should match the names of the input data, see example.
 
 # title
 #' @param title Title of the plot. Default is NULL.
@@ -803,7 +804,7 @@ plotLoadings.mint.pls <-
             # if study != "global" then we plot the results on each study
             
             # -- input checks
-            check = check.input.plotLoadings(object = object, block = object$names$blocks, title = title, col = col, size.name = size.name, name.var = name.var)
+            check = check.input.plotLoadings(object = object, block = block, title = title, col = col, size.name = size.name, name.var = name.var, study = study)
             
             col = check$col
             size.name = check$size.name
@@ -814,14 +815,14 @@ plotLoadings.mint.pls <-
                 stop("'study' must from one of 'object$study', 'global' or 'all.partial', see help file.")
 
             # Handle block selection for all.partial case
-            if (any(study == "all.partial")) {
+            if (any(study == "all.partial") | any(study %in% levels(object$study))) {
                 if (missing(block)) {
                     selected_block = object$names$blocks[1]  # default to first block if not specified
                 } else if (length(block) > 1) {
-                    stop("When study = 'all.partial', only one block can be plotted at a time. Please specify one of: ", 
+                    stop("When study = 'all.partial' or a specific study, only one block can be plotted at a time. Please specify one of: ", 
                          paste(object$names$blocks, collapse = ", "))
                 } else if (!block %in% object$names$blocks) {
-                    stop("When study = 'all.partial', block must be one of: ", 
+                    stop("When study = 'all.partial' or a specific study, block must be one of: ", 
                          paste(object$names$blocks, collapse = ", "))
                 } else {
                     selected_block = block
@@ -1278,8 +1279,8 @@ check.input.plotLoadings <- function(object,
     if(!missing(study))
     {
         #study needs to be either: from levels(object$study), numbers from 1:nlevels(study) or "global"
-        if (any(!study%in%c(levels(object$study), "global")))
-            stop("'study' must be one of 'object$study' or 'all'.")
+        if (any(!study%in%c(levels(object$study), "global", "all.partial")))
+            stop("'study' must be one of 'object$study' or 'all.partial' or 'global.")
         
         if (length(study)!=length(unique(study)))
             stop("Duplicate in 'study' not allowed")
@@ -1345,22 +1346,34 @@ check.input.plotLoadings <- function(object,
     #-----
     if(!is.null(name.var))
     {
-        if (length(block) >1 && length(block) != length(name.var))
-            stop("'names' has to be a list of length the number of block to plot: ", length(block))
-        
-        if (length(block) > 1)
-        {
-            for (block_i in block)
-            {
-                if(length(name.var[[block_i]])!= nrow(object$loadings[[block_i]]))
-                    stop("For block '", block_i,"', 'name.var' should be a vector of length ", nrow(object$loadings[[block_i]]))
+        # For all.partial case, name.var should be a vector
+        if (!missing(study) && any(study == "all.partial")) {
+          if (length(block)>1){stop("When study = 'all.partial', block must be NULL or length of 1")}
+            if (!is.vector(name.var)) {
+                stop("When study = 'all.partial', 'name.var' should be a vector of length equal to the number of variables in the selected block")
+            }
+            # Check length matches the number of variables in the selected block
+            if (length(name.var) != nrow(object$loadings[[block]])) {
+                stop("When study = 'all.partial', 'name.var' should be a vector of length ", nrow(object$loadings[[block]]))
             }
         } else {
-            if(length(name.var)!= nrow(object$loadings[[block]]))
-                stop("For block '", block,"', 'name.var' should be a vector of length ", nrow(object$loadings[[block]]))
+            # For other cases, name.var should be a list
+            if (length(block) > 1 && length(block) != length(name.var)) {
+                stop("'name.var' has to be a list of length the number of block to plot: ", length(block))
+            }
             
+            if (length(block) > 1) {
+                for (block_i in block) {
+                    if(length(name.var[[block_i]])!= nrow(object$loadings[[block_i]]))
+                        stop("For block '", block_i,"', 'name.var' should be a vector of length ", nrow(object$loadings[[block_i]]))
+                }
+            } else {
+                if(length(name.var)!= nrow(object$loadings[[block]]))
+                    stop("For block '", block,"', 'name.var' should be a vector of length ", nrow(object$loadings[[block]]))
+            }
         }
     }
+    
     #title
     #-----
     if (!is.null(title) & !is.character(title))
