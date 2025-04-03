@@ -1031,28 +1031,32 @@ plotLoadings.mint.spls <- plotLoadings.mint.pls
 #' @export
 plotLoadings.mint.plsda <- 
     function(object,
-             contrib = NULL,  # choose between 'max" or "min", NULL does not color the barplot
-             method = "mean", # choose between 'mean" or "median"
-             study = "global",
              comp = 1,
-             plot = TRUE,
-             show.ties = TRUE,
-             col.ties = "white",
              ndisplay = NULL,
-             size.name = 0.7,
-             size.legend = 0.8,
+             xlim = NULL,
+             layout = NULL,
+             border = NA,
              name.var = NULL,
              name.var.complete = FALSE,
+             size.name = 0.7,
              title = NULL,
              subtitle,
              size.title = rel(1.8),
              size.subtitle = rel(1.4),
+             size.axis = 0.7,
+             X.label = NULL,
+             Y.label = NULL,
+             size.labs = 1,
+             contrib = NULL,  # choose between 'max" or "min", NULL does not color the barplot
+             method = "mean", # choose between 'mean" or "median"
+             show.ties = TRUE,
+             col.ties = "white",
              legend = TRUE,
              legend.color = NULL,
              legend.title = 'Outcome',
-             layout = NULL,
-             border = NA,
-             xlim = NULL,
+             size.legend = 0.8,
+             study = "global",
+             plot = TRUE,
              ...
     ) {
         
