@@ -716,16 +716,22 @@ plotLoadings.mixo_plsda <-
                     if (is.null(layout)) {
                         layout <- c(1, length(plot_list))
                     }
+                    
+                    # Create layout matrix based on layout parameter
+                    n_rows <- layout[1]
+                    n_cols <- layout[2]
+                    layout_matrix <- matrix(seq_along(plot_list), nrow = n_rows, ncol = n_cols, byrow = TRUE)
+                    
                     if(is.null(title)) {
                         gridExtra::grid.arrange(
                             grobs = plot_list,
-                            layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
+                            layout_matrix = layout_matrix
                         )
                     } else {
                         title_grob <- grid::textGrob(title, gp = grid::gpar(fontsize = size.title * 8, fontface = "bold"))
                         plot_grobs <- gridExtra::arrangeGrob(
                             grobs = plot_list,
-                            layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
+                            layout_matrix = layout_matrix
                         )
                         combined <- gridExtra::arrangeGrob(title_grob, plot_grobs, ncol = 1, heights = c(0.1, 1))
                         grid::grid.draw(combined)
@@ -1280,16 +1286,22 @@ plotLoadings.mint.plsda <-
                     if (is.null(layout)) {
                         layout <- c(1, length(plot_list))
                     }
+                    
+                    # Create layout matrix based on layout parameter
+                    n_rows <- layout[1]
+                    n_cols <- layout[2]
+                    layout_matrix <- matrix(seq_along(plot_list), nrow = n_rows, ncol = n_cols, byrow = TRUE)
+                    
                     if(is.null(title)) {
                         gridExtra::grid.arrange(
                             grobs = plot_list,
-                            layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
+                            layout_matrix = layout_matrix
                         )
                     } else {
                         title_grob <- grid::textGrob(title, gp = grid::gpar(fontsize = size.title * 8, fontface = "bold"))
                         plot_grobs <- gridExtra::arrangeGrob(
                             grobs = plot_list,
-                            layout_matrix = matrix(seq_along(plot_list), nrow = layout[1], ncol = layout[2], byrow = TRUE)
+                            layout_matrix = layout_matrix
                         )
                         combined <- gridExtra::arrangeGrob(title_grob, plot_grobs, ncol = 1, heights = c(0.1, 1))
                         grid::grid.draw(combined)
