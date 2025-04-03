@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' data-engine-version='2.0' width='720.00pt' height='576.00pt' viewBox='0 0 720.00 576.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA='>
+    <rect x='0.00' y='0.00' width='720.00' height='576.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+</g>
+<defs>
+  <clipPath id='cpMC4wMHwzNjAuMDB8MC4wMHw1NzYuMDA='>
+    <rect x='0.00' y='0.00' width='360.00' height='576.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHwzNjAuMDB8MC4wMHw1NzYuMDA=)'>
+<rect x='100.80' y='440.38' width='137.80' height='60.95' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='116.26' y='367.24' width='122.34' height='60.95' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='238.60' y='294.10' width='92.60' height='60.95' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='168.70' y='220.95' width='69.90' height='60.95' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='238.60' y='147.81' width='65.35' height='60.95' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='238.60' y='74.67' width='56.35' height='60.95' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<text x='86.40' y='473.75' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000176485</text>
+<text x='86.40' y='400.60' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000110400</text>
+<text x='86.40' y='327.46' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000112655</text>
+<text x='86.40' y='254.32' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000154153</text>
+<text x='86.40' y='181.18' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000119820</text>
+<text x='86.40' y='108.03' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000017427</text>
+<line x1='144.91' y1='518.40' x2='285.44' y2='518.40' style='stroke-width: 0.75;' />
+<line x1='144.91' y1='518.40' x2='144.91' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='191.75' y1='518.40' x2='191.75' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='238.60' y1='518.40' x2='238.60' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='285.44' y1='518.40' x2='285.44' y2='525.60' style='stroke-width: 0.75;' />
+<text x='144.91' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='14.47px' lengthAdjust='spacingAndGlyphs'>-0.4</text>
+<text x='191.75' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='14.47px' lengthAdjust='spacingAndGlyphs'>-0.2</text>
+<text x='238.60' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.0</text>
+<text x='285.44' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.2</text>
+</g>
+<g clip-path='url(#cpMC4wMHwzNjAuMDB8MC4wMHw1NzYuMDA=)'>
+<text x='216.00' y='28.80' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='216.19px' lengthAdjust='spacingAndGlyphs'>Loadings on comp 1</text>
+<text x='216.00' y='57.60' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='90.55px' lengthAdjust='spacingAndGlyphs'>Block 'X'</text>
+</g>
+<defs>
+  <clipPath id='cpMzYwLjAwfDcyMC4wMHwwLjAwfDU3Ni4wMA=='>
+    <rect x='360.00' y='0.00' width='360.00' height='576.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMzYwLjAwfDcyMC4wMHwwLjAwfDU3Ni4wMA==)'>
+<rect x='555.86' y='465.18' width='135.34' height='36.16' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='460.80' y='421.79' width='95.06' height='36.16' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='487.22' y='378.40' width='68.65' height='36.16' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='501.36' y='335.01' width='54.51' height='36.16' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='555.86' y='291.62' width='51.10' height='36.16' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='532.20' y='248.23' width='23.66' height='36.16' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='543.62' y='204.84' width='12.24' height='36.16' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='555.86' y='161.45' width='8.54' height='36.16' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='555.86' y='118.06' width='5.25' height='36.16' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='551.71' y='74.67' width='4.15' height='36.16' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<text x='446.40' y='486.14' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000198542</text>
+<text x='446.40' y='442.75' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000159199</text>
+<text x='446.40' y='399.37' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000189367</text>
+<text x='446.40' y='355.98' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000168924</text>
+<text x='446.40' y='312.59' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000106012</text>
+<text x='446.40' y='269.20' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000075884</text>
+<text x='446.40' y='225.81' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000129317</text>
+<text x='446.40' y='182.42' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000136156</text>
+<text x='446.40' y='139.03' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000221972</text>
+<text x='446.40' y='95.64' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='75.21px' lengthAdjust='spacingAndGlyphs'>ENSG00000163611</text>
+<line x1='477.40' y1='518.40' x2='673.56' y2='518.40' style='stroke-width: 0.75;' />
+<line x1='477.40' y1='518.40' x2='477.40' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='516.63' y1='518.40' x2='516.63' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='555.86' y1='518.40' x2='555.86' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='595.10' y1='518.40' x2='595.10' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='634.33' y1='518.40' x2='634.33' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='673.56' y1='518.40' x2='673.56' y2='525.60' style='stroke-width: 0.75;' />
+<text x='477.40' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='14.47px' lengthAdjust='spacingAndGlyphs'>-0.4</text>
+<text x='516.63' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='14.47px' lengthAdjust='spacingAndGlyphs'>-0.2</text>
+<text x='555.86' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.0</text>
+<text x='595.10' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.2</text>
+<text x='634.33' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.4</text>
+<text x='673.56' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.6</text>
+</g>
+<g clip-path='url(#cpMzYwLjAwfDcyMC4wMHwwLjAwfDU3Ni4wMA==)'>
+<text x='576.00' y='28.80' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='216.19px' lengthAdjust='spacingAndGlyphs'>Loadings on comp 1</text>
+<text x='576.00' y='57.60' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='90.55px' lengthAdjust='spacingAndGlyphs'>Block 'Y'</text>
+</g>
+<defs>
+  <clipPath id='cpNTkuMDR8Njg5Ljc2fDU5LjA0fDUwMi41Ng=='>
+    <rect x='59.04' y='59.04' width='630.72' height='443.52' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNTkuMDR8Njg5Ljc2fDU5LjA0fDUwMi41Ng==)'>
+</g>
+</svg>
