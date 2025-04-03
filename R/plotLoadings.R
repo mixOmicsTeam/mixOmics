@@ -757,6 +757,7 @@ plotLoadings.sgccda <- plotLoadings.mixo_plsda
 #' @export
 plotLoadings.mint.pls <-
     function(object,
+             style = "graphics",
              comp = 1,
              ndisplay = NULL,
              xlim = NULL,
@@ -776,7 +777,6 @@ plotLoadings.mint.pls <-
              size.labs = 1,
              block,
              study = "global",
-             style = "graphics",
              ...
     ) {
         
@@ -803,7 +803,6 @@ plotLoadings.mint.pls <-
                                   size.labs = size.labs,
                                   size.axis = size.axis,
                                   block = block,
-                                  ...
                                   )
             
         } else {
