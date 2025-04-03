@@ -257,39 +257,49 @@ plotLoadings(object, ...)
 
 \method{plotLoadings}{mint.pls}(
   object,
-  study = "global",
   comp = 1,
-  col = NULL,
   ndisplay = NULL,
-  size.name = 0.7,
+  xlim = NULL,
+  layout = NULL,
+  col = NULL,
+  border = NA,
   name.var = NULL,
   name.var.complete = FALSE,
+  size.name = 0.7,
   title = NULL,
   subtitle,
   size.title = rel(1.8),
   size.subtitle = rel(1.4),
-  layout = NULL,
-  border = NA,
-  xlim = NULL,
+  size.axis = 0.7,
+  X.label = NULL,
+  Y.label = NULL,
+  size.labs = 1,
+  block,
+  study = "global",
   ...
 )
 
 \method{plotLoadings}{mint.spls}(
   object,
-  study = "global",
   comp = 1,
-  col = NULL,
   ndisplay = NULL,
-  size.name = 0.7,
+  xlim = NULL,
+  layout = NULL,
+  col = NULL,
+  border = NA,
   name.var = NULL,
   name.var.complete = FALSE,
+  size.name = 0.7,
   title = NULL,
   subtitle,
   size.title = rel(1.8),
   size.subtitle = rel(1.4),
-  layout = NULL,
-  border = NA,
-  xlim = NULL,
+  size.axis = 0.7,
+  X.label = NULL,
+  Y.label = NULL,
+  size.labs = 1,
+  block,
+  study = "global",
   ...
 )
 
@@ -392,8 +402,7 @@ or \code{study} are plotted.}
 
 \item{size.subtitle}{size of the subtitle}
 
-\item{block}{A single value indicating which block to consider in a
-\code{sgccda} object.}
+\item{block}{A single value or vector indicating which block to plot. See details for behavior depending on object type.}
 
 \item{contrib}{a character set to 'max' or 'min' indicating if the color of
 the bar should correspond to the group with the maximal or minimal
@@ -462,6 +471,18 @@ global level, only the selected variables are plotted for the partial
 loadings even if the partial loadings are not sparse. See references.
 Importantly for multi plots, the legend accounts for one subplot in the
 layout design.
+
+The \code{block} argument behavior varies depending on the object type:
+\itemize{
+  \item For \code{mixo_pls}, \code{mixo_spls}, \code{rcc}, \code{rgcca}, \code{sgcca}: 
+        can be any block from \code{object$names$blocks}
+  \item For \code{mixo_plsda}, \code{mixo_splsda}: 
+        can only be "X" or "1"
+  \item For \code{mint.pls}, \code{mint.spls}: 
+        when \code{study="all.partial"}, can only be one block from \code{object$names$blocks}
+  \item For \code{pca}: 
+        block argument is not used
+}
 }
 \examples{
 ## object of class 'spls'

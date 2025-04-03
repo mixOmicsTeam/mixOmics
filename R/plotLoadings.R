@@ -29,6 +29,18 @@
 #' Importantly for multi plots, the legend accounts for one subplot in the
 #' layout design.
 #' 
+#' The \code{block} argument behavior varies depending on the object type:
+#' \itemize{
+#'   \item For \code{mixo_pls}, \code{mixo_spls}, \code{rcc}, \code{rgcca}, \code{sgcca}: 
+#'         can be any block from \code{object$names$blocks}
+#'   \item For \code{mixo_plsda}, \code{mixo_splsda}: 
+#'         can only be "X" or "1"
+#'   \item For \code{mint.pls}, \code{mint.spls}: 
+#'         when \code{study="all.partial"}, can only be one block from \code{object$names$blocks}
+#'   \item For \code{pca}: 
+#'         block argument is not used
+#' }
+#' 
 #' @aliases plotLoadings.pls plotLoadings.spls
 #' @param object object
 #' @param comp integer value, which component to plot. Default is 1.
@@ -80,8 +92,7 @@
 #' @param study Indicates which study are to be plotted.  A character vector
 #' containing some levels of \code{object$study}, "all.partial" to plot all
 #' studies or "global" is expected.
-#' @param block A single value indicating which block to consider in a
-#' \code{sgccda} object.
+#' @param block A single value or vector indicating which block to plot. See details for behavior depending on object type.
 
 #' @param show.ties Logical. If TRUE then tie groups appear in the color set by
 #' \code{col.ties}, which will appear in the legend. Ties can happen when
@@ -745,30 +756,32 @@ plotLoadings.sgccda <- plotLoadings.mixo_plsda
 #' @export
 plotLoadings.mint.pls <-
     function(object,
-             study = "global",
              comp = 1,
-             col = NULL,
              ndisplay = NULL,
-             size.name = 0.7,
+             xlim = NULL,
+             layout = NULL,
+             col = NULL,
+             border = NA,
              name.var = NULL,
-             name.var.complete = FALSE,
+             name.var.complete = FALSE, # deprecated
+             size.name = 0.7,
              title = NULL,
              subtitle,
              size.title = rel(1.8),
              size.subtitle = rel(1.4),
-             layout = NULL,
-             border = NA,
-             xlim = NULL,
+             size.axis = 0.7,
+             X.label = NULL,
+             Y.label = NULL,
+             size.labs = 1,
+             block,
+             study = "global",
              ...
     ) {
-        
-        # what I want is to modify the input and call plotLoadings.pls and plotLoadings.splsda where blocks are now studies
-        # do not forget to change object$names$block in levels(object$study) and it should work, see you tomorrow
         
         if(any(study == "global"))
         {
             # if study == "global" then we plot the results on the concatenated data, thus direct call to plotLoadings.plsda
-            plotLoadings.mixo_pls(object = object, block = c("X", "Y"), comp = comp, ndisplay = ndisplay,
+            plotLoadings.mixo_pls(object = object, comp = comp, ndisplay = ndisplay,
                                   size.name = size.name,
                                   name.var = name.var,
                                   name.var.complete = name.var.complete,
@@ -779,21 +792,41 @@ plotLoadings.mint.pls <-
                                   size.subtitle = size.subtitle,
                                   border = border,
                                   xlim = xlim,
-                                  col = col)
+                                  col = col,
+                                  X.label = X.label,
+                                  Y.label = Y.label,
+                                  size.labs = size.labs,
+                                  size.axis = size.axis,
+                                  block = block)
             
         } else {
             # if study != "global" then we plot the results on each study
             
             # -- input checks
-            check = check.input.plotLoadings(object = object, block = c("X", "Y"), study = study, title = title, col = col, size.name = size.name, name.var = name.var)
+            check = check.input.plotLoadings(object = object, block = object$names$blocks, title = title, col = col, size.name = size.name, name.var = name.var)
             
             col = check$col
             size.name = check$size.name
-            block = check$block # c("X", "Y")
+            selected_block = check$block # uses actual block names from object
             
             #study needs to be either: from levels(object$study), numbers from 1:nlevels(study) or "global"
             if (any(!study%in%c(levels(object$study), "global" , "all.partial")))
                 stop("'study' must from one of 'object$study', 'global' or 'all.partial', see help file.")
+
+            # Handle block selection for all.partial case
+            if (any(study == "all.partial")) {
+                if (missing(block)) {
+                    selected_block = object$names$blocks[1]  # default to first block if not specified
+                } else if (length(block) > 1) {
+                    stop("When study = 'all.partial', only one block can be plotted at a time. Please specify one of: ", 
+                         paste(object$names$blocks, collapse = ", "))
+                } else if (!block %in% object$names$blocks) {
+                    stop("When study = 'all.partial', block must be one of: ", 
+                         paste(object$names$blocks, collapse = ", "))
+                } else {
+                    selected_block = block
+                }
+            }
             
             study.init = unique(study)
             # replace "all.partial" by all levels of object$study
@@ -824,10 +857,6 @@ plotLoadings.mint.pls <-
                     stop("'subtitle' indicates the subtitle of the plot for each study and it needs to be the same length as 'study' (", length(study),"), which includes: ", paste(study, collapse = ", "))
             }
             
-            
-            # swap block for study
-            block = study
-            
             # check xlim, has to be a matrix with number of rows=number of studies, or a vector of two values
             if(length(study) == 1 & !is.null(xlim))
             {
@@ -857,13 +886,13 @@ plotLoadings.mint.pls <-
             
             
             # -- layout
-            res = layout.plotLoadings(layout = layout, plot = TRUE, legend = FALSE, block = block)
+            res = layout.plotLoadings(layout = layout, plot = TRUE, legend = FALSE, block = study)
             reset.mfrow = res$reset.mfrow
             opar = res$opar
             omar = par("mar") #reset mar at the end
             
             # get the selected variables on the concatenated data
-            res = get.loadings.ndisplay(object = object, comp = comp, block = "X", name.var = name.var, name.var.complete = name.var.complete, ndisplay = ndisplay)
+            res = get.loadings.ndisplay(object = object, comp = comp, block = selected_block, name.var = name.var, name.var.complete = name.var.complete, ndisplay = ndisplay)
             X = res$X
             colnames.X = res$colnames.X
             name.selected.var = res$name.selected.var
@@ -872,42 +901,44 @@ plotLoadings.mint.pls <-
             
             # swap loadings partial for loadings
             object$loadings.global = object$loadings
-            object$loadings = object$loadings.partial$X
+            object$loadings = object$loadings.partial[[selected_block]]
             object$names$block = levels(object$study)
             
             df.final = list()
-            for (i in 1 : length(block))
+            for (i in 1 : length(study))
             {
-                value.selected.var = object$loadings.partial$X [[block[i]]][, comp] [name.selected.var]
+                value.selected.var = object$loadings.partial[[selected_block]][[study[i]]][, comp] [name.selected.var]
                 
                 df = data.frame(importance = value.selected.var, color = col, stringsAsFactors = FALSE) # contribution of the loading
                 
                 #display barplot with names of variables
                 #added condition if all we need is the contribution stats
-                if (!is.null(title) & length(block) > 1)
+                if (!is.null(title) & length(study) > 1)
                 {
                     par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 6, 2))
                 } else {
                     par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 4, 2))
                 }
-                .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, cex.name = size.name, border = border, xlim = xlim)
+                .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, 
+                        cex.name = size.name, border = border, xlim = xlim,
+                        xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
                 
-                if ( length(block) == 1 & is.null(title) )
+                if ( length(study) == 1 & is.null(title) )
                 {
                     title(paste0('Loadings on comp ', comp), line=1, cex.main = size.title)
-                } else if (length(block) == 1) {
+                } else if (length(study) == 1) {
                     title(paste(title), line=0, cex.main = size.title)
-                } else if ((length(block) > 1 & missing(subtitle))) {
-                    title(paste0('Loadings on comp ', comp, "\nStudy '", block[i],"'"), line=0, cex.main = size.subtitle)
-                } else if (length(block) > 1 & !missing(subtitle)) {
+                } else if ((length(study) > 1 & missing(subtitle))) {
+                    title(paste0('Loadings on comp ', comp, "\nStudy '", study[i],"'"), line=0, cex.main = size.subtitle)
+                } else if (length(study) > 1 & !missing(subtitle)) {
                     title(paste(subtitle[i]), line=0, cex.main = size.subtitle)
                 }
                 
                 df.final[[i]] = df
             }
-            names(df.final) = block
+            names(df.final) = study
             
-            if (length(block) > 1 & !is.null(title))
+            if (length(study) > 1 & !is.null(title))
                 title(title, outer=TRUE, line = -2, cex.main = size.title)
             
             if (reset.mfrow)
@@ -956,9 +987,6 @@ plotLoadings.mint.plsda <-
              xlim = NULL,
              ...
     ) {
-        
-        # what I want is to modify the input and call plotLoadings.pls and plotLoadings.splsda where blocks are now studies
-        # do not forget to change object$names$block in levels(object$study) and it should work, see you tomorrow
         
         if(any(study == "global"))
         {
@@ -1078,7 +1106,7 @@ plotLoadings.mint.plsda <-
             
             # swap loadings partial for loadings
             object$loadings.global = object$loadings
-            object$loadings = object$loadings.partial$X
+            object$loadings = object$loadings.partial[[block]]
             object$names$block = levels(object$study)
             
             X.study = study_split(X, study = object$study)
@@ -1089,7 +1117,7 @@ plotLoadings.mint.plsda <-
             for (i in 1 : length(block))
             {
                 
-                value.selected.var =  object$loadings.partial$X [[block[i]]][, comp] [name.selected.var]
+                value.selected.var =  object$loadings.partial[[block]][[block[i]]][, comp] [name.selected.var]
                 
                 
                 #legend.color
