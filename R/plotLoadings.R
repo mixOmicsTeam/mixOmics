@@ -964,28 +964,33 @@ plotLoadings.mint.spls <- plotLoadings.mint.pls
 #' @export
 plotLoadings.mint.plsda <- 
     function(object,
-             contrib = NULL,  # choose between 'max" or "min", NULL does not color the barplot
-             method = "mean", # choose between 'mean" or "median"
-             study = "global",
+             
              comp = 1,
-             plot = TRUE,
-             show.ties = TRUE,
-             col.ties = "white",
              ndisplay = NULL,
-             size.name = 0.7,
-             size.legend = 0.8,
+             xlim = NULL,
+             layout = NULL,
+             border = NA,
              name.var = NULL,
-             name.var.complete = FALSE,
+             name.var.complete = FALSE, # remove
+             size.name = 0.7,
              title = NULL,
              subtitle,
              size.title = rel(1.8),
              size.subtitle = rel(1.4),
-             legend = TRUE,
+             size.axis = 0.7,
+             X.label = NULL,
+             Y.label = NULL,
+             size.labs = 1,
+             contrib = NULL,  # choose between 'max" or "min", NULL does not color the barplot
+             method = "mean", # choose between 'mean" or "median"
+             show.ties = TRUE,
+             col.ties = "white",
+             egend = TRUE,
              legend.color = NULL,
              legend.title = 'Outcome',
-             layout = NULL,
-             border = NA,
-             xlim = NULL,
+             size.legend = 0.8,
+             study = "global",
+             plot = TRUE, # remove
              ...
     ) {
         
@@ -998,7 +1003,7 @@ plotLoadings.mint.plsda <-
                                     name.var.complete = name.var.complete,
                                     legend = legend,
                                     legend.color = legend.color,
-                                    title = if(!is.null(title)){title}else{paste0('Contribution on comp ', comp, "\n All studies")},
+                                    title = title,
                                     subtitle = subtitle,
                                     legend.title = legend.title,
                                     plot = plot,
@@ -1007,7 +1012,11 @@ plotLoadings.mint.plsda <-
                                     size.title = size.title,
                                     size.subtitle = size.subtitle,
                                     border = border,
-                                    col.ties = col.ties)
+                                    col.ties = col.ties,
+                                    X.label = X.label,
+                                    Y.label = Y.label,
+                                    size.labs = size.labs,
+                                    size.axis = size.axis)
             
         } else {
             
@@ -1162,7 +1171,8 @@ plotLoadings.mint.plsda <-
                     par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 4, 2))
                 }
                 
-                .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, cex.name = size.name, border = border, xlim = xlim[i, ])
+                .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, cex.name = size.name, border = border, xlim = xlim[i, ],
+                                      xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
                 
                 if ( length(block) == 1 & is.null(title) )
                 {
