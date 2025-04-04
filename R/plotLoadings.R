@@ -764,6 +764,7 @@ plotLoadings.sgccda <- plotLoadings.mixo_plsda
 #' @export
 plotLoadings.mint.pls <-
     function(object,
+             style = "graphics",
              comp = 1,
              ndisplay = NULL,
              xlim = NULL,
@@ -790,6 +791,7 @@ plotLoadings.mint.pls <-
         {
             # if study == "global" then we plot the results on the concatenated data, thus direct call to plotLoadings.plsda
             plotLoadings.mixo_pls(object = object, comp = comp, ndisplay = ndisplay,
+                                  style = style,
                                   size.name = size.name,
                                   name.var = name.var,
                                   name.var.complete = name.var.complete,
