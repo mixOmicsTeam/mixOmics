@@ -12,7 +12,6 @@ plotLoadings.mixo_plsda <-
              layout = NULL,
              border = NA,
              name.var = NULL,
-             name.var.complete = FALSE, # deprecated
              size.name = 0.7,
              title = NULL,
              subtitle,
@@ -33,7 +32,41 @@ plotLoadings.mixo_plsda <-
              size.legend = 0.8,
              ...
     ) {
-        
+      # Input checks
+      if (!is.numeric(comp) || length(comp) != 1 || comp <= 0)
+        stop("'comp' must be a positive integer.")
+      if (!style %in% c('graphics', 'ggplot2'))
+        stop("'style' must be either 'graphics' or 'ggplot2'.")
+      if (!is.null(ndisplay) && (!is.numeric(ndisplay) || length(ndisplay) != 1 || ndisplay <= 0))
+        stop("'ndisplay' must be a positive integer.")
+      
+      if (!is.null(title) && !is.character(title))
+        stop("'title' must be NULL or a character string.")
+      if (!is.null(xlim) && (!is.numeric(xlim) || length(xlim) != 2))
+        stop("'xlim' must be a numeric vector of length 2.")
+      if (!is.null(X.label) && !is.character(X.label))
+        stop("'X.label' must be NULL or a character string.")
+      if (!is.null(Y.label) && !is.character(Y.label))
+        stop("'Y.label' must be NULL or a character string.")
+      
+      if (!is.numeric(size.name) || size.name <= 0)
+        stop("'size.name' must be a positive numeric value.")
+      if (!is.numeric(size.title) || size.title <= 0)
+        stop("'size.title' must be a positive numeric value.")
+      if (!is.numeric(size.subtitle) || size.subtitle <= 0)
+        stop("'size.subtitle' must be a positive numeric value.")
+      if (!is.numeric(size.labs) || size.labs <= 0)
+        stop("'size.labs' must be a positive numeric value.")
+      if (!is.numeric(size.axis) || size.axis <= 0)
+        stop("'size.axis' must be a positive numeric value.")
+      
+      # check for inappropriate args
+      extra_args <- list(...)
+      if ("name.var.complete" %in% names(extra_args)) {
+        warning("'name.var.complete' argument is deprecated")
+      }
+      name.var.complete <- FALSE
+      
         # -- input checks
         check = check.input.plotLoadings(object = object, block = block, subtitle = subtitle, size.name = size.name, size.legend = size.legend,
                                          title = title, col = NULL, contrib = contrib, name.var = name.var, xlim = xlim)
@@ -51,7 +84,7 @@ plotLoadings.mixo_plsda <-
         {
             xlim <- xlim[1,]
             plotLoadings.mixo_pls(object = object, block = block, comp = comp, ndisplay = ndisplay,
-                                      size.name = size.name, name.var = name.var, name.var.complete = name.var.complete,
+                                      size.name = size.name, name.var = name.var,
                                       title = title, subtitle = subtitle, size.title = size.title, size.subtitle = size.subtitle,
                                       xlim = xlim, layout = layout, size.axis = size.axis,
                                       X.label = X.label, Y.label = Y.label, size.labs = size.labs,
