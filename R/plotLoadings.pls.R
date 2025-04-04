@@ -13,7 +13,6 @@ plotLoadings.mixo_pls <-
            col = NULL,
            border = NA,
            name.var = NULL,
-           name.var.complete = FALSE, # deprecated
            size.name = 0.7,
            title = NULL,
            subtitle,
@@ -56,6 +55,13 @@ plotLoadings.mixo_pls <-
       stop("'size.labs' must be a positive numeric value.")
     if (!is.numeric(size.axis) || size.axis <= 0)
       stop("'size.axis' must be a positive numeric value.")
+    
+    # check for inappropriate args
+    extra_args <- list(...)
+    if ("name.var.complete" %in% names(extra_args)) {
+      warning("'name.var.complete' argument is deprecated")
+    }
+    name.var.complete <- FALSE
     
     # -- input checks
     check = check.input.plotLoadings(object = object, block = block, subtitle = subtitle, size.name = size.name, title = title, col = col, name.var = name.var, xlim = xlim)
@@ -147,8 +153,13 @@ plotLoadings.mixo_pls <-
     names(contrib.df) <- block
     
     ## Final additions to plots
-    if (style == "graphics" & length(block) > 1 & !is.null(title))
+    if (style == "graphics" & length(block) > 1 & !is.null(title)){
       title(title, outer=TRUE, line = -2, cex.main = size.title)
+      if (reset.mfrow)
+        par(opar)
+      par(mar = omar) #reset mar
+    }
+    
     
     if (style == 'ggplot2') {
       # Add overall plot title if set
@@ -178,10 +189,6 @@ plotLoadings.mixo_pls <-
       
     }
     
-    if (reset.mfrow)
-      par(opar)
-    
-    par(mar = omar) #reset mar
     
     # return the contribution matrix
     return(invisible(contrib.df))
