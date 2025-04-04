@@ -13,10 +13,9 @@ plotLoadings.pca <-
            col = NULL, 
            border = NA, 
            name.var = NULL, 
-           name.var.complete = FALSE, # deprecated
            size.name = 0.7, 
            title = NULL, 
-           size.title = rel(2), 
+           size.title = 2, 
            size.axis = 0.7,
            X.label = NULL,
            Y.label = NULL,
@@ -56,6 +55,13 @@ plotLoadings.pca <-
     
     if (style == 'ggplot2' && !is.null(layout))
       warning("layout is ignored for PCA objects when style is set to 'ggplot2'.")
+    
+    # check for inappropriate args
+    extra_args <- list(...)
+    if ("name.var.complete" %in% names(extra_args)) {
+      warning("'name.var.complete' argument is deprecated")
+    }
+    name.var.complete <- FALSE
   
   # -- input checks
   object$names$blocks <- 'X'

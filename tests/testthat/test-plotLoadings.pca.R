@@ -16,7 +16,7 @@ test_that("Test default behavior with graphics style", {
 # Unit test 2: Test ggplot2 style
 test_that("Test ggplot2 style ignores layout", {
   expect_warning(plotLoadings(pca.obj, comp = 1, style = "ggplot2", layout = c(1,2)),
-                 "layout is ignored when style is set to 'ggplot2'.")
+                 "layout is ignored for PCA objects when style is set to 'ggplot2'.")
 })
 
 # Unit test 3: Test incorrect 'col' value
