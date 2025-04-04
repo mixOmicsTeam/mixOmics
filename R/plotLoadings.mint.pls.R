@@ -5,6 +5,7 @@
 #' @export
 plotLoadings.mint.pls <-
     function(object,
+             style = "graphics",
              comp = 1,
              ndisplay = NULL,
              xlim = NULL,
@@ -12,7 +13,6 @@ plotLoadings.mint.pls <-
              col = NULL,
              border = NA,
              name.var = NULL,
-             name.var.complete = FALSE, # deprecated
              size.name = 0.7,
              title = NULL,
              subtitle,
@@ -26,6 +26,45 @@ plotLoadings.mint.pls <-
              study = "global",
              ...
     ) {
+      
+      ## Check input args
+      # Input checks
+      if (!is.numeric(comp) || length(comp) != 1 || comp <= 0)
+        stop("'comp' must be a positive integer.")
+      if (!style %in% c('graphics', 'ggplot2'))
+        stop("'style' must be either 'graphics' or 'ggplot2'.")
+      
+      if (!is.null(col) && (length(col) != 1 || !col %in% colors()))
+        stop("'col' must be a single valid color.")
+      if (!is.null(ndisplay) && (!is.numeric(ndisplay) || length(ndisplay) != 1 || ndisplay <= 0))
+        stop("'ndisplay' must be a positive integer.")
+      
+      if (!is.null(title) && !is.character(title))
+        stop("'title' must be NULL or a character string.")
+      if (!is.null(xlim) && (!is.numeric(xlim) || length(xlim) != 2))
+        stop("'xlim' must be a numeric vector of length 2.")
+      if (!is.null(X.label) && !is.character(X.label))
+        stop("'X.label' must be NULL or a character string.")
+      if (!is.null(Y.label) && !is.character(Y.label))
+        stop("'Y.label' must be NULL or a character string.")
+      
+      if (!is.numeric(size.name) || size.name <= 0)
+        stop("'size.name' must be a positive numeric value.")
+      if (!is.numeric(size.title) || size.title <= 0)
+        stop("'size.title' must be a positive numeric value.")
+      if (!is.numeric(size.subtitle) || size.subtitle <= 0)
+        stop("'size.subtitle' must be a positive numeric value.")
+      if (!is.numeric(size.labs) || size.labs <= 0)
+        stop("'size.labs' must be a positive numeric value.")
+      if (!is.numeric(size.axis) || size.axis <= 0)
+        stop("'size.axis' must be a positive numeric value.")
+      
+      # check for inappropriate args
+      extra_args <- list(...)
+      if ("name.var.complete" %in% names(extra_args)) {
+        warning("'name.var.complete' argument is deprecated")
+      }
+      name.var.complete <- FALSE
         
         if(any(study == "global"))
         {
@@ -33,7 +72,6 @@ plotLoadings.mint.pls <-
             plotLoadings.mixo_pls(object = object, comp = comp, ndisplay = ndisplay,
                                   size.name = size.name,
                                   name.var = name.var,
-                                  name.var.complete = name.var.complete,
                                   title = title,
                                   subtitle = subtitle,
                                   layout = layout,
