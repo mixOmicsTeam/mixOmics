@@ -68,6 +68,10 @@ plotLoadings.mint.plsda <-
             warning("'name.var.complete' argument is deprecated")
         }
         name.var.complete <- FALSE
+        if ("block" %in% names(extra_args)) {
+            warning("'block' argument is not used for mint.plsda or mint.splsda objects")
+        }
+        block <- "X"
         
         if(any(study == "global"))
         {

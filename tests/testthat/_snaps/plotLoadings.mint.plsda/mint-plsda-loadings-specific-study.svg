@@ -60,21 +60,6 @@
 <text x='291.60' y='57.60' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='90.56px' lengthAdjust='spacingAndGlyphs'>Study '1'</text>
 </g>
 <defs>
-  <clipPath id='cpNTA1LjQ0fDY3NS4zNnw1OS4wNHw1MDIuNTY='>
-    <rect x='505.44' y='59.04' width='169.92' height='443.52' />
-  </clipPath>
-</defs>
-<g clip-path='url(#cpNTA1LjQ0fDY3NS4zNnw1OS4wNHw1MDIuNTY=)'>
-<rect x='551.07' y='280.80' width='63.75' height='57.60' style='stroke-width: 0.75; fill: #FFFFFF;' />
-<circle cx='559.71' cy='303.84' r='2.16' style='stroke-width: 0.75; stroke: #388ECC; fill: #388ECC;' />
-<circle cx='559.71' cy='315.36' r='2.16' style='stroke-width: 0.75; stroke: #F68B33; fill: #F68B33;' />
-<circle cx='559.71' cy='326.88' r='2.16' style='stroke-width: 0.75; stroke: #C2C2C2; fill: #C2C2C2;' />
-<text x='582.94' y='292.32' text-anchor='middle' style='font-size: 9.60px; font-family: sans;' textLength='38.96px' lengthAdjust='spacingAndGlyphs'>Outcome</text>
-<text x='568.35' y='307.14' style='font-size: 9.60px; font-family: sans;' textLength='42.15px' lengthAdjust='spacingAndGlyphs'>Fibroblast</text>
-<text x='568.35' y='318.66' style='font-size: 9.60px; font-family: sans;' textLength='25.08px' lengthAdjust='spacingAndGlyphs'>hESC</text>
-<text x='568.35' y='330.18' style='font-size: 9.60px; font-family: sans;' textLength='27.22px' lengthAdjust='spacingAndGlyphs'>hiPSC</text>
-</g>
-<defs>
   <clipPath id='cpNTkuMDR8Njg5Ljc2fDU5LjA0fDUwMi41Ng=='>
     <rect x='59.04' y='59.04' width='630.72' height='443.52' />
   </clipPath>

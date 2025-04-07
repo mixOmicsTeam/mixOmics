@@ -1,10 +1,5 @@
 context("plotLoadings.mint.plsda")
 
-# Load required libraries
-library(mixOmics)
-library(ggplot2)
-library(gridExtra)
-
 # Load data
 data(stemcells)
 data = stemcells$gene
@@ -124,9 +119,9 @@ test_that("plotLoadings.mint.plsda handles contribution options", {
 # Test return value
 test_that("plotLoadings.mint.plsda returns correct structure", {
     # Test return value for single study
-    result <- plotLoadings(mint.splsda.obj, comp = 1, study = 1)
+    result <- plotLoadings(mint.splsda.obj, comp = 1, study = 1, contrib = "max")
     expect_true(is.data.frame(result[[1]]))
-    expect_true(all(c("importance", "color", "names") %in% names(result[[1]])))
+    expect_true(all(c("importance", "color", "GroupContrib") %in% names(result[[1]])))
     
     # Test return value for multiple studies
     result <- plotLoadings(mint.splsda.obj, comp = 1, study = c(1, 2))
