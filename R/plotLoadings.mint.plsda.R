@@ -89,13 +89,17 @@ plotLoadings.mint.plsda <-
                                     title = if(!is.null(title)){title}else{paste0('Contribution on comp ', comp, "\n All studies")},
                                     subtitle = subtitle,
                                     legend.title = legend.title,
-                                    plot = plot,
                                     xlim = xlim,
                                     layout = layout,
                                     size.title = size.title,
                                     size.subtitle = size.subtitle,
                                     border = border,
-                                    col.ties = col.ties)
+                                    col.ties = col.ties,
+                                    show.ties = show.ties,
+                                    size.axis = size.axis,
+                                    size.labs = size.labs,
+                                    X.label = X.label,
+                                    Y.label = Y.label)
             
         } else {
             
@@ -186,7 +190,7 @@ plotLoadings.mint.plsda <-
             }
             
             # get the selected variables on the concatenated data
-            res = get.loadings.ndisplay(object = object, comp = comp, block = "X", name.var = name.var, name.var.complete = name.var.complete, ndisplay = ndisplay)
+            res = get.loadings.ndisplay(object = object, comp = comp, block = "X", name.var = name.var, name.var.complete = FALSE, ndisplay = ndisplay)
             X = res$X
             colnames.X = res$colnames.X
             name.selected.var = res$name.selected.var
