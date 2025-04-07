@@ -29,17 +29,11 @@
 #' Importantly for multi plots, the legend accounts for one subplot in the
 #' layout design.
 #' 
-#' The \code{block} argument behavior varies depending on the object type:
-#' \itemize{
-#'   \item For \code{mixo_pls}, \code{mixo_spls}, \code{rcc}, \code{rgcca}, \code{sgcca}: 
-#'         can be any block from \code{object$names$blocks}
-#'   \item For \code{mixo_plsda}, \code{mixo_splsda}: 
-#'         can only be "X" or "1"
-#'   \item For \code{mint.pls}, \code{mint.spls}: 
-#'         when \code{study="all.partial"}, can only be one block from \code{object$names$blocks}
-#'   \item For \code{pca}: 
-#'         block argument is not used
-#' }
+#' The \code{block} argument behavior varies depending on the object type. 
+#' For \code{mixo_pls}, \code{mixo_spls}, \code{rcc}, \code{rgcca}, \code{sgcca},
+#' \code{block} can be any number of blocks from \code{object$names$blocks}.
+#' For code{mint.pls}, \code{mint.spls}: when \code{study="all.partial"}, 
+#' can only be one block from \code{object$names$blocks}.
 #' 
 #' @aliases plotLoadings.pls plotLoadings.spls
 #' @param object object
@@ -49,76 +43,54 @@
 #' Useful to lighten a graph.
 #' @param style argument to be set to either \code{'graphics'} or \code{'ggplot2'} 
 #' to indicate the style of the plot. Default is \code{'graphics'}.
-
-# aesthetics
-#' @param col color of barplot, only for non-DA methods.
-#' @param border Argument from \code{\link{barplot}}: indicates whether to draw
-#' a border on the barplot and in which colour. 
-
-
-# variable names
-#' @param size.name A numerical value giving the amount by which plotting the
-#' variable name text should be magnified or reduced relative to the default.
-#' @param name.var A character vector or list indicating the names of the variables.
-#' For single block analysis or when \code{study="all.partial"}, a vector of length equal to the number of variables in the block.
-#' For multi-block analysis, a list where each element is a vector of length equal to the number of variables in the corresponding block.
-#' The names of the vector should match the names of the input data, see example.
-
-# title
-#' @param title Title of the plot. Default is NULL.
-#' @param size.title size of the title
-
-# layout and x axis
 #' @param layout Vector of two values (rows,cols) that indicates the layout of
 #' the plot. If \code{layout} is provided, the remaining empty subplots are
-#' still active. Only applies when style is set to \code{'graphics'}.
-#' @param xlim Argument from \code{\link{barplot}}: limit of the x-axis. When
-
-
-# remove this?
-#' @param name.var.complete Logical. If \code{name.var} is supplied with some
-#' empty names, \code{name.var.complete} allows you to use the initial variable
-#' names to complete the graph (from colnames(X)). Defaut to FALSE.
-#' @param plot Logical indicating of the plot should be output. If set to FALSE
-#' the user can extract the contribution matrix, see example. Default value is
-#' TRUE.
-
-
+#' still active. See details and examples. 
+#' @param xlim Limit of the x-axis, vector of length 2.
+#' @param col color of barplot, only for non-DA methods.
+#' @param border Argument from \code{\link{barplot}}: indicates whether to draw
+#' a border on the barplot and in which colour. Note that for -DA methods, 
+#' when \code{contrib} is not provided, the colour is set to white and border black.
+#' @param name.var A character vector or list indicating the names of the variables.
+#' For single block analysis or when \code{study="all.partial"}, a vector of length equal 
+#' to the number of variables in the block. For multi-block analysis, a list where each element 
+#' is a vector of length equal to the number of variables in the corresponding block.
+#' The names of the vector should match the names of the input data, see example.
+#' @param size.name A numerical value giving the amount by which plotting the
+#' variable name text should be magnified or reduced relative to the default.
+#' @param title Title of the plot. Default is NULL.
+#' @param size.title size of the title
+#' @param subtitle subtitle for each plot, only used when several \code{block}
+#' or \code{study} are plotted.
+#' @param size.subtitle size of the subtitle
+#' @param size.axis size of text on the X axis
+#' @param X.label X axis label. Default is NULL.
+#' @param Y.label Y axis label. Default is NULL.
+#' @param size.labs size of the axis labels. 
+#' @param block A single value or vector indicating which block to plot. 
+#' See details for behavior depending on object type.
 #' @param contrib a character set to 'max' or 'min' indicating if the color of
 #' the bar should correspond to the group with the maximal or minimal
 #' expression levels / abundance.
 #' @param method a character set to 'mean' or 'median' indicating the criterion
 #' to assess the contribution. We recommend using median in the case of count
 #' or skewed data.
-#' @param study Indicates which study are to be plotted.  A character vector
-#' containing some levels of \code{object$study}, "all.partial" to plot all
-#' studies or "global" is expected.
-#' @param block A single value or vector indicating which block to plot. See details for behavior depending on object type.
-
 #' @param show.ties Logical. If TRUE then tie groups appear in the color set by
 #' \code{col.ties}, which will appear in the legend. Ties can happen when
 #' dealing with count data type. By default set to TRUE.
 #' @param col.ties Color corresponding to ties, only used if
 #' \code{show.ties=TRUE} and ties are present.
-
-
-#' @param size.legend A numerical value giving the amount by which plotting the
-#' legend text should be magnified or reduced relative to the default.
-
-
-#' @param subtitle subtitle for each plot, only used when several \code{block}
-#' or \code{study} are plotted.
-#' @param size.subtitle size of the subtitle
 #' @param legend Logical indicating if the legend indicating the group outcomes
 #' should be added to the plot. Default value is TRUE.
 #' @param legend.color A color vector of length the number of group outcomes.
 #' See examples.
 #' @param legend.title A set of characters to indicate the title of the legend.
 #' Default value is NULL.
-
-
-#' plotting several \code{block}, a matrix is expected where each row is the
-#' \code{xlim} used for each of the blocks.
+#' @param size.legend A numerical value giving the amount by which plotting the
+#' legend text should be magnified or reduced relative to the default.
+#' @param study Indicates which study are to be plotted.  A character vector
+#' containing some levels of \code{object$study}, "all.partial" to plot all
+#' studies or "global" is expected.
 #' @param \dots not used.
 #' @return Invisibly returns a \code{data.frame} containing the contribution of 
 #' features on each component. For supervised models the contributions for
