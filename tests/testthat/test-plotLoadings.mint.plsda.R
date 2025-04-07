@@ -13,19 +13,23 @@ mint.splsda.obj = mint.splsda(X = data, Y = type.id, study = study.id, ncomp = 2
 test_that("plotLoadings.mint.plsda works", {
     # Test default behavior with graphics style
     png(tempfile(), width = 1200, height = 1000, res = 150)
+    old_par <- par(no.readonly = TRUE)  # Save current par settings
+    par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names
     expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, style = "graphics"))))
+    par(old_par)  # Restore original par settings
     dev.off()
     
     # Test with ggplot2 style
     png(tempfile(), width = 1200, height = 1000, res = 150)
+    old_par <- par(no.readonly = TRUE)  # Save current par settings
+    par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names
     expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, style = "ggplot2"))))
+    par(old_par)  # Restore original par settings
     dev.off()
     
     # Test with invalid style
-    png(tempfile(), width = 1200, height = 1000, res = 150)
     expect_error(plotLoadings(mint.splsda.obj, comp = 1, style = "invalid"),
                  "'style' must be either 'graphics' or 'ggplot2'")
-    dev.off()
     
     # Test with invalid component
     expect_error(plotLoadings(mint.splsda.obj, comp = 0),
@@ -41,8 +45,11 @@ test_that("plotLoadings.mint.plsda works", {
     
     # Test with invalid block argument
     png(tempfile(), width = 1200, height = 1000, res = 150)
+    old_par <- par(no.readonly = TRUE)  # Save current par settings
+    par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names
     expect_warning(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, block = "X"))),
                   "'block' argument is not used for mint.plsda or mint.splsda objects")
+    par(old_par)  # Restore original par settings
     dev.off()
 })
 
@@ -50,14 +57,20 @@ test_that("plotLoadings.mint.plsda works", {
 test_that("plotLoadings.mint.plsda returns correct structure", {
     # Test return value for single study
     png(tempfile(), width = 1200, height = 1000, res = 150)
+    old_par <- par(no.readonly = TRUE)  # Save current par settings
+    par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names
     result <- plotLoadings(mint.splsda.obj, comp = 1, study = 1, contrib = "max")
+    par(old_par)  # Restore original par settings
     dev.off()
     expect_true(is.data.frame(result[[1]]))
     expect_true(all(c("importance", "color", "GroupContrib") %in% names(result[[1]])))
     
     # Test return value for multiple studies
     png(tempfile(), width = 1200, height = 1000, res = 150)
+    old_par <- par(no.readonly = TRUE)  # Save current par settings
+    par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names
     result <- plotLoadings(mint.splsda.obj, comp = 1, study = c(1, 2))
+    par(old_par)  # Restore original par settings
     dev.off()
     expect_true(is.list(result))
     expect_equal(length(result), 2)

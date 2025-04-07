@@ -9,7 +9,10 @@ pca.obj <- pca(X, ncomp = 3)
 # Unit test 1: Test default behavior
 test_that("Test default behavior with graphics style", {
   png(tempfile(), width = 1200, height = 1000, res = 150)
+  old_par <- par(no.readonly = TRUE)  # Save current par settings
+  par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names
   result <- plotLoadings(pca.obj, comp = 1, style = "graphics")
+  par(old_par)  # Restore original par settings
   dev.off()
   expect_s3_class(result, "data.frame")
   expect_equal(ncol(result), 2)  # Expect 2 columns in output df

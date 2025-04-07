@@ -14,7 +14,10 @@ diablo.obj = wrapper.sgccda(X = data,
 # Unit test 1: Test default behavior with graphics style
 test_that("Test default behavior with graphics style", {
   png(tempfile(), width = 1200, height = 1000, res = 150)
+  old_par <- par(no.readonly = TRUE)  # Save current par settings
+  par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names
   result <- plotLoadings(diablo.obj, comp = 2, style = "graphics")
+  par(old_par)  # Restore original par settings
   dev.off()
   expect_equal(length(result), 2)  # Expect 2 blocks (gene and lipid)
   expect_s3_class(result[[1]], "data.frame")
@@ -24,7 +27,10 @@ test_that("Test default behavior with graphics style", {
 # Unit test 2: Test block-specific functionality
 test_that("Test block-specific plotting", {
   png(tempfile(), width = 1200, height = 1000, res = 150)
+  old_par <- par(no.readonly = TRUE)  # Save current par settings
+  par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names
   result <- plotLoadings(diablo.obj, block = "lipid", style = "graphics")
+  par(old_par)  # Restore original par settings
   dev.off()
   expect_equal(length(result), 1)  # Only one block
   expect_equal(names(result), "lipid")
@@ -33,7 +39,10 @@ test_that("Test block-specific plotting", {
 # Unit test 3: Test contrib parameter
 test_that("Test contrib parameter functionality", {
   png(tempfile(), width = 1200, height = 1000, res = 150)
+  old_par <- par(no.readonly = TRUE)  # Save current par settings
+  par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names
   result <- plotLoadings(diablo.obj, contrib = "max", style = "graphics")
+  par(old_par)  # Restore original par settings
   dev.off()
   expect_equal(length(result), 2)  # Both blocks
   expect_true(all(sapply(result, function(x) "color" %in% colnames(x))))  # Check for color column
