@@ -13,7 +13,9 @@ diablo.obj = wrapper.sgccda(X = data,
 
 # Unit test 1: Test default behavior with graphics style
 test_that("Test default behavior with graphics style", {
+  png(tempfile())
   result <- plotLoadings(diablo.obj, comp = 2, style = "graphics")
+  dev.off()
   expect_equal(length(result), 2)  # Expect 2 blocks (gene and lipid)
   expect_s3_class(result[[1]], "data.frame")
   expect_equal(ncol(result[[1]]), 1)  # Expect 1 column
@@ -21,14 +23,18 @@ test_that("Test default behavior with graphics style", {
 
 # Unit test 2: Test block-specific functionality
 test_that("Test block-specific plotting", {
+  png(tempfile())
   result <- plotLoadings(diablo.obj, block = "lipid", style = "graphics")
+  dev.off()
   expect_equal(length(result), 1)  # Only one block
   expect_equal(names(result), "lipid")
 })
 
 # Unit test 3: Test contrib parameter
 test_that("Test contrib parameter functionality", {
+  png(tempfile())
   result <- plotLoadings(diablo.obj, contrib = "max", style = "graphics")
+  dev.off()
   expect_equal(length(result), 2)  # Both blocks
   expect_true(all(sapply(result, function(x) "color" %in% colnames(x))))  # Check for color column
 })
