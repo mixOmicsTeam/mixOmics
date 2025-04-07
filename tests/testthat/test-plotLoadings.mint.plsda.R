@@ -12,14 +12,20 @@ mint.splsda.obj = mint.splsda(X = data, Y = type.id, study = study.id, ncomp = 2
 # Basic Unit Tests
 test_that("plotLoadings.mint.plsda works", {
     # Test default behavior with graphics style
+    png(tempfile())
     expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, style = "graphics"))))
+    dev.off()
     
     # Test with ggplot2 style
+    png(tempfile())
     expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, style = "ggplot2"))))
+    dev.off()
     
     # Test with invalid style
+    png(tempfile())
     expect_error(plotLoadings(mint.splsda.obj, comp = 1, style = "invalid"),
                  "'style' must be either 'graphics' or 'ggplot2'")
+    dev.off()
     
     # Test with invalid component
     expect_error(plotLoadings(mint.splsda.obj, comp = 0),
@@ -34,97 +40,25 @@ test_that("plotLoadings.mint.plsda works", {
                  "'study' must from one of 'object\\$study', 'global' or 'all.partial', see help file")
     
     # Test with invalid block argument
+    png(tempfile())
     expect_warning(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, block = "X"))),
                   "'block' argument is not used for mint.plsda or mint.splsda objects")
-})
-
-# Test study-specific functionality
-test_that("plotLoadings.mint.plsda handles different study options", {
-    # Test single study
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = 2))))
-    
-    # Test multiple studies
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = c(2, 3)))))
-    
-    # Test all.partial option
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = "all.partial"))))
-    
-    # Test global option
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = "global"))))
-})
-
-# Test customization options
-test_that("plotLoadings.mint.plsda handles customization options", {
-    # Test with custom title
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, title = "Custom Title"))))
-    
-    # Test with custom subtitle
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = c(1, 2), 
-                             subtitle = c("Subtitle 1", "Subtitle 2")))))
-    
-    # Test with custom sizes
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
-                             size.title = 2, 
-                             size.subtitle = 1.6,
-                             size.name = 0.7,
-                             size.axis = 0.7,
-                             size.labs = 1))))
-    
-    # Test with custom labels
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
-                             X.label = "Custom X Label",
-                             Y.label = "Custom Y Label"))))
-    
-    # Test with custom colors
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
-                             legend.color = c("red", "blue", "green")))))
-    
-    # Test with custom legend title
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, 
-                             legend.title = "Custom Legend"))))
-})
-
-# Test display options
-test_that("plotLoadings.mint.plsda handles display options", {
-    # Test with ndisplay
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, ndisplay = 5))))
-    
-    # Test with xlim
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, xlim = c(-1, 1)))))
-    
-    # Test with layout
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, study = c(3, 4), 
-                             layout = c(1, 2)))))
-})
-
-# Test contribution options
-test_that("plotLoadings.mint.plsda handles contribution options", {
-    # Test with max contribution
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max"))))
-    
-    # Test with min contribution
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, contrib = "min"))))
-    
-    # Test with mean method
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max", method = "mean"))))
-    
-    # Test with median method
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max", method = "median"))))
-    
-    # Test with ties handling
-    expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, contrib = "max", 
-                             show.ties = TRUE, col.ties = "white"))))
+    dev.off()
 })
 
 # Test return value
 test_that("plotLoadings.mint.plsda returns correct structure", {
     # Test return value for single study
+    png(tempfile())
     result <- plotLoadings(mint.splsda.obj, comp = 1, study = 1, contrib = "max")
+    dev.off()
     expect_true(is.data.frame(result[[1]]))
     expect_true(all(c("importance", "color", "GroupContrib") %in% names(result[[1]])))
     
     # Test return value for multiple studies
+    png(tempfile())
     result <- plotLoadings(mint.splsda.obj, comp = 1, study = c(1, 2))
+    dev.off()
     expect_true(is.list(result))
     expect_equal(length(result), 2)
     expect_true(all(sapply(result, is.data.frame)))

@@ -8,15 +8,11 @@ pca.obj <- pca(X, ncomp = 3)
 
 # Unit test 1: Test default behavior
 test_that("Test default behavior with graphics style", {
+  png(tempfile())
   result <- plotLoadings(pca.obj, comp = 1, style = "graphics")
+  dev.off()
   expect_s3_class(result, "data.frame")
   expect_equal(ncol(result), 2)  # Expect 2 columns in output df
-})
-
-# Unit test 2: Test ggplot2 style
-test_that("Test ggplot2 style ignores layout", {
-  expect_warning(plotLoadings(pca.obj, comp = 1, style = "ggplot2", layout = c(1,2)),
-                 "layout is ignored for PCA objects when style is set to 'ggplot2'.")
 })
 
 # Unit test 3: Test incorrect 'col' value

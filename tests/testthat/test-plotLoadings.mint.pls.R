@@ -8,7 +8,9 @@ mint.spls.obj <- mint.pls(X = stemcells$gene[,20:25], Y = stemcells$gene[,1:10],
 
 # Unit test 1: Test default behavior
 test_that("Test default behavior with graphics style", {
+  png(tempfile())
   result <- plotLoadings(mint.spls.obj, comp = 1, style = "graphics")
+  dev.off()
   expect_equal(class(result), "list")
   expect_true(all(sapply(result, is.data.frame)))
 })
