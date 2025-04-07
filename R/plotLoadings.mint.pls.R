@@ -132,7 +132,7 @@ plotLoadings.mint.pls <-
             }
             
             # Handle block selection for all.partial case
-            if (study == "all.partial" | study %in% levels(object$study)) {
+            if (any(study == "all.partial") | any(study %in% levels(object$study))) {
                 if (missing(block)) {
                     block = object$names$blocks[1]  # default to first block if not specified
                 } else if (length(block) > 1) {

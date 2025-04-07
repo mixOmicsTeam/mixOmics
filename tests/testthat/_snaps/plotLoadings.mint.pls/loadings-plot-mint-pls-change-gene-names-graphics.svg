@@ -50,8 +50,8 @@
 <text x='285.44' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.2</text>
 </g>
 <g clip-path='url(#cpMC4wMHwzNjAuMDB8MC4wMHw1NzYuMDA=)'>
-<text x='216.00' y='28.80' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='216.19px' lengthAdjust='spacingAndGlyphs'>Loadings on comp 1</text>
-<text x='216.00' y='57.60' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='90.55px' lengthAdjust='spacingAndGlyphs'>Block 'X'</text>
+<text x='216.00' y='31.68' text-anchor='middle' style='font-size: 21.60px; font-weight: bold; font-family: sans;' textLength='194.57px' lengthAdjust='spacingAndGlyphs'>Loadings on comp 1</text>
+<text x='216.00' y='57.60' text-anchor='middle' style='font-size: 21.60px; font-weight: bold; font-family: sans;' textLength='81.49px' lengthAdjust='spacingAndGlyphs'>Block 'X'</text>
 </g>
 <defs>
   <clipPath id='cpMzYwLjAwfDcyMC4wMHwwLjAwfDU3Ni4wMA=='>
@@ -96,14 +96,7 @@
 <text x='673.56' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.6</text>
 </g>
 <g clip-path='url(#cpMzYwLjAwfDcyMC4wMHwwLjAwfDU3Ni4wMA==)'>
-<text x='576.00' y='28.80' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='216.19px' lengthAdjust='spacingAndGlyphs'>Loadings on comp 1</text>
-<text x='576.00' y='57.60' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='90.55px' lengthAdjust='spacingAndGlyphs'>Block 'Y'</text>
-</g>
-<defs>
-  <clipPath id='cpNTkuMDR8Njg5Ljc2fDU5LjA0fDUwMi41Ng=='>
-    <rect x='59.04' y='59.04' width='630.72' height='443.52' />
-  </clipPath>
-</defs>
-<g clip-path='url(#cpNTkuMDR8Njg5Ljc2fDU5LjA0fDUwMi41Ng==)'>
+<text x='576.00' y='31.68' text-anchor='middle' style='font-size: 21.60px; font-weight: bold; font-family: sans;' textLength='194.57px' lengthAdjust='spacingAndGlyphs'>Loadings on comp 1</text>
+<text x='576.00' y='57.60' text-anchor='middle' style='font-size: 21.60px; font-weight: bold; font-family: sans;' textLength='81.49px' lengthAdjust='spacingAndGlyphs'>Block 'Y'</text>
 </g>
 </svg>
