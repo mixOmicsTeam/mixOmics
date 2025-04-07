@@ -8,7 +8,7 @@ pca.obj <- pca(X, ncomp = 3)
 
 # Unit test 1: Test default behavior
 test_that("Test default behavior with graphics style", {
-  png(tempfile())
+  png(tempfile(), width = 1200, height = 1000, res = 150)
   result <- plotLoadings(pca.obj, comp = 1, style = "graphics")
   dev.off()
   expect_s3_class(result, "data.frame")

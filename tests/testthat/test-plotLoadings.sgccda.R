@@ -13,7 +13,7 @@ diablo.obj = wrapper.sgccda(X = data,
 
 # Unit test 1: Test default behavior with graphics style
 test_that("Test default behavior with graphics style", {
-  png(tempfile())
+  png(tempfile(), width = 1200, height = 1000, res = 150)
   result <- plotLoadings(diablo.obj, comp = 2, style = "graphics")
   dev.off()
   expect_equal(length(result), 2)  # Expect 2 blocks (gene and lipid)
@@ -23,7 +23,7 @@ test_that("Test default behavior with graphics style", {
 
 # Unit test 2: Test block-specific functionality
 test_that("Test block-specific plotting", {
-  png(tempfile())
+  png(tempfile(), width = 1200, height = 1000, res = 150)
   result <- plotLoadings(diablo.obj, block = "lipid", style = "graphics")
   dev.off()
   expect_equal(length(result), 1)  # Only one block
@@ -32,7 +32,7 @@ test_that("Test block-specific plotting", {
 
 # Unit test 3: Test contrib parameter
 test_that("Test contrib parameter functionality", {
-  png(tempfile())
+  png(tempfile(), width = 1200, height = 1000, res = 150)
   result <- plotLoadings(diablo.obj, contrib = "max", style = "graphics")
   dev.off()
   expect_equal(length(result), 2)  # Both blocks

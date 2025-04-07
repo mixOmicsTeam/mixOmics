@@ -12,17 +12,17 @@ mint.splsda.obj = mint.splsda(X = data, Y = type.id, study = study.id, ncomp = 2
 # Basic Unit Tests
 test_that("plotLoadings.mint.plsda works", {
     # Test default behavior with graphics style
-    png(tempfile())
+    png(tempfile(), width = 1200, height = 1000, res = 150)
     expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, style = "graphics"))))
     dev.off()
     
     # Test with ggplot2 style
-    png(tempfile())
+    png(tempfile(), width = 1200, height = 1000, res = 150)
     expect_silent(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, style = "ggplot2"))))
     dev.off()
     
     # Test with invalid style
-    png(tempfile())
+    png(tempfile(), width = 1200, height = 1000, res = 150)
     expect_error(plotLoadings(mint.splsda.obj, comp = 1, style = "invalid"),
                  "'style' must be either 'graphics' or 'ggplot2'")
     dev.off()
@@ -40,7 +40,7 @@ test_that("plotLoadings.mint.plsda works", {
                  "'study' must from one of 'object\\$study', 'global' or 'all.partial', see help file")
     
     # Test with invalid block argument
-    png(tempfile())
+    png(tempfile(), width = 1200, height = 1000, res = 150)
     expect_warning(invisible(capture.output(plotLoadings(mint.splsda.obj, comp = 1, block = "X"))),
                   "'block' argument is not used for mint.plsda or mint.splsda objects")
     dev.off()
@@ -49,14 +49,14 @@ test_that("plotLoadings.mint.plsda works", {
 # Test return value
 test_that("plotLoadings.mint.plsda returns correct structure", {
     # Test return value for single study
-    png(tempfile())
+    png(tempfile(), width = 1200, height = 1000, res = 150)
     result <- plotLoadings(mint.splsda.obj, comp = 1, study = 1, contrib = "max")
     dev.off()
     expect_true(is.data.frame(result[[1]]))
     expect_true(all(c("importance", "color", "GroupContrib") %in% names(result[[1]])))
     
     # Test return value for multiple studies
-    png(tempfile())
+    png(tempfile(), width = 1200, height = 1000, res = 150)
     result <- plotLoadings(mint.splsda.obj, comp = 1, study = c(1, 2))
     dev.off()
     expect_true(is.list(result))
