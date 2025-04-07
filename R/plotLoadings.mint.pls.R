@@ -173,7 +173,7 @@ plotLoadings.mint.pls <-
             
             
             # -- layout
-            res = layout.plotLoadings(layout = layout, plot = TRUE, legend = FALSE, block = block)
+            res = layout.plotLoadings(layout = layout, plot = TRUE, legend = FALSE, block = study.init)
             reset.mfrow = res$reset.mfrow
             opar = res$opar
             omar = par("mar") #reset mar at the end
