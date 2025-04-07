@@ -106,58 +106,58 @@ test_that("plotLoadings works for mint.pls graphics", {
 ## ------------------------------------------------------------------------ ##
 ## vdiffr testing - "ggplot2"
 
-# test_that("plotLoadings works for mint.pls ggplot2", {
-#   skip_on_ci() # only run the vdiffr tests locally
-#   
-#   # simple plot
-#   invisible(capture.output(
-#     expect_doppelganger(
-#       title = "Loadings plot mint.pls simple - ggplot2", 
-#       fig = plotLoadings(mint.spls.obj, style = "ggplot2"))
-#   ))
-#   
-#   # plot with all.partial
-#   invisible(capture.output(
-#     expect_doppelganger(
-#       title = "Loadings plot mint.pls all.partial - ggplot2",
-#       fig = plotLoadings(mint.spls.obj, study = "all.partial", style = "ggplot2"))
-#   ))
-#   
-#   # plot specific study
-#   invisible(capture.output(
-#     expect_doppelganger(
-#       title = "Loadings plot mint.pls specific study - ggplot2",
-#       fig = plotLoadings(mint.spls.obj, study = "Study_A", style = "ggplot2"))
-#   ))
-#   
-#   # change gene names
-#   new_names <- list(c(paste0("Gene_", 1:1:ncol(mint.spls.obj$X))), c(paste0("Clinical_", 1:1:ncol(mint.spls.obj$Y))))
-#   names(new_names) <- c("X", "Y")
-#   invisible(capture.output(
-#     expect_doppelganger(
-#       title = "Loadings plot mint.pls change gene names - ggplot2",
-#       fig = plotLoadings(mint.spls.obj, name.var = new_names, style = "ggplot2"))
-#   ))
-#   
-#   # change labels and label sizes
-#   invisible(capture.output(
-#     expect_doppelganger(
-#       title = "Loadings plot mint.pls change labels and label sizes - ggplot2",
-#       fig = plotLoadings(mint.spls.obj, style = "ggplot2", X.label = "X", Y.label = "Y", title = "Title Test",
-#                          size.labs = 2, size.title = 3, size.axis = 1))
-#   ))
-#   
-#   # change colours and borders
-#   invisible(capture.output(
-#     expect_doppelganger(
-#       title = "Loadings plot mint.pls change cols and borders - ggplot2",
-#       fig = plotLoadings(mint.spls.obj, style = "ggplot2", col = "green", border = "grey", xlim = c(-1, 1)))
-#   ))
-#   
-#   # change layout
-#   invisible(capture.output(
-#     expect_doppelganger(
-#       title = "Loadings plot mint.pls change layout - ggplot2",
-#       fig = plotLoadings(mint.spls.obj, study = c("Study_A", "Study_B"), layout = c(2,1), style = "ggplot2"))
-#   ))
-# }) 
+test_that("plotLoadings works for mint.pls ggplot2", {
+  skip_on_ci() # only run the vdiffr tests locally
+
+  # simple plot
+  invisible(capture.output(
+    expect_doppelganger(
+      title = "Loadings plot mint.pls simple - ggplot2",
+      fig = plotLoadings(mint.spls.obj, style = "ggplot2"))
+  ))
+
+  # plot with all.partial
+  invisible(capture.output(
+    expect_doppelganger(
+      title = "Loadings plot mint.pls all.partial - ggplot2",
+      fig = plotLoadings(mint.spls.obj, study = "all.partial", style = "ggplot2"))
+  ))
+
+  # plot specific study
+  invisible(capture.output(
+    expect_doppelganger(
+      title = "Loadings plot mint.pls specific study - ggplot2",
+      fig = plotLoadings(mint.spls.obj, study = "Study_A", style = "ggplot2"))
+  ))
+
+  # change gene names
+  new_names <- list(c(paste0("Gene_", 1:1:ncol(mint.spls.obj$X))), c(paste0("Clinical_", 1:1:ncol(mint.spls.obj$Y))))
+  names(new_names) <- c("X", "Y")
+  invisible(capture.output(
+    expect_doppelganger(
+      title = "Loadings plot mint.pls change gene names - ggplot2",
+      fig = plotLoadings(mint.spls.obj, name.var = new_names, style = "ggplot2"))
+  ))
+
+  # change labels and label sizes
+  invisible(capture.output(
+    expect_doppelganger(
+      title = "Loadings plot mint.pls change labels and label sizes - ggplot2",
+      fig = plotLoadings(mint.spls.obj, style = "ggplot2", X.label = "X", Y.label = "Y", title = "Title Test",
+                         size.labs = 2, size.title = 3, size.axis = 1))
+  ))
+
+  # change colours and borders
+  invisible(capture.output(
+    expect_doppelganger(
+      title = "Loadings plot mint.pls change cols and borders - ggplot2",
+      fig = plotLoadings(mint.spls.obj, style = "ggplot2", col = "green", border = "grey", xlim = c(-1, 1)))
+  ))
+
+  # change layout
+  invisible(capture.output(
+    expect_doppelganger(
+      title = "Loadings plot mint.pls change layout - ggplot2",
+      fig = plotLoadings(mint.spls.obj, study = c("Study_A", "Study_B"), layout = c(2,1), style = "ggplot2"))
+  ))
+})
