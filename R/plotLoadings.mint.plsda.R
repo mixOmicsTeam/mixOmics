@@ -5,38 +5,85 @@
 #' @export
 plotLoadings.mint.plsda <- 
     function(object,
-             contrib = NULL,  # choose between 'max" or "min", NULL does not color the barplot
-             method = "mean", # choose between 'mean" or "median"
-             study = "global",
              comp = 1,
-             plot = TRUE,
-             show.ties = TRUE,
-             col.ties = "white",
+             style = "graphics",
              ndisplay = NULL,
-             size.name = 0.7,
-             size.legend = 0.8,
+             xlim = NULL,
+             layout = NULL,
+             border = NA,
              name.var = NULL,
-             name.var.complete = FALSE,
+             size.name = 0.7,
              title = NULL,
              subtitle,
-             size.title = rel(1.8),
-             size.subtitle = rel(1.4),
+             size.title = 2,
+             size.subtitle = 1.7,
+             size.axis = 0.7,
+             X.label = NULL,
+             Y.label = NULL,
+             size.labs = 1,
+             contrib = NULL,  # choose between 'max" or "min", NULL does not color the barplot
+             method = "mean", # choose between 'mean" or "median"
+             show.ties = TRUE,
+             col.ties = "white",
              legend = TRUE,
              legend.color = NULL,
              legend.title = 'Outcome',
-             layout = NULL,
-             border = NA,
-             xlim = NULL,
+             size.legend = 0.8,
+             study = "global",
              ...
     ) {
+
+        ## Check input args
+      # Input checks
+      if (!is.numeric(comp) || length(comp) != 1 || comp <= 0)
+        stop("'comp' must be a positive integer.")
+      if (!style %in% c('graphics', 'ggplot2'))
+        stop("'style' must be either 'graphics' or 'ggplot2'.")
+      if (!is.null(ndisplay) && (!is.numeric(ndisplay) || length(ndisplay) != 1 || ndisplay <= 0))
+        stop("'ndisplay' must be a positive integer.")
+      
+      if (!is.null(title) && !is.character(title))
+        stop("'title' must be NULL or a character string.")
+      if (!is.null(xlim) && (!is.numeric(xlim) || length(xlim) != 2))
+        stop("'xlim' must be a numeric vector of length 2.")
+      if (!is.null(X.label) && !is.character(X.label))
+        stop("'X.label' must be NULL or a character string.")
+      if (!is.null(Y.label) && !is.character(Y.label))
+        stop("'Y.label' must be NULL or a character string.")
+      
+      if (!is.numeric(size.name) || size.name <= 0)
+        stop("'size.name' must be a positive numeric value.")
+      if (!is.numeric(size.title) || size.title <= 0)
+        stop("'size.title' must be a positive numeric value.")
+      if (!is.numeric(size.subtitle) || size.subtitle <= 0)
+        stop("'size.subtitle' must be a positive numeric value.")
+      if (!is.numeric(size.labs) || size.labs <= 0)
+        stop("'size.labs' must be a positive numeric value.")
+      if (!is.numeric(size.axis) || size.axis <= 0)
+        stop("'size.axis' must be a positive numeric value.")
+      
+      # check for inappropriate args
+      extra_args <- list(...)
+      if ("name.var.complete" %in% names(extra_args)) {
+        warning("'name.var.complete' argument is deprecated")
+      }
+
+      if ("plot" %in% names(extra_args)) {
+        warning("'plot' argument is deprecated")
+      }
         
         if(any(study == "global"))
         {
-            plotLoadings.mixo_plsda(object = object, contrib = contrib, method = method, block = "X", comp = comp, ndisplay = ndisplay,
+            plotLoadings.mixo_plsda(object = object, 
+                                    style = style,
+                                    contrib = contrib, 
+                                    method = method, 
+                                    block = "X", 
+                                    comp = comp, 
+                                    ndisplay = ndisplay,
                                     size.name = size.name,
                                     size.legend = size.legend,
                                     name.var = name.var,
-                                    name.var.complete = name.var.complete,
                                     legend = legend,
                                     legend.color = legend.color,
                                     title = if(!is.null(title)){title}else{paste0('Contribution on comp ', comp, "\n All studies")},
@@ -203,7 +250,13 @@ plotLoadings.mint.plsda <-
                     par(mar = c(4, max(7, max(sapply(colnames.X, nchar),na.rm = TRUE)/2), 4, 2))
                 }
                 
-                .plotLoadings_barplot(height = df$importance, col = df$color, names.arg = colnames.X, cex.name = size.name, border = border, xlim = xlim[i, ])
+                .plotLoadings_barplot(height = df$importance, 
+                                    col = df$color, 
+                                    names.arg = colnames.X, 
+                                    cex.name = size.name, 
+                                    border = border, 
+                                    xlim = xlim[i, ],
+                                    xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
                 
                 if ( length(block) == 1 & is.null(title) )
                 {
