@@ -301,7 +301,6 @@ plotLoadings.mint.plsda <-
                     # Create the base plot
                     p <- ggplot(df, aes(x = reorder(names, -abs(importance)), y = importance)) +
                         geom_bar(stat = "identity", aes(fill = color), color = border) +
-                        scale_fill_identity() +  # This ensures the colors are used as-is
                         theme_minimal() +
                         theme(axis.text.y = element_text(size = size.name * 8),
                               axis.text.x = element_text(size = size.axis * 8),
@@ -329,10 +328,17 @@ plotLoadings.mint.plsda <-
                     
                     # Add legend if needed
                     if (legend && !is.null(contrib)) {
-                        p <- p + theme(legend.position = "right") +
-                            scale_fill_manual(values = legend.color[1:nlevels(Y)], 
-                                            labels = levels(Y),
-                                            name = legend.title)
+                        # Create a named vector for the legend
+                        legend_values <- c(legend.color[1:nlevels(Y)], setNames(col.ties, "ties"))
+                        legend_labels <- c(levels(Y), "ties")
+                        
+                        p <- p + 
+                            scale_fill_identity(guide = "legend",
+                                              breaks = legend_values,
+                                              labels = legend_labels,
+                                              name = legend.title)
+                    } else {
+                        p <- p + scale_fill_identity()
                     }
                     
                     plot_list[[i]] <- p
