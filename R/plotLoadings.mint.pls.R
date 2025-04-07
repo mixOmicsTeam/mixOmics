@@ -69,7 +69,9 @@ plotLoadings.mint.pls <-
         if(any(study == "global"))
         {
             # if study == "global" then we plot the results on the concatenated data, thus direct call to plotLoadings.plsda
-            plotLoadings.mixo_pls(object = object, comp = comp, ndisplay = ndisplay,
+            plotLoadings.mixo_pls(object = object, 
+                                  comp = comp, 
+                                  ndisplay = ndisplay,
                                   size.name = size.name,
                                   name.var = name.var,
                                   title = title,
@@ -94,9 +96,9 @@ plotLoadings.mint.pls <-
             
             col = check$col
             size.name = check$size.name
-            block = check$block # uses actual block names from object
+            # block = check$block # uses actual block names from object
             
-            #study needs to be either: from levels(object$study), numbers from 1:nlevels(study) or "global"
+            #study needs to be either: from levels(object$study), "all.partial" or "global"
             if (any(!study%in%c(levels(object$study), "global" , "all.partial")))
                 stop("'study' must from one of 'object$study', 'global' or 'all.partial', see help file.")
             
@@ -121,7 +123,7 @@ plotLoadings.mint.pls <-
                 }
             }
             study.init = unique(study.init) #once again cause we added studies if "all.partial"
-            study = study.init
+            # study = study.init
             
             if (!missing(subtitle))
             {
@@ -130,17 +132,17 @@ plotLoadings.mint.pls <-
             }
             
             # Handle block selection for all.partial case
-            if (any(study == "all.partial")) {
+            if (study == "all.partial" | study %in% levels(object$study)) {
                 if (missing(block)) {
                     block = object$names$blocks[1]  # default to first block if not specified
                 } else if (length(block) > 1) {
-                    stop("When study = 'all.partial', only one block can be plotted at a time. Please specify one of: ", 
+                    stop("When study = 'all.partial' or a specific study is specified, only one block can be plotted at a time. Please specify one of: ", 
                          paste(object$names$blocks, collapse = ", "))
                 }
             }
             
-            # swap block for study
-            block = study
+            # # swap block for study
+            # block = study
             
             # check xlim, has to be a matrix with number of rows=number of studies, or a vector of two values
             if(length(study) == 1 & !is.null(xlim))
@@ -190,9 +192,9 @@ plotLoadings.mint.pls <-
             object$names$block = levels(object$study)
             
             df.final = list()
-            for (i in 1 : length(block))
+            for (i in 1 : length(study.init))
             {
-                value.selected.var = object$loadings.partial[[block]][[block[i]]][, comp] [name.selected.var]
+                value.selected.var = object$loadings.partial[[block]][[study.init[i]]][, comp] [name.selected.var]
                 
                 df = data.frame(importance = value.selected.var, color = col, stringsAsFactors = FALSE) # contribution of the loading
                 
@@ -208,14 +210,14 @@ plotLoadings.mint.pls <-
                         cex.name = size.name, border = border, xlim = xlim,
                         xlab = X.label, ylab = Y.label, cex.lab = size.labs, cex.axis = size.axis)
                 
-                if ( length(block) == 1 & is.null(title) )
+                if ( length(study.init) == 1 & is.null(title) )
                 {
                     title(paste0('Loadings on comp ', comp), line=1, cex.main = size.title)
-                } else if (length(block) == 1) {
+                } else if (length(study.init) == 1) {
                     title(paste(title), line=0, cex.main = size.title)
-                } else if ((length(block) > 1 & missing(subtitle))) {
-                    title(paste0('Loadings on comp ', comp, "\nStudy '", block[i],"'"), line=0, cex.main = size.subtitle)
-                } else if (length(block) > 1 & !missing(subtitle)) {
+                } else if ((length(study.init) > 1 & missing(subtitle))) {
+                    title(paste0('Loadings on comp ', comp, "\nStudy '", study.init[i],"'"), line=0, cex.main = size.subtitle)
+                } else if (length(study.init) > 1 & !missing(subtitle)) {
                     title(paste(subtitle[i]), line=0, cex.main = size.subtitle)
                 }
                 
