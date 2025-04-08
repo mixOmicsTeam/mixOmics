@@ -29,7 +29,8 @@ primary_groups <- nutrimouse$diet
 plotArrow(rcc.obj, ind.names = FALSE,
           group = primary_groups, legend = TRUE)
 
-# plot samples coloured by primary groups, force all samples to have a different shape (2 = triangle)
+# plot samples coloured by primary groups, force all samples to have 
+# a different shape (2 = triangle)
 plotArrow(rcc.obj, ind.names = FALSE,
           group = primary_groups, legend = TRUE,
           pch = 2)
