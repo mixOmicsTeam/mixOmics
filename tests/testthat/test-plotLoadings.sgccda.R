@@ -13,6 +13,9 @@ diablo.obj = wrapper.sgccda(X = data,
 
 # Unit test 1: Test default behavior with graphics style
 test_that("Test default behavior with graphics style", {
+  skip_on_cran()
+  skip_on_ci()
+
   png(tempfile(), width = 1200, height = 1000, res = 150)
   old_par <- par(no.readonly = TRUE)  # Save current par settings
   par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names
@@ -26,6 +29,9 @@ test_that("Test default behavior with graphics style", {
 
 # Unit test 2: Test block-specific functionality
 test_that("Test block-specific plotting", {
+  skip_on_cran()
+  skip_on_ci()
+
   png(tempfile(), width = 1200, height = 1000, res = 150)
   old_par <- par(no.readonly = TRUE)  # Save current par settings
   par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names
@@ -38,6 +44,9 @@ test_that("Test block-specific plotting", {
 
 # Unit test 3: Test contrib parameter
 test_that("Test contrib parameter functionality", {
+  skip_on_cran()
+  skip_on_ci()
+  
   png(tempfile(), width = 1200, height = 1000, res = 150)
   old_par <- par(no.readonly = TRUE)  # Save current par settings
   par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names

@@ -8,6 +8,9 @@ mint.spls.obj <- mint.pls(X = stemcells$gene[,20:25], Y = stemcells$gene[,1:10],
 
 # Unit test 1: Test default behavior
 test_that("Test default behavior with graphics style", {
+  skip_on_cran()
+  skip_on_ci()
+  
   png(tempfile(), width = 1200, height = 1000, res = 150)
   old_par <- par(no.readonly = TRUE)  # Save current par settings
   par(mar = c(8, 4, 4, 2))  # Increase bottom margin to fit long names

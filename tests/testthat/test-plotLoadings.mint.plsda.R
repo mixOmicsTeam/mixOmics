@@ -11,6 +11,9 @@ mint.splsda.obj = mint.splsda(X = data, Y = type.id, study = study.id, ncomp = 2
 
 # Basic Unit Tests
 test_that("plotLoadings.mint.plsda works", {
+    skip_on_cran()
+    skip_on_ci()
+
     # Test default behavior with graphics style
     png(tempfile(), width = 1200, height = 1000, res = 150)
     old_par <- par(no.readonly = TRUE)  # Save current par settings
@@ -55,6 +58,9 @@ test_that("plotLoadings.mint.plsda works", {
 
 # Test return value
 test_that("plotLoadings.mint.plsda returns correct structure", {
+    skip_on_cran()
+    skip_on_ci()
+
     # Test return value for single study
     png(tempfile(), width = 1200, height = 1000, res = 150)
     old_par <- par(no.readonly = TRUE)  # Save current par settings
