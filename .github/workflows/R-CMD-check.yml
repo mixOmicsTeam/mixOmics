@@ -153,6 +153,7 @@ jobs:
           remotes::install_cran("rcmdcheck", Ncpus=2)
           remotes::install_cran("covr", Ncpus=2)
           install.packages("vdiffr")
+          install.packages("badger")
         shell: Rscript {0}
 
       - name: Session info 🖥️ 
