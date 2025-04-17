@@ -212,6 +212,30 @@ Thank you!
 
 ## What’s New
 
+#### April 2025
+
+\*\* Version 6.32.0 \*\*
+
+[Bioconductor release version
+6.32.0](https://www.bioconductor.org/packages/release/bioc/html/mixOmics.html)
+released 17th April 2025 mixOmics can now be downloaded using
+[Bioconductor version
+3.21](https://bioconductor.org/news/bioc_3_21_release/) and is
+compatable with R 4.5.0
+
+- feature request
+  [\#345](https://github.com/mixOmicsTeam/mixOmics/issues/345) updated
+  functionality for `plotLoadings()` so can plot in ggplot2 style and
+  customise aesthetics
+- bug fix implemented for
+  [\#357](https://github.com/mixOmicsTeam/mixOmics/issues/357)
+  `plotIndiv()` not handing `pch` ordering correctly
+- enhancement request
+  [\#332](https://github.com/mixOmicsTeam/mixOmics/issues/332) increased
+  test coverage for `plotIndiv()`
+- implemented a new unit testing framework for plotting functions using
+  `vdiffr` package
+
 #### March 2025
 
 - enhancement request
@@ -224,11 +248,11 @@ Thank you!
   [\#336](https://github.com/mixOmicsTeam/mixOmics/issues/336)
   streamline multiblock functions by removing `scheme` and `init` args
 
-Also explored potential bugs in handling of near zero variance in
-`block.splsda`
-[\#352](https://github.com/mixOmicsTeam/mixOmics/issues/352) and of
-`perf()` giving incorrect per-class error rates
-[\#355](https://github.com/mixOmicsTeam/mixOmics/issues/355).
+Also explored potential unusual behaviour of: \* zero variance handling
+in `block.splsda`
+[\#352](https://github.com/mixOmicsTeam/mixOmics/issues/352) \* `perf()`
+giving non-intuitve per-class error rates
+[\#355](https://github.com/mixOmicsTeam/mixOmics/issues/355)
 
 #### November 2024
 
@@ -266,7 +290,7 @@ streamlined as described in issue
   components used in the final model. Designed to be used in the final
   step of the workflow for quantifying final model performance. Outputs
   a list of values but no plotting functionality avaliable. See [PR
-  344](https://github.com/mixOmicsTeam/mixOmics/pull/344) for more
+  \#344](https://github.com/mixOmicsTeam/mixOmics/pull/344) for more
   details.
 
 - Additional functionality for `tune()` functions and new `tune()`

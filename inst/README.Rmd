@@ -26,8 +26,8 @@ opts_knit$set(cache.path = "whatsnew-files/")
 ```
 
 ```{r create-badges, include=FALSE, eval=TRUE}
-if (!requireNamespace('badger', quietly = TRUE))
-  install.packages("badger")
+# if (!requireNamespace('badger', quietly = TRUE))
+#   install.packages("badger")
 library(badger)
 pkg_license <- read.dcf("../DESCRIPTION")[, "License"]
 pkg_license_badge <- sprintf("https://img.shields.io/badge/license-%s-lightgrey.svg", pkg_license)
@@ -52,7 +52,7 @@ This repository contains the `R` package which is [hosted on Bioconductor](http:
 
 The best way to install `mixOmics` is using `Bioconductor`. You can see the landing page for the release version of `mixOmics` on Bioconductor [here](https://bioconductor.org/packages/release/bioc/html/mixOmics.html). Make sure you have the latest R version and the latest `BiocManager` package installed following [these instructions](https://www.bioconductor.org/install/).
 
-```{r}
+```{r, eval=FALSE}
 ## install BiocManager if not installed
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
@@ -68,7 +68,7 @@ library(mixOmics)
 
 Bioconductor versions are updated twice a year, between these updates you can download the latest version of `mixOmics` from `Github`. Note that this latest version of mixOmics is under development and may not be stable, check the gitHub page for releases which have passed package testing.
 
-```{r}
+```{r, eval=FALSE}
 ## install devtools
 install.packages("devtools")
 
