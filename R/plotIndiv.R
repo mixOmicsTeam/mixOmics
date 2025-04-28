@@ -421,35 +421,35 @@ internal_getVariatesAndLabels <-
       }
       
       
-      #-- Variance explained for pls and block.pls obejcts
-      
-      # we display explained variance when only 1block is plotted and the object is not MINT
-      #        if (!any(class.object%in%object.mint) & length(blocks) == 1 && rep.space !=  "XY-variate")
-      if (length(blocks) == 1 && rep.space !=  "XY-variate")
-      {
-        if(!is.null(object$prop_expl_var))
-        {
-          if (style == "3d")
-          {
-            inf = 100*round(object$prop_expl_var[[blocks]][c(comp[1], comp[2], comp[3])], 2)#c((object$sdev[comp[1]])^2/object$var.tot, (object$sdev[comp[2]])^2/object$var.tot, (object$sdev[comp[3]]^2)/object$var.tot)
-          } else {
-            if (any(class.object%in%object.mint))
-            {
-              if (blocks%in%c("X", "Y")) # means that study == "global"
-              {
-                inf = 100*round(object$prop_expl_var[[blocks]]$"all data"[c(comp[1], comp[2])], 2)
-              } else {
-                inf = 100*round(object$prop_expl_var[[blocks.init]][[blocks]][c(comp[1], comp[2])], 2)# c((object$sdev[comp[1]])^2/object$var.tot, (object$sdev[comp[2]])^2/object$var.tot)
-                
-              }
-            } else {
-              inf = 100*round(object$prop_expl_var[[blocks]][c(comp[1], comp[2])], 2)
-              
-            }
-          }
+      #-- Variance explained for pls and block.pls objects
+
+    # we display explained variance when only 1 block is plotted
+    if (length(blocks) == 1 && rep.space != "XY-variate") {
+      if (!is.null(object$prop_expl_var)) {
+        if (style == "3d") {
+          inf = 100 * round(object$prop_expl_var[[blocks]][c(comp[1], comp[2], comp[3])], 2)
         } else {
-          inf = rep("NC", 3)
+          if (any(class.object %in% object.mint)) {
+            if (blocks %in% c("X", "Y")) {  # means that study == "global"
+              inf = 100 * round(object$prop_expl_var[[blocks]]$"all data"[c(comp[1], comp[2])], 2)
+            } else {
+              ## PATCH for MINT models: safely coerce blocks to character
+              blocks_char <- as.character(blocks)
+              if (!is.null(object$prop_expl_var[[blocks.init]]) &&
+                  blocks_char %in% names(object$prop_expl_var[[blocks.init]])) {
+                inf = 100 * round(object$prop_expl_var[[blocks.init]][[blocks_char]][c(comp[1], comp[2])], 2)
+              } else {
+                inf = c(NA, NA)
+              }
+            }
+          } else {
+            inf = 100 * round(object$prop_expl_var[[blocks]][c(comp[1], comp[2])], 2)
+          }
         }
+      } else {
+        inf = rep("NC", 3)
+      }
+
         
         # for future development: if a label with explained variance for each blocks :
         #   inf = lapply(object$prop_expl_var, function(x){round(x[c(comp[1], comp[2])], 2)})
