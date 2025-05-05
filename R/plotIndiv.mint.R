@@ -332,6 +332,10 @@ plotIndiv.mint.pls <-
             z = variate$z
             X.label = variate$X.label #only the last one of the loop is used
             Y.label = variate$Y.label #only the last one of the loop is used
+            if(rep.space == "multi"){
+              X.label = sub(":.*", "", X.label) # to avoid 'NA% expl var"
+              Y.label = sub(":.*", "", Y.label)
+            }
             
             n = nrow(object$X)
             
@@ -371,6 +375,15 @@ plotIndiv.mint.pls <-
             ylim = out$ylim
             #missing.col = out$missing.col
             plot_parameters = out$plot_parameters
+            
+            # for 'multi' rep.space when have chosen a study, avoid NAs
+            if(rep.space == "multi"){
+              df$Block <- as.character(df$Block)
+              half <- floor(nrow(df) / 2)
+              df$Block[1:half] <- "Block: X"
+              df$Block[(half+1):nrow(df)] <- "Block: Y"
+              df$Block <- as.factor(df$Block)
+            }
             
             #save(list=ls(),file="temp.Rdata")
             # concatenate results
