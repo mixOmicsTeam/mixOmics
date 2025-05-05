@@ -435,9 +435,18 @@ internal_getVariatesAndLabels <-
             } else {
               ## PATCH for MINT models: safely coerce blocks to character
               blocks_char <- as.character(blocks)
-              if (!is.null(object$prop_expl_var[[blocks.init]]) &&
-                  blocks_char %in% names(object$prop_expl_var[[blocks.init]])) {
-                inf = 100 * round(object$prop_expl_var[[blocks.init]][[blocks_char]][c(comp[1], comp[2])], 2)
+              if (!is.null(object$prop_expl_var[[blocks.init]])) {
+                # Check if we can access the explained variance
+                if (blocks_char %in% names(object$prop_expl_var[[blocks.init]])) {
+                  var_data <- object$prop_expl_var[[blocks.init]][[blocks_char]]
+                  if (!is.null(var_data) && is.numeric(var_data)) {
+                    inf = 100 * round(var_data[c(comp[1], comp[2])], 2)
+                  } else {
+                    inf = c(NA, NA)
+                  }
+                } else {
+                  inf = c(NA, NA)
+                }
               } else {
                 inf = c(NA, NA)
               }
@@ -930,28 +939,63 @@ shape.input.plotIndiv <-
       
       #mint object
       #display.names = FALSE # so far ggplot and lattice require a unique vector of names. when the code changes, we can use ind.names (list)
-      group.mint = split(group, object$study)[study]
-      group = as.factor(unlist(group.mint))
-      pch = as.vector(unlist(split(pch, object$study)[study]))
-      cex = as.vector(unlist(split(cex, object$study)[study]))
-      pch.levels = as.vector(unlist(split(pch.levels, object$study)[study]))
-      col.per.group.mint = as.vector(unlist(split(levels.color, object$study)[study]))
-      #col = as.vector(unlist(split(col, object$study)[study]))
-      
-      
+      # Handle both numeric position and study names
+      if (is.numeric(study)) {
+        # Convert numeric position to actual study name
+        if (any(study > length(levels(object$study)))) {
+          stop("'study' position out of bounds. Maximum study position is ", length(levels(object$study)))
+        }
+        study <- levels(object$study)[study]
+      } else if (!all(study %in% levels(object$study))) {
+        stop("'study' must be either a numeric position or one of: ", paste(levels(object$study), collapse = ", "))
+      }
+
+      # For MINT models, we need to handle both blocks and study
+      if (length(blocks) == 1) {
+        # Single block case
+        group.mint = split(group, object$study)[study]
+        group = as.factor(unlist(group.mint))
+        pch = as.vector(unlist(split(pch, object$study)[study]))
+        cex = as.vector(unlist(split(cex, object$study)[study]))
+        pch.levels = as.vector(unlist(split(pch.levels, object$study)[study]))
+        col.per.group.mint = as.vector(unlist(split(levels.color, object$study)[study]))
+      } else {
+        # Multiple blocks case
+        group.mint = lapply(blocks, function(block) {
+          split(group, object$study)[study]
+        })
+        group = as.factor(unlist(lapply(group.mint, unlist)))
+        pch = as.vector(unlist(lapply(blocks, function(block) {
+          unlist(split(pch, object$study)[study])
+        })))
+        cex = as.vector(unlist(lapply(blocks, function(block) {
+          unlist(split(cex, object$study)[study])
+        })))
+        pch.levels = as.vector(unlist(lapply(blocks, function(block) {
+          unlist(split(pch.levels, object$study)[study])
+        })))
+        col.per.group.mint = as.vector(unlist(lapply(blocks, function(block) {
+          unlist(split(levels.color, object$study)[study])
+        })))
+      }
       
       #-- Start: data set
       df = list()
-      if (style == "3d")
-      {
-        for (i in 1 : length(x))
-        {
-          df[[i]] = data.frame(x = x[[i]], y = y[[i]], z = z[[i]], group = group.mint[[i]])
+      if (style == "3d") {
+        for (i in 1 : length(x)) {
+          if (length(blocks) == 1) {
+            df[[i]] = data.frame(x = x[[i]], y = y[[i]], z = z[[i]], group = group)
+          } else {
+            df[[i]] = data.frame(x = x[[i]], y = y[[i]], z = z[[i]], group = group.mint[[i]])
+          }
         }
       } else {
-        for (i in 1 : length(x))
-        {
-          df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group.mint[[i]])
+        for (i in 1 : length(x)) {
+          if (length(blocks) == 1) {
+            df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group)
+          } else {
+            df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group.mint[[i]])
+          }
         }
       }
       
