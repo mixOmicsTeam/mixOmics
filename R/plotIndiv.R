@@ -57,8 +57,9 @@
 #' "average" (averages the components from all blocks to produce a consensus plot) OR
 #' "weighted.average" (weighted average of the components according to their correlation with the
 #' outcome Y). See examples.
-#' @param study - only for MINT models. Indicates whether to plot all studies together
-#' \code{"global"} or separately \code{"all.partial"}. Default is "global".
+#' @param study - only for MINT models. Indicates whether to 1) plot all studies together
+#' \code{"global"} (default), 2) facet plot by study to show all at once \code{"all.partial"}
+#' or 3) plot specififice studies (see examples). 
 #' @param layout layout parameter passed to mfrow. Only for MINT model and only 
 #' used when \code{study} is "all.partial"
 #' @param style argument to be set to either \code{'graphics'},
@@ -435,9 +436,18 @@ internal_getVariatesAndLabels <-
             } else {
               ## PATCH for MINT models: safely coerce blocks to character
               blocks_char <- as.character(blocks)
-              if (!is.null(object$prop_expl_var[[blocks.init]]) &&
-                  blocks_char %in% names(object$prop_expl_var[[blocks.init]])) {
-                inf = 100 * round(object$prop_expl_var[[blocks.init]][[blocks_char]][c(comp[1], comp[2])], 2)
+              if (!is.null(object$prop_expl_var[[blocks.init]])) {
+                # Check if we can access the explained variance
+                if (blocks_char %in% names(object$prop_expl_var[[blocks.init]])) {
+                  var_data <- object$prop_expl_var[[blocks.init]][[blocks_char]]
+                  if (!is.null(var_data) && is.numeric(var_data)) {
+                    inf = 100 * round(var_data[c(comp[1], comp[2])], 2)
+                  } else {
+                    inf = c(NA, NA)
+                  }
+                } else {
+                  inf = c(NA, NA)
+                }
               } else {
                 inf = c(NA, NA)
               }
@@ -930,28 +940,66 @@ shape.input.plotIndiv <-
       
       #mint object
       #display.names = FALSE # so far ggplot and lattice require a unique vector of names. when the code changes, we can use ind.names (list)
-      group.mint = split(group, object$study)[study]
-      group = as.factor(unlist(group.mint))
-      pch = as.vector(unlist(split(pch, object$study)[study]))
-      cex = as.vector(unlist(split(cex, object$study)[study]))
-      pch.levels = as.vector(unlist(split(pch.levels, object$study)[study]))
-      col.per.group.mint = as.vector(unlist(split(levels.color, object$study)[study]))
-      #col = as.vector(unlist(split(col, object$study)[study]))
-      
-      
+      # Handle both numeric position and study names
+      if (is.numeric(study)) {
+        # Convert numeric position to actual study name
+        if (any(study > length(levels(object$study)))) {
+          stop("'study' position out of bounds. Maximum study position is ", length(levels(object$study)))
+        }
+        study <- levels(object$study)[study]
+      } else if (!all(study %in% levels(object$study))) {
+        stop("'study' must be either a numeric position or one of: ", paste(levels(object$study), collapse = ", "))
+      }
+
+      # For MINT models, we need to handle both blocks and study
+      if (length(blocks) == 1) {
+        # Single block case
+        group.mint = split(group, object$study)[study]
+        group = as.factor(unlist(group.mint))
+        pch = as.vector(unlist(split(pch, object$study)[study]))
+        cex = as.vector(unlist(split(cex, object$study)[study]))
+        pch.levels = as.vector(unlist(split(pch.levels, object$study)[study]))
+        col.per.group.mint = as.vector(unlist(split(levels.color, object$study)[study]))
+      } else {
+        # Multiple blocks case
+        group.mint = lapply(blocks, function(block) {
+          split(group, object$study)[study]
+        })
+        group = as.factor(unlist(lapply(group.mint, unlist)))
+        pch = as.vector(unlist(lapply(blocks, function(block) {
+          unlist(split(pch, object$study)[study])
+        })))
+        cex = as.vector(unlist(lapply(blocks, function(block) {
+          unlist(split(cex, object$study)[study])
+        })))
+        pch.levels = as.vector(unlist(lapply(blocks, function(block) {
+          unlist(split(pch.levels, object$study)[study])
+        })))
+        col.per.group.mint = as.vector(unlist(lapply(blocks, function(block) {
+          unlist(split(levels.color, object$study)[study])
+        })))
+      }
       
       #-- Start: data set
       df = list()
-      if (style == "3d")
-      {
-        for (i in 1 : length(x))
-        {
-          df[[i]] = data.frame(x = x[[i]], y = y[[i]], z = z[[i]], group = group.mint[[i]])
+      if (style == "3d") {
+        for (i in 1 : length(x)) {
+          if (length(blocks) == 1) {
+            df[[i]] = data.frame(x = x[[i]], y = y[[i]], z = z[[i]], group = group)
+          } else {
+            df[[i]] = data.frame(x = x[[i]], y = y[[i]], z = z[[i]], group = group.mint[[i]])
+          }
         }
       } else {
-        for (i in 1 : length(x))
-        {
-          df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group.mint[[i]])
+        for (i in 1 : length(x)) {
+          if (length(blocks) == 1) {
+            df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group)
+          } else {
+            if(length(study)>1){
+              df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group.mint[[1]][[i]])
+            } else {df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group.mint[[i]])}
+            
+          }
         }
       }
       
@@ -971,9 +1019,40 @@ shape.input.plotIndiv <-
       #if (display.names)
       #df$names = rep(ind.names, length(x))
       
-      df$pch = pch; df$pch.levels = pch.levels
+      # have added if statements here to deal with MINT cases when length of pch, pch.level, cex and col.per.group.mint dont match number of data points (rows in df)
+      # in case when one study is plotted in 'multi' rep space, these params are half length of data points (which are across X and Y variate space), so need to be repeated twice
+      # in case where multiple studies are plotted, these params are too long (nrow(df) repeated by number of studies) so need to be shorterned
+      # any other deviation of length of these vectors as compared to number of data points is caught as an error
+      if (length(pch) != nrow(df)){
+        if (length(pch) == nrow(df)/2){pch <- c(pch, pch)}
+        else if (length(pch) == length(study)*nrow(df) & length(pch) %% length(study) == 0 & all(pch[1:(length(pch)/length(study))] == pch[(length(pch)/length(study) + 1):length(pch)]))
+        {pch <- pch[1:(length(pch) / length(study))]} 
+        else {stop("unexpected error occured! 'pch' length does not match number of samples")}
+      }
+      df$pch = pch
+      
+      if (length(pch.levels) != nrow(df)){
+        if (length(pch.levels) == nrow(df)/2){pch.levels <- c(pch.levels, pch.levels)}
+        else if (length(pch.levels) == length(study)*nrow(df) & length(pch.levels) %% length(study) == 0 & all(pch.levels[1:(length(pch.levels)/length(study))] == pch.levels[(length(pch.levels)/length(study) + 1):length(pch.levels)])){
+          pch.levels <- pch.levels[1:(length(pch.levels) / length(study))]
+        } else {stop("unexpected error occured! 'pch.levels' length does not match number of samples")}
+      }
+      df$pch.levels = pch.levels
+      
+      if (length(cex) != nrow(df)){
+        if (length(cex) == nrow(df)/2){cex <- c(cex, cex)}
+        else if (length(cex) == length(study)*nrow(df) & length(cex) %% length(study) == 0 & all(cex[1:(length(cex)/length(study))] == cex[(length(cex)/length(study) + 1):length(cex)])){
+          cex <- cex[1:(length(cex) / length(study))]
+        } else {stop("unexpected error occured! 'cex' length does not match number of samples")}
+      }
       df$cex = cex
-      #df$col.per.group = col.per.group.mint;
+      
+      if (length(col.per.group.mint) != nrow(df)){
+        if (length(col.per.group.mint) == nrow(df)/2){col.per.group.mint <- c(col.per.group.mint, col.per.group.mint)}
+        else if (length(col.per.group.mint) == length(study)*nrow(df) & length(col.per.group.mint) %% length(study) == 0 & all(col.per.group.mint[1:(length(col.per.group.mint)/length(study))] == col.per.group.mint[(length(col.per.group.mint)/length(study) + 1):length(col.per.group.mint)])){
+          col.per.group.mint <- col.per.group.mint[1:(length(col.per.group.mint) / length(study))]
+        } else {stop("unexpected error occured! 'col.per.group.mint' length does not match number of samples")}
+      }
       df$col = col.per.group.mint#as.character(col)
       
       
