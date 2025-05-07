@@ -91,6 +91,59 @@ test_that("plotIndiv works for mint sPLSDA plotting studies separately and toget
     title = "mint sPLSDA plot studies facetted different layout",
     fig = plotIndiv(mint.res, study = "all.partial", layout = c(3,4)))
   ))
+  invisible(capture.output(
+  # just plotting one study
+  expect_doppelganger(
+    title = "mint sPLSDA plot one study",
+    fig = plotIndiv(mint.res, study = "1"))
+  ))
+  invisible(capture.output(
+  # plotting two studies
+  expect_doppelganger(
+    title = "mint sPLSDA plot two studies",
+    fig = plotIndiv(mint.res, study = c("1", "2")))
+  ))
+})
+
+test_that("plotIndiv works for mint sPLSDA on different rep spaces", {
+  skip_on_ci() # only run the vdiffr tests locally
+  
+  invisible(capture.output(
+    # all studies in one plot XY variate
+    expect_doppelganger(
+      title = "mint sPLSDA plot global XY rep space",
+      fig = plotIndiv(mint.res, study = "global", rep.space = "XY-variate"))
+  ))
+  invisible(capture.output(
+    # studies in separate plots Y variate
+    expect_doppelganger(
+      title = "mint sPLSDA plot studies facetted Y variate",
+      fig = plotIndiv(mint.res, study = "all.partial", rep.space = "Y-variate"))
+  ))
+  invisible(capture.output(
+    # studies in separate plots - XY variate
+    expect_doppelganger(
+      title = "mint sPLSDA plot studies facetted XY variate",
+      fig = plotIndiv(mint.res, study = "all.partial", rep.space = "XY-variate"))
+  ))
+  invisible(capture.output(
+    # just plotting one study - multi
+    expect_doppelganger(
+      title = "mint sPLSDA plot one study multi",
+      fig = plotIndiv(mint.res, study = "1", rep.space = "multi"))
+  ))
+  invisible(capture.output(
+    # just plotting one study - XY variate
+    expect_doppelganger(
+      title = "mint sPLSDA plot one study XY variate",
+      fig = plotIndiv(mint.res, study = "1", rep.space = "XY-variate"))
+  ))
+  invisible(capture.output(
+    # plotting two studies
+    expect_doppelganger(
+      title = "mint sPLSDA plot two studies XY variate",
+      fig = plotIndiv(mint.res, study = c("3", "2"), rep.space = "XY-variate"))
+  ))
 })
 
 test_that("plotIndiv works for mint sPLSDA plotting controlled groups cols, ellipse, etc", {
