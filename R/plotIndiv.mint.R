@@ -244,7 +244,7 @@ plotIndiv.mint.pls <-
                 if (rep.space == "multi")
                 {
                     rep.space = "X-variate"
-                    warning("More than one study is plotted, 'rep.space' is set to 'X-variate'. Alternatively, you can input 'Y-variate'")
+                    warning("More than one study is plotted, 'rep.space' is set to 'X-variate'. Alternatively, you can input 'Y-variate' or 'XY-variate'")
                 }
                 
                 if (rep.space == "X-variate")

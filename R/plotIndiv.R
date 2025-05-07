@@ -994,7 +994,10 @@ shape.input.plotIndiv <-
           if (length(blocks) == 1) {
             df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group)
           } else {
-            df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group.mint[[i]])
+            if(length(study)>1){
+              df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group.mint[[1]][[i]])
+            } else {df[[i]] = data.frame(x = x[[i]], y = y[[i]], group = group.mint[[i]])}
+            
           }
         }
       }
@@ -1015,9 +1018,40 @@ shape.input.plotIndiv <-
       #if (display.names)
       #df$names = rep(ind.names, length(x))
       
-      df$pch = pch; df$pch.levels = pch.levels
+      # have added if statements here to deal with MINT cases when length of pch, pch.level, cex and col.per.group.mint dont match number of data points (rows in df)
+      # in case when one study is plotted in 'multi' rep space, these params are half length of data points (which are across X and Y variate space), so need to be repeated twice
+      # in case where multiple studies are plotted, these params are too long (nrow(df) repeated by number of studies) so need to be shorterned
+      # any other deviation of length of these vectors as compared to number of data points is caught as an error
+      if (length(pch) != nrow(df)){
+        if (length(pch) == nrow(df)/2){pch <- c(pch, pch)}
+        else if (length(pch) == length(study)*nrow(df) & length(pch) %% length(study) == 0 & all(pch[1:(length(pch)/length(study))] == pch[(length(pch)/length(study) + 1):length(pch)]))
+        {pch <- pch[1:(length(pch) / length(study))]} 
+        else {stop("unexpected error occured! 'pch' length does not match number of samples")}
+      }
+      df$pch = pch
+      
+      if (length(pch.levels) != nrow(df)){
+        if (length(pch.levels) == nrow(df)/2){pch.levels <- c(pch.levels, pch.levels)}
+        else if (length(pch.levels) == length(study)*nrow(df) & length(pch.levels) %% length(study) == 0 & all(pch.levels[1:(length(pch.levels)/length(study))] == pch.levels[(length(pch.levels)/length(study) + 1):length(pch.levels)])){
+          pch.levels <- pch.levels[1:(length(pch.levels) / length(study))]
+        } else {stop("unexpected error occured! 'pch.levels' length does not match number of samples")}
+      }
+      df$pch.levels = pch.levels
+      
+      if (length(cex) != nrow(df)){
+        if (length(cex) == nrow(df)/2){cex <- c(cex, cex)}
+        else if (length(cex) == length(study)*nrow(df) & length(cex) %% length(study) == 0 & all(cex[1:(length(cex)/length(study))] == cex[(length(cex)/length(study) + 1):length(cex)])){
+          cex <- cex[1:(length(cex) / length(study))]
+        } else {stop("unexpected error occured! 'cex' length does not match number of samples")}
+      }
       df$cex = cex
-      #df$col.per.group = col.per.group.mint;
+      
+      if (length(col.per.group.mint) != nrow(df)){
+        if (length(col.per.group.mint) == nrow(df)/2){col.per.group.mint <- c(col.per.group.mint, col.per.group.mint)}
+        else if (length(col.per.group.mint) == length(study)*nrow(df) & length(col.per.group.mint) %% length(study) == 0 & all(col.per.group.mint[1:(length(col.per.group.mint)/length(study))] == col.per.group.mint[(length(col.per.group.mint)/length(study) + 1):length(col.per.group.mint)])){
+          col.per.group.mint <- col.per.group.mint[1:(length(col.per.group.mint) / length(study))]
+        } else {stop("unexpected error occured! 'col.per.group.mint' length does not match number of samples")}
+      }
       df$col = col.per.group.mint#as.character(col)
       
       
