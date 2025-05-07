@@ -57,8 +57,9 @@
 #' "average" (averages the components from all blocks to produce a consensus plot) OR
 #' "weighted.average" (weighted average of the components according to their correlation with the
 #' outcome Y). See examples.
-#' @param study - only for MINT models. Indicates whether to plot all studies together
-#' \code{"global"} or separately \code{"all.partial"}. Default is "global".
+#' @param study - only for MINT models. Indicates whether to 1) plot all studies together
+#' \code{"global"} (default), 2) facet plot by study to show all at once \code{"all.partial"}
+#' or 3) plot specififice studies (see examples). 
 #' @param layout layout parameter passed to mfrow. Only for MINT model and only 
 #' used when \code{study} is "all.partial"
 #' @param style argument to be set to either \code{'graphics'},

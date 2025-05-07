@@ -141,6 +141,16 @@ mint.obj <- mint.splsda(X = stemcells$gene, Y = stemcells$celltype, ncomp = 2,
 # plot samples, by default samples are plotted together coloured by groups and pch by study
 plotIndiv(mint.obj, legend = TRUE)
 
-# plot samples separated by study, can control layout
+# plot all studies at once, can control layout 
 plotIndiv(mint.obj, legend = TRUE, study = "all.partial")
 plotIndiv(mint.obj, legend = TRUE, study = "all.partial", layout = c(1,1))
+
+# (note when plotting multiple studies 'rep.space' cannot be 'multi', 
+# if set to 'multi' will revert to 'X-variate')
+plotIndiv(mint.obj, legend = TRUE, study = "all.partial", re.space = "multi")
+
+# plot one specific studies
+plotIndiv(mint.obj, study = "1", rep.space = "multi")
+
+# plot more than one specific study
+plotIndiv(mint.obj, study = c("1", "2"), rep.space = "XY-variate")
