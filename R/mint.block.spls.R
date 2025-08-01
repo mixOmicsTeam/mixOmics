@@ -32,8 +32,9 @@
 #' @return \code{mint.block.spls} returns an object of class \code{"mint.spls",
 #' "block.spls"}, a list that contains the following components:
 #' 
-#' \item{X}{the centered and standardized original predictor matrix.}
+#' \item{X}{the centered and standardized original predictor and response matrices.}
 #' \item{Y}{the centered and standardized original response vector or matrix.}
+#' \item{indY}{the position of the outcome Y in the output list X.}
 #' \item{ncomp}{the number of components included in the model for each block.}
 #' \item{mode}{the algorithm used to fit the model.} \item{mat.c}{matrix of
 #' coefficients from the regression of X / residual matrices X on the
@@ -124,16 +125,22 @@ mint.block.spls <- function(X,
         DA = FALSE
     )
     
+    # calculate weights for each dataset
+    weights = get.weights(result$variates, indY = result$indY)
+    
     # choose the desired output from 'result'
     out = list(
         call = match.call(),
         X = result$A,
-        Y = result$A[[1]],
+        Y = result$A[[result$indY]],
+        indY = result$indY,
         ncomp = result$ncomp,
         mode = result$mode,
         study = result$study,
-        keepX = result$keepA[-result$indY],
-        keepY = result$keepA[result$indY][[1]],
+        # keepX = result$keepA[-result$indY],
+        # keepY = result$keepA[result$indY][[1]],
+        keepX = lapply(result$keepA, function(x){x[,-result$indY]}),
+        keepY = lapply(result$keepA, function(x){x[,result$indY]}),
         variates = result$variates,
         loadings = result$loadings,
         variates.partial = result$variates.partial,
@@ -144,10 +151,11 @@ mint.block.spls <- function(X,
         iter = result$iter,
         max.iter = result$max.iter,
         nzv = result$nzv,
-        scale = result$scale
+        scale = result$scale,
+        weights = weights
     )
     
-    class(out) = c("mint.block.spls","block.spls","sgcca")
+    class(out) = c("mint.block.spls","mint.spls","block.spls","sgcca")
     return(invisible(out))
     
 }
