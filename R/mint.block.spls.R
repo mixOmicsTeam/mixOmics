@@ -33,7 +33,7 @@
 #' "block.spls"}, a list that contains the following components:
 #' 
 #' \item{X}{the centered and standardized original predictor and response matrices.}
-#' \item{Y}{the centered and standardized original response vector or matrix.}
+# \item{Y}{the centered and standardized original response vector or matrix.}
 #' \item{indY}{the position of the outcome Y in the output list X.}
 #' \item{ncomp}{the number of components included in the model for each block.}
 #' \item{mode}{the algorithm used to fit the model.} \item{mat.c}{matrix of
@@ -132,7 +132,7 @@ mint.block.spls <- function(X,
     out = list(
         call = match.call(),
         X = result$A,
-        Y = result$A[[result$indY]],
+        # Y = result$A[[result$indY]],
         indY = result$indY,
         ncomp = result$ncomp,
         mode = result$mode,
@@ -155,7 +155,7 @@ mint.block.spls <- function(X,
         weights = weights
     )
     
-    class(out) = c("mint.block.spls","mint.spls","block.spls","sgcca")
+    class(out) = c("mint.block.spls","block.spls","sgcca")
     return(invisible(out))
     
 }
