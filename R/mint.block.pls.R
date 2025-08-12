@@ -40,8 +40,9 @@
 #' @return \code{mint.block.pls} returns an object of class \code{"mint.pls",
 #' "block.pls"}, a list that contains the following components:
 #' 
-#' \item{X}{the centered and standardized original predictor matrix.}
-#' \item{Y}{the centered and standardized original response vector or matrix.}
+#' \item{X}{the centered and standardized original predictor and response matrices.}
+# \item{Y}{the centered and standardized original response vector or matrix.}
+#' \item{indY}{the position of the outcome Y in the output list X.}
 #' \item{ncomp}{the number of components included in the model for each block.}
 #' \item{mode}{the algorithm used to fit the model.} \item{mat.c}{matrix of
 #' coefficients from the regression of X / residual matrices X on the
@@ -128,11 +129,15 @@ mint.block.pls <- function(X,
         DA = FALSE
     )
     
+    # calculate weights for each dataset
+    weights = get.weights(result$variates, indY = result$indY)
+    
     # choose the desired output from 'result'
     out=list(
         call = match.call(),
         X = result$A,
-        Y = result$A[[1]],
+        # Y = result$A[[result$indY]],
+        indY = result$indY,
         ncomp = result$ncomp,
         mode = result$mode,
         study = result$study,
@@ -146,7 +151,8 @@ mint.block.pls <- function(X,
         iter = result$iter,
         max.iter = result$max.iter,
         nzv = result$nzv,
-        scale = result$scale)
+        scale = result$scale,
+        weights = weights)
     
     class(out) = c("mint.block.pls","block.pls","sgcca")
     return(invisible(out))
