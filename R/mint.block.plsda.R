@@ -225,7 +225,7 @@ mint.block.plsda <- function(X,
         nzv = result$nzv,
         scale = result$scale)
     
-    class(out) = c("mint.block.plsda","mint.block.pls","block.pls","sgccda","sgcca","DA")
+    class(out) = c("mint.block.plsda","mint.block.pls","block.plsda","block.pls","sgccda","sgcca","DA")
     return(invisible(out))
     
 }
