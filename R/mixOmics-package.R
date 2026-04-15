@@ -38,5 +38,6 @@ NULL
 #' @importFrom stats cor cov dist hclust lm lsfit median na.omit order.dendrogram predict quantile reorder var sd pnorm aggregate t.test
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom dplyr arrange rename filter group_by mutate n row_number summarise ungroup
+#' @importFrom rlang .data
 #' @noRd
 NULL
