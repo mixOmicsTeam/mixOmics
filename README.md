@@ -65,7 +65,9 @@ Docker container. You can do this by downloading and using the Docker
 desktop application or via the command line as described below.
 
 <details>
+
 <summary>
+
 Click to expand
 </summary>
 
@@ -125,7 +127,7 @@ docker run -e PASSWORD=your_password --rm -p 8787:8787 mixomicsteam/mixomics
 In your web browser, go to `http://localhost:8787/` (change port if
 necessary) and login with the following credentials:
 
-*username*: rstudio  
+*username*: rstudio\
 *password*: (your_password set in step 4)
 
 6)  Inspect/stop
@@ -169,7 +171,9 @@ appreciate well-formatted and detailed pull requests. Preferably with
 tests on our datasets.
 
 <details>
+
 <summary>
+
 Set up development environment
 </summary>
 
@@ -211,6 +215,13 @@ community of users, data analysts, developers and R programmers alike!
 Thank you!
 
 ## What’s New
+
+#### April 2026
+
+- bug fix implemented for
+  [\#374](https://github.com/mixOmicsTeam/mixOmics/issues/374) replaced
+  deprecated `aes_string()` with `aes(.data[[...]])` in plotting
+  functions
 
 #### April 2025
 
