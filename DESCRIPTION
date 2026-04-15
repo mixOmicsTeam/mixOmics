@@ -26,7 +26,8 @@ Imports:
     BiocParallel,
     utils,
     gsignal,
-    rgl
+    rgl,
+    rlang
 Suggests: 
     BiocStyle,
     knitr,
