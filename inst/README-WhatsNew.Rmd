@@ -17,6 +17,10 @@ opts_chunk$set( echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE)
 
 ## What's New
 
+#### April 2026
+
+* bug fix implemented for [#374](https://github.com/mixOmicsTeam/mixOmics/issues/374) replaced deprecated `aes_string()` with `aes(.data[[...]])` in plotting functions
+
 #### April 2025
 ** Version 6.32.0 **
 
