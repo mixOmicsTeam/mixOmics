@@ -222,6 +222,9 @@ Thank you!
   [\#374](https://github.com/mixOmicsTeam/mixOmics/issues/374) replaced
   deprecated `aes_string()` with `aes(.data[[...]])` in plotting
   functions
+- bug fix implemented for
+  [\#379](https://github.com/mixOmicsTeam/mixOmics/issues/379) replaced
+  deprecated `size` aesthetic with `linewidth` in ggplot2 line geoms
 
 #### April 2025
 

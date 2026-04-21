@@ -25,7 +25,6 @@ Imports:
     ggrepel,
     BiocParallel,
     utils,
-    gsignal,
     rgl,
     rlang
 Suggests: 
