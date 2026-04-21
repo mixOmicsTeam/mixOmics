@@ -88,5 +88,6 @@ test_that("biplot works for plsda objects", {
 ## Regression guard: ggplot2 size -> linewidth
 
 test_that("(biplot:edge.case): no ggplot2 size-aesthetic deprecation warning", {
-  expect_no_warning(biplot(plsda.breast))
+  # vline/hline default to FALSE; enable them to exercise the linewidth code paths
+  expect_no_warning(biplot(plsda.breast, vline = TRUE, hline = TRUE))
 })
