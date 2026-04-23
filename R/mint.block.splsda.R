@@ -186,8 +186,10 @@ mint.block.splsda <- function(X,
         ncomp = result$ncomp,
         mode = result$mode,
         study = result$study,
-        keepX = result$keepA[-result$indY],
-        keepY = result$keepA[result$indY][[1]],
+        # keepX = result$keepA[-result$indY],
+        # keepY = result$keepA[result$indY][[1]],
+        keepX = lapply(result$keepA, function(x){x[,-result$indY]}),
+        keepY = lapply(result$keepA, function(x){x[,result$indY]}),
         variates = result$variates,
         loadings = result$loadings,
         variates.partial = result$variates.partial,
@@ -201,7 +203,7 @@ mint.block.splsda <- function(X,
         scale = result$scale
     )
     
-    class(out) = c("mint.block.splsda","mint.block.spls","block.spls","sgccda","sgcca","DA")
+    class(out) = c("mint.block.splsda","mint.block.spls","block.splsda","block.spls","sgccda","sgcca","DA")
     return(invisible(out))
     
 }
