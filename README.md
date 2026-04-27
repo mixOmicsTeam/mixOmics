@@ -65,7 +65,9 @@ Docker container. You can do this by downloading and using the Docker
 desktop application or via the command line as described below.
 
 <details>
+
 <summary>
+
 Click to expand
 </summary>
 
@@ -125,7 +127,7 @@ docker run -e PASSWORD=your_password --rm -p 8787:8787 mixomicsteam/mixomics
 In your web browser, go to `http://localhost:8787/` (change port if
 necessary) and login with the following credentials:
 
-*username*: rstudio  
+*username*: rstudio\
 *password*: (your_password set in step 4)
 
 6)  Inspect/stop
@@ -169,7 +171,9 @@ appreciate well-formatted and detailed pull requests. Preferably with
 tests on our datasets.
 
 <details>
+
 <summary>
+
 Set up development environment
 </summary>
 
@@ -212,6 +216,58 @@ Thank you!
 
 ## What’s New
 
+#### April 2026
+
+- bug fix implemented for
+  [\#374](https://github.com/mixOmicsTeam/mixOmics/issues/374) replaced
+  deprecated `aes_string()` with `aes(.data[[...]])` in plotting
+  functions
+- bug fix implemented for
+  [\#379](https://github.com/mixOmicsTeam/mixOmics/issues/379) replaced
+  deprecated `size` aesthetic with `linewidth` in ggplot2 line geoms
+
+#### April 2025
+
+\*\* Version 6.32.0 \*\*
+
+[Bioconductor release version
+6.32.0](https://www.bioconductor.org/packages/release/bioc/html/mixOmics.html)
+released 17th April 2025 mixOmics can now be downloaded using
+[Bioconductor version
+3.21](https://bioconductor.org/news/bioc_3_21_release/) and is
+compatable with R 4.5.0
+
+- feature request
+  [\#345](https://github.com/mixOmicsTeam/mixOmics/issues/345) updated
+  functionality for `plotLoadings()` so can plot in ggplot2 style and
+  customise aesthetics
+- bug fix implemented for
+  [\#357](https://github.com/mixOmicsTeam/mixOmics/issues/357)
+  `plotIndiv()` not handing `pch` ordering correctly
+- enhancement request
+  [\#332](https://github.com/mixOmicsTeam/mixOmics/issues/332) increased
+  test coverage for `plotIndiv()`
+- implemented a new unit testing framework for plotting functions using
+  `vdiffr` package
+
+#### March 2025
+
+- enhancement request
+  [\#353](https://github.com/mixOmicsTeam/mixOmics/issues/353) better
+  error message in `perf()` when one sample in a class
+- enhancement request
+  [\#340](https://github.com/mixOmicsTeam/mixOmics/issues/340) expand
+  test coverage for main functions
+- enhancement request
+  [\#336](https://github.com/mixOmicsTeam/mixOmics/issues/336)
+  streamline multiblock functions by removing `scheme` and `init` args
+
+Also explored potential unusual behaviour of: \* zero variance handling
+in `block.splsda`
+[\#352](https://github.com/mixOmicsTeam/mixOmics/issues/352) \* `perf()`
+giving non-intuitve per-class error rates
+[\#355](https://github.com/mixOmicsTeam/mixOmics/issues/355)
+
 #### November 2024
 
 - enhancement request
@@ -248,7 +304,7 @@ streamlined as described in issue
   components used in the final model. Designed to be used in the final
   step of the workflow for quantifying final model performance. Outputs
   a list of values but no plotting functionality avaliable. See [PR
-  344](https://github.com/mixOmicsTeam/mixOmics/pull/344) for more
+  \#344](https://github.com/mixOmicsTeam/mixOmics/pull/344) for more
   details.
 
 - Additional functionality for `tune()` functions and new `tune()`

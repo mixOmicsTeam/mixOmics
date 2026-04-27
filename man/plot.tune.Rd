@@ -37,8 +37,9 @@ One of c('cor', 'RSS').}
 
 \item{comp}{Integer of length 2 denoting the components to plot.}
 
-\item{pch}{plot character. A character string or a vector of single
-characters or integers. See \code{\link{points}} for all alternatives.}
+\item{pch}{value or vector, controls shape of points to be plotted. Can be used 
+to control the shape of the points directly or to create a second group membership
+and legend. See details.}
 
 \item{cex}{numeric character (or symbol) expansion, possibly vector.}
 

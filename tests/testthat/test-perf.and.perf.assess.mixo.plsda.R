@@ -1,4 +1,4 @@
-context("perf.mixo.plsda")
+context("perf.assess.mixo.plsda")
 library(BiocParallel)
 
 ## ------------------------------------------------------------------------ ##
@@ -99,4 +99,24 @@ test_that("perf.assess.mixo_splsda works same as perf for same components in ser
   expect_equal(out.3$error.rate$overall, out.4$error.rate$overall)
   expect_equal(as.vector(out.1$error.rate$overall[2,]), as.vector(out.3$error.rate$overall))
 
+})
+
+## ------------------------------------------------------------------------ ##
+## Test perf.assess.mixo_plsda() give informative error message when one sample in one class
+
+test_that("perf.assess.mixo_plsda error when one sample in one class", code = {
+  
+  # set up data and model
+  data(liver.toxicity)
+  X <- liver.toxicity$gene[1:49, ]
+  Y <- liver.toxicity$treatment$Dose.Group[1:49]
+  res <- plsda(X, Y, ncomp = 2)
+  
+  # Execution using old perf() function in serial
+  test_run <- function() {
+    perf.assess(res, validation = "Mfold", folds = 2, nrepeat = 1, BPPARAM = SerialParam(), seed = 12)}
+  
+  expect_error(test_run(), 
+               "Cannot evaluate performance when a class level ('2000') has only a single associated sample.",
+               fixed = TRUE)
 })

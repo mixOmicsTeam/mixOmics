@@ -48,7 +48,6 @@ plotArrow <- function(object,
                       comp = c(1,2),
                       ind.names = TRUE,
                       group = NULL,
-                      col.per.group=NULL,
                       col = NULL,
                       ind.names.position = c('start', 'end'), 
                       ind.names.size = 2,
@@ -78,6 +77,19 @@ plotArrow <- function(object,
     
     ind.names.position <- match.arg(ind.names.position)
     is.multiblock <- ifelse(is.list(object$X), TRUE, FALSE)
+    
+    col.per.group <- col
+    
+    # check for inappropriate args
+    extra_args <- list(...)
+    # check for deprecated args
+    if ("col.per.group" %in% names(extra_args)) {
+      warning("'col.per.group' is deprecated, please use 'col' to specify colours for each group")
+    }
+    if ("pch.levels" %in% names(extra_args)) {
+        warning("'pch.levels' is deprecated, please use 'pch' to specify point types")
+    }
+    
     ## keep the plot components only and name columns as x and y
     variates <- mapply(arr = object$variates, block = names(object$variates), FUN = function(arr, block) {
         df <- data.frame(arr[,comp])
@@ -143,10 +155,11 @@ plotArrow <- function(object,
             n_ind = nrow(variates)
         )
     group <- col.group$group
-    col.per.group <- col.group$col.per.group
+    if(!missing(col.per.group)){
+      col.per.group <- col.group$col.per.group}
     pch.legend <- TRUE
     
-    if (is(object, 'DA'))
+    if (is(object, 'DA') && is.null(pch))
     {
         pch <- seq_len(length(blocks)+1)[-8][seq_along(blocks)] ## keep pch = 8 for centroids
         names(pch) <- blocks
@@ -277,7 +290,7 @@ plotArrow <- function(object,
             ),
             alpha = arrow.alpha,
             arrow = arrow(type='closed', angle = 30, length = unit(arrow.length, "cm"), ends = 'last'),
-            size = arrow.size,
+            linewidth = arrow.size,
             show.legend = FALSE
         ) 
     } 

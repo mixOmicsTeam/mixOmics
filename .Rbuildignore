@@ -27,3 +27,5 @@ ignore
 .Renviron
 ^codecov\.yml$
 ^\.github$
+^doc$
+^Meta$

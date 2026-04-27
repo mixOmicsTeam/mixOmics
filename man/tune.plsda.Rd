@@ -63,7 +63,9 @@ Default is \code{"Mfold"}.}
 threshold required for improvement in error rate of the components. Default
 to 0.01.}
 
-\item{dist}{Distance metric. Should be a subset of "max.dist", "centroids.dist", "mahalanobis.dist" or "all". Default is "all"}
+\item{dist}{distance metric to use for \code{splsda} to estimate the
+classification error rate, should be a subset of \code{"centroids.dist"},
+\code{"mahalanobis.dist"} or \code{"max.dist"} (see Details).}
 
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)}
 

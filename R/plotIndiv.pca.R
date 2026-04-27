@@ -7,29 +7,30 @@
 plotIndiv.pca <- 
     function(object,
              comp = NULL,
+             style = "ggplot2",
              ind.names = TRUE,
              group,
-             col.per.group,
-             style = "ggplot2",
+             col,
              ellipse = FALSE,
              ellipse.level = 0.95,
              centroid = FALSE,
              star = FALSE,
+             pch,
              title = NULL,
              legend = FALSE,
+             legend.title.pch = "Legend",
+             legend.title = "Legend",
+             legend.position = "right",
              X.label = NULL,
              Y.label = NULL,
              Z.label = NULL,
-             abline = FALSE,
              xlim = NULL,
              ylim = NULL,
-             col,
-             cex,
-             pch,
-             pch.levels,
-             alpha = 0.2,
              axes.box = "box",
-             layout = NULL,
+             abline = FALSE,
+             cex,
+             alpha = 0.2,
+             point.lwd = 1,
              size.title = rel(2),
              size.subtitle = rel(1.5),
              size.xlabel = rel(1),
@@ -37,15 +38,34 @@ plotIndiv.pca <-
              size.axis = rel(0.8),
              size.legend = rel(1),
              size.legend.title = rel(1.1),
-             legend.title = "Legend",
-             legend.title.pch = "Legend",
-             legend.position = "right",
-             point.lwd = 1,
              ...
              
              
     )
     {
+
+        # check for inappropriate args
+        extra_args <- list(...)
+        if ("rep.space" %in% names(extra_args)) {
+            warning("'rep.space' is not used for PCA, sPCA, IPCA, sIPCA")
+        }
+        if ("study" %in% names(extra_args) || "layout" %in% names(extra_args)) {
+            warning("'study' and 'layout' arguments are only used for MINT models")
+        }
+        if ("blocks" %in% names(extra_args)) {
+            warning("'blocks' argument is only used for multiblock models")
+        }
+        # check for deprecated args
+        if ("col.per.group" %in% names(extra_args)) {
+            warning("'col.per.group' is deprecated, please use 'col' to specify colours for each group")
+        }
+        if ("pch.levels" %in% names(extra_args)) {
+            warning("'pch.levels' is deprecated, please use 'pch' to specify point types")
+        }
+        if ("cols" %in% names(extra_args)) {
+            warning("'cols' is not a valid argument, did you mean 'col' ?")
+        }
+
         plot_parameters = list(
             size.title = size.title,
             size.subtitle = size.subtitle,
@@ -62,6 +82,7 @@ plotIndiv.pca <-
         
         blocks = "X"
         rep.space = "X-variate"
+        layout = NULL
         
         check = check.input.plotIndiv(
             object = object,
@@ -144,7 +165,7 @@ plotIndiv.pca <-
             z = z,
             ind.names = ind.names,
             group = group,
-            col.per.group = col.per.group,
+            col.per.group = col,
             style = style,
             study = "global",
             ellipse = ellipse,
@@ -157,7 +178,6 @@ plotIndiv.pca <-
             col = col,
             cex = cex,
             pch = pch,
-            pch.levels = pch.levels,
             display.names = display.names,
             plot_parameters = plot_parameters
         )

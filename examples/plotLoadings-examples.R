@@ -10,7 +10,7 @@ keepY = c(10, 10))
 plotLoadings(toxicity.spls)
 
 # with xlim
-xlim = matrix(c(-0.1,0.3, -0.4,0.6), nrow = 2, byrow = TRUE)
+xlim = c(-0.5, 0.5)
 plotLoadings(toxicity.spls, xlim = xlim)
 
 
@@ -36,25 +36,6 @@ plotLoadings(splsda.liver, comp = 2, method = 'median', contrib = "max")
 # Colors indicate the group in which the median expression is minimal
 plotLoadings(splsda.liver, comp = 2, method = 'median', contrib = 'min')
 
-# changing the name to gene names
-# if the user input a name.var but names(name.var) is NULL,
-# then a warning will be output and assign names of name.var to colnames(X)
-# this is to make sure we can match the name of the selected variables to the contribution plot.
-name.var = liver.toxicity$gene.ID[, 'geneBank']
-length(name.var)
-plotLoadings(splsda.liver, comp = 2, method = 'median', name.var = name.var,
-title = "Liver data", contrib = "max")
-
-# if names are provided: ok, even when NAs
-name.var = liver.toxicity$gene.ID[, 'geneBank']
-names(name.var) = rownames(liver.toxicity$gene.ID)
-plotLoadings(splsda.liver, comp = 2, method = 'median',
-name.var = name.var, size.name = 0.5, contrib = "max")
-
-#missing names of some genes? complete with the original names
-plotLoadings(splsda.liver, comp = 2, method = 'median',
-name.var = name.var, size.name = 0.5,complete.name.var=TRUE, contrib = "max")
-
 # look at the contribution (median) for each variable
 plot.contrib = plotLoadings(splsda.liver, comp = 2, method = 'median', plot = FALSE,
 contrib = "max")
@@ -68,7 +49,6 @@ plotLoadings(splsda.liver, comp = 2, method = 'median', legend = FALSE, contrib 
 
 # change the color of the legend
 plotLoadings(splsda.liver, comp = 2, method = 'median', legend.color = c(1:4), contrib = "max")
-
 
 
 # object 'splsda multilevel'
@@ -128,8 +108,6 @@ X = liver.toxicity$gene
 Y = liver.toxicity$treatment[, 4]
 
 plsda.liver = plsda(X, Y, ncomp = 2)
-plotIndiv(plsda.liver, ind.names = Y, ellipse = TRUE)
-
 
 name.var = liver.toxicity$gene.ID[, 'geneBank']
 names(name.var) = rownames(liver.toxicity$gene.ID)
@@ -156,23 +134,119 @@ ncomp = 2)
 plotLoadings(nutrimouse.sgccda,block=2)
 plotLoadings(nutrimouse.sgccda,block="gene")
 
-
-
-# object 'mint.splsda'
-# ----------------
-data(stemcells)
-data = stemcells$gene
-type.id = stemcells$celltype
-exp = stemcells$study
-
-res = mint.splsda(X = data, Y = type.id, ncomp = 3, keepX = c(10,5,15), study = exp)
-
-plotLoadings(res)
-plotLoadings(res, contrib = "max")
-plotLoadings(res, contrib = "min", study = 1:4,comp=2)
-
-# combining different plots by setting a layout of 2 rows and 4columns.
-# Note that the legend accounts for a subplot so 4columns instead of 2.
-plotLoadings(res,contrib="min",study=c(1,2,3),comp=2, layout = c(2,4))
-plotLoadings(res,contrib="min",study="global",comp=2)
 }
+
+
+#' PCA example
+#' -----------
+data(liver.toxicity)
+X = liver.toxicity$gene
+Y = liver.toxicity$clinic
+
+#' Simple PCA plot
+pca.liver = pca(X, ncomp = 2)
+plotLoadings(pca.liver)
+
+#' Customize PCA plot
+plotLoadings(pca.liver, 
+    comp = 2,
+    ndisplay = 20,  # Show top 20 variables
+    col = "steelblue",
+    border = "black",
+    size.name = 0.8,
+    title = "PCA Loadings - Component 2",
+    X.label = "Loading value",
+    Y.label = "Variables")
+
+#' PLS/SPLS example
+#' ----------------
+toxicity.spls = spls(X, Y, ncomp = 2, keepX = c(50, 50), keepY = c(10, 10))
+
+#' Plot both blocks with custom layout
+plotLoadings(toxicity.spls,
+    comp = 2,
+    block = c("X", "Y"),
+    layout = c(2, 2),
+    title = "PLS Loadings - Component 2",
+    subtitle = c("Gene Block", "Clinical Block"))
+
+#' PLSDA/SPLSDA example
+#' -------------------
+X = as.matrix(liver.toxicity$gene)
+Y = as.factor(paste0('treatment_', liver.toxicity$treatment[, 4]))
+splsda.liver = splsda(X, Y, ncomp = 2, keepX = c(20, 20))
+
+#' Show contribution with gene names
+name.var = liver.toxicity$gene.ID[, 'geneBank']
+names(name.var) = rownames(liver.toxicity$gene.ID)
+
+plotLoadings(splsda.liver,
+    comp = 2,
+    method = 'median',
+    contrib = "max",
+    name.var = name.var,
+    size.name = 0.5,
+    title = "Liver Treatment - Component 2",
+    legend.title = "Treatment",
+    legend.color = color.mixo(1:4))
+
+
+#' MINT PLSDA example
+#' -----------------
+data(stemcells)
+X = stemcells$gene
+Y = stemcells$celltype
+study = stemcells$study
+mint.splsda = mint.splsda(X = X, Y = Y, ncomp = 3, keepX = c(10, 5, 15), study = study)
+
+#' All partial loadings with custom layout
+plotLoadings(mint.splsda,
+    comp = 2,
+    study = "all.partial",
+    contrib = "max",
+    method = "median",
+    layout = c(2, 4),
+    legend.color = color.mixo(1:3),
+    subtitle = paste("Study", 1:4),
+    show.ties = TRUE,
+    col.ties = "gray")
+
+#' Advanced customization examples
+#' -----------------------------
+
+#' Custom variable names and sizes
+plotLoadings(splsda.liver,
+    comp = 2,
+    method = 'median',
+    contrib = "max",
+    name.var = name.var,
+    size.name = 0.8,
+    title = "Custom Variable Names",
+    size.title = 1.2,
+    size.axis = 0.8,
+    size.labs = 1.0)
+
+#' No legend
+plotLoadings(splsda.liver,
+    comp = 2,
+    method = 'median',
+    contrib = "max",
+    legend = FALSE)
+
+#' Custom legend
+plotLoadings(splsda.liver,
+    comp = 2,
+    method = 'median',
+    contrib = "max",
+    legend.title = "Treatment Groups",
+    legend.color = c("red", "blue", "green", "purple"),
+    size.legend = 0.8)
+
+#' Minimal display with top variables
+plotLoadings(splsda.liver,
+    comp = 2,
+    method = 'median',
+    contrib = "max",
+    ndisplay = 20,  # Show only top 20 variables
+    title = "Top 20 Contributing Variables")
+

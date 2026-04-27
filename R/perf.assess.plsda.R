@@ -34,13 +34,12 @@
 #' @method perf.assess mixo_plsda
 #' @export
 perf.assess.mixo_plsda <- function(object,
-                            dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
                             validation = c("Mfold", "loo"),
-                            folds = 10,
+                            folds,
                             nrepeat = 1,
+                            dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
                             auc = FALSE,
                             progressBar = FALSE,
-                            signif.threshold = 0.01,
                             BPPARAM = SerialParam(),
                             seed = NULL,
                             ...)
@@ -117,9 +116,6 @@ perf.assess.mixo_plsda <- function(object,
     if (!(logratio %in% c("none", "CLR")))
         stop("Choose one of the two following logratio transformation: 'none' or 'CLR'")
     #fold is checked in 'MCVfold'
-    
-    #-- check significance threshold
-    signif.threshold <- .check_alpha(signif.threshold)
     
     #---------------------------------------------------------------------------#
     #-- logration + multilevel approach ----------------------------------------#

@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' data-engine-version='2.0' width='720.00pt' height='576.00pt' viewBox='0 0 720.00 576.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA='>
+    <rect x='0.00' y='0.00' width='720.00' height='576.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<rect x='100.80' y='427.77' width='396.10' height='73.56' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='106.97' y='339.49' width='389.94' height='73.56' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='177.91' y='251.22' width='319.00' height='73.56' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='259.22' y='162.94' width='237.68' height='73.56' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<rect x='496.90' y='74.67' width='194.30' height='73.56' style='stroke-width: 0.75; stroke: none; fill: #388ECC;' />
+<text x='86.40' y='467.44' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='35.48px' lengthAdjust='spacingAndGlyphs'>ALT.IU.L.</text>
+<text x='86.40' y='379.17' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='36.41px' lengthAdjust='spacingAndGlyphs'>AST.IU.L.</text>
+<text x='86.40' y='290.89' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='46.22px' lengthAdjust='spacingAndGlyphs'>TBA.umol.L.</text>
+<text x='86.40' y='202.61' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='45.76px' lengthAdjust='spacingAndGlyphs'>BUN.mg.dL.</text>
+<text x='86.40' y='114.34' text-anchor='end' style='font-size: 8.40px; font-family: sans;' textLength='70.51px' lengthAdjust='spacingAndGlyphs'>Cholesterol.mg.dL.</text>
+<line x1='212.66' y1='518.40' x2='639.02' y2='518.40' style='stroke-width: 0.75;' />
+<line x1='212.66' y1='518.40' x2='212.66' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='354.78' y1='518.40' x2='354.78' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='496.90' y1='518.40' x2='496.90' y2='525.60' style='stroke-width: 0.75;' />
+<line x1='639.02' y1='518.40' x2='639.02' y2='525.60' style='stroke-width: 0.75;' />
+<text x='212.66' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='14.47px' lengthAdjust='spacingAndGlyphs'>-0.4</text>
+<text x='354.78' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='14.47px' lengthAdjust='spacingAndGlyphs'>-0.2</text>
+<text x='496.90' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.0</text>
+<text x='639.02' y='544.32' text-anchor='middle' style='font-size: 8.40px; font-family: sans;' textLength='11.68px' lengthAdjust='spacingAndGlyphs'>0.2</text>
+<text x='396.00' y='28.80' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='216.19px' lengthAdjust='spacingAndGlyphs'>Loadings on comp 1</text>
+<text x='396.00' y='57.60' text-anchor='middle' style='font-size: 24.00px; font-weight: bold; font-family: sans;' textLength='90.55px' lengthAdjust='spacingAndGlyphs'>Block 'Y'</text>
+</g>
+</svg>

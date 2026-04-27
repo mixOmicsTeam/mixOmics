@@ -37,13 +37,12 @@
 #' @export
 perf.assess.sgccda <- 
   function (object,
-            dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
             validation = c("Mfold", "loo"),
-            folds = 10,
+            folds = 3,
             nrepeat = 1,
+            dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
             auc = FALSE,
             progressBar = FALSE,
-            signif.threshold = 0.01,
             BPPARAM = SerialParam(),
             seed = NULL,
             ...)
@@ -72,14 +71,17 @@ perf.assess.sgccda <-
     } else {
       dist.select = dist
     }
+
+    if (any(table(object$Y) <= 1)) {
+      stop(paste("Cannot evaluate performance when a class level ('", 
+                names(table(object$Y))[which(table(object$Y) == 1)],
+                "') has only a single associated sample.", sep = ""))
+    }
     ### End: Initialization parameters
     
     dist = match.arg(dist.select, choices = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"), several.ok = TRUE)
     
     ### Start: Check parameter validation / set up sample
-    
-    #-- check significance threshold
-    signif.threshold <- .check_alpha(signif.threshold)
     
     if (length(validation) > 1 )
       validation = validation [1]

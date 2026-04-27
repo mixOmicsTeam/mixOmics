@@ -16,13 +16,12 @@ perf.assess(object, ...)
 
 \method{perf.assess}{sgccda}(
   object,
-  dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   validation = c("Mfold", "loo"),
-  folds = 10,
+  folds = 3,
   nrepeat = 1,
+  dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   auc = FALSE,
   progressBar = FALSE,
-  signif.threshold = 0.01,
   BPPARAM = SerialParam(),
   seed = NULL,
   ...
@@ -33,7 +32,6 @@ perf.assess(object, ...)
   dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   auc = FALSE,
   progressBar = FALSE,
-  signif.threshold = 0.01,
   ...
 )
 
@@ -42,7 +40,6 @@ perf.assess(object, ...)
   dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   auc = FALSE,
   progressBar = FALSE,
-  signif.threshold = 0.01,
   ...
 )
 
@@ -50,8 +47,8 @@ perf.assess(object, ...)
   object,
   validation = c("Mfold", "loo"),
   folds,
-  progressBar = FALSE,
   nrepeat = 1,
+  progressBar = FALSE,
   BPPARAM = SerialParam(),
   seed = NULL,
   ...
@@ -61,8 +58,8 @@ perf.assess(object, ...)
   object,
   validation = c("Mfold", "loo"),
   folds,
-  progressBar = FALSE,
   nrepeat = 1,
+  progressBar = FALSE,
   BPPARAM = SerialParam(),
   seed = NULL,
   ...
@@ -70,13 +67,12 @@ perf.assess(object, ...)
 
 \method{perf.assess}{mixo_plsda}(
   object,
-  dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   validation = c("Mfold", "loo"),
-  folds = 10,
+  folds,
   nrepeat = 1,
+  dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   auc = FALSE,
   progressBar = FALSE,
-  signif.threshold = 0.01,
   BPPARAM = SerialParam(),
   seed = NULL,
   ...
@@ -84,13 +80,12 @@ perf.assess(object, ...)
 
 \method{perf.assess}{mixo_splsda}(
   object,
-  dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   validation = c("Mfold", "loo"),
-  folds = 10,
+  folds,
   nrepeat = 1,
+  dist = c("all", "max.dist", "centroids.dist", "mahalanobis.dist"),
   auc = FALSE,
   progressBar = FALSE,
-  signif.threshold = 0.01,
   BPPARAM = SerialParam(),
   seed = NULL,
   ...
@@ -103,12 +98,6 @@ retrieve some key parameters stored in that object.}
 
 \item{...}{not used}
 
-\item{dist}{only applies to an object inheriting from \code{"plsda"},
-\code{"splsda"} or \code{"mint.splsda"} to evaluate the classification
-performance of the model. Should be a subset of \code{"max.dist"},
-\code{"centroids.dist"}, \code{"mahalanobis.dist"}. Default is \code{"all"}.
-See \code{\link{predict}}.}
-
 \item{validation}{a character string.  What kind of (internal) validation to use,
 matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
 \code{"Mfold"}. For MINT methods only \code{"loo"} will be used.}
@@ -119,15 +108,17 @@ matching one of \code{"Mfold"} or \code{"loo"} (see below). Default is
 This is an important argument to ensure the estimation of the performance to
 be as accurate as possible. Default it 1.}
 
+\item{dist}{only applies to an object inheriting from \code{"plsda"},
+\code{"splsda"} or \code{"mint.splsda"} to evaluate the classification
+performance of the model. Should be a subset of \code{"max.dist"},
+\code{"centroids.dist"}, \code{"mahalanobis.dist"}. Default is \code{"all"}.
+See \code{\link{predict}}.}
+
 \item{auc}{if \code{TRUE} calculate the Area Under the Curve (AUC)
 performance of the model.}
 
 \item{progressBar}{by default set to \code{FALSE} to output the progress bar
 of the computation.}
-
-\item{signif.threshold}{numeric between 0 and 1 indicating the significance
-threshold required for improvement in error rate of the components. Default
-to 0.01.}
 
 \item{BPPARAM}{A \linkS4class{BiocParallelParam} object indicating the type
 of parallelisation. See examples in \code{?tune.spca}.}
@@ -350,7 +341,10 @@ data("breast.TCGA")
 mrna <- breast.TCGA$data.train$mrna
 mirna <- breast.TCGA$data.train$mirna
 data <- list(mrna = mrna, mirna = mirna)
-design <- matrix(1, ncol = length(data), nrow = length(data), dimnames = list(names(data), names(data)))
+design <- matrix(1, 
+   ncol = length(data), 
+   nrow = length(data), 
+   dimnames = list(names(data), names(data)))
 diag(design) <-  0
 
 block.plsda.res <- block.plsda(X = data, Y = breast.TCGA$data.train$subtype, 

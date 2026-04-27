@@ -1,4 +1,4 @@
-context("perf.diablo")
+context("perf.assess.diablo")
 library(BiocParallel)
 
 ## ------------------------------------------------------------------------ ##
@@ -39,4 +39,28 @@ test_that("perf.diablo works with with auroc", {
                                    BPPARAM = SnowParam(workers = 2), seed = 100, progressBar = FALSE)
     expect_equal(perf.res$weights$comp2, perf.assess.res.parallel$weights$comp2)
     
+})
+
+## ------------------------------------------------------------------------ ##
+## Test  perf.assess.sgccda() give informative error message when one sample in one class
+
+test_that("perf.assess.sgccda error when one sample in one class", code = {
+  
+  # set up data and model
+  data(nutrimouse)
+  data = list(gene = nutrimouse$gene[1:10, ], lipid = nutrimouse$lipid[1:10, ])
+  design = matrix(c(0,1,1,1,0,1,1,1,0), ncol = 3, nrow = 3, byrow = TRUE)
+  nutrimouse.sgccda <- block.splsda(X = data,
+                                    Y = nutrimouse$diet[1:10],
+                                    design = design,
+                                    keepX = list(gene=c(10,10), lipid=c(15,15)),
+                                    ncomp = 2)
+  
+  test_run <- function() {
+    perf.assess(nutrimouse.sgccda, folds = 2, nrepeat = 1, auc = TRUE, 
+         BPPARAM = SerialParam(RNGseed = 100000), seed = 100, progressBar = FALSE)}
+  
+  expect_error(test_run(), 
+               "Cannot evaluate performance when a class level ('ref') has only a single associated sample.",
+               fixed = TRUE)
 })

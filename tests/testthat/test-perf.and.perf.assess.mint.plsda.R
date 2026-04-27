@@ -1,4 +1,4 @@
-context("perf.mint.plsda")
+context("perf.assess.mint.plsda")
 library(BiocParallel)
 
 ## ------------------------------------------------------------------------ ##
@@ -41,6 +41,25 @@ test_that("perf.mint.splsda works with custom alpha", code = {
     expect_true(all(out$choice.ncomp == 1))
     
 })
+
+## ------------------------------------------------------------------------ ##
+## Test perf.assess.mixo_plsda() give informative error message when one sample in one class
+# can't run this because get error message already when try to build model like this
+
+# test_that("perf.assess.mixo_plsda error when one sample in one class", code = {
+#   
+#   data(stemcells)
+#   res = mint.splsda(
+#     X = stemcells$gene[1:33,],
+#     Y = stemcells$celltype[1:33],
+#     ncomp = 3,
+#     keepX = c(5, 10, 15),
+#     study = stemcells$study[1:33]
+#   )
+#   
+#   Error in internal_wrapper.mint(X = X, Y = Y.mat, ncomp = ncomp, near.zero.var = near.zero.var,  : 
+#   At least one study has only one sample, please consider removing before calling the function again
+# })
 
 # test_that("perf.mint.splsda and tune.mint.splsda yield the same error rates for all measures", code = {
 #     data(stemcells)
