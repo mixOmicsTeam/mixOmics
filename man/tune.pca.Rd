@@ -29,11 +29,13 @@ number of columns of \code{X} can be supplied. The value is passed to
 \code{\link{scale}}.}
 
 \item{scale}{a logical value indicating whether the variables should be
-scaled to have unit variance before the analysis takes place. The default is
-\code{FALSE} for consistency with \code{prcomp} function, but in general
-scaling is advisable. Alternatively, a vector of length equal the number of
-columns of \code{X} can be supplied. The value is passed to
-\code{\link{scale}}.}
+scaled to have unit variance before the analysis takes place. Defaults to
+\code{TRUE}.
+For rCCA, both matrices are centred within each training fold, and
+\code{scale = TRUE} also uses training-fold standard deviations to scale
+the training and held-out samples. See \code{\link{tune.rcc}}.
+For PCA, a vector of length equal to the number of columns of \code{X}
+can also be supplied and is passed to \code{\link{scale}}.}
 
 \item{max.iter}{Integer, the maximum number of iterations.}
 
