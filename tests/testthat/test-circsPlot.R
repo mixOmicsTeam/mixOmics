@@ -62,3 +62,27 @@ test_that("circosPlot works when using the indY parameter", code = {
     expect_is(cp_res, "matrix")
 })
 
+
+test_that("circosPlot works with comp = 1 when a block has a single selected variable", code = {
+    # Check that selecting a single variable preserves its name and avoids indexing errors.
+    data("breast.TCGA")
+    data = list(mrna = breast.TCGA$data.train$mrna,
+                mirna = breast.TCGA$data.train$mirna,
+                protein = breast.TCGA$data.train$protein)
+
+    list.keepX = list(mrna = c(10, 10), mirna = c(1, 10), protein = c(10, 10))
+    TCGA.block.splsda = block.splsda(X = data, Y = breast.TCGA$data.train$subtype,
+                                     ncomp = 2, keepX = list.keepX, design = 'full')
+
+    cp_res <- circosPlot(TCGA.block.splsda, comp = 1, cutoff = 0.5)
+
+    expect_is(cp_res, "matrix")
+    # one row/column per variable selected on comp 1 across all blocks
+    expect_equal(ncol(cp_res), sum(sapply(list.keepX, `[`, 1)))
+    # preserve every selected feature name in block and input-variable order
+    expected.names <- unlist(lapply(TCGA.block.splsda$loadings[names(data)],
+                                   function(x) rownames(x)[x[, 1] != 0]),
+                             use.names = FALSE)
+    expect_identical(rownames(cp_res), expected.names)
+    expect_identical(colnames(cp_res), expected.names)
+})
