@@ -263,7 +263,7 @@ circosPlot <- function(object, ...) UseMethod('circosPlot')
         keepA = lapply(object$loadings, function(i)
             apply(abs(i)[, comp, drop = FALSE], 1, sum) > 0)
         cord = mapply(function(x, y, keep){
-            cor(x[, keep], y[, comp], use = "pairwise")
+            cor(x[, keep, drop = FALSE], y[, comp, drop = FALSE], use = "pairwise")
         }, x=X, y=object$variates,
         keep = keepA, SIMPLIFY = FALSE)
         
